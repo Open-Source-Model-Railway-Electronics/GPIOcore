@@ -12,6 +12,16 @@ extern Transceiver transceiver ;
 
 #define OPCODE(x) void inline x##F( Message *msg )
 
+// pin rules, PROTOCOL.md section 9. NA (0x3F, or 0xFF masked) = not used
+bool isValidPin( uint8_t pin, uint8_t isOutput )
+{
+    pin &= 0x3F ;
+    if( pin == NA ) return true ;
+    if( pin <=  2 ) return false ;                  // D0/D1 = Serial, D2 = DCC input
+    if( pin >= 20 ) return !isOutput && pin <= 21 && board.type == BOARD_NANO ;   // A6/A7: analog inputs, Nano only
+    return true ;
+}
+
 void clearUnusedOutputs( uint8_t index )
 {
     for( int i = index; i < 16; i++ )
@@ -83,6 +93,7 @@ OPCODE( OPCODE_SET_INPUT_DATA )
 {
     uint8_t index = msg->payload[0] ;
     if( index >= 16 ) return ;
+    if( !isValidPin( msg->payload[3], 0 ) ) { transceiver.nack = NACK_INVALID_PIN ; return ; }
     InputSettings data ;
 
     int p = 1 ; // payload index
@@ -134,6 +145,10 @@ OPCODE( OPCODE_SET_OUTPUT_DATA )
 {
     uint8_t index = msg->payload[0] ;
     if( index >= 16 ) return ;
+    for( uint8_t i = 1 ; i <= 7 ; i ++ )            // pinA-D, relayA-C
+    {
+        if( !isValidPin( msg->payload[i], 1 ) ) { transceiver.nack = NACK_INVALID_PIN ; return ; }
+    }
     Settings data ;
 
     int p = 1 ;
@@ -461,6 +476,56 @@ OPCODE( OPCODE_SET_PRESET )
 }
 
 
+OPCODE( OPCODE_HELLO )
+{
+    uint16_t pool = freeRouteSteps() ;
+
+    configSession = 1 ;
+
+    msg->command    = OPCODE_HELLO_REPLY ;
+    msg->payload[0] = PROTOCOL_VERSION ;
+    msg->payload[1] = MAX_ROUTE_STEPS ;
+    msg->payload[2] = pool & 0xFF ;
+    msg->payload[3] = pool >> 8 ;
+    msg->payload[4] = HELLO_BOARD ;
+    transceiver.sendMessage( msg ) ;
+}
+
+OPCODE( OPCODE_GET_BOARD )
+{
+    uint8_t n ;
+    for( n = 0 ; n < BOARD_NAME_LEN ; n ++ )
+    {
+        uint8_t c = EEPROM.read( boardEEAddress + sizeof( board ) + n ) ;
+        if( c == 0 || c == 0xFF ) break ;
+        msg->payload[ 4 + n ] = c ;
+    }
+
+    msg->command    = OPCODE_SET_BOARD ;
+    msg->payload[0] = 4 + n ;
+    msg->payload[1] = board.type ;
+    msg->payload[2] = board.flags ;
+    msg->payload[3] = board.delay ;
+    transceiver.sendMessage( msg ) ;
+}
+
+OPCODE( OPCODE_SET_BOARD )
+{
+    if( msg->payload[0] < 4 ) return ;
+    uint8_t n = msg->payload[0] - 4 ;
+    if( n > BOARD_NAME_LEN ) n = BOARD_NAME_LEN ;
+
+    board.type  = msg->payload[1] ;
+    board.flags = msg->payload[2] ;
+    board.delay = msg->payload[3] ;
+    EEPROM.put( boardEEAddress, board ) ;
+
+    for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ )
+    {
+        EEPROM.update( boardEEAddress + sizeof( board ) + i, i < n ? msg->payload[ 4 + i ] : 0 ) ;
+    }
+}
+
 #undef OPCODE
 
 extern const char * version ;   // src/version.h, defined in GPIOcore.ino
@@ -492,6 +557,9 @@ void messageReceived( Message *msg, uint8 len )  // call back message
         process( OPCODE_GET_OUTPUT_STATE ) ;
         process( OPCODE_REQ_VERSION      ) ;
         process( OPCODE_SET_PRESET       ) ;
+        process( OPCODE_HELLO            ) ;
+        process( OPCODE_GET_BOARD        ) ;
+        process( OPCODE_SET_BOARD        ) ;
     }
 }
 #undef process

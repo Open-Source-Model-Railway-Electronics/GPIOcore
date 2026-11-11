@@ -16,6 +16,9 @@ Input           input[16] ;
 Timer           debounce ;
 Transceiver     transceiver ;
 uint16_t        nextEEAddress = 0 ;
+BoardSettings   board ;
+uint16_t        boardEEAddress = 1004 ;     // type, flags, delay, name[16]
+uint8_t         configSession  = 0 ;        // 1 after HELLO
 
 // Recorder — uses internal EEPROM from address 420 up to 999 (~72 events of 8 bytes)
 const uint16_t  RECORDER_EE_START = 420 ;
@@ -38,6 +41,24 @@ bool callbackAttach(   uint8_t pin )              { return servoManager.attach( 
 void callbackDetach(   uint8_t pin )              { servoManager.detach(   pin      ) ; }
 void callbackSetServo( uint8_t pin, uint8_t pos ) { servoManager.setServo( pin, pos ) ; }
 
+
+// number of route steps that still fit in EEPROM (HELLO)
+uint16_t freeRouteSteps()
+{
+    return 16 * MAX_OUTPUTS ;           // v1 storage: 8 linked outputs per input
+}
+
+void loadBoard()
+{
+    EEPROM.get( boardEEAddress, board ) ;
+    if( board.type <= BOARD_JACK ) return ;
+
+    board.type  = BOARD_NANO ;          // erased EEPROM: defaults
+    board.flags = BOARD_RECORDER | ( INTERLOCK_AUTO << 2 ) ;
+    board.delay = 3 ;
+    EEPROM.put( boardEEAddress, board ) ;
+    for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ ) EEPROM.update( boardEEAddress + sizeof( board ) + i, 0 ) ;
+}
 
 bool deadbeef()
 {
@@ -62,6 +83,8 @@ void setup()
     Serial.begin(115200) ;
     delay(100) ;
     sendMyVersion() ;
+
+    loadBoard() ;
 
     dcc.pin(2, 0) ;
     dcc.init( MAN_ID_DIY, 11, FLAGS_OUTPUT_ADDRESS_MODE | FLAGS_DCC_ACCESSORY_DECODER, 0 ) ;

@@ -110,10 +110,12 @@ uint8 Transceiver::receive()
     case 3:
         if( b == checksum )
         {
+            nack = 0 ;
             if( messageReceived )
                 messageReceived( &mess, len ) ;
 
-            sendAck() ;
+            if( nack ) sendNack( nack ) ;
+            else       sendAck() ;
         }
         else
         {

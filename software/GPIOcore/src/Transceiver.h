@@ -26,6 +26,7 @@ public:
     void    sendMessage(Message *) ;
     void    sendAck() ;
     void    sendNack( uint8 reason ) ;
+    uint8_t nack ;          // set by messageReceived() to answer with NACK <nack> instead of ACK
     
     private:
     Message     mess ;
