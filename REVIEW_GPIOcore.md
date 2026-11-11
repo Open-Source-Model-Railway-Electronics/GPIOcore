@@ -12,7 +12,7 @@ Datum: 2026-11-04 · Scope: de hele map `GPIOcore/` (firmware, `GUI_Python/`, `G
   - de output-opcode kondigt 13 bytes aan, maar de payload is 14 bytes (**F1**).
 - **Python GUI**: werkt niet met de huidige firmware. Hij crasht bij het eerste bericht, ontvangt niets
   (de receive-loop wordt maar één keer aangeroepen) en gebruikt een oude payload-layout. Zie **P1–P9**.
-- **Qt GUI**: nieuw project `GUI/GPIOcoreGUI/`. Het werkt met de huidige firmware (inclusief de
+- **Qt GUI**: nieuw project `software/gui/`. Het werkt met de huidige firmware (inclusief de
   protocol-eigenaardigheden hieronder) en ook met een gefixte firmware (0x2E). Er zijn 19 automatische
   tests, die draaien tegen een firmware-simulator. Nog **niet getest op echte hardware**.
 
@@ -78,7 +78,7 @@ route-default, preset-broadcast-layout, preset 4).
   - er staat altijd minstens één regel open; bij een lege route kies je daar de eerste output;
   - verwijderen gaat met een prullenbak-knop per regel;
   - bugfix: rij-knoppen werden verwijderd terwijl hun eigen klik nog liep (`delete` → `deleteLater`).
-- **Help:** 17 uitgebreide uitlegteksten voor beginners in `GUI/GPIOcoreGUI/i18n/info/en/*.html`, plus
+- **Help:** 17 uitgebreide uitlegteksten voor beginners in `software/gui/i18n/info/en/*.html`, plus
   *Help → Getting started*.
 - **Vertalingen:**
   - schermteksten via Qt Linguist (`i18n/gpiocore_<taal>.ts`; `gpiocore_nl.ts` aangemaakt, 269 teksten,
@@ -86,7 +86,7 @@ route-default, preset-broadcast-layout, preset 4).
   - uitlegteksten als HTML per taal, met terugval op Engels;
   - een *View → Language*-menu.
 
-  Uitleg voor vertalers: `GUI/GPIOcoreGUI/i18n/README.md`.
+  Uitleg voor vertalers: `software/gui/i18n/README.md`.
 - Er zijn 39 tests (31 core + 8 GUI), allemaal groen.
 
 ## Update 2026-11-11: protocol v2 (GUI klaar, decoder nog te doen)
@@ -431,7 +431,7 @@ Conclusie: de Python GUI is niet bruikbaar met de huidige firmware. De Qt GUI ve
 
 ---
 
-## 6. Nieuwe Qt GUI (`GUI/GPIOcoreGUI/`)
+## 6. Nieuwe Qt GUI (`software/gui/`)
 
 **Functies**
 - Seriële verbinding (115200 8N1). Herkent Arduino/CH340/FTDI/CP210x-poorten automatisch en wacht op het
@@ -450,7 +450,7 @@ Conclusie: de Python GUI is niet bruikbaar met de huidige firmware. De Qt GUI ve
 - **Demo-modus**: een ingebouwde firmware-simulator die het gedrag van de huidige firmware nabootst
   (inclusief F1, F2, F5 en de bitfield-truncatie).
 
-**Bouwen**: open `GUI/GPIOcoreGUI/CMakeLists.txt` in Qt Creator (kit Qt 6.10.1 MinGW). Getest met
+**Bouwen**: open `software/gui/CMakeLists.txt` in Qt Creator (kit Qt 6.10.1 MinGW). Getest met
 Qt 6.10.1 / MinGW 13.1. De code gebruikt geen Qt6-only API's en `find_package` valt terug op Qt5, maar
 een Qt5-build heb ik **niet** kunnen testen (alleen Qt 6 staat op deze machine).
 

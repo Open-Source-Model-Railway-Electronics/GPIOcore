@@ -1,7 +1,7 @@
 # GPIOcore seriële protocol — v1 en v2
 
 Datum: 2026-11-11 (bijgewerkt) · Status: **v1** is de huidige firmware. **v2** is de specificatie voor de nieuwe decoder;
-de Qt GUI en de simulator (`GUI/GPIOcoreGUI/src/simulateddevice.cpp`) implementeren v2 al.
+de Qt GUI en de simulator (`software/gui/src/simulateddevice.cpp`) implementeren v2 al.
 
 De GUI werkt met beide versies. Na het openen van de poort stuurt hij `HELLO`:
 - Een v2-decoder antwoordt met zijn mogelijkheden.
