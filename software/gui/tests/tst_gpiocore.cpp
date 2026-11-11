@@ -436,6 +436,48 @@ private slots:
         QCOMPARE(r.errors, 0);
     }
 
+    void boardSettingsRoundTrip()
+    {
+        BoardSettings b;
+        b.name = QStringLiteral("Station/left:1234567890");   // path characters dropped, max 16
+        b.type = BoardDccNext; b.recorder = false; b.timing = false; b.interlock = InterlockOn; b.delay = 7;
+        BoardSettings d;
+        QVERIFY(decodeBoard(encodeBoard(b), d));
+        QCOMPARE(d.name, QStringLiteral("Stationleft12345"));
+        QCOMPARE(int(d.type), int(BoardDccNext));
+        QVERIFY(!d.recorder && !d.timing);
+        QCOMPARE(int(d.interlock), int(InterlockOn));
+        QCOMPARE(int(d.delay), 7);
+        QCOMPARE(BoardSettings::fromJson(d.toJson()), d);
+
+        Rig r; makeRig(r, SimulatedDevice::Options());
+        QVERIFY(r.link->caps().boardSettings);
+        BoardSettings got;
+        QObject::connect(r.link, &DeviceLink::boardReceived, r.link, [&got](const BoardSettings &x) { got = x; });
+        r.link->writeBoard(d);
+        r.link->readBoard();
+        waitFinished(r);
+        QCOMPARE(r.errors, 0);
+        QCOMPARE(r.sim->board(), d);
+        QCOMPARE(got, d);
+    }
+
+    void namesStayInTheFile()
+    {
+        BoardConfig b;
+        b.outputs[2].name = QStringLiteral("Turnout left");
+        b.inputs[5].name  = QStringLiteral("Button A");
+        b.board.name = QStringLiteral("Test");
+        BoardConfig c;
+        QVERIFY(BoardConfig::fromJson(b.toJson(), c, nullptr));
+        QCOMPARE(c.outputs[2].name, b.outputs[2].name);
+        QCOMPARE(c.inputs[5].name, b.inputs[5].name);
+        QCOMPARE(c.board.name, b.board.name);
+        // names are not part of the board data: a named output equals the board's copy
+        OutputConfig plain = b.outputs[2]; plain.name.clear();
+        QVERIFY(plain == b.outputs[2]);
+    }
+
     void helloTimeoutIsV1()
     {
         Rig r; makeRig(r, SimulatedDevice::Options::currentFirmware());
