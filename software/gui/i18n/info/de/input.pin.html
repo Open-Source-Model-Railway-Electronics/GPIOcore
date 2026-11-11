@@ -1,0 +1,12 @@
+<h3>Eingangspin — wo der Taster angeschlossen ist</h3>
+<p>Wählen Sie den Arduino-Pin, an dem Taster, Schalter oder Sensor angeschlossen ist.</p>
+<p><b>So schließen Sie ihn an:</b> ein Draht des Tasters an den Pin, der andere Draht an <b>GND</b> (Minus, 0 V).
+Das ist alles: kein Widerstand nötig, die Platine schaltet ihren eigenen internen „Pull-up“-Widerstand ein.</p>
+<pre>  Pin D7 ───[ Taster ]─── GND</pre>
+<ul>
+<li>Schließen Sie einen Taster <b>nicht</b> an 5 V oder 12 V an: das kann den Arduino beschädigen.</li>
+<li>Pin <b>D2</b> ist der DCC-Eingang und kann nicht verwendet werden.</li>
+<li>Ein Pin kann nur einmal verwendet werden: nicht von zwei Eingängen und nicht von einem Eingang und einem
+Ausgang.</li>
+</ul>
+<p>Nur DCC, kein Taster? Wählen Sie „nicht benutzt“.</p>

@@ -1,0 +1,38 @@
+<h2>Erste Schritte</h2>
+<p>Dieses Programm richtet eine <b>GPIOcore-Platine</b> ein: einen kleinen Arduino (Nano / Uno oder ein DCCnext), der
+unter Ihrer Anlage sitzt und Dinge schaltet: Weichen, Beleuchtung, Signale, Relais. Sie sagen der Platine, <i>was</i>
+an <i>welchem</i> Pin angeschlossen ist und <i>wodurch</i> es sich bewegen soll.</p>
+
+<h3>Die zwei Arten</h3>
+<ul>
+<li><b>Ausgänge</b> (rechte Spalte) sind Dinge, die die Platine <i>tut</i>: einen Servo bewegen, einer Weichenspule
+einen Impuls geben, eine LED leuchten lassen, ein Relais schalten. Es gibt 16 davon.</li>
+<li><b>Eingänge</b> (linke Spalte) sind Dinge, die <i>der Platine einen Befehl geben</i>: ein Taster auf Ihrem
+Stellpult oder ein Befehl Ihrer DCC-Zentrale (Ihr Digitalsystem / Handregler). Es gibt 16 davon.</li>
+</ul>
+
+<h3>Schritt für Schritt</h3>
+<ol>
+<li><b>Verbinden.</b> Stecken Sie die Platine an den USB-Anschluss. Wählen Sie oben ihren Port (meist steht CH340,
+USB Serial oder Arduino dabei) und klicken Sie auf <b>Verbinden</b>. Keine Platine zur Hand? Klicken Sie auf
+<b>Demo</b>, um alles mit einer simulierten Platine auszuprobieren.</li>
+<li><b>Einen Ausgang einrichten.</b> Klicken Sie rechts auf einen Ausgang. Von rechts fährt ein Feld herein. Wählen
+Sie den <b>Typ</b> (zum Beispiel <i>Servo</i>) und den <b>Pin</b>, an dem der Draht hängt.</li>
+<li><b>Einen Eingang einrichten.</b> Klicken Sie links auf einen Eingang. Von links fährt ein Feld herein. Wählen
+Sie, was ihn auslöst: einen <b>Taster-Pin</b>, eine <b>DCC-Adresse</b> oder beides.</li>
+<li><b>Verbinden Sie beide.</b> Ziehen Sie den Ausgang (rechts) auf den Eingang (links). Eine farbige Linie
+erscheint: dieser Eingang bedient jetzt diesen Ausgang. Der Ausgang bekommt die Farbe seines Eingangs, so sehen Sie
+auf einen Blick, was zusammengehört.</li>
+<li><b>An die Platine senden.</b> Alles, was Sie geändert haben, bekommt einen orangen Punkt. Klicken Sie oben auf
+<b>… Änderung(en) schreiben</b>. Die Platine speichert es, auch ohne Strom.</li>
+</ol>
+
+<h3>Gut zu wissen</h3>
+<ul>
+<li>Jeder <b>(i)</b>-Knopf erklärt, was daneben steht. Klicken Sie darauf, wenn Sie unsicher sind.</li>
+<li>Roter Text bedeutet, dass etwas nicht stimmt, zum Beispiel zwei Dinge am selben Pin.</li>
+<li><b>Zustand 0 / 1 testen</b> in einem Ausgangsfeld bewegt ihn sofort, so können Sie Ihre Verdrahtung prüfen.</li>
+<li><b>Datei → Konfiguration speichern</b> legt eine Kopie Ihrer Einstellungen auf dem Computer ab. Machen Sie das,
+bevor Sie experimentieren.</li>
+<li>Durcheinander geraten? <b>Verwerfen</b> verwirft alles, was Sie noch nicht auf die Platine geschrieben haben.</li>
+</ul>

@@ -1,0 +1,38 @@
+<h2>Firmware aktualisieren</h2>
+<p>Die <b>Firmware</b> ist das Programm, das auf dem Arduino Ihrer GPIOcore-Platine läuft. Manchmal gibt es eine
+neuere Version mit Korrekturen oder neuen Funktionen. Dieses Fenster spielt sie auf Ihre Platine.</p>
+
+<h3>Schritt für Schritt</h3>
+<ol>
+<li><b>Schließen Sie die Platine</b> mit einem USB-Kabel an.</li>
+<li><b>Port:</b> wählen Sie die Platine. Meist steht CH340, USB Serial oder Arduino dabei. Nicht zu sehen? Prüfen
+Sie das Kabel und klicken Sie auf <b>Refresh</b>.</li>
+<li><b>Firmware file:</b> das ist die Datei mit dem neuen Programm (sie endet auf <i>.hex</i>). Normalerweise ist die
+richtige Datei schon eingetragen. Wenn nicht, klicken Sie auf <b>Browse…</b> und wählen <i>GPIOcore.hex</i>.</li>
+<li><b>Board type:</b> die meisten Platinen funktionieren mit <i>Arduino Uno / Nano (new bootloader)</i>. Günstigere
+oder ältere Nanos brauchen oft <i>Arduino Nano (old bootloader)</i>. Nicht sicher? Beginnen Sie einfach mit dem
+ersten: antwortet die Platine nicht, probiert das Programm selbst das andere.</li>
+<li>Klicken Sie auf <b>Flash</b> und warten Sie, bis der Balken voll ist. Das dauert etwa 10 bis 30 Sekunden.
+<b>Ziehen Sie die Platine nicht ab</b>, solange sie beschäftigt ist.</li>
+</ol>
+
+<h3>Gut zu wissen</h3>
+<ul>
+<li>Dieses Programm gibt die Platine während des Hochladens frei und verbindet sich danach wieder. Sie müssen nichts
+tun.</li>
+<li>Ihre Einstellungen auf der Platine (Ausgänge, Eingänge, Verbindungen) bleiben normalerweise erhalten. Zur
+Sicherheit vorher <b>Datei → Konfiguration speichern</b> verwenden.</li>
+<li>Andere Programme, die die Platine nutzen, etwa der serielle Monitor der Arduino IDE, müssen vorher geschlossen
+werden.</li>
+<li>Etwas ist schiefgegangen? Lesen Sie die rote Meldung: dort steht, was Sie versuchen können. <b>Show details</b>
+zeigt den vollständigen Bericht; praktisch, wenn Sie jemanden um Hilfe bitten.</li>
+<li>Ein fehlgeschlagenes Hochladen macht die Platine nicht kaputt. Einfach noch einmal versuchen.</li>
+</ul>
+
+<h3>Über einen ArduinoISP-Programmer (fortgeschritten)</h3>
+<p>Nur für Platinen ohne USB-Bootloader oder eine Platine, die nicht mehr antwortet. Sie brauchen einen zweiten
+Arduino mit dem Sketch <i>ArduinoISP</i>, verbunden mit den sechs ICSP-Pins Ihrer Platine. Wählen Sie den Port
+dieses <i>Programmer</i>-Arduinos. Dabei werden auch die Chip-Einstellungen (Fuses) gesetzt und der USB-Bootloader
+entfernt, danach können Sie diese Platine nur noch mit dem Programmer aktualisieren. Außerdem werden <b>Ihre
+Einstellungen gelöscht</b>: speichern Sie sie vorher mit <b>Datei → Konfiguration speichern</b> und schreiben Sie sie
+danach zurück.</p>

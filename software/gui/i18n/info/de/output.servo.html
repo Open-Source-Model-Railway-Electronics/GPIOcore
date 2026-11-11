@@ -1,0 +1,21 @@
+<h3>Einen Servo einrichten</h3>
+<p>Ein Servo dreht auf einen Winkel zwischen 0° und 180°. Als Weichenantrieb bewegt er sich zwischen zwei
+Stellungen:</p>
+<ul>
+<li><b>Stellung 0 (Abzweig)</b> — der Winkel für „Abzweig“.</li>
+<li><b>Stellung 1 (Gerade)</b> — der Winkel für „Gerade“.</li>
+<li><b>Geschwindigkeit</b> — Millisekunden pro Grad. 20 ms/° ist ruhig und vorbildgerecht; 5 ist schnell; 50 ist
+sehr langsam. Eine volle Bewegung dauert |Stellung 1 − Stellung 0| × Geschwindigkeit.</li>
+</ul>
+<h4>Die richtigen Stellungen finden — mit „Live“</h4>
+<ol>
+<li>Verbinden Sie die Platine und haken Sie <b>Live</b> an.</li>
+<li>Schieben Sie den Regler <i>Stellung 0</i> langsam. Der Servo auf der Anlage bewegt sich mit.
+Hören Sie auf, wenn die Weichenzunge gerade an der Backenschiene anliegt.</li>
+<li>Machen Sie dasselbe für <i>Stellung 1</i>.</li>
+<li>Klicken Sie auf <b>Schreiben</b>, um es zu speichern.</li>
+</ol>
+<p><b>Tipp:</b> drücken Sie die Zunge nicht zu fest an die Schiene: der Servo brummt dann und wird warm.
+Gehen Sie 2–3° vom Berührungspunkt zurück.</p>
+<p>Verdrahtung: braun/schwarz = GND, rot = 5 V (bei mehreren Servos aus einem eigenen 5-V-Netzteil!),
+orange/gelb = Signal zum Pin.</p>

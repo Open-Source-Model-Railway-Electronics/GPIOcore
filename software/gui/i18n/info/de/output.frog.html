@@ -1,0 +1,19 @@
+<h3>Herzstück-Polarisierung — Electrofrog oder Unifrog?</h3>
+<p>Das <b>Herzstück</b> ist die Stelle einer Weiche, an der sich die beiden Schienen kreuzen. Bei Weichen mit
+„polarisiertem Herzstück“ ist dieses Teil aus Metall und muss <b>dieselbe Polarität wie der eingestellte Fahrweg</b>
+bekommen. Bekommt es die falsche, bleiben Loks stehen oder es gibt einen Kurzschluss. Ein Relais polarisiert das
+Herzstück um, wenn die Weiche umläuft.</p>
+<p>Sehen Sie sich Ihre Weiche an und wählen Sie <b>eines</b>:</p>
+<ul>
+<li><b>Keine (isoliertes Herzstück)</b> — das Herzstück ist aus Kunststoff (Peco <i>Insulfrog</i>, die meisten
+Bettungsgleise). Nichts zu tun.</li>
+<li><b>Electrofrog — 2 Relais</b> (Peco <i>Electrofrog</i> und ähnliche). Relais A wird für „Gerade“ eingeschaltet,
+Relais B für „Abzweig“. Während die Weiche umläuft, sind <b>beide kurz aus</b>, so gibt es nie einen Kurzschluss
+(erst trennen, dann verbinden).</li>
+<li><b>Unifrog — 1 Relais</b> (Peco <i>Unifrog</i>). Das Herzstück hat einen Draht. Ein Umschaltrelais verbindet ihn
+mit der richtigen Schiene. Mit einem Servo schaltet es genau, wenn der Servo die Mitte passiert; mit einem
+Spulenantrieb am Ende des Impulses.</li>
+</ul>
+<p>Sie können nur eine der beiden Arten verwenden. Wählen Sie eine, werden die Pins der anderen entfernt.</p>
+<p><b>Verdrahtung:</b> verwenden Sie ein Relais<i>modul</i> (mit Transistor und Diode) — ein Arduino-Pin kann kein
+nacktes Relais treiben.</p>

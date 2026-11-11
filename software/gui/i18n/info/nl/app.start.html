@@ -1,0 +1,39 @@
+<h2>Aan de slag</h2>
+<p>Dit programma stelt een <b>GPIOcore-print</b> in: een kleine Arduino (Nano / Uno, of een DCCnext) die onder je
+baan zit en dingen schakelt: wissels, verlichting, seinen, relais. Je vertelt de print <i>wat</i> er op
+<i>welke</i> pin is aangesloten, en <i>waardoor</i> het moet bewegen.</p>
+
+<h3>De twee soorten</h3>
+<ul>
+<li><b>Uitgangen</b> (rechterkolom) zijn dingen die de print <i>doet</i>: een servo bewegen, een wisselspoel een puls
+geven, een LED laten branden, een relais schakelen. Er zijn er 16.</li>
+<li><b>Ingangen</b> (linkerkolom) zijn dingen die <i>de print opdracht geven</i>: een drukknop op je
+bedieningspaneel, of een commando van je DCC-centrale (je digitale systeem / handregelaar). Er zijn er 16.</li>
+</ul>
+
+<h3>Stap voor stap</h3>
+<ol>
+<li><b>Verbinden.</b> Steek de print in de USB-poort. Kies bovenaan de poort (meestal staat er CH340, USB Serial of
+Arduino bij) en klik op <b>Verbinden</b>. Geen print bij de hand? Klik op <b>Demo</b> om alles te proberen met een
+nagebootste print.</li>
+<li><b>Een uitgang instellen.</b> Klik rechts op een uitgang. Er schuift een paneel in vanaf rechts. Kies het
+<b>type</b> (bijvoorbeeld <i>Servo</i>) en de <b>pin</b> waar de draad op zit.</li>
+<li><b>Een ingang instellen.</b> Klik links op een ingang. Er schuift een paneel in vanaf links. Kies waardoor hij
+start: een <b>knop-pin</b>, een <b>DCC-adres</b>, of allebei.</li>
+<li><b>Verbind ze.</b> Sleep de uitgang (rechts) naar de ingang (links). Er verschijnt een gekleurde lijn: die
+ingang bedient nu die uitgang. De uitgang krijgt de kleur van zijn ingang, zodat je in één oogopslag ziet wat bij
+elkaar hoort.</li>
+<li><b>Naar de print sturen.</b> Alles wat je hebt veranderd krijgt een oranje stip. Klik bovenaan op
+<b>… wijziging(en) schrijven</b>. De print bewaart het, ook als de stroom eraf is.</li>
+</ol>
+
+<h3>Goed om te weten</h3>
+<ul>
+<li>Elk <b>(i)</b>-knopje legt uit wat ernaast staat. Klik erop als je twijfelt.</li>
+<li>Rode tekst betekent dat er iets mis is, bijvoorbeeld twee dingen op dezelfde pin.</li>
+<li><b>Test stand 0 / 1</b> in een uitgangspaneel laat hem meteen bewegen, zo kun je je bedrading controleren.</li>
+<li><b>Bestand → Configuratie opslaan</b> bewaart een kopie van je instellingen op de computer. Doe dit voordat je
+gaat experimenteren.</li>
+<li>Er een rommeltje van gemaakt? <b>Terugdraaien</b> gooit alles weg wat je nog niet naar de print hebt
+geschreven.</li>
+</ul>

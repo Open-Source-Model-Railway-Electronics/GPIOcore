@@ -1,0 +1,13 @@
+<h3>Pins — wo die Drähte hinkommen</h3>
+<p>Wählen Sie den oder die Arduino-Pins für diesen Ausgang. Die Pinnamen stehen auf der Platine: <b>D3 … D13</b> und
+<b>A0 … A5</b>.</p>
+<ul>
+<li>Ein Pin kann nur <b>einmal</b> verwendet werden. Ein doppelt verwendeter Pin wird rot.</li>
+<li><b>D2</b> ist der DCC-Eingang. <b>D0 / D1</b> sind die USB-Verbindung; nur manche Platinen können sie nutzen
+(siehe die Warnung, wenn Sie einen wählen).</li>
+<li><b>~PWM</b>-Pins (D3, D5, D6, D9, D10, D11) können dimmen. Lichteffekte brauchen einen davon.
+Solange ein Servo verwendet wird, können D9 und D10 <i>nicht</i> dimmen.</li>
+<li>Bei einem <b>DCCnext</b> zeigt die Liste auch die auf dieser Platine aufgedruckte Portnummer.</li>
+</ul>
+<p>Ein Arduino-Pin liefert nur wenig Strom (max. 20 mA). Genug für eine LED mit Vorwiderstand oder die Signalleitung
+eines Servos. Für Relais, Spulen und Lampen einen Treiber oder ein Relaismodul dazwischenschalten.</p>

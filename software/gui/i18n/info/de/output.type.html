@@ -1,0 +1,22 @@
+<h3>Was ist an diesem Ausgang angeschlossen?</h3>
+<ul>
+<li><b>Einfach Dauer</b> — ein Pin ein oder aus. LEDs, ein Relaismodul, Lampen (über einen Transistor oder ein
+Relais).</li>
+<li><b>Einfach Impuls</b> — ein Pin bekommt einen kurzen Impuls. Für ein Entkupplungsgleis oder ein Gerät mit einer
+Spule.</li>
+<li><b>Einfach Blinken</b> — ein Pin blinkt, solange er eingeschaltet ist. Ein Warnlicht.</li>
+<li><b>Doppelt Dauer</b> — zwei Pins: A ein und B aus oder umgekehrt. Zweifarbige Signale, zwei Relais.</li>
+<li><b>Doppelimpuls</b> — zwei Pins, einer davon bekommt einen kurzen Impuls. Für <b>Weichenantriebe mit Spulen</b>
+(Peco, Roco, Fleischmann …): A = die eine Spule, B = die andere Spule.</li>
+<li><b>Wechselblinken</b> — zwei Pins blinken abwechselnd.</li>
+<li><b>Wechsellicht</b> — zwei Lichter abwechselnd mit einer Pause: Bahnübergangslichter.</li>
+<li><b>Kaminfeuer / Leuchtstoffröhre / Schweißlicht</b> — Lichteffekte: flackerndes Feuer, eine Leuchtstoffröhre,
+die flackernd angeht, Schweißblitze. (Kaminfeuer und Leuchtstoffröhre brauchen PWM-Pins.)</li>
+<li><b>4-begriffiges Signal</b> — vier LEDs (rot, grün, gelb, weiß …), gestellt durch DCC-Signalbefehle oder eine
+Fahrstraße.</li>
+<li><b>Servo</b> — ein Modellbau-Servo als Weichenantrieb. Langsame, vorbildgerechte Bewegung.</li>
+<li><b>PWM</b> — eine feste Helligkeit für eine Lampe oder LED-Kette.</li>
+<li><b>Nicht benutzt</b> — nichts angeschlossen.</li>
+</ul>
+<p><b>Wichtig bei Spulen:</b> ein Arduino-Pin kann eine Spule nicht direkt treiben. Verwenden Sie eine
+Treiberplatine (zum Beispiel einen ULN2803 oder ein MOSFET-Modul) zwischen Pin und Spule.</p>

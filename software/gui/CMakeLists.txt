@@ -63,7 +63,7 @@ set_target_properties(GPIOcoreGUI PROPERTIES WIN32_EXECUTABLE TRUE MACOSX_BUNDLE
 # UI translations (Qt 6): i18n/gpiocore_<lang>.ts, edited with Qt Linguist.
 #   cmake --build <build dir> --target update_translations   (refresh the .ts files)
 # The .qm files are built and compiled in as :/i18n/gpiocore_<lang>.qm.
-set(GPIOCORE_LANGUAGES nl CACHE STRING "UI languages besides English (i18n/gpiocore_<lang>.ts)")
+set(GPIOCORE_LANGUAGES nl de fr es it pl cs da nb sv hu pt CACHE STRING "UI languages besides English (i18n/gpiocore_<lang>.ts)")
 if(QT_VERSION_MAJOR EQUAL 6)
     find_package(Qt6 QUIET COMPONENTS LinguistTools)
     if(Qt6LinguistTools_FOUND)

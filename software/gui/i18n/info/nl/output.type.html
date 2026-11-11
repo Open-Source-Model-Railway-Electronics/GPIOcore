@@ -1,0 +1,19 @@
+<h3>Wat zit er op deze uitgang?</h3>
+<ul>
+<li><b>Enkel vast</b> — één pin aan of uit. LED's, een relaismodule, lampjes (via een transistor of relais).</li>
+<li><b>Enkele puls</b> — één pin krijgt een korte puls. Voor een ontkoppelaar of iets met één spoel.</li>
+<li><b>Enkel knipperend</b> — één pin knippert zolang hij aan staat. Een waarschuwingslicht.</li>
+<li><b>Dubbel vast</b> — twee pinnen: A aan en B uit, of andersom. Tweekleurige seinen, twee relais.</li>
+<li><b>Dubbele puls</b> — twee pinnen, één ervan krijgt een korte puls. Voor <b>wisselaandrijvingen met spoelen</b>
+(Peco, Roco, Fleischmann …): A = de ene spoel, B = de andere spoel.</li>
+<li><b>Dubbel knipperend</b> — twee pinnen knipperen om en om.</li>
+<li><b>Wisselknipper</b> — twee lampen om de beurt met een pauze: overweglichten.</li>
+<li><b>Haardvuur / TL-buis / lasser</b> — lichteffecten: flakkerend vuur, een TL-buis die flikkerend aangaat,
+lasflitsen. (Haardvuur en TL-buis hebben PWM-pinnen nodig.)</li>
+<li><b>4-beelden sein</b> — vier LED's (rood, groen, geel, wit …), gezet door DCC-seincommando's of door een rijweg.</li>
+<li><b>Servo</b> — een modelservo als wisselaandrijving. Langzame, realistische beweging.</li>
+<li><b>PWM</b> — een vaste helderheid voor een lamp of LED-strip.</li>
+<li><b>Niet in gebruik</b> — er is niets aangesloten.</li>
+</ul>
+<p><b>Belangrijk bij spoelen:</b> een Arduino-pin kan een spoel niet rechtstreeks aansturen. Gebruik een driverprint
+(bijvoorbeeld een ULN2803 of een MOSFET-module) tussen de pin en de spoel.</p>

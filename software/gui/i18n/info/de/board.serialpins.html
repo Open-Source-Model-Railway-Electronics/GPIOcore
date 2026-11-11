@@ -1,0 +1,11 @@
+<h3>Pins D0 und D1</h3>
+<p>D0 und D1 sind die Leitungen, über die der Arduino per USB mit diesem Programm spricht. Neuere Platinen können
+sie trotzdem für Ihre Anlage nutzen:</p>
+<ul>
+<li>Beim Start wartet die Platine <b>5 Sekunden</b> auf dieses Programm.</li>
+<li>Verbindet sich das Programm, bleiben D0 / D1 während der Konfiguration für USB reserviert. Was an diesen Pins
+hängt, funktioniert dann <b>nicht</b>.</li>
+<li>Verbindet sich nichts (normaler Betrieb auf der Anlage), werden D0 / D1 normale Pins.</li>
+</ul>
+<p>Nutzen Sie sie für einfache Dinge wie LEDs. Vermeiden Sie große Lasten an D0: sie können das Hochladen neuer
+Firmware stören.</p>

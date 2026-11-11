@@ -1,0 +1,30 @@
+<h3>Stappen van de rijweg</h3>
+<p>Een rijweg is een lijst met dingen om te doen, van boven naar beneden. Elke regel (stap) zet <b>één uitgang</b> en
+<b>wacht</b> dan even voor de volgende stap.</p>
+<p><b>Wanneer start de rijweg?</b> Als de knop op de ingangspin wordt <b>ingedrukt</b>, of als de centrale
+<b>een willekeurig commando</b> (rechtdoor of afbuigend) naar het DCC-adres van de ingang stuurt.</p>
+
+<h4>De kolommen</h4>
+<ul>
+<li><b>Uitgang</b> — wat deze stap bedient.</li>
+<li><b>Waarde</b> — wat de uitgang moet doen. Dat hangt af van het soort uitgang:
+  <ul>
+  <li>wissel, lamp, relais: <b>afbuigend (0)</b> of <b>rechtdoor (1)</b>;</li>
+  <li>4-beelden sein: een <b>seinbeeldnummer</b> (0–255) — hetzelfde nummer dat je centrale gebruikt;</li>
+  <li>servo: afbuigend, rechtdoor, of een exacte <b>hoek</b> tussen 10° en 170°;</li>
+  <li>PWM: een helderheid / snelheid van 0–255.</li>
+  </ul></li>
+<li><b>Wachten na</b> — hoe lang er gewacht wordt voor de volgende stap, in tienden van een seconde
+(standaard 0,3 s, tot 1638 s ≈ 27 minuten). Wissels met spoelen die tegelijk veel stroom trekken, kunnen je voeding
+laten inzakken: een korte wachttijd ertussen helpt.</li>
+</ul>
+
+<h4>Zo maak je er een</h4>
+<ol>
+<li>Kies een uitgang in de eerste regel, <i>of</i> sleep in het midden van het scherm een uitgang naar deze ingang.</li>
+<li>Klik op <b>+ Stap toevoegen</b> (of sleep nog eens) voor de volgende.</li>
+<li>Gebruik ▲ ▼ om de volgorde te veranderen, en de <b>prullenbak</b> om een stap te verwijderen.</li>
+</ol>
+<p>Dezelfde uitgang mag vaker voorkomen. Voorbeeld: een servo die eerst naar 45° gaat en later naar 135°, voor een
+langzame beweging in twee delen.</p>
+<p>Oudere printen (protocol v1) bewaren maar 8 stappen met afbuigend / rechtdoor en een vaste 0,5 s.</p>

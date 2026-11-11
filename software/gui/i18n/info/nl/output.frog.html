@@ -1,0 +1,19 @@
+<h3>Polariteit puntstuk — electrofrog of unifrog?</h3>
+<p>Het <b>puntstuk</b> is het punt van een wissel waar de twee spoorstaven elkaar kruisen. Bij wissels met een
+“stroomvoerend puntstuk” is dit stuk van metaal en moet het <b>dezelfde polariteit krijgen als de ingestelde
+rijrichting</b>. Krijgt het de verkeerde, dan blijven locs staan of ontstaat er kortsluiting. Een relais schakelt het
+puntstuk om als de wissel beweegt.</p>
+<p>Kijk naar je wissel en kies <b>één</b>:</p>
+<ul>
+<li><b>Geen (dood puntstuk)</b> — het puntstuk is van kunststof (Peco <i>Insulfrog</i>, de meeste railsystemen
+met bedding). Niets te doen.</li>
+<li><b>Electrofrog — 2 relais</b> (Peco <i>Electrofrog</i> en vergelijkbaar). Relais A wordt ingeschakeld voor
+“rechtdoor”, relais B voor “afbuigend”. Terwijl de wissel beweegt zijn ze <b>allebei even uit</b>, zodat er nooit
+kortsluiting is (eerst verbreken, dan maken).</li>
+<li><b>Unifrog — 1 relais</b> (Peco <i>Unifrog</i>). Het puntstuk heeft één draad. Eén wisselcontact-relais
+verbindt hem met de juiste spoorstaaf. Met een servo schakelt het precies als de servo het midden passeert; met een
+spoelaandrijving aan het eind van de puls.</li>
+</ul>
+<p>Je kunt er maar één van de twee gebruiken. Als je er een kiest, worden de pinnen van de andere verwijderd.</p>
+<p><b>Bedrading:</b> gebruik een relais<i>module</i> (met transistor en diode) — een Arduino-pin kan geen kaal relais
+aansturen.</p>
