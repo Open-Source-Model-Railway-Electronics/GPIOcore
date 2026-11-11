@@ -27,6 +27,7 @@ uint8_t  stepSize() ;                                       // 2 = timing off, 4
 uint16_t routeAddress( uint8_t route, uint8_t step ) ;
 uint16_t usedRouteSteps() ;
 uint16_t freeRouteSteps() ;
+uint16_t maxRouteBytes() ;                                 // pool minus the recorder minimum
 uint8_t  resizeRoute( uint8_t route, uint8_t total ) ;      // 0 = does not fit
 void     readStep(  uint8_t route, uint8_t step,       uint8_t *b ) ;  // 4 bytes, wire format
 void     writeStep( uint8_t route, uint8_t step, const uint8_t *b ) ;

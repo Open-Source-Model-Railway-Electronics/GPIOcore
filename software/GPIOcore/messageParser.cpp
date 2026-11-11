@@ -513,14 +513,63 @@ OPCODE( OPCODE_SET_BOARD )
     uint8_t n = msg->payload[0] - 4 ;
     if( n > BOARD_NAME_LEN ) n = BOARD_NAME_LEN ;
 
+    uint8_t oldFlags = board.flags ;
+    uint8_t flags    = msg->payload[2] ;
+
+    board.flags = ( flags & ~BOARD_TIMING ) | ( oldFlags & BOARD_TIMING ) ;   // recorder first, then convert the pool
+    if( usedRouteSteps() * stepSize() > maxRouteBytes()
+    ||  !setTiming( ( flags & BOARD_TIMING ) ? 1 : 0 ) )
+    {
+        board.flags     = oldFlags ;        // does not fit: keep the old settings
+        transceiver.nack = NACK_FULL ;
+        return ;
+    }
+
     board.type  = msg->payload[1] ;
-    board.flags = msg->payload[2] ;
+    board.flags = flags ;
     board.delay = msg->payload[3] ;
+    updateRecorderRange() ;
     EEPROM.put( boardEEAddress, board ) ;
 
     for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ )
     {
         EEPROM.update( boardEEAddress + sizeof( board ) + i, i < n ? msg->payload[ 4 + i ] : 0 ) ;
+    }
+}
+
+OPCODE( OPCODE_GET_ROUTE )
+{
+    uint8_t route = msg->payload[0] ;
+    uint8_t first = msg->payload[1] ;
+    if( route >= 16 ) return ;
+
+    uint8_t total = routeCount[ route ] ;
+    uint8_t n     = first < total ? total - first : 0 ;
+    if( n > 7 ) n = 7 ;                 // max 7 steps per message
+
+    msg->command    = OPCODE_SET_ROUTE ;
+    msg->payload[0] = 4 + 4 * n ;
+    msg->payload[1] = route ;
+    msg->payload[2] = total ;
+    msg->payload[3] = first ;
+    for( uint8_t i = 0 ; i < n ; i ++ ) readStep( route, first + i, &msg->payload[ 4 + 4 * i ] ) ;
+    transceiver.sendMessage( msg ) ;
+}
+
+// <len> <route> <total> <first> <step ...>: first = 0 (re)sizes the route, the steps are written in place
+OPCODE( OPCODE_SET_ROUTE )
+{
+    uint8_t route = msg->payload[1] ;
+    uint8_t total = msg->payload[2] ;
+    uint8_t first = msg->payload[3] ;
+    if( route >= 16 || msg->payload[0] < 4 ) return ;
+
+    if( first == 0 && !resizeRoute( route, total ) ) { transceiver.nack = NACK_FULL ; return ; }
+
+    uint8_t n = ( msg->payload[0] - 4 ) / 4 ;
+    for( uint8_t i = 0 ; i < n && first + i < routeCount[ route ] ; i ++ )
+    {
+        writeStep( route, first + i, &msg->payload[ 4 + 4 * i ] ) ;
     }
 }
 
@@ -558,6 +607,8 @@ void messageReceived( Message *msg, uint8 len )  // call back message
         process( OPCODE_HELLO            ) ;
         process( OPCODE_GET_BOARD        ) ;
         process( OPCODE_SET_BOARD        ) ;
+        process( OPCODE_GET_ROUTE        ) ;
+        process( OPCODE_SET_ROUTE        ) ;
     }
 }
 #undef process

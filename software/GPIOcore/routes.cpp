@@ -35,7 +35,7 @@ uint16_t usedRouteSteps()
     return steps ;
 }
 
-static uint16_t maxRouteBytes()
+uint16_t maxRouteBytes()
 {
     return EE_END - EE_POOL - ( ( board.flags & BOARD_RECORDER ) ? RECORDER_MIN_BYTES : 0 ) ;
 }
