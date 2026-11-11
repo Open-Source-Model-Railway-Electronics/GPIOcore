@@ -188,6 +188,17 @@ void DeviceLink::servoLive(int output, int angle)
     enqueue(Kind::ServoLive, SERVO_LIVE, p, output, 150);
 }
 
+void DeviceLink::readBoard()
+{
+    enqueue(Kind::GetBoard, GET_BOARD, QByteArray(), -1, timeoutMs);
+}
+
+void DeviceLink::writeBoard(const Gpio::BoardSettings &b)
+{
+    const QByteArray body = Gpio::encodeBoard(b);
+    enqueue(Kind::SetBoard, SET_BOARD, QByteArray(1, char(body.size() + 1)) + body, -1, timeoutMs);
+}
+
 void DeviceLink::readOutput(int index)
 {
     enqueue(Kind::GetOutput, GET_OUTPUT_DATA, QByteArray(1, char(index)), index, timeoutMs);
@@ -461,14 +472,34 @@ void DeviceLink::handleFrame(const Frame &f)
             c.serialPins    = f.byte(4) & HELLO_FLAG_SERIAL_PINS;
             c.servoLive     = f.byte(4) & HELLO_FLAG_SERVO_LIVE;
             c.extEeprom     = f.byte(4) & HELLO_FLAG_EXT_EEPROM;
+            c.boardSettings = f.byte(4) & HELLO_FLAG_BOARD;
             emit logMessage(QStringLiteral("INFO"),
                             tr("Protocol v%1: %2 steps per route, %3 steps in total%4")
                                 .arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool)
                                 .arg(c.extEeprom ? tr(", external EEPROM") : QString()));
             setCaps(c);
             complete(true);
+            if (c.boardSettings)
+                enqueue(Kind::GetBoard, GET_BOARD, QByteArray(), -1, timeoutMs, true);   // name first
             return;
         }
+        break;
+
+    case Kind::GetBoard:
+        if (f.command == SET_BOARD)
+        {
+            Gpio::BoardSettings b;
+            if (Gpio::decodeBoard(f.payload.mid(1), b))
+            {
+                complete(true);
+                emit boardReceived(b);
+                return;
+            }
+        }
+        break;
+
+    case Kind::SetBoard:
+        if (f.isAck()) { complete(true); return; }
         break;
 
     case Kind::GetRoute:
@@ -567,6 +598,8 @@ QString DeviceLink::describe(const Txn &t) const
     case Kind::GetRoute:  return tr("read route %1").arg(t.index);
     case Kind::SetRoute:  return tr("write route %1").arg(t.index);
     case Kind::ServoLive: return tr("live servo %1").arg(t.index);
+    case Kind::GetBoard:  return tr("read board settings");
+    case Kind::SetBoard:  return tr("write board settings");
     }
     return QString();
 }

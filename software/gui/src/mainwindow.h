@@ -17,6 +17,8 @@ class QLabel;
 class QPlainTextEdit;
 class QProgressBar;
 class QStackedWidget;
+class QLineEdit;
+class QTimer;
 class QTabWidget;
 
 class MainWindow : public QMainWindow
@@ -28,6 +30,9 @@ public:
     void connectDemo();
     void connectPort(const QString &port);
     bool loadFile(const QString &path);       // configuration JSON
+    void setExpertMode(bool on);              // simple mode hides bytes, log and protocol details
+    void showWorkspace();                     // leave the start page
+    static QString boardsDir();               // where <board name>.json files are kept
     // Apply a preset (without asking) once the first read-all has finished.
     void applyPresetOnStart(int preset);
     // Save a screenshot once reading (and the start preset) has finished, then quit.
@@ -64,7 +69,18 @@ private:
     Gpio::RouteLimits routeLimits() const;
     void applyCapabilities();
     void updateInputEditorLimits();
-    void setDccNext(bool on);
+    void setBoardType(int type);
+    void userEdited();                        // an edit by the user: send it to the board soon
+    void sendLive();
+    void onBoardReceived(const Gpio::BoardSettings &b);
+    void editBoardSettings();
+    void askBoardName();
+    void saveBoardFile();
+    void newOfflineBoard();
+    void addBlock(bool output);
+    void removeSelected();
+    void flashFirmware();
+    QWidget *buildStartPage();
     void refreshRows();
     void refreshAll();
     void refreshWarnings();
@@ -101,7 +117,17 @@ private:
 
     QComboBox      *m_port = nullptr;
     QComboBox      *m_preset = nullptr;
-    QCheckBox      *m_dccNext = nullptr;
+    QComboBox      *m_boardType = nullptr;
+    QStackedWidget *m_stack = nullptr;          // 0 = start page, 1 = workspace
+    QTimer         *m_liveTimer = nullptr;
+    QLineEdit      *m_inName = nullptr;
+    QLineEdit      *m_outName = nullptr;
+    QAction        *m_actExpert = nullptr;
+    QAction        *m_actShowUnused = nullptr;
+    QAction        *m_actBoardSettings = nullptr;
+    QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
+    bool            m_expert = false;
+    bool            m_nameAsked = false;
     QAction        *m_actRefresh = nullptr;
     QAction        *m_actConnect = nullptr;
     QAction        *m_actDemo = nullptr;

@@ -27,7 +27,7 @@ public:
         int  protocol       = 2;      // 1 = current firmware (no HELLO / routes / live servo)
         int  maxRouteSteps  = Gpio::MaxRouteSteps;
         int  stepPool       = 256;    // external EEPROM: 16 routes x 16 steps
-        quint8 helloFlags   = 0x07;   // serial pins, servo live, external EEPROM
+        quint8 helloFlags   = 0x0F;   // serial pins, servo live, external EEPROM, board settings
         int  bootDelayMs    = 150;
         int  replyDelayMs   = 1;
 
@@ -49,6 +49,8 @@ public:
     void setOutput(int i, const Gpio::OutputConfig &c) { m_out[i] = c.normalized(); }
     int  liveAngle(int output) const { return m_live[output]; }   // last SERVO_LIVE, -1 = none
     bool configSession() const { return m_session; }                // HELLO received
+    Gpio::BoardSettings board() const { return m_board; }
+    void setBoard(const Gpio::BoardSettings &b) { m_board = b; }
 
     // Reply with NACK(checksum) to the next n complete frames.
     void corruptNextFrames(int n) { m_corrupt = n; }
@@ -96,4 +98,5 @@ private:
     int        m_framesReceived = 0;
     std::array<int, Gpio::NumOutputs> m_live;
     bool       m_session = false;
+    Gpio::BoardSettings m_board;
 };

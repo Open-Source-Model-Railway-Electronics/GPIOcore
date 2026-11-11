@@ -229,8 +229,8 @@ void OutputEditor::buildUi()
     m_state = new QComboBox;
     m_state->addItem(tr("0  (off / curved)"), 0);
     m_state->addItem(tr("1  (on / straight)"), 1);
-    m_test0 = new QPushButton(tr("▶ Test state 0"));
-    m_test1 = new QPushButton(tr("▶ Test state 1"));
+    m_test0 = new QPushButton(tr("▶ Test: curved / off"));
+    m_test1 = new QPushButton(tr("▶ Test: straight / on"));
     m_test0->setObjectName(QStringLiteral("test"));
     m_test1->setObjectName(QStringLiteral("test"));
     const QString tip = tr("Writes this output to the board with the chosen state (also stored in EEPROM)");
@@ -303,8 +303,8 @@ void OutputEditor::buildUi()
 void OutputEditor::refreshPinCombos()
 {
     m_loading = true;
-    for (auto *c : m_pins)   Ui::fillPinCombo(c);
-    for (auto *c : m_relays) Ui::fillPinCombo(c);
+    for (auto *c : m_pins)   Ui::fillPinCombo(c, true);
+    for (auto *c : m_relays) Ui::fillPinCombo(c, true);
     m_loading = false;
     refresh();
 }

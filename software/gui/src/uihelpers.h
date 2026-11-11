@@ -19,7 +19,7 @@ QColor inputColor(int index);          // unique colour per input (0..15), used 
 QIcon  swatchIcon(const QColor &color);
 
 // Pin combo: "—" plus D0..D13, A0..A5. Item data = pin number.
-void   fillPinCombo(QComboBox *combo);
+void   fillPinCombo(QComboBox *combo, bool output = false);
 // Select the item whose data equals value; adds a warning item if missing.
 void   selectData(QComboBox *combo, int value, const QString &unknownText = QString());
 int    currentData(const QComboBox *combo);

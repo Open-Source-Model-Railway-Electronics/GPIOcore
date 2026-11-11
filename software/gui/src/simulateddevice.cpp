@@ -217,6 +217,18 @@ void SimulatedDevice::messageReceived()
                                   m_opt.helloFlags };
         sendMessage(quint8(Proto::HELLO_GROUP << 4 | 5), reply);
     }
+    else if (m_opt.protocol >= 2 && (m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::GET_BOARD)
+    {
+        const QByteArray body = encodeBoard(m_board);
+        quint8 msg[32] = {};
+        msg[0] = quint8(body.size() + 1);
+        memcpy(msg + 1, body.constData(), size_t(body.size()));
+        sendMessage(Proto::SET_BOARD, msg);
+    }
+    else if (m_opt.protocol >= 2 && (m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::SET_BOARD)
+    {
+        decodeBoard(QByteArray(reinterpret_cast<const char *>(p + 1), m_len - 1), m_board);
+    }
     else if (m_opt.protocol >= 2 && m_command == Proto::GET_ROUTE)
     {
         if (index >= NumInputs) return;

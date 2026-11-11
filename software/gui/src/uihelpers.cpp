@@ -137,7 +137,7 @@ QIcon swatchIcon(const QColor &color)
     return QIcon(pm);
 }
 
-void fillPinCombo(QComboBox *combo)
+void fillPinCombo(QComboBox *combo, bool output)
 {
     combo->clear();
     combo->addItem(trGpio("—  not used"), int(PinNA));
@@ -145,8 +145,11 @@ void fillPinCombo(QComboBox *combo)
     {
         QString text = pinLabel(pin);
         if (isPwmPin(pin)) text += QStringLiteral("  ~PWM");
-        const QString reserved = pinReservedReason(pin);
+        QString reserved = pinReservedReason(pin);
+        if (reserved.isEmpty() && output) reserved = pinOutputReason(pin);
         const QString note     = pinNote(pin);
+        if ((pin == 20 || pin == 21) && !reserved.isEmpty())
+            continue;                    // A6/A7 only appear where they can be used
         if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
         else if (!note.isEmpty()) text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
         combo->addItem(text, int(pin));

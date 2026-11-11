@@ -62,6 +62,8 @@ QString commandName(quint8 command)
     case GET_ROUTE:              return QStringLiteral("GET_ROUTE");
     case SET_ROUTE:              return QStringLiteral("SET_ROUTE");
     case SERVO_LIVE:             return QStringLiteral("SERVO_LIVE");
+    case GET_BOARD:              return QStringLiteral("GET_BOARD");
+    case SET_BOARD:              return QStringLiteral("SET_BOARD");
     }
     if ((command >> 4) == HELLO_GROUP)
         return QStringLiteral("HELLO_REPLY");

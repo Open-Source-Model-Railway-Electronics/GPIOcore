@@ -31,6 +31,7 @@ public:
     void setOutputs(const QStringList &names, const QVector<quint8> &types);
     void setOutputNames(const QStringList &names) { setOutputs(names, m_outputTypes); }
     void setRouteLimits(const Gpio::RouteLimits &limits, int stepsUsedElsewhere);
+    void setTimingEnabled(bool on);         // board setting: own wait time per step
     void setRecorderTaken(bool taken);        // another input already is the recorder
     void setWarnings(const QStringList &warnings);
     void refreshPinCombos();
@@ -64,6 +65,7 @@ private:
     QStringList       m_outputNames;
     QVector<quint8>   m_outputTypes;
     Gpio::RouteLimits m_limits;
+    bool              m_timing = true;
     int               m_stepsElsewhere = 0;
     bool              m_recorderTaken = false;
     QString           m_signature;

@@ -445,6 +445,7 @@ void InputEditor::updateSteps()
         }
         r.wait->setValue(s.delay / 10.0);
         r.wait->setEnabled(!m_limits.v1);
+        r.wait->setVisible(m_timing);
         r.up->setEnabled(i > 0);
         r.down->setEnabled(i + 1 < n);
     }
@@ -564,4 +565,10 @@ void InputEditor::collect()
 
     refresh();
     emit changed(m_index, m_cfg);
+}
+
+void InputEditor::setTimingEnabled(bool on)
+{
+    m_timing = on;
+    setInput(m_index, m_cfg);
 }

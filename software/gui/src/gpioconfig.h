@@ -15,7 +15,7 @@ namespace Gpio {
 constexpr int     NumOutputs = 16;
 constexpr int     NumInputs  = 16;
 constexpr int     MaxLinked  = 8;      // MAX_OUTPUTS in config.h
-constexpr int     NumPins    = 20;     // Uno / Nano: D0..D13, A0..A5 (= 14..19)
+constexpr int     NumPins    = 22;     // D0..D13, A0..A5 (= 14..19), A6/A7 (= 20/21, Nano only, analog input only)
 constexpr quint8  PinNA      = 0x3F;   // NA in config.h (6-bit pin fields)
 constexpr quint16 AddrNone   = 0x0FFF; // 12-bit address field, 0xFFFF truncates to this
 constexpr quint8  LinkNone   = 0xFF;   // linkedOutput: bits 6-0 = 0x7F means "end of route"
@@ -57,6 +57,7 @@ struct OutputConfig
     quint8 type   = OutputNotInUse;
     quint8 state  = 0;
     std::array<quint8, 4> data { { 0, 0, 0, 0 } };   // union, AVR little endian
+    QString name;                          // GUI only (board file), not stored on the board
 
     // union views
     quint32 switchTime() const;
@@ -155,6 +156,7 @@ struct InputConfig
     quint8  type     = InputNotInUse;
     quint8  outputId = 0;
     QVector<RouteStep> route;                 // source of truth for routes
+    QString name;                             // GUI only (board file), not stored on the board
     std::array<quint8, MaxLinked> linked;     // v1 wire format: bit7 = state, bits 6-0 = output id
 
     InputConfig() { linked.fill(LinkNone); }
@@ -179,9 +181,37 @@ struct InputConfig
 QByteArray encodeInput(int index, const InputConfig &c);
 bool       decodeInput(const QByteArray &payload, int &index, InputConfig &c);
 
+// ── Board settings (protocol v2: GET_BOARD 0xC0 / SET_BOARD 0xCF) ───────────
+enum BoardType : quint8 { BoardUno, BoardNano, BoardDccNext, BoardJackOfAllTrades, BoardTypeCount };
+enum Interlock : quint8 { InterlockOff, InterlockOn, InterlockAuto };
+constexpr int MaxBoardName = 16;
+
+struct BoardSettings
+{
+    QString name;                       // identifies the board, max 16 ASCII characters
+    quint8  type      = BoardNano;
+    bool    recorder  = true;           // recorder function enabled
+    bool    timing    = true;           // per-step wait times in routes (off: fixed 'delay')
+    quint8  interlock = InterlockAuto;
+    quint8  delay     = DefaultStepDelay; // 0.1 s units, used when timing is off
+
+    bool operator==(const BoardSettings &o) const
+    { return name == o.name && type == o.type && recorder == o.recorder && timing == o.timing
+          && interlock == o.interlock && delay == o.delay; }
+    bool operator!=(const BoardSettings &o) const { return !(*this == o); }
+
+    QJsonObject toJson() const;
+    static BoardSettings fromJson(const QJsonObject &o);
+};
+QString    boardTypeName(quint8 type);
+QString    cleanBoardName(const QString &name);       // ASCII, no path characters, max 16
+QByteArray encodeBoard(const BoardSettings &b);       // payload without the length byte
+bool       decodeBoard(const QByteArray &payload, BoardSettings &b);
+
 // ── Whole board ─────────────────────────────────────────────────────────────
 struct BoardConfig
 {
+    BoardSettings board;
     std::array<OutputConfig, NumOutputs> outputs;
     std::array<InputConfig,  NumInputs>  inputs;
 
@@ -192,10 +222,12 @@ struct BoardConfig
 // ── Board / pins (Arduino Uno / Nano, or DCCnext) ──────────────────────────
 struct BoardOptions
 {
+    quint8 type           = BoardNano;
     bool dccNext          = false;   // ArCoMoRa DCCnext: ports 1-10 = D3-D12, 11-16 = A0-A5, no D13
     bool serialPinsUsable = true;    // decoder releases D0/D1 after its boot window (protocol v2)
 };
 BoardOptions &boardOptions();
+void          setBoardType(quint8 type);   // also sets dccNext
 
 QString pinName(quint8 pin);            // "D5", "A0", "—"
 QString pinLabel(quint8 pin);           // pinName plus "port n" on a DCCnext
@@ -203,6 +235,8 @@ int     dccNextPort(quint8 pin);        // 1..16, or 0 when the pin is not a DCC
 bool    isPwmPin(quint8 pin);           // same list as isPwmPin() in output.cpp
 QString pinReservedReason(quint8 pin);  // non-empty: the pin cannot be used (conflict)
 QString pinNote(quint8 pin);            // non-empty: usable, but with a caveat (D0/D1)
+QString pinOutputReason(quint8 pin);    // non-empty: the pin cannot be an output (A6/A7)
+bool    isServoTimerPin(quint8 pin);    // D9/D10: no PWM while a servo exists (Servo library, timer 1)
 
 // ── Presets (OPCODE_SET_PRESET in messageParser.cpp) ───────────────────────
 QStringList presetNames();

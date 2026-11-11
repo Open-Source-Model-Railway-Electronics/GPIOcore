@@ -8,7 +8,7 @@
 using namespace Gpio;
 
 static constexpr int Cols = 5;
-static constexpr int Rows = NumPins / Cols;
+static constexpr int Rows = (NumPins + Cols - 1) / Cols;
 
 PinMapView::PinMapView(QWidget *parent) : QWidget(parent)
 {

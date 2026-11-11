@@ -132,6 +132,7 @@ static quint8 pinFromJson(const QJsonValue &v) { return v.isDouble() ? quint8(v.
 QJsonObject OutputConfig::toJson() const
 {
     QJsonObject o;
+    if (!name.isEmpty()) o["name"] = name;
     o["type"]   = QString::fromUtf8(outputTypeInfo(type).key);
     o["pinA"]   = pinToJson(pinA);   o["pinB"]   = pinToJson(pinB);
     o["pinC"]   = pinToJson(pinC);   o["pinD"]   = pinToJson(pinD);
@@ -147,6 +148,7 @@ QJsonObject OutputConfig::toJson() const
 OutputConfig OutputConfig::fromJson(const QJsonObject &o)
 {
     OutputConfig c;
+    c.name = o["name"].toString();
     const QString key = o["type"].toString();
     for (quint8 t = 0; t < OutputTypeCount; ++t)
         if (key == QLatin1String(kOutputTypes[t].key)) c.type = t;
@@ -303,6 +305,7 @@ bool InputConfig::operator==(const InputConfig &o) const
 QJsonObject InputConfig::toJson() const
 {
     QJsonObject o;
+    if (!name.isEmpty()) o["name"] = name;
     o["type"]    = QString::fromUtf8(inputTypeInfo(type).key);
     o["address"] = address == AddrNone ? QJsonValue() : QJsonValue(int(address));
     o["pin"]     = pinToJson(pin);
@@ -324,6 +327,7 @@ QJsonObject InputConfig::toJson() const
 InputConfig InputConfig::fromJson(const QJsonObject &o)
 {
     InputConfig c;
+    c.name = o["name"].toString();
     const QString key = o["type"].toString();
     for (quint8 t = 0; t < InputTypeCount; ++t)
         if (key == QLatin1String(kInputTypes[t].key)) c.type = t;
@@ -384,10 +388,17 @@ QJsonObject BoardConfig::toJson() const
 {
     QJsonObject root;
     root["format"]  = QStringLiteral("GPIOcore-config");
-    root["version"] = 1;
+    root["version"] = 2;
+    root["about"]   = QStringLiteral(
+        "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
+        "Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. "
+        "Output data[4] depends on the type, see PROTOCOL.md section 2.1. Input address: DCC accessory address or null. "
+        "Route steps: output 0-15, value = 0 curved / 1 straight, or with raw = true an aspect / servo angle 10-170 / PWM 0-255, "
+        "delay = wait after the step in 0.1 s. 'name' fields are only kept in this file.");
+    root["board"]   = board.toJson();
     QJsonArray outs, ins;
-    for (const auto &o : outputs) outs.append(o.toJson());
-    for (const auto &i : inputs)  ins.append(i.toJson());
+    for (int i = 0; i < NumOutputs; ++i) { QJsonObject o = outputs[i].toJson(); o["index"] = i; outs.append(o); }
+    for (int i = 0; i < NumInputs; ++i)  { QJsonObject o = inputs[i].toJson();  o["index"] = i; ins.append(o); }
     root["outputs"] = outs;
     root["inputs"]  = ins;
     return root;
@@ -409,6 +420,84 @@ bool BoardConfig::fromJson(const QJsonObject &root, BoardConfig &out, QString *e
     }
     for (int i = 0; i < NumOutputs; ++i) out.outputs[i] = OutputConfig::fromJson(outs.at(i).toObject());
     for (int i = 0; i < NumInputs;  ++i) out.inputs[i]  = InputConfig::fromJson(ins.at(i).toObject());
+    out.board = root.contains("board") ? BoardSettings::fromJson(root["board"].toObject()) : BoardSettings();
+    return true;
+}
+
+// ── Board settings ──────────────────────────────────────────────────────────
+static const char *const kBoardKeys[BoardTypeCount] = { "uno", "nano", "dccnext", "jackOfAllTrades" };
+static const char *const kInterlockKeys[3] = { "off", "on", "auto" };
+
+QString boardTypeName(quint8 type)
+{
+    switch (type)
+    {
+    case BoardUno:             return trGpio("Arduino Uno");
+    case BoardNano:            return trGpio("Arduino Nano");
+    case BoardDccNext:         return trGpio("DCCnext");
+    case BoardJackOfAllTrades: return trGpio("Jack of all trades");
+    }
+    return QStringLiteral("?");
+}
+
+QString cleanBoardName(const QString &name)
+{
+    QString out;
+    for (QChar c : name.trimmed())
+        if (c.unicode() >= 0x20 && c.unicode() < 0x7F && !QStringLiteral("\\/:*?\"<>|").contains(c))
+            out += c;
+    return out.left(MaxBoardName);
+}
+
+QJsonObject BoardSettings::toJson() const
+{
+    QJsonObject o;
+    o["name"]      = name;
+    o["type"]      = QString::fromLatin1(kBoardKeys[type < BoardTypeCount ? type : BoardNano]);
+    o["recorder"]  = recorder;
+    o["timing"]    = timing;
+    o["interlock"] = QString::fromLatin1(kInterlockKeys[interlock < 3 ? interlock : InterlockAuto]);
+    o["delay"]     = int(delay);
+    return o;
+}
+
+BoardSettings BoardSettings::fromJson(const QJsonObject &o)
+{
+    BoardSettings b;
+    b.name = cleanBoardName(o["name"].toString());
+    const QString t = o["type"].toString();
+    for (quint8 i = 0; i < BoardTypeCount; ++i)
+        if (t == QLatin1String(kBoardKeys[i])) b.type = i;
+    b.recorder = o["recorder"].toBool(true);
+    b.timing   = o["timing"].toBool(true);
+    const QString il = o["interlock"].toString();
+    for (quint8 i = 0; i < 3; ++i)
+        if (il == QLatin1String(kInterlockKeys[i])) b.interlock = i;
+    b.delay = quint8(qBound(0, o["delay"].toInt(DefaultStepDelay), 255));
+    return b;
+}
+
+QByteArray encodeBoard(const BoardSettings &b)
+{
+    QByteArray p;
+    p.append(char(b.type));
+    p.append(char((b.recorder ? 0x01 : 0) | (b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2)));
+    p.append(char(b.delay));
+    p.append(cleanBoardName(b.name).toLatin1());
+    return p;
+}
+
+bool decodeBoard(const QByteArray &p, BoardSettings &b)
+{
+    if (p.size() < 3)
+        return false;
+    b.type      = quint8(p.at(0)) < BoardTypeCount ? quint8(p.at(0)) : quint8(BoardNano);
+    b.recorder  = p.at(1) & 0x01;
+    b.timing    = p.at(1) & 0x02;
+    b.interlock = quint8((p.at(1) >> 2) & 0x03);
+    if (b.interlock > InterlockAuto) b.interlock = InterlockAuto;
+    b.delay     = quint8(p.at(2));
+    b.name      = cleanBoardName(QString::fromLatin1(p.mid(3)));
     return true;
 }
 
@@ -422,7 +511,7 @@ BoardOptions &boardOptions()
 QString pinName(quint8 pin)
 {
     if (pin < 14)       return QStringLiteral("D%1").arg(pin);
-    if (pin < NumPins)  return QStringLiteral("A%1").arg(pin - 14);
+    if (pin < NumPins)  return QStringLiteral("A%1").arg(pin - 14);   // A0..A7
     if (pin == PinNA)   return QStringLiteral("—");
     return QStringLiteral("?%1").arg(pin);
 }
@@ -430,7 +519,7 @@ QString pinName(quint8 pin)
 int dccNextPort(quint8 pin)
 {
     if (pin >= 3 && pin <= 12)       return pin - 2;     // port 1-10 = D3-D12
-    if (pin >= 14 && pin < NumPins)  return pin - 3;     // port 11-16 = A0-A5
+    if (pin >= 14 && pin <= 19)      return pin - 3;     // port 11-16 = A0-A5
     return 0;
 }
 
@@ -455,14 +544,34 @@ QString pinReservedReason(quint8 pin)
     case 1:  return b.serialPinsUsable ? QString() : trGpio("Serial TX (GUI link)");
     case 2:  return trGpio("DCC input");
     case 13: return b.dccNext ? trGpio("not available on a DCCnext") : QString();
+    case 20:
+    case 21: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
     }
     return QString();
+}
+
+QString pinOutputReason(quint8 pin)
+{
+    return (pin == 20 || pin == 21) ? trGpio("analog input only") : QString();
+}
+
+bool isServoTimerPin(quint8 pin)
+{
+    return pin == 9 || pin == 10;
+}
+
+void setBoardType(quint8 type)
+{
+    boardOptions().type    = type < BoardTypeCount ? type : quint8(BoardNano);
+    boardOptions().dccNext = (type == BoardDccNext);
 }
 
 QString pinNote(quint8 pin)
 {
     if (pin < 2 && boardOptions().serialPinsUsable)
         return trGpio("shared with serial: only active when no GUI is connected");
+    if (pin == 20 || pin == 21)
+        return trGpio("analog input without pull-up: add a 10 kOhm resistor to 5 V");
     return QString();
 }
 

@@ -18,6 +18,11 @@ public:
     void setMarks(const QVector<bool> &inputDirty, const QVector<bool> &outputDirty,
                   const QVector<bool> &inputConflict, const QVector<bool> &outputConflict);
     void selectInput(int index);
+    // Hide inputs / outputs that are not in use (and not part of a route).
+    void setHideUnused(bool hide);
+    bool hideUnused() const { return m_hideUnused; }
+    bool inputShown(int index) const  { return m_inRow.value(index, -1) >= 0; }
+    bool outputShown(int index) const { return m_outRow.value(index, -1) >= 0; }
     void selectOutput(int index);
 
     const Gpio::BoardConfig &board() const { return m_board; }
@@ -80,6 +85,9 @@ private:
     QVector<Wire>     m_wires;
 
     int     m_selInput  = -1;
+    bool    m_hideUnused = false;
+    QVector<int> m_inRow, m_outRow;   // row on the canvas, -1 = hidden
+    void    updateRows();
     int     m_selOutput = -1;
     int     m_selWire   = -1;
     int     m_hoverWire = -1;

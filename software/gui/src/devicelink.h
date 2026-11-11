@@ -29,6 +29,7 @@ struct DeviceCaps
     bool serialPins    = false;   // D0/D1 usable as I/O outside a config session
     bool servoLive     = false;
     bool extEeprom     = false;
+    bool boardSettings = false;   // GET_BOARD / SET_BOARD (name, type, ...)
 };
 
 class DeviceLink : public QObject
@@ -64,6 +65,8 @@ public:
     void readRoute(int route);
     void writeRoute(int route, const QVector<Gpio::RouteStep> &steps);
     void servoLive(int output, int angle);   // coalesced: only the latest angle is sent
+    void readBoard();                        // v2 with board settings only
+    void writeBoard(const Gpio::BoardSettings &b);
 
     const DeviceCaps &caps() const { return m_caps; }
 
@@ -86,6 +89,7 @@ signals:
     void legacyOutputFormatChanged(bool legacy);
     void capabilitiesChanged(const DeviceCaps &caps);
     void routeReceived(int route, const QVector<Gpio::RouteStep> &steps);
+    void boardReceived(const Gpio::BoardSettings &board);
     void progress(int done, int total);
     void finished(int failures);            // queue became empty
     void errorOccurred(const QString &message);
@@ -93,7 +97,7 @@ signals:
 
 private:
     enum class Kind { Version, Hello, GetInput, GetOutput, SetInput, SetOutput, Preset,
-                      GetRoute, SetRoute, ServoLive };
+                      GetRoute, SetRoute, ServoLive, GetBoard, SetBoard };
 
     struct Txn
     {
@@ -108,7 +112,8 @@ private:
 
     void enqueue(Kind kind, quint8 command, const QByteArray &payload, int index, int timeout,
                  bool front = false);
-    static bool needsV2(Kind k) { return k == Kind::GetRoute || k == Kind::SetRoute || k == Kind::ServoLive; }
+    static bool needsV2(Kind k) { return k == Kind::GetRoute || k == Kind::SetRoute || k == Kind::ServoLive
+                                      || k == Kind::GetBoard || k == Kind::SetBoard; }
     void setCaps(const DeviceCaps &caps);
     void sendNext();
     void transmit();

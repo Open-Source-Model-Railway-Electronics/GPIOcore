@@ -40,7 +40,34 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
 
 QSize ConnectionView::minimumSizeHint() const
 {
-    return QSize(620, int(Top + NumInputs * (NodeH + Gap) + Margin));
+    int rows = 1;
+    for (int r : m_inRow)  rows = qMax(rows, r + 1);
+    for (int r : m_outRow) rows = qMax(rows, r + 1);
+    return QSize(620, int(Top + rows * (NodeH + Gap) + Margin));
+}
+
+void ConnectionView::setHideUnused(bool hide)
+{
+    m_hideUnused = hide;
+    updateRows();
+    rebuildWires();
+    update();
+}
+
+void ConnectionView::updateRows()
+{
+    m_inRow.fill(-1, NumInputs);
+    m_outRow.fill(-1, NumOutputs);
+    int r = 0;
+    for (int i = 0; i < NumInputs; ++i)
+        if (!m_hideUnused || m_board.inputs[i].type != InputNotInUse || i == m_selInput)
+            m_inRow[i] = r++;
+    r = 0;
+    for (int o = 0; o < NumOutputs; ++o)
+        if (!m_hideUnused || m_board.outputs[o].type != OutputNotInUse || o == m_selOutput
+            || !outputSources(m_board, o).isEmpty())
+            m_outRow[o] = r++;
+    updateGeometry();
 }
 
 QSize ConnectionView::sizeHint() const
@@ -52,6 +79,7 @@ void ConnectionView::setBoard(const BoardConfig &board)
 {
     m_board = board;
     m_selWire = m_hoverWire = -1;
+    updateRows();
     rebuildWires();
     update();
 }
@@ -64,8 +92,8 @@ void ConnectionView::setMarks(const QVector<bool> &inputDirty, const QVector<boo
     update();
 }
 
-void ConnectionView::selectInput(int index)  { m_selInput = index; m_selOutput = -1; update(); }
-void ConnectionView::selectOutput(int index) { m_selOutput = index; m_selInput = -1; update(); }
+void ConnectionView::selectInput(int index)  { m_selInput = index; m_selOutput = -1; updateRows(); rebuildWires(); update(); }
+void ConnectionView::selectOutput(int index) { m_selOutput = index; m_selInput = -1; updateRows(); rebuildWires(); update(); }
 
 // ── Colours ─────────────────────────────────────────────────────────────────
 QColor ConnectionView::inputColor(int i) const
@@ -87,13 +115,17 @@ qreal ConnectionView::nodeWidth() const
 
 QRectF ConnectionView::inputRect(int i) const
 {
-    return QRectF(Margin, Top + i * (NodeH + Gap), nodeWidth(), NodeH);
+    const int row = m_inRow.value(i, i);
+    if (row < 0) return QRectF();
+    return QRectF(Margin, Top + row * (NodeH + Gap), nodeWidth(), NodeH);
 }
 
 QRectF ConnectionView::outputRect(int o) const
 {
+    const int row = m_outRow.value(o, o);
+    if (row < 0) return QRectF();
     const qreal w = nodeWidth();
-    return QRectF(width() - Margin - w, Top + o * (NodeH + Gap), w, NodeH);
+    return QRectF(width() - Margin - w, Top + row * (NodeH + Gap), w, NodeH);
 }
 
 QPointF ConnectionView::inputPort(int i) const
@@ -169,14 +201,14 @@ void ConnectionView::rebuildWires()
 int ConnectionView::inputAt(const QPointF &p) const
 {
     for (int i = 0; i < NumInputs; ++i)
-        if (inputRect(i).adjusted(0, 0, 10, 0).contains(p)) return i;
+        if (inputShown(i) && inputRect(i).adjusted(0, 0, 10, 0).contains(p)) return i;
     return -1;
 }
 
 int ConnectionView::outputAt(const QPointF &p) const
 {
     for (int o = 0; o < NumOutputs; ++o)
-        if (outputRect(o).adjusted(-10, 0, 0, 0).contains(p)) return o;
+        if (outputShown(o) && outputRect(o).adjusted(-10, 0, 0, 0).contains(p)) return o;
     return -1;
 }
 
@@ -241,7 +273,10 @@ void ConnectionView::drawInput(QPainter &p, int i)
     f.setBold(true);
     p.setFont(f);
     p.setPen(kText);
-    const QString title = (m_inDirty.value(i) ? QStringLiteral("   ") : QString()) + tr("In %1").arg(i);
+    QString title = (m_inDirty.value(i) ? QStringLiteral("   ") : QString()) + tr("In %1").arg(i);
+    if (!c.name.isEmpty())
+        title += QStringLiteral(" · ") + c.name;
+    title = p.fontMetrics().elidedText(title, Qt::ElideRight, int(r.width() - 110));
     p.drawText(QRectF(r.left() + 14, r.top() + 4, r.width() - 110, 20), Qt::AlignLeft | Qt::AlignVCenter, title);
     if (m_inDirty.value(i))
     {
@@ -292,6 +327,16 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     p.setPen(kText);
     p.drawText(QRectF(r.left() + 14, r.top() + 4, 80, 20), Qt::AlignLeft | Qt::AlignVCenter,
                (m_outDirty.value(o) ? QStringLiteral("   ") : QString()) + tr("Out %1").arg(o));
+    if (!c.name.isEmpty())   // the name replaces the type text below the title
+    {
+        QFont nf = font();
+        nf.setItalic(true);
+        p.setFont(nf);
+        p.setPen(kMuted);
+        p.drawText(QRectF(r.left() + 14, r.top() + 24, r.width() - 40, 18), Qt::AlignRight | Qt::AlignVCenter,
+                   p.fontMetrics().elidedText(c.name, Qt::ElideRight, int(r.width() / 2)));
+        p.setFont(f);
+    }
     if (m_outDirty.value(o))
     {
         p.setPen(kAmber);
@@ -388,8 +433,8 @@ void ConnectionView::paintEvent(QPaintEvent *)
         p.drawPath(curve(a, b));
     }
 
-    for (int i = 0; i < NumInputs; ++i)  drawInput(p, i);
-    for (int o = 0; o < NumOutputs; ++o) drawOutput(p, o);
+    for (int i = 0; i < NumInputs; ++i)  if (inputShown(i))  drawInput(p, i);
+    for (int o = 0; o < NumOutputs; ++o) if (outputShown(o)) drawOutput(p, o);
 }
 
 // ── Mouse ───────────────────────────────────────────────────────────────────

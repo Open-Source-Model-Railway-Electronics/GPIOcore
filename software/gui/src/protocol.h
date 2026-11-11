@@ -42,6 +42,12 @@ constexpr quint8 HELLO_GROUP            = 0x9;
 constexpr quint8 HELLO_FLAG_SERIAL_PINS = 0x01;  // D0/D1 usable as I/O outside a config session
 constexpr quint8 HELLO_FLAG_SERVO_LIVE  = 0x02;  // SERVO_LIVE supported
 constexpr quint8 HELLO_FLAG_EXT_EEPROM  = 0x04;  // routes / recorder in external EEPROM
+constexpr quint8 HELLO_FLAG_BOARD       = 0x08;  // GET_BOARD / SET_BOARD supported
+
+// Board settings and name (PROTOCOL.md section 10)
+// GET_BOARD (0 bytes) -> reply SET_BOARD <len> <type> <flags> <delay> <name 0..16>
+constexpr quint8 GET_BOARD              = 0xC0;
+constexpr quint8 SET_BOARD              = 0xCF;
 
 // Routes: up to 16 steps of 4 bytes, transferred in chunks of up to 7 steps.
 // GET_ROUTE <route> <first step>            -> reply SET_ROUTE
@@ -58,6 +64,8 @@ constexpr int    MaxLen                 = 32;
 constexpr quint8 NACK_INVALID_CHECKSUM  = 1;
 constexpr quint8 NACK_INVALID_LENGTH    = 2;
 constexpr quint8 NACK_TIMEOUT           = 3;
+constexpr quint8 NACK_FULL              = 4;     // v2: route / step pool full
+constexpr quint8 NACK_INVALID_PIN       = 5;     // v2: pin 2 (DCC) or a pin that does not exist
 
 struct Frame
 {

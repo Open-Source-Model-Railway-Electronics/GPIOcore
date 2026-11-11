@@ -12,6 +12,19 @@
 #include "uihelpers.h"
 
 #include <QAction>
+#include <QDesktopServices>
+#include <QDialog>
+#include <QUrl>
+#include <QDoubleSpinBox>
+#include <QDialogButtonBox>
+#include <QDir>
+#include <QFileInfo>
+#include <QFormLayout>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QStandardPaths>
 #include <QActionGroup>
 #include <QApplication>
 #include <QLocale>
@@ -72,7 +85,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     SimulatedDevice defaults;
     for (int i = 0; i < NumOutputs; ++i) m_edit.outputs[i] = defaults.output(i);
     for (int i = 0; i < NumInputs;  ++i) m_edit.inputs[i]  = defaults.input(i);
+    m_edit.board.type = quint8(QSettings().value(QStringLiteral("board/type"), int(BoardNano)).toInt());
+    Gpio::setBoardType(m_edit.board.type);
     m_dev = m_edit;
+
+    m_liveTimer = new QTimer(this);
+    m_liveTimer->setSingleShot(true);
+    m_liveTimer->setInterval(350);       // edits are sent after a short pause (slider drags, typing)
+    connect(m_liveTimer, &QTimer::timeout, this, &MainWindow::sendLive);
 
     buildUi();
     buildToolbar();
@@ -84,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(m_link, &DeviceLink::outputReceived, this, &MainWindow::onOutputReceived);
     connect(m_link, &DeviceLink::inputReceived,  this, &MainWindow::onInputReceived);
     connect(m_link, &DeviceLink::routeReceived,  this, &MainWindow::onRouteReceived);
+    connect(m_link, &DeviceLink::boardReceived,  this, &MainWindow::onBoardReceived);
     connect(m_link, &DeviceLink::capabilitiesChanged, this, [this] { applyCapabilities(); });
     connect(m_link, &DeviceLink::logMessage,     this, &MainWindow::appendLog);
     connect(m_link, &DeviceLink::errorOccurred,  this, [this](const QString &m) {
@@ -104,7 +125,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(m_link, &DeviceLink::finished, this, [this](int failures) {
         m_keepEdits = false;
         updateActions();
-        statusBar()->showMessage(failures ? tr("Done with %1 error(s)").arg(failures) : tr("Done"), 4000);
+        if (failures)
+            statusBar()->showMessage(tr("Done with %1 error(s)").arg(failures), 6000);
+        if (dirtyCount() > 0 && m_liveTimer->isActive() == false && failures == 0)
+            m_liveTimer->start();        // edits made while the board was busy
+        saveBoardFile();
+        if (!m_nameAsked && m_link->caps().boardSettings && m_dev.board.name.isEmpty())
+            QTimer::singleShot(0, this, &MainWindow::askBoardName);
     });
     connect(m_link, &DeviceLink::presetApplied, this, [this](int preset) {
         m_outKnown.fill(false);         // board content replaced: take everything from the board
@@ -113,6 +140,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     });
 
     applyCapabilities();
+    setExpertMode(QSettings().value(QStringLiteral("ui/expert"), false).toBool());
     refreshAll();
     onConnectionChanged();
 }
@@ -139,7 +167,7 @@ void MainWindow::buildUi()
     m_inEd  = new InputEditor;
     m_outEd = new OutputEditor;
 
-    auto makePanel = [this](QWidget *editor, const QString &title, QWidget *&panel) {
+    auto makePanel = [this](QWidget *editor, const QString &title, QWidget *&panel, QLineEdit *&name) {
         panel = new QWidget;
         panel->setObjectName(QStringLiteral("sidePanel"));
         panel->setAttribute(Qt::WA_StyledBackground);
@@ -153,9 +181,18 @@ void MainWindow::buildUi()
         close->setText(QStringLiteral("✕"));
         close->setToolTip(tr("Close (Esc)"));
         connect(close, &QToolButton::clicked, this, &MainWindow::closePanels);
+        auto *remove = new QToolButton;
+        remove->setText(tr("Remove"));
+        remove->setToolTip(tr("Set this to 'not in use' and take it off the canvas"));
+        connect(remove, &QToolButton::clicked, this, &MainWindow::removeSelected);
         head->addWidget(t, 1);
+        head->addWidget(remove);
         head->addWidget(close);
         v->addLayout(head);
+        name = new QLineEdit;
+        name->setPlaceholderText(tr("Name, e.g. \"Turnout station left\" (kept on this computer)"));
+        name->setMaxLength(40);
+        v->addWidget(name);
         auto *sa = new QScrollArea;
         sa->setWidgetResizable(true);
         sa->setWidget(editor);
@@ -166,8 +203,19 @@ void MainWindow::buildUi()
         panel->setMaximumWidth(0);
         panel->hide();
     };
-    makePanel(m_inEd,  tr("INPUT SETTINGS"),  m_leftPanel);
-    makePanel(m_outEd, tr("OUTPUT SETTINGS"), m_rightPanel);
+    makePanel(m_inEd,  tr("INPUT SETTINGS"),  m_leftPanel,  m_inName);
+    makePanel(m_outEd, tr("OUTPUT SETTINGS"), m_rightPanel, m_outName);
+    connect(m_inName, &QLineEdit::textEdited, this, [this](const QString &t) {
+        m_edit.inputs[m_inEd->index()].name = t.trimmed();
+        refreshRows();
+        saveBoardFile();
+    });
+    connect(m_outName, &QLineEdit::textEdited, this, [this](const QString &t) {
+        m_edit.outputs[m_outEd->index()].name = t.trimmed();
+        refreshRows();
+        m_inEd->setOutputs(outputNames(), outputTypes());
+        saveBoardFile();
+    });
 
     auto *viewScroll = new QScrollArea;
     viewScroll->setWidgetResizable(true);
@@ -175,13 +223,29 @@ void MainWindow::buildUi()
     viewScroll->setFrameShape(QFrame::NoFrame);
     viewScroll->setMinimumWidth(560);
 
+    auto *centre = new QWidget;
+    auto *cv = new QVBoxLayout(centre);
+    cv->setContentsMargins(0, 0, 0, 0);
+    auto *addRow = new QHBoxLayout;
+    auto *addIn  = new QPushButton(tr("+ Add input"));
+    auto *addOut = new QPushButton(tr("+ Add output"));
+    addIn->setToolTip(tr("Take the next free input and open its settings"));
+    addOut->setToolTip(tr("Take the next free output and open its settings"));
+    connect(addIn,  &QPushButton::clicked, this, [this] { addBlock(false); });
+    connect(addOut, &QPushButton::clicked, this, [this] { addBlock(true); });
+    addRow->addWidget(addIn);
+    addRow->addStretch(1);
+    addRow->addWidget(addOut);
+    cv->addLayout(addRow);
+    cv->addWidget(viewScroll, 1);
+
     auto *config = new QWidget;
     config->setObjectName(QStringLiteral("configArea"));
     auto *h = new QHBoxLayout(config);
     h->setContentsMargins(6, 6, 6, 6);
     h->setSpacing(6);
     h->addWidget(m_leftPanel);
-    h->addWidget(viewScroll, 1);
+    h->addWidget(centre, 1);
     h->addWidget(m_rightPanel);
     m_tabs->addTab(config, tr("Configuration"));
 
@@ -192,7 +256,10 @@ void MainWindow::buildUi()
     m_pinMap = new PinMapView;
     m_tabs->addTab(m_pinMap, tr("Pin map"));
 
-    setCentralWidget(m_tabs);
+    m_stack = new QStackedWidget;
+    m_stack->addWidget(buildStartPage());
+    m_stack->addWidget(m_tabs);
+    setCentralWidget(m_stack);
 
     // Log dock
     m_log = new QPlainTextEdit;
@@ -252,36 +319,61 @@ void MainWindow::buildUi()
             statusBar()->showMessage(tr("Input %1 is a recorder / feedback input and cannot drive outputs").arg(in), 4000);
             break;
         }
-        boardEdited();
+        userEdited();
         selectInput(in);
     });
     connect(m_view, &ConnectionView::disconnectRequested, this, [this](int in, int step) {
         Gpio::disconnect(m_edit, in, step);
-        boardEdited();
+        userEdited();
     });
     connect(m_view, &ConnectionView::toggleStepRequested, this, [this](int in, int step) {
         toggleStepState(m_edit, in, step);
-        boardEdited();
+        userEdited();
     });
     connect(m_view, &ConnectionView::moveStepRequested, this, [this](int in, int step, int delta) {
         moveStep(m_edit, in, step, delta);
-        boardEdited();
+        userEdited();
     });
     connect(m_outEd, &OutputEditor::changed, this, [this](int i, const OutputConfig &c) {
+        const QString name = m_edit.outputs[i].name;
         m_edit.outputs[i] = c;
+        m_edit.outputs[i].name = name;
         m_inEd->setOutputs(outputNames(), outputTypes());
-        boardEdited();
+        userEdited();
     });
     connect(m_outEd, &OutputEditor::liveServo, this, [this](int i, int angle) {
         m_link->servoLive(i, angle);    // queued sends are merged, only the newest angle goes out
     });
     connect(m_inEd, &InputEditor::changed, this, [this](int i, const InputConfig &c) {
+        const QString name = m_edit.inputs[i].name;
         m_edit.inputs[i] = c;
-        boardEdited();
+        m_edit.inputs[i].name = name;
+        userEdited();
     });
     connect(m_outEd, &OutputEditor::testRequested, this, &MainWindow::testOutput);
     connect(m_pinMap, &PinMapView::outputActivated, this, [this](int i) { m_tabs->setCurrentIndex(0); selectOutput(i); });
     connect(m_pinMap, &PinMapView::inputActivated,  this, [this](int i) { m_tabs->setCurrentIndex(0); selectInput(i); });
+}
+
+void MainWindow::userEdited()
+{
+    boardEdited();
+    if (m_link->isReady())
+        m_liveTimer->start();           // (re)start: send after a short pause
+    else
+        saveBoardFile();
+}
+
+void MainWindow::sendLive()
+{
+    if (!m_link->isReady() || dirtyCount() == 0)
+        return;
+    if (m_link->isBusy())
+    {
+        m_liveTimer->start();            // try again when the board is free
+        return;
+    }
+    writeChanges();
 }
 
 void MainWindow::boardEdited()
@@ -362,7 +454,7 @@ void MainWindow::applyCapabilities()
         m_protoChip->style()->unpolish(m_protoChip);
         m_protoChip->style()->polish(m_protoChip);
     }
-    m_protoChip->setVisible(known);
+    m_protoChip->setVisible(known && m_expert);
     updateInputEditorLimits();
     refreshAll();
 }
@@ -375,10 +467,14 @@ void MainWindow::updateInputEditorLimits()
     m_inEd->setRecorderTaken(recorderInput(m_edit, i) >= 0);
 }
 
-void MainWindow::setDccNext(bool on)
+void MainWindow::setBoardType(int type)
 {
-    boardOptions().dccNext = on;
-    QSettings().setValue(QStringLiteral("board/dccNext"), on);
+    m_edit.board.type = quint8(type);
+    Gpio::setBoardType(m_edit.board.type);
+    QSettings().setValue(QStringLiteral("board/type"), type);
+    m_inEd->setTimingEnabled(m_edit.board.timing);
+    if (m_boardType && m_boardType->currentIndex() != type)
+        m_boardType->setCurrentIndex(type);
     m_outEd->refreshPinCombos();
     m_inEd->refreshPinCombos();
     refreshAll();
@@ -405,34 +501,50 @@ void MainWindow::buildToolbar()
     tb->addSeparator();
 
     m_actRead   = tb->addAction(style()->standardIcon(QStyle::SP_ArrowDown), tr("Read board"), this, &MainWindow::readFromBoard);
-    m_actWrite  = tb->addAction(style()->standardIcon(QStyle::SP_ArrowUp),   tr("Write changes"), this, &MainWindow::writeChanges);
-    m_actRevert = tb->addAction(tr("Revert"), this, &MainWindow::revertChanges);
-    if (QWidget *w = tb->widgetForAction(m_actWrite))
-        w->setObjectName(QStringLiteral("primary"));
-    tb->addSeparator();
+    m_actRead->setToolTip(tr("Read everything from the board again"));
+    m_actWrite  = new QAction(style()->standardIcon(QStyle::SP_ArrowUp), tr("Write changes"), this);
+    connect(m_actWrite, &QAction::triggered, this, &MainWindow::writeChanges);
+    m_actRevert = new QAction(tr("Revert"), this);
+    connect(m_actRevert, &QAction::triggered, this, &MainWindow::revertChanges);
+    m_expertOnly << tb->addSeparator();
 
     m_preset = new QComboBox;
     m_preset->addItems(presetNames());
-    tb->addWidget(new QLabel(tr(" Preset ")));
-    tb->addWidget(m_preset);
+    m_expertOnly << tb->addWidget(new QLabel(tr(" Preset ")));
+    m_expertOnly << tb->addWidget(m_preset);
     m_actPreset = tb->addAction(tr("Apply"), this, &MainWindow::applyPreset);
+    m_expertOnly << m_actPreset;
     tb->addSeparator();
 
-    m_dccNext = new QCheckBox(tr("DCCnext board"));
-    m_dccNext->setChecked(QSettings().value(QStringLiteral("board/dccNext"), false).toBool());
-    boardOptions().dccNext = m_dccNext->isChecked();
-    connect(m_dccNext, &QCheckBox::toggled, this, &MainWindow::setDccNext);
-    tb->addWidget(m_dccNext);
+    m_boardType = new QComboBox;
+    for (int t = 0; t < BoardTypeCount; ++t)
+        m_boardType->addItem(boardTypeName(quint8(t)));
+    m_boardType->setCurrentIndex(m_edit.board.type);
+    m_boardType->setToolTip(tr("Which board this is: decides which pins exist"));
+    connect(m_boardType, QOverload<int>::of(&QComboBox::activated), this, [this](int t) {
+        setBoardType(t);
+        if (m_link->isReady() && m_link->caps().boardSettings)
+            m_link->writeBoard(m_edit.board);
+        saveBoardFile();
+    });
+    tb->addWidget(new QLabel(tr(" Board ")));
+    tb->addWidget(m_boardType);
     tb->addWidget(Info::button(QStringLiteral("board.dccnext")));
+    m_actBoardSettings = tb->addAction(tr("Board settings…"), this, &MainWindow::editBoardSettings);
 
     // Menus
     QMenu *file = menuBar()->addMenu(tr("&File"));
+    file->addAction(tr("&New board (offline)…"), this, &MainWindow::newOfflineBoard);
     m_actOpen = file->addAction(style()->standardIcon(QStyle::SP_DialogOpenButton), tr("&Open configuration…"),
                                 this, &MainWindow::openFile);
     m_actOpen->setShortcut(QKeySequence::Open);
     m_actSave = file->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save configuration…"),
                                 this, &MainWindow::saveFile);
     m_actSave->setShortcut(QKeySequence::Save);
+    file->addAction(tr("Open the boards folder"), this, [] {
+        QDir().mkpath(boardsDir());
+        QDesktopServices::openUrl(QUrl::fromLocalFile(boardsDir()));
+    });
     file->addSeparator();
     file->addAction(tr("&Quit"), this, &QWidget::close)->setShortcut(QKeySequence::Quit);
 
@@ -443,10 +555,28 @@ void MainWindow::buildToolbar()
     board->addAction(m_actRead);
     board->addAction(m_actWrite);
     board->addAction(m_actRevert);
+    board->addSeparator();
+    board->addAction(m_actBoardSettings);
+    board->addAction(tr("Apply a preset…"), this, [this] { setExpertMode(true); m_preset->setFocus(); });
+    board->addSeparator();
+    board->addAction(tr("&Flash firmware…"), this, &MainWindow::flashFirmware);
     m_actWrite->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
     m_actRead->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
 
     QMenu *view = menuBar()->addMenu(tr("&View"));
+    m_actExpert = view->addAction(tr("&Expert mode"));
+    m_actExpert->setCheckable(true);
+    m_actExpert->setToolTip(tr("Show bytes, the serial log, protocol details and presets"));
+    connect(m_actExpert, &QAction::toggled, this, &MainWindow::setExpertMode);
+    m_actShowUnused = view->addAction(tr("Show unused inputs and outputs"));
+    m_actShowUnused->setCheckable(true);
+    m_actShowUnused->setChecked(QSettings().value(QStringLiteral("ui/showUnused"), false).toBool());
+    m_view->setHideUnused(!m_actShowUnused->isChecked());
+    connect(m_actShowUnused, &QAction::toggled, this, [this](bool on) {
+        QSettings().setValue(QStringLiteral("ui/showUnused"), on);
+        m_view->setHideUnused(!on);
+    });
+    view->addSeparator();
     m_actRaw = view->addAction(tr("Show TX/RX bytes in log"));
     m_actRaw->setCheckable(true);
     m_actRaw->setChecked(true);
@@ -534,6 +664,8 @@ void MainWindow::connectPort(const QString &port)
     }
     m_outKnown.fill(false);
     m_inKnown.fill(false);
+    m_nameAsked = false;
+    showWorkspace();
     QString err;
     if (!m_link->openSerial(port, &err))
         QMessageBox::warning(this, windowTitle(), tr("Could not open %1:\n%2").arg(port, err));
@@ -545,8 +677,15 @@ void MainWindow::connectDemo()
         m_link->close();
     m_outKnown.fill(false);
     m_inKnown.fill(false);
+    m_nameAsked = true;                  // the demo board does not need a name
+    showWorkspace();
     QString err;
-    m_link->openDevice(new SimulatedDevice, true, &err);
+    auto *sim = new SimulatedDevice;
+    BoardSettings demo;
+    demo.name = QStringLiteral("Demo");
+    demo.type = m_edit.board.type;
+    sim->setBoard(demo);
+    m_link->openDevice(sim, true, &err);
 }
 
 void MainWindow::onConnectionChanged()
@@ -585,9 +724,10 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
 {
     const bool keep = m_keepEdits || (m_outKnown[i] && outputDirty(i));
     m_dev.outputs[i] = c;
+    m_dev.outputs[i].name = m_edit.outputs[i].name;
     m_outKnown[i] = true;
     if (!keep)
-        m_edit.outputs[i] = c;
+        m_edit.outputs[i] = m_dev.outputs[i];
     refreshRows();
     if (m_outEd->index() == i && !keep)
         m_outEd->setOutput(i, m_edit.outputs[i]);
@@ -603,6 +743,7 @@ void MainWindow::onInputReceived(int i, const InputConfig &received)
     if (m_link->caps().protocol >= 2)
         c.route = m_dev.inputs[i].route;   // the real route follows with GET_ROUTE
     const bool keep = m_keepEdits || (m_inKnown[i] && inputDirty(i));
+    c.name = m_edit.inputs[i].name;
     m_dev.inputs[i] = c;
     m_inKnown[i] = true;
     if (!keep)
@@ -688,7 +829,7 @@ void MainWindow::testOutput(int index, int state)
 // ── Files ───────────────────────────────────────────────────────────────────
 void MainWindow::openFile()
 {
-    const QString path = QFileDialog::getOpenFileName(this, tr("Open configuration"), QString(),
+    const QString path = QFileDialog::getOpenFileName(this, tr("Open configuration"), boardsDir(),
                                                       tr("GPIOcore configuration (*.json)"));
     if (!path.isEmpty())
         loadFile(path);
@@ -709,18 +850,40 @@ bool MainWindow::loadFile(const QString &path)
         QMessageBox::warning(this, windowTitle(), err);
         return false;
     }
-    m_edit = b;
-    m_keepEdits = !m_link->isReady();     // will be compared with the board after connecting
+    if (m_link->isReady())
+    {
+        const BoardSettings onBoard = m_edit.board;
+        m_edit = b;
+        m_edit.board.name = onBoard.name;    // the name belongs to the connected board
+        if (QMessageBox::question(this, windowTitle(),
+                                  tr("Send this configuration to the connected board now?"))
+            == QMessageBox::Yes)
+        {
+            if (m_link->caps().boardSettings)
+                m_link->writeBoard(m_edit.board);
+            m_liveTimer->start();
+        }
+    }
+    else
+    {
+        m_edit = b;
+        m_dev  = b;                          // offline: nothing to compare with
+    }
+    setBoardType(m_edit.board.type);
+    showWorkspace();
     refreshAll();
     m_outEd->setOutput(m_outEd->index(), m_edit.outputs[m_outEd->index()]);
     m_inEd->setInput(m_inEd->index(), m_edit.inputs[m_inEd->index()]);
-    statusBar()->showMessage(tr("Loaded %1 — use 'Write changes' to send it to the board").arg(path), 6000);
+    statusBar()->showMessage(tr("Loaded %1").arg(path), 6000);
     return true;
 }
 
 void MainWindow::saveFile()
 {
-    const QString path = QFileDialog::getSaveFileName(this, tr("Save configuration"), QStringLiteral("gpiocore.json"),
+    QDir().mkpath(boardsDir());
+    const QString suggested = QDir(boardsDir()).filePath(
+        (m_edit.board.name.isEmpty() ? QStringLiteral("gpiocore") : m_edit.board.name) + QStringLiteral(".json"));
+    const QString path = QFileDialog::getSaveFileName(this, tr("Save configuration"), suggested,
                                                       tr("GPIOcore configuration (*.json)"));
     if (path.isEmpty())
         return;
@@ -769,8 +932,11 @@ void MainWindow::updateActions()
     m_actPreset->setEnabled(ready && !busy);
     m_port->setEnabled(!m_link->isOpen());
     m_actRefresh->setEnabled(!m_link->isOpen());
-    m_dirtyChip->setText(tr("%1 unsent change(s)").arg(dirty));
-    m_dirtyChip->setVisible(dirty > 0);
+    if (m_link->isReady())
+        m_dirtyChip->setText(busy ? tr("Saving on the board…") : tr("%1 change(s) waiting").arg(dirty));
+    else
+        m_dirtyChip->setText(tr("%1 unsent change(s)").arg(dirty));
+    m_dirtyChip->setVisible(dirty > 0 && (m_expert || !m_link->isReady() || busy));
 }
 
 // ── Canvas refresh ──────────────────────────────────────────────────────────
@@ -821,6 +987,7 @@ void MainWindow::selectOutput(int i)
     m_view->selectOutput(i);
     m_outEd->setOutput(i, m_edit.outputs[i]);
     m_outEd->setWarnings(outputWarnings(i));
+    m_outName->setText(m_edit.outputs[i].name);
     openPanel(OpenOutput);
 }
 
@@ -829,6 +996,7 @@ void MainWindow::selectInput(int i)
     m_view->selectInput(i);
     m_inEd->setInput(i, m_edit.inputs[i]);
     m_inEd->setWarnings(inputWarnings(i));
+    m_inName->setText(m_edit.inputs[i].name);
     updateInputEditorLimits();
     openPanel(OpenInput);
 }
@@ -843,7 +1011,9 @@ QStringList MainWindow::outputNames() const
 {
     QStringList names;
     for (int i = 0; i < NumOutputs; ++i)
-        names << tr("Output %1 · %2").arg(i).arg(outputTypeName(m_edit.outputs[i].type));
+        names << (m_edit.outputs[i].name.isEmpty()
+                      ? tr("Output %1 · %2").arg(i).arg(outputTypeName(m_edit.outputs[i].type))
+                      : tr("Output %1 · %2").arg(i).arg(m_edit.outputs[i].name));
     return names;
 }
 
@@ -903,8 +1073,9 @@ QStringList MainWindow::outputWarnings(int i) const
             servo |= (o.type == ServoType);
         for (int s = 0; s < info.pinCount; ++s)
             if (servo && (c.pin(s) == 9 || c.pin(s) == 10))
-                w << tr("%1 (%2): the Servo library uses timer 1, so PWM on D9 / D10 does not work while a servo "
-                        "output exists.").arg(trGpio(roles[s]), pinName(c.pin(s)));
+                w << tr("%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on D9 and D10 "
+                        "stops working as soon as at least one servo output exists. Use D3, D5, D6 or D11 for PWM, "
+                        "or remove the servo.").arg(trGpio(roles[s]), pinName(c.pin(s)));
     }
     w.removeDuplicates();
     return w;
@@ -973,7 +1144,8 @@ void MainWindow::appendLog(const QString &kind, const QString &text)
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
-    if (dirtyCount() > 0
+    saveBoardFile();
+    if (m_link->isReady() && dirtyCount() > 0
         && QMessageBox::question(this, windowTitle(),
                                  tr("%1 change(s) have not been written to the board. Quit anyway?").arg(dirtyCount()))
                != QMessageBox::Yes)
@@ -982,6 +1154,284 @@ void MainWindow::closeEvent(QCloseEvent *e)
         return;
     }
     e->accept();
+}
+
+// ── Simple / expert mode ────────────────────────────────────────────────────
+void MainWindow::setExpertMode(bool on)
+{
+    m_expert = on;
+    QSettings().setValue(QStringLiteral("ui/expert"), on);
+    if (m_actExpert && m_actExpert->isChecked() != on)
+        m_actExpert->setChecked(on);
+    for (QAction *a : m_expertOnly)
+        a->setVisible(on);
+    if (auto *dock = findChild<QDockWidget *>(QStringLiteral("logDock")))
+    {
+        dock->setVisible(on);
+        dock->toggleViewAction()->setVisible(on);
+    }
+    if (m_actRaw) m_actRaw->setVisible(on);
+    // payload bytes under the editors
+    for (QWidget *ed : { static_cast<QWidget *>(m_inEd), static_cast<QWidget *>(m_outEd) })
+        for (QLabel *l : ed->findChildren<QLabel *>(QStringLiteral("mono")))
+            l->setVisible(on);
+    m_protoChip->setVisible(on && m_link->isOpen() && m_link->caps().known);
+    updateActions();
+}
+
+void MainWindow::showWorkspace()
+{
+    if (m_stack)
+        m_stack->setCurrentIndex(1);
+}
+
+QWidget *MainWindow::buildStartPage()
+{
+    auto *page = new QWidget;
+    page->setObjectName(QStringLiteral("startPage"));
+    auto *outer = new QVBoxLayout(page);
+    outer->addStretch(1);
+    auto *box = new QWidget;
+    box->setMaximumWidth(520);
+    auto *v = new QVBoxLayout(box);
+    auto *title = new QLabel(tr("<h2>GPIOcore Configurator</h2>"
+                                "<p>Plug a GPIOcore board into a USB port, choose its port at the top and press "
+                                "<b>Connect</b>. Everything you change is sent to the board straight away.</p>"));
+    title->setWordWrap(true);
+    v->addWidget(title);
+    auto add = [this, v](const QString &text, const QString &help, auto slot) {
+        auto *b = new QPushButton(text);
+        b->setMinimumHeight(40);
+        b->setToolTip(help);
+        connect(b, &QPushButton::clicked, this, slot);
+        v->addWidget(b);
+        auto *l = new QLabel(help);
+        l->setObjectName(QStringLiteral("help"));
+        l->setWordWrap(true);
+        v->addWidget(l);
+    };
+    add(tr("Connect to the board"), tr("Uses the port selected at the top."), [this] { toggleConnection(); });
+    add(tr("Try the demo"), tr("A simulated board, nothing can break."), [this] { connectDemo(); });
+    add(tr("Open a board file…"), tr("Look at or prepare the settings of a board without connecting it."), [this] { openFile(); });
+    add(tr("New board (offline)…"), tr("Prepare a new board on this computer and send it later."), [this] { newOfflineBoard(); });
+    add(tr("Flash firmware…"), tr("Put the GPIOcore firmware on an Arduino."), [this] { flashFirmware(); });
+    v->addWidget(Info::button(QStringLiteral("app.start")), 0, Qt::AlignLeft);
+    auto *h = new QHBoxLayout;
+    h->addStretch(1);
+    h->addWidget(box);
+    h->addStretch(1);
+    outer->addLayout(h);
+    outer->addStretch(2);
+    return page;
+}
+
+// ── Board settings, name and board files ────────────────────────────────────
+QString MainWindow::boardsDir()
+{
+    const QString def = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
+                            .filePath(QStringLiteral("GPIOcore/boards"));
+    return QSettings().value(QStringLiteral("files/boardsDir"), def).toString();
+}
+
+void MainWindow::onBoardReceived(const BoardSettings &b)
+{
+    m_dev.board = b;
+    // Names (and offline edits) live in <name>.json; the board itself wins for all settings,
+    // which arrive right after this.
+    const QString path = QDir(boardsDir()).filePath(b.name + QStringLiteral(".json"));
+    if (!b.name.isEmpty() && QFileInfo::exists(path))
+    {
+        QFile f(path);
+        BoardConfig file;
+        if (f.open(QIODevice::ReadOnly)
+            && BoardConfig::fromJson(QJsonDocument::fromJson(f.readAll()).object(), file, nullptr))
+        {
+            for (int i = 0; i < NumOutputs; ++i) m_edit.outputs[i].name = file.outputs[i].name;
+            for (int i = 0; i < NumInputs; ++i)  m_edit.inputs[i].name  = file.inputs[i].name;
+            appendLog(QStringLiteral("INFO"), tr("Names loaded from %1").arg(QDir::toNativeSeparators(path)));
+        }
+    }
+    m_edit.board = b;
+    setBoardType(b.type);
+    setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));
+    m_connChip->setText(tr("● %1 — %2").arg(m_link->portName(), b.name.isEmpty() ? tr("board without a name") : b.name));
+    refreshAll();
+}
+
+void MainWindow::saveBoardFile()
+{
+    const QString name = m_edit.board.name;
+    if (name.isEmpty() || name == QLatin1String("Demo"))
+        return;
+    QDir().mkpath(boardsDir());
+    QFile f(QDir(boardsDir()).filePath(name + QStringLiteral(".json")));
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        f.write(QJsonDocument(m_edit.toJson()).toJson(QJsonDocument::Indented));
+}
+
+void MainWindow::askBoardName()
+{
+    m_nameAsked = true;
+    bool ok = false;
+    const QString name = cleanBoardName(QInputDialog::getText(
+        this, tr("Name this board"),
+        tr("This board has no name yet. Give it a short, unique name (max. 16 letters, e.g. \"Station-left\").\n"
+           "The name is stored on the board; your names for inputs and outputs are kept in a file with this name."),
+        QLineEdit::Normal, QString(), &ok));
+    if (!ok || name.isEmpty())
+        return;
+    m_edit.board.name = name;
+    m_dev.board.name  = name;
+    m_link->writeBoard(m_edit.board);
+    onBoardReceived(m_edit.board);
+    saveBoardFile();
+}
+
+void MainWindow::editBoardSettings()
+{
+    QDialog d(this);
+    d.setWindowTitle(tr("Board settings"));
+    auto *form = new QFormLayout(&d);
+    auto *name = new QLineEdit(m_edit.board.name);
+    name->setMaxLength(MaxBoardName);
+    auto *type = new QComboBox;
+    for (int t = 0; t < BoardTypeCount; ++t) type->addItem(boardTypeName(quint8(t)));
+    type->setCurrentIndex(m_edit.board.type);
+    auto *recorder = new QCheckBox(tr("Use the recorder"));
+    recorder->setChecked(m_edit.board.recorder);
+    recorder->setToolTip(tr("Off: the recorder's memory is used for routes instead"));
+    auto *timing = new QCheckBox(tr("Own wait time per route step"));
+    timing->setChecked(m_edit.board.timing);
+    timing->setToolTip(tr("Off: every step waits the same time and routes need half the memory"));
+    auto *delay = new QDoubleSpinBox;
+    delay->setRange(0.0, 25.5);
+    delay->setSingleStep(0.1);
+    delay->setDecimals(1);
+    delay->setSuffix(tr(" s"));
+    delay->setValue(m_edit.board.delay / 10.0);
+    auto *interlock = new QComboBox;
+    interlock->addItem(tr("Off — routes may run at the same time"));
+    interlock->addItem(tr("On — one route at a time"));
+    interlock->addItem(tr("Automatic — turnout routes one at a time, lights in parallel"));
+    interlock->setCurrentIndex(m_edit.board.interlock);
+    form->addRow(tr("Name"), name);
+    form->addRow(tr("Board type"), type);
+    form->addRow(QString(), recorder);
+    form->addRow(QString(), timing);
+    form->addRow(tr("Wait time per step"), delay);
+    form->addRow(tr("Route interlocking"), interlock);
+    auto *note = new QLabel(m_link->isReady() && !m_link->caps().boardSettings
+                                ? tr("This board's firmware cannot store these settings yet; they are only kept in the file.")
+                                : QString());
+    note->setWordWrap(true);
+    note->setObjectName(QStringLiteral("help"));
+    form->addRow(note);
+    auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    form->addRow(bb);
+    connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    auto sync = [&] { delay->setEnabled(!timing->isChecked()); };
+    connect(timing, &QCheckBox::toggled, &d, sync);
+    sync();
+    if (d.exec() != QDialog::Accepted)
+        return;
+
+    BoardSettings b = m_edit.board;
+    b.name      = cleanBoardName(name->text());
+    b.type      = quint8(type->currentIndex());
+    b.recorder  = recorder->isChecked();
+    b.timing    = timing->isChecked();
+    b.delay     = quint8(qRound(delay->value() * 10));
+    b.interlock = quint8(interlock->currentIndex());
+    m_edit.board = b;
+    setBoardType(b.type);
+    m_inEd->setTimingEnabled(b.timing);
+    if (m_link->isReady() && m_link->caps().boardSettings)
+    {
+        m_link->writeBoard(b);
+        m_link->readBoard();
+    }
+    saveBoardFile();
+    setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));
+}
+
+void MainWindow::newOfflineBoard()
+{
+    if (m_link->isOpen())
+        m_link->close();
+    bool ok = false;
+    const QString name = cleanBoardName(QInputDialog::getText(this, tr("New board"),
+        tr("Name of the new board (max. 16 letters). When you later connect a board and give it this name, "
+           "these settings belong to it."), QLineEdit::Normal, QString(), &ok));
+    if (!ok)
+        return;
+    SimulatedDevice defaults;
+    BoardConfig b;
+    for (int i = 0; i < NumOutputs; ++i) b.outputs[i] = defaults.output(i);
+    for (int i = 0; i < NumInputs;  ++i) b.inputs[i]  = defaults.input(i);
+    b.board.name = name;
+    b.board.type = m_edit.board.type;
+    m_edit = m_dev = b;
+    setBoardType(b.board.type);
+    showWorkspace();
+    refreshAll();
+    saveBoardFile();
+}
+
+void MainWindow::addBlock(bool output)
+{
+    if (output)
+    {
+        for (int o = 0; o < NumOutputs; ++o)
+            if (m_edit.outputs[o].type == OutputNotInUse && outputSources(m_edit, o).isEmpty())
+            {
+                m_edit.outputs[o].type = SingleSteady;
+                userEdited();
+                selectOutput(o);
+                return;
+            }
+        statusBar()->showMessage(tr("All 16 outputs are in use."), 4000);
+    }
+    else
+    {
+        for (int i = 0; i < NumInputs; ++i)
+            if (m_edit.inputs[i].type == InputNotInUse)
+            {
+                m_edit.inputs[i].type = Momentary;
+                userEdited();
+                selectInput(i);
+                return;
+            }
+        statusBar()->showMessage(tr("All 16 inputs are in use."), 4000);
+    }
+}
+
+void MainWindow::removeSelected()
+{
+    if (m_open == OpenInput)
+    {
+        const int i = m_inEd->index();
+        InputConfig c;                   // not in use, no pin, no address, no route
+        c.name.clear();
+        m_edit.inputs[i] = c;
+    }
+    else if (m_open == OpenOutput)
+    {
+        const int o = m_outEd->index();
+        for (int i = 0; i < NumInputs; ++i)          // take it out of every route
+            for (int s = m_edit.inputs[i].route.size() - 1; s >= 0; --s)
+                if (m_edit.inputs[i].route[s].output == o)
+                    Gpio::disconnect(m_edit, i, s);
+        OutputConfig c;
+        m_edit.outputs[o] = c;
+    }
+    closePanels();
+    userEdited();
+}
+
+void MainWindow::flashFirmware()
+{
+    QMessageBox::information(this, windowTitle(), tr("Flashing is not available in this build."));
 }
 
 // ── Screenshot mode (for documentation / automated checks) ──────────────────
