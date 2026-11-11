@@ -37,6 +37,7 @@ add_library(gpiocore_ui STATIC
     src/pinmapview.h      src/pinmapview.cpp
     src/connectionview.h  src/connectionview.cpp
     src/uihelpers.h       src/uihelpers.cpp
+    src/flasher.h         src/flasher.cpp
     src/infotexts.h       src/infotexts.cpp
     src/i18n.h            src/i18n.cpp
 )
@@ -49,6 +50,13 @@ qt_add_resources(gpiocore_ui "help_texts" PREFIX "/info" BASE "i18n/info" FILES 
 
 add_executable(GPIOcoreGUI src/main.cpp)
 target_link_libraries(GPIOcoreGUI PRIVATE gpiocore_ui)
+
+# Firmware flashing: avrdude next to the exe, dev builds also find tools/ and release/ in the source tree
+target_compile_definitions(gpiocore_ui PRIVATE GPIOCORE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+add_custom_command(TARGET GPIOcoreGUI POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/tools/avrdude
+            $<TARGET_FILE_DIR:GPIOcoreGUI>/tools/avrdude)
 target_compile_definitions(GPIOcoreGUI PRIVATE PROJECT_VERSION_STRING="${PROJECT_VERSION}")
 set_target_properties(GPIOcoreGUI PROPERTIES WIN32_EXECUTABLE TRUE MACOSX_BUNDLE TRUE)
 

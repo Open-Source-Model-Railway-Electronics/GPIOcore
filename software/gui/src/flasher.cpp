@@ -151,7 +151,7 @@ void Flasher::flash(const QString &port, const QString &hexPath, Method m)
     if (isRunning())
         return;
     m_port = port;
-    m_hex = hexPath;
+    m_hex = QFileInfo(hexPath).absoluteFilePath();   // avrdude runs in its own directory
     m_retried = false;
     m_cancelled = false;
     m_failure = None;
@@ -435,7 +435,7 @@ FlashDialog::FlashDialog(const QString &preselectPort, QWidget *parent)
     m_ispNote = new QLabel(tr("<b>Advanced:</b> choose the port of the <i>programmer</i> Arduino (running ArduinoISP), "
                               "wired to the ICSP pins of your board. This also sets the fuses and "
                               "<b>removes the USB bootloader</b>: afterwards the board can only be updated "
-                              "with the programmer again."), this);
+                              "with the programmer again. The settings stored on the board are erased."), this);
     m_ispNote->setWordWrap(true);
     m_ispNote->setStyleSheet(QStringLiteral("color: #b35900;"));
     root->addWidget(m_ispNote);

@@ -3,6 +3,7 @@
 #include "connections.h"
 #include "connectionview.h"
 #include "devicelink.h"
+#include "flasher.h"
 #include "i18n.h"
 #include "infotexts.h"
 #include "inputeditor.h"
@@ -1431,7 +1432,19 @@ void MainWindow::removeSelected()
 
 void MainWindow::flashFirmware()
 {
-    QMessageBox::information(this, windowTitle(), tr("Flashing is not available in this build."));
+    const QString port = m_link->isOpen() ? m_link->portName() : m_port->currentData().toString();
+    FlashDialog d(port, this);
+    bool reconnect = false;
+    connect(&d, &FlashDialog::aboutToFlash, this, [this, &reconnect] {
+        reconnect = m_link->isOpen() && m_link->portName() != QLatin1String("simulator");
+        if (m_link->isOpen())
+            m_link->close();             // avrdude needs the port
+    });
+    connect(&d, &FlashDialog::flashFinished, this, [this, &reconnect, port](bool ok) {
+        if (ok && reconnect)
+            QTimer::singleShot(1500, this, [this, port] { connectPort(port); });
+    });
+    d.exec();
 }
 
 // ── Screenshot mode (for documentation / automated checks) ──────────────────

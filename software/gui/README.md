@@ -54,10 +54,22 @@ nog niet getest.
      v2-decoder.
    - **4-lampsein**: het aspect komt van DCC of uit een route. Het board onthoudt het laatste aspect in
      EEPROM, dus er is geen start-aspect.
-4. Klik **Write N change(s)**. Alleen de gewijzigde items gaan naar het board, en elk item wordt
-   teruggelezen ter controle.
-5. **DCCnext board** in de toolbar: de pin-keuzes tonen het poortnummer ("D3 · port 1"), en D13 wordt rood.
-6. Met *File → Save/Open* bewaar je een configuratie als JSON, ook offline.
+4. **Live opslaan.** Elke wijziging gaat na 0,35 s vanzelf naar het board en wordt teruggelezen.
+   *Write changes* bestaat alleen nog in het menu *Board*.
+5. **Board** in de toolbar: Arduino Uno, Arduino Nano (A6/A7 als analoge input), DCCnext (poortnummers,
+   geen D13) of Jack of all trades. *Board settings…*: naam, recorder aan/uit, wachttijd per stap aan/uit
+   (uit = vaste wachttijd, halve geheugenruimte), route-interlocking (uit / aan / automatisch).
+6. **Board-bestanden.** Elk board heeft een naam (op het board zelf). De GUI houdt per board een bestand
+   `Documenten/GPIOcore/boards/<naam>.json` bij met alle instellingen plus de namen van in- en outputs.
+   Bij verbinden: naam lezen → bestand laden (namen) → alles van het board lezen (het board wint).
+   Offline: *File → New board* of *Open*; dat bestand is leesbaar JSON met uitleg in het veld `about`, zodat
+   je het ook met de hand of door een AI kunt laten invullen.
+7. **Eenvoudig / expert.** Standaard eenvoudig: geen bytes, geen serial log, geen protocol-details, geen
+   presets in de toolbar. *View → Expert mode* zet ze terug. *View → Show unused inputs and outputs*
+   toont ook de ongebruikte blokken; anders voeg je ze toe met **+ Add input / + Add output** en haal je ze
+   weg met **Remove** in het paneel.
+8. **Firmware flashen:** *Board → Flash firmware…* (avrdude zit in `tools/avrdude`). Standaardbestand:
+   `release/GPIOcore.hex`.
    `examples/routes-demo.json` is een voorbeeld met routes, een sein en servo's.
 
 Met **Demo** verbind je met een ingebouwde simulatie van een **v2-decoder** (16 stappen, pool 256,

@@ -1,0 +1,35 @@
+<h2>Updating the firmware</h2>
+<p>The <b>firmware</b> is the program that runs on the Arduino of your GPIOcore board. Sometimes there is a newer
+version with fixes or new features. This window puts it on your board.</p>
+
+<h3>Step by step</h3>
+<ol>
+<li><b>Plug in the board</b> with a USB cable.</li>
+<li><b>Port:</b> choose the board. It usually says CH340, USB Serial or Arduino. Don't see it? Check the cable and
+click <b>Refresh</b>.</li>
+<li><b>Firmware file:</b> this is the file with the new program (it ends in <i>.hex</i>). Normally the right file is
+already filled in. If not, click <b>Browse…</b> and pick <i>GPIOcore.hex</i>.</li>
+<li><b>Board type:</b> most boards work with <i>Arduino Uno / Nano (new bootloader)</i>. Cheaper or older Nano
+boards often need <i>Arduino Nano (old bootloader)</i>. Not sure? Just start with the first one: if the board
+does not answer, the program tries the other one by itself.</li>
+<li>Click <b>Flash</b> and wait until the bar is full. This takes about 10 to 30 seconds. <b>Do not unplug the
+board</b> while it is busy.</li>
+</ol>
+
+<h3>Good to know</h3>
+<ul>
+<li>This program lets go of the board while uploading and connects again afterwards. You don't have to do anything.</li>
+<li>Your settings on the board (outputs, inputs, connections) are normally kept. To be safe, use
+<b>File → Save</b> first.</li>
+<li>Other programs that use the board, like the Arduino IDE serial monitor, must be closed first.</li>
+<li>Something went wrong? Read the red message: it says what to try. <b>Show details</b> shows the full report,
+which is handy when you ask someone for help.</li>
+<li>A failed upload does not break the board. Just try again.</li>
+</ul>
+
+<h3>Via ArduinoISP programmer (advanced)</h3>
+<p>Only for boards without a USB bootloader, or a board that no longer answers. You need a second Arduino running
+the <i>ArduinoISP</i> sketch, wired to the six ICSP pins of your board. Choose the port of that <i>programmer</i>
+Arduino. This also sets the chip settings (fuses) and removes the USB bootloader, so afterwards you can only update
+this board with the programmer. It also <b>erases your settings</b> on the board: save them with <b>File → Save</b>
+first, and write them back afterwards.</p>
