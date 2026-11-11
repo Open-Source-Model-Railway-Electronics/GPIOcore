@@ -1,6 +1,8 @@
 #include "input.h"
+#include "routes.h"
 
 extern uint16_t nextEEAddress ;
+extern Input    input[16] ;
 
 Input::Input() {}
 
@@ -38,11 +40,6 @@ void Input::defaults()
     eedata.myAddress = address ;        // DCC addresses 1-16 by default
     eedata.pin       = NA ;
     eedata.type      = LATCHING ;
-
-    for( int i = 0 ; i < MAX_OUTPUTS ; i ++ )
-    {
-        eedata.linkedOutput[i] = 0xFF ;   // 0x7F in bits 6-0 = end of route
-    }
 }
 
 void Input::set( InputSettings *data )
@@ -133,18 +130,14 @@ void Input::triggerOutputs()
 
     if( outputTimer.update( settingOutputs ) )
     {
-        uint8_t outID = eedata.linkedOutput[index] & 0x7F ;    // bits 6-0 = ID
-        uint8_t state = eedata.linkedOutput[index] >>    7 ;   // bit  7   = state
+        uint8_t route = this - input ;
 
-        if( outID < 16 )    // 0x7F = end of route, anything else >= 16 is invalid
+        if( index < routeCount[ route ] )
         {
-            callbackInput( outID, state, 0 ) ;
-
-            if( ++ index == MAX_OUTPUTS )
-            {
-                settingOutputs  = false ;
-                index           =     0 ;
-            }
+            uint8_t step[4] ;
+            readStep( route, index, step ) ;
+            callbackInput( step[0] & STEP_ID, step[1], 0 ) ;
+            index ++ ;
         }
         else
         {

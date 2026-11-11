@@ -2,6 +2,7 @@
 #include "src/Transceiver.h"
 #include "output.h"
 #include "input.h"
+#include "routes.h"
 
 extern Output      output[16] ;
 extern Input       input[16]  ;
@@ -73,7 +74,7 @@ void setupInputs(uint8_t usedInputs)
         if(i < usedInputs)  toSend.payload[p++] = input[i].eedata.outputID = i ;
         else                toSend.payload[p++] = input[i].eedata.outputID = 0xFF ;
 
-        for(int j = 0; j < MAX_OUTPUTS; j++) { toSend.payload[p++] = input[i].eedata.linkedOutput[j] = 0xFF; }
+        for(int j = 0; j < MAX_OUTPUTS; j++) { toSend.payload[p++] = 0xFF; }
 
         transceiver.sendMessage(&toSend);
         input[i].saveEEPROM() ;
@@ -104,12 +105,7 @@ OPCODE( OPCODE_SET_INPUT_DATA )
     data.pin        = msg->payload[ p++ ] ;
     data.type       = msg->payload[ p++ ] ;
     data.outputID   = msg->payload[ p++ ] ;
-
-    
-    for( int i = 0 ; i < MAX_OUTPUTS ; i ++ )
-    {
-        data.linkedOutput[i] = msg->payload[ p++ ] ;
-    }
+    // linked[8] (payload 6-13) is ignored, the route comes with SET_ROUTE
 
     input[index].set( &data ) ;
 
@@ -132,9 +128,11 @@ OPCODE( OPCODE_GET_INPUT_DATA )
     msg->payload[p++] = data->type ;
     msg->payload[p++] = data->outputID ;
 
-    for( int i = 0 ; i < MAX_OUTPUTS ; i++ )
+    for( uint8_t i = 0 ; i < MAX_OUTPUTS ; i++ )   // v1 linked[8]: first 8 steps of the route, state only
     {
-        msg->payload[p++] = data->linkedOutput[i] ;
+        uint8_t step[4] = { 0xFF, 0, 0, 0 } ;
+        if( i < routeCount[ index ] ) readStep( index, i, step ) ;
+        msg->payload[p++] = step[0] == 0xFF ? 0xFF : ( step[0] & STEP_ID ) | ( step[1] ? 0x80 : 0 ) ;
     }
     msg->command = OPCODE_SET_INPUT_DATA ;
     transceiver.sendMessage( msg ) ;

@@ -9,9 +9,7 @@ typedef struct eeInputSettings
     uint8_t  pin       : 6  ;   // GPIO pin (of NA)
     uint8_t  type      : 3  ;   // input type (3 bits → 0-7)
     uint8_t  outputID  : 4  ;   // gekoppeld output object (0-15)
-
-    uint8_t  linkedOutput[ MAX_OUTPUTS ] ;  // route targets: bit7=state, bits6-0=ID
-} InputSettings ;
+} InputSettings ;               // 4 bytes, the route is stored in the route pool (routes.h)
 
 class Input
 {

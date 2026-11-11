@@ -8,6 +8,7 @@
 #include "src/Transceiver.h"
 #include "src/event.h"
 #include "messageParser.h"
+#include "routes.h"
 
 NmraDcc         dcc ;
 ServoManager    servoManager ;
@@ -17,15 +18,13 @@ Timer           debounce ;
 Transceiver     transceiver ;
 uint16_t        nextEEAddress = 0 ;
 BoardSettings   board ;
-uint16_t        boardEEAddress = 1004 ;     // type, flags, delay, name[16]
+uint16_t        boardEEAddress = EE_BOARD ; // type, flags, delay, name[16]
 uint8_t         configSession  = 0 ;        // 1 after HELLO
 
-// Recorder — uses internal EEPROM from address 420 up to 999 (~72 events of 8 bytes)
-const uint16_t  RECORDER_EE_START = 420 ;
-const uint16_t  RECORDER_EE_END   = 999 ;
+// Recorder — uses the top of the shared EEPROM pool, the range is set by updateRecorderRange()
 const uint8_t   OUTPUT_EVENT      =   1 ;   // custom event type for output state changes
 
-EventHandler    recorder( RECORDER_EE_START, RECORDER_EE_END ) ;
+EventHandler    recorder( 0, 0 ) ;
 
 
 /* TODO
@@ -42,39 +41,69 @@ void callbackDetach(   uint8_t pin )              { servoManager.detach(   pin  
 void callbackSetServo( uint8_t pin, uint8_t pos ) { servoManager.setServo( pin, pos ) ; }
 
 
-// number of route steps that still fit in EEPROM (HELLO)
-uint16_t freeRouteSteps()
+static_assert( sizeof( Settings      ) == 10, "EEPROM layout v2: output = 10 B" ) ;
+static_assert( sizeof( InputSettings ) ==  4, "EEPROM layout v2: input = 4 B"   ) ;
+
+// EEPROM layout v2 (EEPROM.md). A v1 board (DEADBEEF at 1000) is migrated, an empty one gets defaults.
+void eepromBegin()
 {
-    return 16 * MAX_OUTPUTS ;           // v1 storage: 8 linked outputs per input
-}
-
-void loadBoard()
-{
-    EEPROM.get( boardEEAddress, board ) ;
-    if( board.type <= BOARD_JACK ) return ;
-
-    board.type  = BOARD_NANO ;          // erased EEPROM: defaults
-    board.flags = BOARD_RECORDER | ( INTERLOCK_AUTO << 2 ) ;
-    board.delay = 3 ;
-    EEPROM.put( boardEEAddress, board ) ;
-    for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ ) EEPROM.update( boardEEAddress + sizeof( board ) + i, 0 ) ;
-}
-
-bool deadbeef()
-{
-    const int DEADBEEF_EE_ADDRESS = 1000 ;
-
-    uint32_t deadbeef_ ;
-    EEPROM.get(DEADBEEF_EE_ADDRESS, deadbeef_) ;
-
-    if( deadbeef_ != 0xDEADBEEF )
+    if( EEPROM.read( EE_MAGIC ) == 'G' && EEPROM.read( EE_MAGIC + 1 ) == '2' )
     {
-        deadbeef_ = 0xDEADBEEF ;
-        EEPROM.put(DEADBEEF_EE_ADDRESS, deadbeef_) ;
-        return true ;
+        EEPROM.get( boardEEAddress, board ) ;
+        return ;
     }
 
-    return false ;
+    // v1: output i at i * 22, input i at i * 22 + 10 (4 B settings + linked[8])
+    const uint8_t V1_RECORD = 22 ;
+    uint32_t marker ;
+    uint8_t  linked[16][MAX_OUTPUTS] ;
+    EEPROM.get( 1000, marker ) ;
+    uint8_t  v1 = marker == 0xDEADBEEF ;
+
+    for( uint8_t i = 0 ; i < 16 ; i ++ )
+    {
+        linked[i][0] = 0xFF ;
+        if( v1 )
+        {
+            EEPROM.get( i * V1_RECORD,      output[i].eedata ) ;
+            EEPROM.get( i * V1_RECORD + 10,  input[i].eedata ) ;
+            for( uint8_t j = 0 ; j < MAX_OUTPUTS ; j ++ ) linked[i][j] = EEPROM.read( i * V1_RECORD + 14 + j ) ;
+        }
+        else
+        {
+            output[i].defaults() ;
+             input[i].defaults() ;
+        }
+    }
+
+    board.type  = BOARD_NANO ;
+    board.flags = BOARD_RECORDER | ( INTERLOCK_AUTO << 2 ) ;   // timing off: 2 B per step
+    board.delay = v1 ? 5 : 3 ;          // v1 routes waited 0.5 s per step
+    EEPROM.put( boardEEAddress, board ) ;
+    for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ ) EEPROM.update( boardEEAddress + sizeof( board ) + i, 0 ) ;
+
+    uint16_t address = EE_POOL ;
+    for( uint8_t i = 0 ; i < 16 ; i ++ )
+    {
+        output[i].saveEEPROM() ;
+         input[i].saveEEPROM() ;
+
+        uint8_t n = 0 ;                 // linked[]: bit 7 = state, bits 0-6 = output id, 0x7F = end
+        while( n < MAX_OUTPUTS && ( linked[i][n] & 0x7F ) < 16 )
+        {
+            EEPROM.update( address ++, linked[i][n] & 0x7F ) ;
+            EEPROM.update( address ++, linked[i][n] >> 7   ) ;
+            n ++ ;
+        }
+        EEPROM.update( EE_COUNTS + i, n ) ;
+    }
+
+    EEPROM.update( EE_MAGIC,     'G'       ) ;
+    EEPROM.update( EE_MAGIC + 1, '2'       ) ;
+    EEPROM.update( EE_MAGIC + 2, EE_LAYOUT ) ;
+
+    routesBegin() ;
+    recorder.clearProgram() ;           // the old recorder space is now part of the pool
 }
 
 void setup()
@@ -84,28 +113,19 @@ void setup()
     delay(100) ;
     sendMyVersion() ;
 
-    loadBoard() ;
-
     dcc.pin(2, 0) ;
     dcc.init( MAN_ID_DIY, 11, FLAGS_OUTPUT_ADDRESS_MODE | FLAGS_DCC_ACCESSORY_DECODER, 0 ) ;
 
-    for( uint8_t i = 0 ; i < 16 ; i++ )
+    nextEEAddress = EE_OUTPUTS ;
+    for( uint8_t i = 0 ; i < 16 ; i++ ) output[i].assignEEPROM() ;     // EE_OUTPUTS
+    for( uint8_t i = 0 ; i < 16 ; i++ )                                 // EE_INPUTS
     {
-        output[i].assignEEPROM() ;
          input[i].assignEEPROM() ;
          input[i].begin() ;
     }
 
-    if( deadbeef() )
-    {
-        for( uint8_t i = 0 ; i < 16 ; i++ )
-        {
-            output[i].defaults() ;
-            output[i].saveEEPROM() ;
-             input[i].defaults() ;
-             input[i].saveEEPROM() ;
-        }
-    }
+    eepromBegin() ;
+    routesBegin() ;
 
     for( uint8_t i = 0 ; i < 16 ; i++ )
     {

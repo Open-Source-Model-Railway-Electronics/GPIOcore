@@ -60,6 +60,12 @@ void EventHandler::stopRecording()
 Event EventHandler::getEvent()
 {
     Event localEvent ;
+    if( eeAddress + sizeof( localEvent ) > maxAddress )     // past the end of the recorder space: stop
+    {
+        localEvent.data1          = STOP ;
+        localEvent.time2nextEvent = 1 ;
+        return localEvent ;
+    }
     EEPROM.get( eeAddress, localEvent ) ;
 
     // I2C EEPROM read — uncomment when hardware is available
@@ -105,6 +111,11 @@ void EventHandler::resetProgram()
 void EventHandler::storeEvent( uint8_t _data1, uint16_t _data2, uint8_t _data3 )
 {
     if( recordingDevice != evRecording ) return ;
+    if( eeAddress + ( _data1 == STOP ? 1 : 2 ) * sizeof( Event ) > maxAddress ) // always keep room for STOP
+    {
+        if( memoryFull ) memoryFull() ;
+        return ;
+    }
 
     Event    localEvent ;
     uint32_t currTime = millis() ;
@@ -178,6 +189,27 @@ void EventHandler::update()
 
         event = getEvent() ;
         newSensor = 0 ;
+    }
+}
+
+// the recorder space moved (routes grew or shrank, recorder switched on/off): the old program is lost
+void EventHandler::setRange( uint32_t _beginAddress, uint32_t _endAddress )
+{
+    uint8_t moved = beginAddress != 0 && beginAddress != _beginAddress ;
+
+    beginAddress = _beginAddress ;
+    maxAddress   = _endAddress ;
+
+    if( moved ) clearProgram() ;
+}
+
+void EventHandler::clearProgram()
+{
+    recordingDevice = evStandby ;
+    if( beginAddress + sizeof( Event ) <= maxAddress )
+    {
+        Event stop = { STOP, 1, 1, 1 } ;        // empty program
+        EEPROM.put( beginAddress, stop ) ;
     }
 }
 

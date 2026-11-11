@@ -65,6 +65,8 @@ public:
     void    update() ;
     void    storeEvent( uint8_t data1, uint16_t data2, uint8_t data3 ) ;
     uint8_t getState() ;
+    void    clearProgram() ;
+    void    setRange( uint32_t beginAddress, uint32_t endAddress ) ;  // end is exclusive
 
 private:
     Event       event ;
