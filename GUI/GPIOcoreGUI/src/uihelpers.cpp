@@ -1,0 +1,280 @@
+#include "uihelpers.h"
+
+#include <QApplication>
+#include <QComboBox>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPalette>
+#include <QPixmap>
+#include <QStyleFactory>
+
+using namespace Gpio;
+
+namespace Ui {
+
+void applyAppStyle(QApplication &app)
+{
+    app.setStyle(QStyleFactory::create(QStringLiteral("Fusion")));
+
+    QPalette p;
+    p.setColor(QPalette::Window,          QColor(0xF4, 0xF6, 0xF9));
+    p.setColor(QPalette::WindowText,      QColor(0x1F, 0x29, 0x37));
+    p.setColor(QPalette::Base,            Qt::white);
+    p.setColor(QPalette::AlternateBase,   QColor(0xF8, 0xFA, 0xFC));
+    p.setColor(QPalette::Text,            QColor(0x1F, 0x29, 0x37));
+    p.setColor(QPalette::Button,          QColor(0xFF, 0xFF, 0xFF));
+    p.setColor(QPalette::ButtonText,      QColor(0x1F, 0x29, 0x37));
+    p.setColor(QPalette::Highlight,       QColor(0x25, 0x63, 0xEB));
+    p.setColor(QPalette::HighlightedText, Qt::white);
+    p.setColor(QPalette::ToolTipBase,     QColor(0x1F, 0x29, 0x37));
+    p.setColor(QPalette::ToolTipText,     Qt::white);
+    p.setColor(QPalette::PlaceholderText, QColor(0x94, 0xA3, 0xB8));
+    p.setColor(QPalette::Disabled, QPalette::Text,       QColor(0xA0, 0xA8, 0xB4));
+    p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(0xA0, 0xA8, 0xB4));
+    app.setPalette(p);
+
+    app.setStyleSheet(QStringLiteral(R"(
+        QMainWindow { background: #F4F6F9; }
+        QToolBar { background: #FFFFFF; border: none; border-bottom: 1px solid #E2E8F0; spacing: 6px; padding: 6px; }
+        QToolBar QToolButton { padding: 5px 10px; border-radius: 6px; }
+        QToolBar QToolButton:hover { background: #EEF2F7; }
+        QToolButton#primary { background: #2563EB; color: white; font-weight: 600; }
+        QToolButton#primary:hover { background: #1D4ED8; }
+        QToolButton#primary:disabled { background: #BFD0F5; color: #F1F5F9; }
+        QGroupBox { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; margin-top: 14px; padding: 10px 10px 8px 10px; }
+        QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 4px; color: #475569; font-weight: 600; }
+        QTableWidget { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; gridline-color: #EEF2F7; selection-background-color: #DBEAFE; selection-color: #1F2937; }
+        QHeaderView::section { background: #F8FAFC; border: none; border-bottom: 1px solid #E2E8F0; padding: 5px 6px; color: #64748B; font-weight: 600; }
+        QTabWidget::pane { border: none; }
+        QTabBar::tab { padding: 7px 16px; margin-right: 2px; border-top-left-radius: 6px; border-top-right-radius: 6px; color: #64748B; }
+        QTabBar::tab:selected { background: #FFFFFF; color: #1F2937; font-weight: 600; border: 1px solid #E2E8F0; border-bottom: none; }
+        QLabel#title { font-size: 15pt; font-weight: 600; color: #0F172A; }
+        QToolButton#info { border: 1px solid #93C5FD; border-radius: 10px; color: #2563EB; background: #EFF6FF;
+                           font-weight: 700; font-family: Georgia, 'Times New Roman', serif; font-style: italic; padding: 0; }
+        QToolButton#info:hover { background: #DBEAFE; border-color: #2563EB; }
+        QFrame#infoPopup { background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 8px; }
+        QLabel#infoText { color: #1F2937; }
+        QWidget#sidePanel { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; }
+        QToolButton#panelClose { border: none; color: #64748B; font-size: 14pt; padding: 0 6px; }
+        QToolButton#stepDelete { border: 1px solid #FCA5A5; border-radius: 5px; background: #FFFFFF; padding: 2px; }
+        QToolButton#stepDelete:hover { background: #FEE2E2; border-color: #DC2626; }
+        QToolButton#panelClose:hover { color: #0F172A; }
+        QLabel#help  { color: #64748B; }
+        QLabel#warn  { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; border-radius: 6px; padding: 6px 8px; }
+        QLabel#error { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; border-radius: 6px; padding: 6px 8px; }
+        QLabel#chip     { border-radius: 9px; padding: 2px 10px; background: #E2E8F0; color: #334155; }
+        QLabel#chipOk   { border-radius: 9px; padding: 2px 10px; background: #DCFCE7; color: #166534; }
+        QLabel#chipWarn { border-radius: 9px; padding: 2px 10px; background: #FEF3C7; color: #92400E; }
+        QLabel#mono  { font-family: Consolas, 'Courier New', monospace; color: #475569; }
+        QPlainTextEdit#log { font-family: Consolas, 'Courier New', monospace; font-size: 9pt; background: #0F172A; color: #E2E8F0; border: none; }
+        QPushButton { padding: 5px 12px; border: 1px solid #CBD5E1; border-radius: 6px; background: #FFFFFF; }
+        QPushButton:hover { background: #F1F5F9; }
+        QPushButton#test { border-color: #93C5FD; color: #1D4ED8; }
+        QComboBox, QSpinBox { padding: 3px 6px; border: 1px solid #CBD5E1; border-radius: 5px; background: white; min-height: 20px; }
+        QComboBox:disabled, QSpinBox:disabled { background: #F1F5F9; }
+        QScrollArea { border: none; background: transparent; }
+        QStatusBar { background: #FFFFFF; border-top: 1px solid #E2E8F0; }
+    )"));
+}
+
+QColor outputTypeColor(quint8 type)
+{
+    switch (type)
+    {
+    case SingleSteady:   return QColor(0x3B, 0x82, 0xF6);
+    case SinglePulse:    return QColor(0x63, 0x66, 0xF1);
+    case SingleFlashing: return QColor(0xF5, 0x9E, 0x0B);
+    case DoubleSteady:   return QColor(0x0E, 0xA5, 0xE9);
+    case DoublePulse:    return QColor(0x8B, 0x5C, 0xF6);
+    case DoubleFlashing: return QColor(0xF9, 0x73, 0x16);
+    case SwingLight:     return QColor(0xEF, 0x44, 0x44);
+    case FirePlaceLight: return QColor(0xEA, 0x58, 0x0C);
+    case TubeLight:      return QColor(0x06, 0xB6, 0xD4);
+    case WelderLight:    return QColor(0xA8, 0x55, 0xF7);
+    case FourToneSignal: return QColor(0x22, 0xC5, 0x5E);
+    case ServoType:      return QColor(0x10, 0xB9, 0x81);
+    case Pwm:            return QColor(0xEC, 0x48, 0x99);
+    case OutputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
+    }
+    return QColor(0x94, 0xA3, 0xB8);
+}
+
+QColor inputTypeColor(quint8 type)
+{
+    switch (type)
+    {
+    case Momentary:     return QColor(0x3B, 0x82, 0xF6);
+    case Latching:      return QColor(0x10, 0xB9, 0x81);
+    case Route:         return QColor(0x8B, 0x5C, 0xF6);
+    case InputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
+    case Recorder:      return QColor(0xEF, 0x44, 0x44);
+    case FeedbackInput: return QColor(0xF5, 0x9E, 0x0B);
+    }
+    return QColor(0x94, 0xA3, 0xB8);
+}
+
+QColor inputColor(int index)
+{
+    // 16 distinct mid-saturation hues, readable as wires on white
+    static const QColor palette[16] = {
+        QColor(0xE5, 0x39, 0x35), QColor(0x1E, 0x88, 0xE5), QColor(0x43, 0xA0, 0x47), QColor(0xFB, 0x8C, 0x00),
+        QColor(0x8E, 0x24, 0xAA), QColor(0x00, 0x89, 0x7B), QColor(0xD8, 0x1B, 0x60), QColor(0x39, 0x49, 0xAB),
+        QColor(0x7C, 0xB3, 0x42), QColor(0xF4, 0x51, 0x1E), QColor(0x00, 0xAC, 0xC1), QColor(0x6D, 0x4C, 0x41),
+        QColor(0xC0, 0xCA, 0x33), QColor(0x5E, 0x35, 0xB1), QColor(0x03, 0x9B, 0xE5), QColor(0x54, 0x6E, 0x7A),
+    };
+    return palette[qBound(0, index, 15)];
+}
+
+QIcon swatchIcon(const QColor &color)
+{
+    QPixmap pm(14, 14);
+    pm.fill(Qt::transparent);
+    QPainter p(&pm);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(color.darker(120));
+    p.setBrush(color);
+    p.drawRoundedRect(QRectF(1.5, 1.5, 11, 11), 3, 3);
+    return QIcon(pm);
+}
+
+void fillPinCombo(QComboBox *combo)
+{
+    combo->clear();
+    combo->addItem(trGpio("—  not used"), int(PinNA));
+    for (quint8 pin = 0; pin < NumPins; ++pin)
+    {
+        QString text = pinLabel(pin);
+        if (isPwmPin(pin)) text += QStringLiteral("  ~PWM");
+        const QString reserved = pinReservedReason(pin);
+        const QString note     = pinNote(pin);
+        if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
+        else if (!note.isEmpty()) text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
+        combo->addItem(text, int(pin));
+        if (!reserved.isEmpty())
+            combo->setItemData(combo->count() - 1, QColor(0xB4, 0x53, 0x09), Qt::ForegroundRole);
+        if (!note.isEmpty())
+            combo->setItemData(combo->count() - 1, note, Qt::ToolTipRole);
+    }
+}
+
+void selectData(QComboBox *combo, int value, const QString &unknownText)
+{
+    int i = combo->findData(value);
+    if (i < 0)
+    {
+        combo->addItem(unknownText.isEmpty() ? QStringLiteral("⚠ invalid (%1)").arg(value) : unknownText, value);
+        i = combo->count() - 1;
+        combo->setItemData(i, QColor(0xB9, 0x1C, 0x1C), Qt::ForegroundRole);
+    }
+    combo->setCurrentIndex(i);
+}
+
+int currentData(const QComboBox *combo)
+{
+    return combo->currentData().toInt();
+}
+
+QVector<QVector<PinUse>> pinUsage(const BoardConfig &board)
+{
+    QVector<QVector<PinUse>> use(NumPins);
+    static const char *roles[7] = { QT_TRANSLATE_NOOP("Gpio", "A"), QT_TRANSLATE_NOOP("Gpio", "B"), QT_TRANSLATE_NOOP("Gpio", "C"),
+                                    QT_TRANSLATE_NOOP("Gpio", "D"), QT_TRANSLATE_NOOP("Gpio", "relay A"),
+                                    QT_TRANSLATE_NOOP("Gpio", "relay B"), QT_TRANSLATE_NOOP("Gpio", "relay C") };
+
+    for (int i = 0; i < NumOutputs; ++i)
+    {
+        const OutputConfig &c = board.outputs[i];
+        const OutputTypeInfo &info = outputTypeInfo(c.type);
+        for (int s = 0; s < 7; ++s)
+        {
+            const bool active = (s < 4) ? (s < info.pinCount) : info.relays;
+            const quint8 pin = c.pin(s);
+            if (active && pin < NumPins)
+                use[pin].append({ true, i, trGpio(roles[s]) });
+        }
+    }
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        const InputConfig &c = board.inputs[i];
+        if (c.type != InputNotInUse && c.pin < NumPins)
+            use[c.pin].append({ false, i, QStringLiteral("input") });
+    }
+    return use;
+}
+
+QString outputSummaryPins(const OutputConfig &c)
+{
+    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    QStringList parts;
+    for (int s = 0; s < info.pinCount; ++s)
+        parts << pinName(c.pin(s));
+    return parts.join(QStringLiteral("  "));
+}
+
+QString outputSummaryRelays(const OutputConfig &c)
+{
+    if (!outputTypeInfo(c.type).relays)
+        return QString();
+    QStringList parts;
+    if (c.relayA != PinNA || c.relayB != PinNA)
+        parts << QStringLiteral("EF %1/%2").arg(pinName(c.relayA), pinName(c.relayB));
+    if (c.relayC != PinNA)
+        parts << QStringLiteral("UF %1").arg(pinName(c.relayC));
+    return parts.join(QStringLiteral("  "));
+}
+
+QString outputSummaryParams(const OutputConfig &c)
+{
+    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    switch (info.params)
+    {
+    case ParamKind::SwitchTime:
+        return QStringLiteral("%1 ms").arg(qulonglong(c.switchTime()) * info.timeUnitMs);
+    case ParamKind::Swing:
+        return QStringLiteral("%1 / %2 ms").arg(c.swingPulse() * info.timeUnitMs).arg(c.swingPause() * info.timeUnitMs);
+    case ParamKind::Servo:
+        return QStringLiteral("%1°–%2°, %3 ms/°").arg(c.servoMin()).arg(c.servoMax()).arg(c.servoSpeed());
+    case ParamKind::PwmValue:
+        return QStringLiteral("value %1").arg(c.pwmValue());
+    case ParamKind::FourTone:
+        return QStringLiteral("on %1  blink %2")
+            .arg(c.pwmValue() & 0x0F, 4, 2, QLatin1Char('0'))
+            .arg(c.pwmValue() >> 4, 4, 2, QLatin1Char('0'));
+    case ParamKind::None:
+        break;
+    }
+    return QString();
+}
+
+QString inputSummaryTarget(const InputConfig &c)
+{
+    const InputTypeInfo &info = inputTypeInfo(c.type);
+    if (info.usesRoute)
+        return c.route.isEmpty() ? trGpio("(empty route)")
+                                 : trGpio("%1 steps").arg(c.route.size());
+    if (c.type == FeedbackInput)
+        return trGpio("feedback id %1").arg(c.outputId);
+    if (info.usesOutput)
+        return trGpio("Output %1").arg(c.outputId);
+    return QString();
+}
+
+QString stepValueText(const RouteStep &s, quint8 outputType)
+{
+    if (!s.raw)
+        return s.value ? QStringLiteral("S") : QStringLiteral("C");
+    switch (stepKind(outputType))
+    {
+    case StepKind::ServoStateOrAngle: return QStringLiteral("%1°").arg(s.value);
+    case StepKind::Aspect:            return QStringLiteral("A%1").arg(s.value);
+    case StepKind::PwmValue:          return QStringLiteral("P%1").arg(s.value);
+    default:                          return QString::number(s.value);
+    }
+}
+
+QString delayText(quint16 delay)
+{
+    return QStringLiteral("%1 s").arg(delay / 10.0, 0, 'f', 1);
+}
+
+} // namespace Ui

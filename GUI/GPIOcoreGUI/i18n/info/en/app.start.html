@@ -1,0 +1,35 @@
+<h2>Getting started</h2>
+<p>This program sets up a <b>GPIOcore board</b>: a small Arduino (Nano / Uno, or a DCCnext) that sits under your
+layout and switches things: turnouts, lights, signals, relays. You tell the board <i>what</i> is connected to
+<i>which</i> pin, and <i>what</i> should make it move.</p>
+
+<h3>The two kinds of things</h3>
+<ul>
+<li><b>Outputs</b> (right column) are things the board <i>does</i>: move a servo, pulse a turnout coil, light an LED,
+switch a relay. There are 16 of them.</li>
+<li><b>Inputs</b> (left column) are things that <i>tell the board to do something</i>: a push button on your control
+panel, or a command from your DCC command station (your digital system / handheld). There are 16 of them.</li>
+</ul>
+
+<h3>Step by step</h3>
+<ol>
+<li><b>Connect.</b> Plug the board into the USB port. Choose its port at the top (it usually says CH340, USB Serial or
+Arduino) and click <b>Connect</b>. No board at hand? Click <b>Demo</b> to try everything with a pretend board.</li>
+<li><b>Set up an output.</b> Click an output on the right. A panel slides in from the right. Choose the <b>type</b>
+(for example <i>Servo</i>) and the <b>pin</b> where the wire goes.</li>
+<li><b>Set up an input.</b> Click an input on the left. A panel slides in from the left. Choose what starts it:
+a <b>button pin</b>, a <b>DCC address</b>, or both.</li>
+<li><b>Connect them.</b> Drag the output (right) onto the input (left). A coloured line appears: that input now
+operates that output. The output gets the colour of its input, so you can see at a glance what belongs together.</li>
+<li><b>Send it to the board.</b> Everything you changed gets an orange dot. Click <b>Write … change(s)</b> at the
+top. The board stores it, even when the power is off.</li>
+</ol>
+
+<h3>Good to know</h3>
+<ul>
+<li>Every <b>(i)</b> button explains the thing next to it. Click it whenever you are unsure.</li>
+<li>Red text means something is wrong, for example two things on the same pin.</li>
+<li><b>Test state 0 / 1</b> in an output panel makes it move right away, so you can check your wiring.</li>
+<li><b>File → Save</b> keeps a copy of your setup on the computer. Do this before you experiment.</li>
+<li>Made a mess? <b>Revert</b> throws away everything you have not written to the board yet.</li>
+</ul>

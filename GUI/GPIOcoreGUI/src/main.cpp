@@ -1,0 +1,51 @@
+#include "i18n.h"
+#include "mainwindow.h"
+#include "uihelpers.h"
+
+#include <QApplication>
+#include <QCommandLineParser>
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    QApplication::setApplicationName(QStringLiteral("GPIOcore Configurator"));
+    QApplication::setOrganizationName(QStringLiteral("Train-Science"));
+    QApplication::setApplicationVersion(QStringLiteral(PROJECT_VERSION_STRING));
+    Ui::applyAppStyle(app);
+    Lang::install(app);                  // before any window is created
+
+    QCommandLineParser cli;
+    cli.setApplicationDescription(QStringLiteral("Configure GPIOcore boards over the serial port."));
+    cli.addHelpOption();
+    cli.addVersionOption();
+    QCommandLineOption demo(QStringLiteral("demo"), QStringLiteral("Connect to the built-in firmware simulator."));
+    QCommandLineOption port(QStringLiteral("port"), QStringLiteral("Connect to this serial port at start."), QStringLiteral("name"));
+    QCommandLineOption shot(QStringLiteral("screenshot"), QStringLiteral("Save a screenshot after reading the board, then quit."), QStringLiteral("file"));
+    QCommandLineOption tab(QStringLiteral("tab"), QStringLiteral("Tab for --screenshot: outputs, inputs, pins."), QStringLiteral("tab"), QStringLiteral("outputs"));
+    QCommandLineOption select(QStringLiteral("select"), QStringLiteral("Row to select for --screenshot."), QStringLiteral("n"), QStringLiteral("0"));
+    QCommandLineOption preset(QStringLiteral("preset"), QStringLiteral("Apply this preset after connecting (no confirmation)."), QStringLiteral("n"));
+    QCommandLineOption open(QStringLiteral("open"), QStringLiteral("Load this configuration file at start."), QStringLiteral("file"));
+    QCommandLineOption size(QStringLiteral("size"), QStringLiteral("Window size, e.g. 1680x900 (for screenshots)."), QStringLiteral("WxH"));
+    cli.addOptions({ demo, port, shot, tab, select, preset, open, size });
+    cli.process(app);
+
+    MainWindow w;
+    if (cli.isSet(preset))
+        w.applyPresetOnStart(cli.value(preset).toInt());
+    if (cli.isSet(shot))
+        w.scheduleScreenshot(cli.value(shot), cli.value(tab), cli.value(select).toInt());
+    if (cli.isSet(size))
+    {
+        const QStringList wh = cli.value(size).split(QLatin1Char('x'));
+        if (wh.size() == 2)
+            w.resize(wh[0].toInt(), wh[1].toInt());
+    }
+    w.show();
+    if (cli.isSet(open))
+        w.loadFile(cli.value(open));
+
+    if (cli.isSet(demo))      w.connectDemo();
+    else if (cli.isSet(port)) w.connectPort(cli.value(port));
+
+    return app.exec();
+}

@@ -1,0 +1,483 @@
+#include "gpioconfig.h"
+
+#include <QCoreApplication>
+
+#include <QJsonArray>
+
+namespace Gpio {
+
+// ── Type tables ─────────────────────────────────────────────────────────────
+static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
+{
+    // key               name                pins relays pwm  params                 unit
+    { "singleSteady",    QT_TRANSLATE_NOOP("Gpio", "Single steady"),     1, true,  false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "One pin follows the state.") },
+    { "singlePulse",     QT_TRANSLATE_NOOP("Gpio", "Single pulse"),      1, true,  false, ParamKind::SwitchTime, 100,
+      QT_TRANSLATE_NOOP("Gpio", "One pin is pulsed for the switch time (firmware: value x 100 ms).") },
+    { "singleFlashing",  QT_TRANSLATE_NOOP("Gpio", "Single flashing"),   1, false, false, ParamKind::SwitchTime, 10,
+      QT_TRANSLATE_NOOP("Gpio", "Pin A blinks while the state is on (value x 10 ms per half period).") },
+    { "doubleSteady",    QT_TRANSLATE_NOOP("Gpio", "Double steady"),     2, true,  false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Pin A = state, pin B = inverted state.") },
+    { "doublePulse",     QT_TRANSLATE_NOOP("Gpio", "Double pulse"),      2, true,  false, ParamKind::SwitchTime, 10,
+      QT_TRANSLATE_NOOP("Gpio", "Turnout coil pair: pin A or B is pulsed (value x 10 ms).") },
+    { "doubleFlashing",  QT_TRANSLATE_NOOP("Gpio", "Double flashing"),   2, false, false, ParamKind::SwitchTime, 10,
+      QT_TRANSLATE_NOOP("Gpio", "Pins A and B blink alternately (value x 10 ms per half period).") },
+    { "swingLight",      QT_TRANSLATE_NOOP("Gpio", "Swing light"),       2, false, false, ParamKind::Swing,      10,
+      QT_TRANSLATE_NOOP("Gpio", "Level crossing style: A, B, pause (values x 10 ms).") },
+    { "firePlaceLight",  QT_TRANSLATE_NOOP("Gpio", "Fireplace"),         2, false, true,  ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Random flicker on PWM pins A and B.") },
+    { "tubeLight",       QT_TRANSLATE_NOOP("Gpio", "TL tube"),           1, false, true,  ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Fluorescent tube start-up flicker on PWM pin A.") },
+    { "welderLight",     QT_TRANSLATE_NOOP("Gpio", "Welder"),            1, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Random welding flashes on pin A.") },
+    { "fourToneSignal",  QT_TRANSLATE_NOOP("Gpio", "4-aspect signal"),   4, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Four LEDs A-D. The aspect comes from DCC extended (signal) packets or a route; the board keeps the last aspect in EEPROM.") },
+    { "servo",           QT_TRANSLATE_NOOP("Gpio", "Servo"),             1, true,  false, ParamKind::Servo,      0,
+      QT_TRANSLATE_NOOP("Gpio", "Servo on pin A, sweeps between min and max.") },
+    { "pwm",             QT_TRANSLATE_NOOP("Gpio", "PWM"),               1, false, true,  ParamKind::PwmValue,   0,
+      QT_TRANSLATE_NOOP("Gpio", "Fixed PWM value on pin A.") },
+    { "notInUse",        QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
+    { "unknown",         QT_TRANSLATE_NOOP("Gpio", "Unknown type"),      4, true,  false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
+};
+
+const OutputTypeInfo &outputTypeInfo(quint8 type)
+{
+    return kOutputTypes[type < OutputTypeCount ? type : OutputTypeCount];
+}
+
+static const InputTypeInfo kInputTypes[InputTypeCount + 1] =
+{
+    // key          name          addr   output route
+    { "momentary",  QT_TRANSLATE_NOOP("Gpio", "Toggle"),       true,  true,  false, QT_TRANSLATE_NOOP("Gpio", "Each press (falling edge) or DCC command toggles the output.") },
+    { "latching",   QT_TRANSLATE_NOOP("Gpio", "Absolute"),     true,  true,  false, QT_TRANSLATE_NOOP("Gpio", "The output follows the input level or the DCC direction.") },
+    { "route",      QT_TRANSLATE_NOOP("Gpio", "Route"),        true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).") },
+    { "notInUse",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
+    { "recorder",   QT_TRANSLATE_NOOP("Gpio", "Recorder"),     false, false, false, QT_TRANSLATE_NOOP("Gpio", "Long press = record on/off, short press = play on/off.") },
+    { "feedback",   QT_TRANSLATE_NOOP("Gpio", "Feedback"),     false, true,  false, QT_TRANSLATE_NOOP("Gpio", "Sensor for the recorder; 'output' is used as feedback id.") },
+    { "unknown",    QT_TRANSLATE_NOOP("Gpio", "Unknown"),      true,  true,  true,  QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
+};
+
+const InputTypeInfo &inputTypeInfo(quint8 type)
+{
+    return kInputTypes[type < InputTypeCount ? type : InputTypeCount];
+}
+
+QString trGpio(const char *text) { return QCoreApplication::translate("Gpio", text); }
+QString outputTypeName(quint8 type) { return trGpio(outputTypeInfo(type).name); }
+QString outputTypeHelp(quint8 type) { return trGpio(outputTypeInfo(type).help); }
+QString inputTypeName(quint8 type)  { return trGpio(inputTypeInfo(isRouteType(type) ? quint8(Route) : type).name); }
+QString inputTypeHelp(quint8 type)  { return trGpio(inputTypeInfo(isRouteType(type) ? quint8(Route) : type).help); }
+
+// ── OutputConfig ────────────────────────────────────────────────────────────
+quint32 OutputConfig::switchTime() const
+{
+    return quint32(data[0]) | quint32(data[1]) << 8 | quint32(data[2]) << 16 | quint32(data[3]) << 24;
+}
+
+void OutputConfig::setSwitchTime(quint32 v)
+{
+    for (int i = 0; i < 4; ++i)
+        data[i] = quint8(v >> (8 * i));
+}
+
+void OutputConfig::setSwing(quint16 pulse, quint16 pause)
+{
+    data[0] = quint8(pulse);  data[1] = quint8(pulse >> 8);
+    data[2] = quint8(pause);  data[3] = quint8(pause >> 8);
+}
+
+quint8 OutputConfig::pin(int slot) const
+{
+    switch (slot)
+    {
+    case 0: return pinA;   case 1: return pinB;   case 2: return pinC;   case 3: return pinD;
+    case 4: return relayA; case 5: return relayB; case 6: return relayC;
+    }
+    return PinNA;
+}
+
+void OutputConfig::setPin(int slot, quint8 p)
+{
+    switch (slot)
+    {
+    case 0: pinA   = p; break;  case 1: pinB   = p; break;
+    case 2: pinC   = p; break;  case 3: pinD   = p; break;
+    case 4: relayA = p; break;  case 5: relayB = p; break;
+    case 6: relayC = p; break;
+    }
+}
+
+OutputConfig OutputConfig::normalized() const
+{
+    OutputConfig c = *this;
+    for (int s = 0; s < 7; ++s)
+        c.setPin(s, c.pin(s) & 0x3F);   // 6-bit fields
+    c.type  &= 0x0F;                     // 4-bit field
+    c.state &= 0x01;                     // 1-bit field
+    return c;
+}
+
+bool OutputConfig::operator==(const OutputConfig &o) const
+{
+    for (int s = 0; s < 7; ++s)
+        if (pin(s) != o.pin(s)) return false;
+    return type == o.type && state == o.state && data == o.data;
+}
+
+static QJsonValue pinToJson(quint8 p) { return p == PinNA ? QJsonValue() : QJsonValue(int(p)); }
+static quint8 pinFromJson(const QJsonValue &v) { return v.isDouble() ? quint8(v.toInt() & 0x3F) : PinNA; }
+
+QJsonObject OutputConfig::toJson() const
+{
+    QJsonObject o;
+    o["type"]   = QString::fromUtf8(outputTypeInfo(type).key);
+    o["pinA"]   = pinToJson(pinA);   o["pinB"]   = pinToJson(pinB);
+    o["pinC"]   = pinToJson(pinC);   o["pinD"]   = pinToJson(pinD);
+    o["relayA"] = pinToJson(relayA); o["relayB"] = pinToJson(relayB);
+    o["relayC"] = pinToJson(relayC);
+    o["state"]  = int(state);
+    QJsonArray d;
+    for (quint8 b : data) d.append(int(b));
+    o["data"]   = d;
+    return o;
+}
+
+OutputConfig OutputConfig::fromJson(const QJsonObject &o)
+{
+    OutputConfig c;
+    const QString key = o["type"].toString();
+    for (quint8 t = 0; t < OutputTypeCount; ++t)
+        if (key == QLatin1String(kOutputTypes[t].key)) c.type = t;
+    c.pinA   = pinFromJson(o["pinA"]);   c.pinB   = pinFromJson(o["pinB"]);
+    c.pinC   = pinFromJson(o["pinC"]);   c.pinD   = pinFromJson(o["pinD"]);
+    c.relayA = pinFromJson(o["relayA"]); c.relayB = pinFromJson(o["relayB"]);
+    c.relayC = pinFromJson(o["relayC"]);
+    c.state  = quint8(o["state"].toInt() & 1);
+    const QJsonArray d = o["data"].toArray();
+    for (int i = 0; i < 4 && i < d.size(); ++i)
+        c.data[i] = quint8(d.at(i).toInt());
+    return c;
+}
+
+QByteArray encodeOutput(int index, const OutputConfig &c, bool legacy)
+{
+    QByteArray p;
+    p.append(char(index));
+    for (int s = 0; s < 7; ++s)
+        p.append(char(c.pin(s)));
+    p.append(char(c.type));
+    p.append(char(c.state));
+    for (quint8 b : c.data)
+        p.append(char(b));
+    return legacy ? p.left(13) : p;   // 14 bytes
+}
+
+bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c, bool legacy)
+{
+    const int need = legacy ? 13 : 14;
+    if (p.size() < need)
+        return false;
+    auto at = [&](int i) { return quint8(p.at(i)); };
+    index = at(0);
+    for (int s = 0; s < 7; ++s)
+        c.setPin(s, at(1 + s));
+    c.type  = at(8);
+    c.state = at(9);
+    for (int i = 0; i < 4; ++i)
+        c.data[i] = (10 + i < need) ? at(10 + i) : 0;
+    return index >= 0 && index < NumOutputs;
+}
+
+// ── Route steps ─────────────────────────────────────────────────────────────
+// byte 0: bits 0-3 output id, bit 4 raw value, bits 5-7 reserved (0)
+// byte 1: value
+// byte 2: delay bits 0-7    byte 3: bits 0-5 = delay bits 8-13, bits 6-7 reserved (0)
+QByteArray encodeStep(const RouteStep &s)
+{
+    const quint16 d = qMin<quint16>(s.delay, MaxStepDelay);
+    QByteArray b(4, '\0');
+    b[0] = char((s.output & 0x0F) | (s.raw ? 0x10 : 0));
+    b[1] = char(s.value);
+    b[2] = char(d & 0xFF);
+    b[3] = char((d >> 8) & 0x3F);
+    return b;
+}
+
+RouteStep decodeStep(const char *bytes)
+{
+    const quint8 *b = reinterpret_cast<const quint8 *>(bytes);
+    RouteStep s;
+    s.output = b[0] & 0x0F;
+    s.raw    = (b[0] & 0x10) != 0;
+    s.value  = b[1];
+    s.delay  = quint16(b[2] | (b[3] & 0x3F) << 8);
+    return s;
+}
+
+StepKind stepKind(quint8 outputType)
+{
+    switch (outputType)
+    {
+    case ServoType:      return StepKind::ServoStateOrAngle;
+    case FourToneSignal: return StepKind::Aspect;
+    case Pwm:            return StepKind::PwmValue;
+    }
+    return StepKind::State;
+}
+
+RouteStep defaultStep(int output, quint8 outputType)
+{
+    RouteStep s;
+    s.output = output;
+    switch (stepKind(outputType))
+    {
+    case StepKind::Aspect:   s.raw = true;  s.value = 0;   break;
+    case StepKind::PwmValue: s.raw = true;  s.value = 255; break;
+    default:                 s.raw = false; s.value = 1;   break;
+    }
+    return s;
+}
+
+// ── InputConfig ─────────────────────────────────────────────────────────────
+void InputConfig::syncLinkedFromRoute()
+{
+    linked.fill(LinkNone);
+    for (int i = 0; i < route.size() && i < MaxLinked; ++i)
+    {
+        const RouteStep &s = route[i];
+        const quint8 state = s.raw ? quint8(s.value != 0) : quint8(s.value & 1);
+        linked[i] = makeLink(quint8(s.output), state);
+    }
+}
+
+void InputConfig::routeFromLinked()
+{
+    route.clear();
+    for (quint8 v : linked)
+    {
+        const quint8 id = linkId(v);
+        if (id >= NumOutputs)
+            break;                       // 0x7F = end, anything else ends the route too (firmware)
+        RouteStep s;
+        s.output = id;
+        s.value  = linkState(v);
+        s.raw    = false;
+        s.delay  = V1StepDelay;
+        route.append(s);
+    }
+}
+
+InputConfig InputConfig::asV1() const
+{
+    InputConfig c = *this;
+    c.syncLinkedFromRoute();
+    c.routeFromLinked();
+    return c;
+}
+
+InputConfig InputConfig::normalized() const
+{
+    InputConfig c = *this;
+    c.address  &= 0x0FFF;   // 12 bits
+    c.pin      &= 0x3F;     //  6 bits
+    c.type     &= 0x07;     //  3 bits
+    c.outputId &= 0x0F;     //  4 bits
+    if (c.route.size() > MaxRouteSteps)
+        c.route.resize(MaxRouteSteps);
+    for (RouteStep &s : c.route)
+    {
+        s.output &= 0x0F;
+        s.delay   = qMin<quint16>(s.delay, MaxStepDelay);
+    }
+    return c;
+}
+
+bool InputConfig::operator==(const InputConfig &o) const
+{
+    return address == o.address && pin == o.pin && type == o.type
+        && outputId == o.outputId && route == o.route;
+}
+
+QJsonObject InputConfig::toJson() const
+{
+    QJsonObject o;
+    o["type"]    = QString::fromUtf8(inputTypeInfo(type).key);
+    o["address"] = address == AddrNone ? QJsonValue() : QJsonValue(int(address));
+    o["pin"]     = pinToJson(pin);
+    o["output"]  = int(outputId);
+    QJsonArray steps;
+    for (const RouteStep &s : route)
+    {
+        QJsonObject step;
+        step["output"] = s.output;
+        step["value"]  = int(s.value);
+        step["raw"]    = s.raw;
+        step["delay"]  = int(s.delay);       // 0.1 s units
+        steps.append(step);
+    }
+    o["route"] = steps;
+    return o;
+}
+
+InputConfig InputConfig::fromJson(const QJsonObject &o)
+{
+    InputConfig c;
+    const QString key = o["type"].toString();
+    for (quint8 t = 0; t < InputTypeCount; ++t)
+        if (key == QLatin1String(kInputTypes[t].key)) c.type = t;
+    if (key == QLatin1String("routeFalling"))
+        c.type = Route;                  // files from before the edge choice was dropped
+    c.address  = o["address"].isDouble() ? quint16(o["address"].toInt() & 0x0FFF) : AddrNone;
+    c.pin      = pinFromJson(o["pin"]);
+    c.outputId = quint8(o["output"].toInt() & 0x0F);
+    const QJsonArray steps = o["route"].toArray();
+    for (int i = 0; i < MaxRouteSteps && i < steps.size(); ++i)
+    {
+        const QJsonObject step = steps.at(i).toObject();
+        RouteStep s;
+        s.output = step["output"].toInt() & 0x0F;
+        s.value  = quint8(step.contains("value") ? step["value"].toInt() : step["state"].toInt());  // "state": older files
+        s.raw    = step["raw"].toBool(false);
+        s.delay  = quint16(step.contains("delay") ? step["delay"].toInt() : V1StepDelay);
+        c.route.append(s);
+    }
+    c.syncLinkedFromRoute();
+    return c.normalized();
+}
+
+QByteArray encodeInput(int index, const InputConfig &c)
+{
+    InputConfig v1 = c;
+    v1.syncLinkedFromRoute();            // v2 firmware ignores these bytes, v1 uses them
+    QByteArray p;
+    p.append(char(index));
+    p.append(char(c.address >> 8));
+    p.append(char(c.address & 0xFF));
+    p.append(char(c.pin));
+    p.append(char(c.type));
+    p.append(char(c.outputId));
+    for (quint8 v : v1.linked)
+        p.append(char(v));
+    return p;   // 14 bytes
+}
+
+bool decodeInput(const QByteArray &p, int &index, InputConfig &c)
+{
+    if (p.size() < 14)
+        return false;
+    auto at = [&](int i) { return quint8(p.at(i)); };
+    index      = at(0);
+    c.address  = quint16(at(1) << 8 | at(2));
+    c.pin      = at(3);
+    c.type     = at(4);
+    c.outputId = at(5);
+    for (int i = 0; i < MaxLinked; ++i)
+        c.linked[i] = at(6 + i);
+    c.routeFromLinked();                 // v2: replaced by GET_ROUTE afterwards
+    return index >= 0 && index < NumInputs;
+}
+
+// ── BoardConfig ─────────────────────────────────────────────────────────────
+QJsonObject BoardConfig::toJson() const
+{
+    QJsonObject root;
+    root["format"]  = QStringLiteral("GPIOcore-config");
+    root["version"] = 1;
+    QJsonArray outs, ins;
+    for (const auto &o : outputs) outs.append(o.toJson());
+    for (const auto &i : inputs)  ins.append(i.toJson());
+    root["outputs"] = outs;
+    root["inputs"]  = ins;
+    return root;
+}
+
+bool BoardConfig::fromJson(const QJsonObject &root, BoardConfig &out, QString *error)
+{
+    if (root["format"].toString() != QLatin1String("GPIOcore-config"))
+    {
+        if (error) *error = QStringLiteral("Not a GPIOcore configuration file.");
+        return false;
+    }
+    const QJsonArray outs = root["outputs"].toArray();
+    const QJsonArray ins  = root["inputs"].toArray();
+    if (outs.size() != NumOutputs || ins.size() != NumInputs)
+    {
+        if (error) *error = QStringLiteral("Expected %1 outputs and %2 inputs.").arg(NumOutputs).arg(NumInputs);
+        return false;
+    }
+    for (int i = 0; i < NumOutputs; ++i) out.outputs[i] = OutputConfig::fromJson(outs.at(i).toObject());
+    for (int i = 0; i < NumInputs;  ++i) out.inputs[i]  = InputConfig::fromJson(ins.at(i).toObject());
+    return true;
+}
+
+// ── Board / pins ────────────────────────────────────────────────────────────
+BoardOptions &boardOptions()
+{
+    static BoardOptions options;
+    return options;
+}
+
+QString pinName(quint8 pin)
+{
+    if (pin < 14)       return QStringLiteral("D%1").arg(pin);
+    if (pin < NumPins)  return QStringLiteral("A%1").arg(pin - 14);
+    if (pin == PinNA)   return QStringLiteral("—");
+    return QStringLiteral("?%1").arg(pin);
+}
+
+int dccNextPort(quint8 pin)
+{
+    if (pin >= 3 && pin <= 12)       return pin - 2;     // port 1-10 = D3-D12
+    if (pin >= 14 && pin < NumPins)  return pin - 3;     // port 11-16 = A0-A5
+    return 0;
+}
+
+QString pinLabel(quint8 pin)
+{
+    if (boardOptions().dccNext && dccNextPort(pin))
+        return QStringLiteral("%1 · port %2").arg(pinName(pin)).arg(dccNextPort(pin));
+    return pinName(pin);
+}
+
+bool isPwmPin(quint8 pin)
+{
+    return pin == 3 || pin == 5 || pin == 6 || pin == 9 || pin == 10 || pin == 11;
+}
+
+QString pinReservedReason(quint8 pin)
+{
+    const BoardOptions &b = boardOptions();
+    switch (pin)
+    {
+    case 0:  return b.serialPinsUsable ? QString() : trGpio("Serial RX (GUI link)");
+    case 1:  return b.serialPinsUsable ? QString() : trGpio("Serial TX (GUI link)");
+    case 2:  return trGpio("DCC input");
+    case 13: return b.dccNext ? trGpio("not available on a DCCnext") : QString();
+    }
+    return QString();
+}
+
+QString pinNote(quint8 pin)
+{
+    if (pin < 2 && boardOptions().serialPinsUsable)
+        return trGpio("shared with serial: only active when no GUI is connected");
+    return QString();
+}
+
+QStringList presetNames()
+{
+    return {
+        trGpio("0 – 16 servos"),
+        trGpio("1 – 8 servos + unifrog relay"),
+        trGpio("2 – 5 servos + electrofrog relays"),
+        trGpio("3 – 16 single steady"),
+        trGpio("4 – 8 double pulse"),
+        trGpio("5 – 5 double pulse + unifrog relay"),
+        trGpio("6 – 4 double pulse + electrofrog relays"),
+        trGpio("7 – 8 double steady"),
+    };
+}
+
+} // namespace Gpio

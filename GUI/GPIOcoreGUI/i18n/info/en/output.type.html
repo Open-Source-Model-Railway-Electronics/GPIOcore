@@ -1,0 +1,19 @@
+<h3>What is connected to this output?</h3>
+<ul>
+<li><b>Single steady</b> — one pin on or off. LEDs, a relay module, lamps (via a transistor or relay).</li>
+<li><b>Single pulse</b> — one pin gets a short pulse. For a decoupler or a single-coil device.</li>
+<li><b>Single flashing</b> — one pin blinks while switched on. A warning light.</li>
+<li><b>Double steady</b> — two pins: A on and B off, or the other way round. Two-colour signals, two relays.</li>
+<li><b>Double pulse</b> — two pins, one of them gets a short pulse. For <b>coil turnout motors</b>
+(Peco, Roco, Fleischmann …): A = one coil, B = the other coil.</li>
+<li><b>Double flashing</b> — two pins blink alternately.</li>
+<li><b>Swing light</b> — two lights take turns with a pause: level crossing lights.</li>
+<li><b>Fireplace / TL tube / welder</b> — lighting effects: flickering fire, a fluorescent tube that
+flickers on, welding flashes. (Fireplace and TL tube need PWM pins.)</li>
+<li><b>4-aspect signal</b> — four LEDs (red, green, yellow, white …), set by DCC signal commands or by a route.</li>
+<li><b>Servo</b> — a model servo as turnout motor. Slow, realistic movement.</li>
+<li><b>PWM</b> — a fixed brightness for a lamp or LED string.</li>
+<li><b>Not in use</b> — nothing connected.</li>
+</ul>
+<p><b>Important for coils:</b> an Arduino pin cannot drive a coil directly. Use a driver board (for example a
+ULN2803 or a MOSFET module) between the pin and the coil.</p>

@@ -1,0 +1,16 @@
+<h3>Frog polarity — electrofrog or unifrog?</h3>
+<p>The <b>frog</b> is the point of a turnout where the two rails cross. On “live frog” turnouts this piece is
+metal and must get the <b>same polarity as the route that is set</b>. If it gets the wrong one, locos stall or
+cause a short circuit. A relay switches the frog when the turnout moves.</p>
+<p>Look at your turnout and choose <b>one</b>:</p>
+<ul>
+<li><b>None (dead frog)</b> — the frog is plastic (Peco <i>Insulfrog</i>, most set-track). Nothing to do.</li>
+<li><b>Electrofrog — 2 relays</b> (Peco <i>Electrofrog</i> and similar). Relay A is switched on for
+“straight”, relay B for “curved”. While the turnout is moving <b>both are off</b> for a moment, so there is never a
+short circuit (break before make).</li>
+<li><b>Unifrog — 1 relay</b> (Peco <i>Unifrog</i>). The frog has one wire. One change-over relay connects it to the
+correct rail. With a servo it switches exactly when the servo passes the middle; with a coil motor at the end of
+the pulse.</li>
+</ul>
+<p>You can only use one of the two. Choosing one removes the pins of the other.</p>
+<p><b>Wiring:</b> use a relay <i>module</i> (with transistor and diode) — an Arduino pin cannot drive a bare relay.</p>

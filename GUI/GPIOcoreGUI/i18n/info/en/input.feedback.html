@@ -1,0 +1,8 @@
+<h3>Feedback — a sensor the recorder waits for</h3>
+<p>A feedback input is a <b>track sensor</b>: a reed contact under the track with a magnet under the train,
+a light barrier, or a current detector. It tells the board: “a train is here”.</p>
+<p><b>Why?</b> Trains do not always take exactly the same time. When you <b>record</b>, the moment the sensor
+triggers is stored. When the recording is <b>played back</b>, the board stops at that point and <b>waits until the
+sensor triggers again</b>. So the train decides the timing, not a clock.</p>
+<p><b>Feedback id</b>: a number (0–15) to tell sensors apart. Give every sensor its own number.</p>
+<p>Wire it like a button: sensor between the pin and GND.</p>

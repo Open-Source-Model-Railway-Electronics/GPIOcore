@@ -1,0 +1,10 @@
+<h3>Pins D0 and D1</h3>
+<p>D0 and D1 are the wires the Arduino uses to talk to this program over USB. Newer boards can still use them for
+your layout:</p>
+<ul>
+<li>When the board starts, it waits <b>5 seconds</b> for this program.</li>
+<li>If the program connects, D0 / D1 stay reserved for USB while you configure. Things on those pins do
+<b>not</b> work then.</li>
+<li>If nothing connects (normal operation on the layout), D0 / D1 become normal pins.</li>
+</ul>
+<p>Use them for simple things like LEDs. Avoid heavy loads on D0: they can disturb uploading new firmware.</p>

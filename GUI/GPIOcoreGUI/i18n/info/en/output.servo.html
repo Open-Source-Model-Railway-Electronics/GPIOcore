@@ -1,0 +1,20 @@
+<h3>Setting up a servo</h3>
+<p>A servo turns to an angle between 0° and 180°. As a turnout motor it moves between two positions:</p>
+<ul>
+<li><b>Position 0 (curved)</b> — the angle for “curved”.</li>
+<li><b>Position 1 (straight)</b> — the angle for “straight”.</li>
+<li><b>Speed</b> — milliseconds per degree. 20 ms/° is calm and realistic; 5 is fast; 50 is very slow.
+A full movement takes |position 1 − position 0| × speed.</li>
+</ul>
+<h4>Finding the right positions — use “Live”</h4>
+<ol>
+<li>Connect the board and tick <b>Live</b>.</li>
+<li>Drag the <i>Position 0</i> slider slowly. The servo on the layout moves along with it.
+Stop when the turnout blade just touches the rail.</li>
+<li>Do the same for <i>Position 1</i>.</li>
+<li>Click <b>Write</b> to store it.</li>
+</ol>
+<p><b>Tip:</b> do not push the blade too hard against the rail: the servo will hum and get warm.
+Go back 2–3° from the point where it touches.</p>
+<p>Wiring: brown/black = GND, red = 5 V (from a separate 5 V supply for several servos!), orange/yellow = signal to
+the pin.</p>

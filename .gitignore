@@ -1,0 +1,8 @@
+# Build output
+build/
+**/build/
+*.user
+*.user.*
+.qtcreator/
+__pycache__/
+*.qm

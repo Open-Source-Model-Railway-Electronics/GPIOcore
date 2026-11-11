@@ -1,0 +1,134 @@
+#pragma once
+#include "src/stateMachineClass.h"
+#include "src/ST.h"
+#include "config.h"
+#include <EEPROM.h>
+
+// <OPCODE_SET_INPUT_DATA> <pinA> <pinB> <relayPinA> <relayPinB> <relayPinC> <type> <state> <union byte1> <union byte2> <union byte3> <union byte4>
+// <OPCODE_SET_INPUT_DATA> <index> <addr H> <addr L> <pin> <type> <output> <linked 0> <linked 1> <linked 2> <linked 3> <linked 4> <linked 5> <linked 6> <linked 7>
+
+typedef struct eeOutputSettings 
+{
+    uint8_t     pinA      : 6  ; // primary IO pin
+    uint8_t     pinB      : 6  ; // secondary pin
+    uint8_t     pinC      : 6  ; // tertiary pin
+    uint8_t     pinD      : 6  ; // quaternary pin
+    uint8_t     relayPinA : 6  ; // electrofrog
+    uint8_t     relayPinB : 6  ; // electrofrog
+    uint8_t     relayPinC : 6  ; // unifrog
+    uint8_t     type      : 4  ;
+    uint8_t     state     : 1  ;
+
+    union {
+        uint32_t switchTime ;  // switch time for flashing or pulsed IO
+
+        struct {               // servo settings
+            uint8_t servoMin ;
+            uint8_t servoMax ;
+            uint8_t servoSpeed ;
+            uint8_t servoPattern ;
+        } servo ;
+
+        struct {               // swing light settings
+            uint16_t pulseTime ;   // how long each LED is on (ms)
+            uint16_t pauseTime ;   // dark pause between cycles (ms)
+        } swing ;
+
+        uint8_t data[4] ;
+
+        uint8_t pwmVal ;    // PWM mode (bijv. RGBW)
+    };
+
+} Settings ;
+
+
+enum types
+{
+    singleSteady,
+    singlePulse,
+    singleFlashing,
+    doubleSteady,
+    doublePulse,
+    doubleFlashing,
+    swingLight,
+    firePlaceLight,
+    tubeLight,
+    welderLight,
+    fourToneSignal,
+    servoType,
+    PWM,
+    notInUse
+} ;
+
+const Settings defaultSettings = {
+    1,      // pinA
+    NA,     // pinB
+    NA,     // pinC
+    NA,     // pinD
+    NA,     // relayPinA
+    NA,     // relayPinB
+    NA,     // relayPinC
+    singleSteady, // type
+    0,      // state
+    50      // switchTime
+};
+
+enum state
+{
+    idle,
+    turnOffRelays,
+    moveActuator,
+    flashing,
+    swingLightState,
+    firePlaceLightState,
+    tubeLightState,
+    welderLightState,
+    fourToneSignalState,
+    pwm,
+    turnOnRelays,
+} ;
+
+
+class Output
+{
+public:
+    Output() ;
+    uint8_t     update() ;
+
+    void        set( Settings *data ) ;
+    Settings   *get() ;
+    
+    uint8_t     setVal(   uint8_t   _val ) ;
+    uint8_t     setState( uint8_t _state ) ;
+    void        defaults() ;
+    void        saveEEPROM() ;
+    void        loadEEPROM() ;
+    void        assignEEPROM() ;
+
+    Settings    eedata ;
+
+private:
+    StateMachine sm ;
+
+    uint8_t     idleF() ;
+    uint8_t     turnOffRelaysF() ;
+    uint8_t     moveActuatorF() ;
+    uint8_t     flashingF() ;
+    uint8_t     swingLightStateF() ;
+    uint8_t     firePlaceLightStateF() ;
+    uint8_t     tubeLightStateF() ;
+    uint8_t     welderLightStateF() ;
+    uint8_t     fourToneSignalStateF() ;
+    uint8_t     pwmF() ;
+    uint8_t     turnOnRelaysF() ;
+    uint8_t     sweep() ;
+    
+    uint16_t    eeAddress ;
+    uint8_t     oldPos ;
+    uint8_t     pos ;
+    uint8_t     counter ;
+
+    Trigger     stopTrigger ;
+    Timer       timer ;
+    uint8_t     attached : 1 ;
+} ;

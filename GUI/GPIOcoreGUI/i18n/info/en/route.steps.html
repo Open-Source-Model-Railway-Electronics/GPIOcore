@@ -1,0 +1,30 @@
+<h3>Route steps</h3>
+<p>A route is a list of things to do, from top to bottom. Each line (step) sets <b>one output</b> and then
+<b>waits</b> a moment before the next step.</p>
+<p><b>When does the route start?</b> When the button on the input pin is <b>pressed</b>, or when the command
+station sends <b>any command</b> (straight or curved) to the input's DCC address.</p>
+
+<h4>The columns</h4>
+<ul>
+<li><b>Output</b> — what this step operates.</li>
+<li><b>Value</b> — what the output should do. This depends on the kind of output:
+  <ul>
+  <li>turnout, light, relay: <b>curved (0)</b> or <b>straight (1)</b>;</li>
+  <li>4-aspect signal: an <b>aspect number</b> (0–255) — the same number your command station uses;</li>
+  <li>servo: curved, straight, or an exact <b>angle</b> between 10° and 170°;</li>
+  <li>PWM: a brightness / speed value 0–255.</li>
+  </ul></li>
+<li><b>Wait after</b> — how long to wait before the next step, in tenths of a second
+(0.3 s is the default, up to 1638 s ≈ 27 minutes). Coil turnouts drawing a lot of current at once can make your
+power supply dip: a short wait between them helps.</li>
+</ul>
+
+<h4>How to make one</h4>
+<ol>
+<li>Choose an output in the first line, <i>or</i> drag an output onto this input in the middle of the screen.</li>
+<li>Click <b>+ Add step</b> (or drag again) for the next one.</li>
+<li>Use ▲ ▼ to change the order, and the <b>bin</b> to delete a step.</li>
+</ol>
+<p>The same output may appear more than once. Example: a servo that first goes to 45° and later to 135° for
+a slow, two-stage movement.</p>
+<p>Older boards (protocol v1) only store 8 steps with curved / straight and a fixed 0.5 s.</p>

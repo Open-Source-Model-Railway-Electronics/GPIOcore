@@ -1,0 +1,448 @@
+{
+  "format": "GPIOcore-config",
+  "version": 1,
+  "outputs": [
+    {
+      "type": "servo",
+      "pinA": 3,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": 4,
+      "relayB": 5,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        70,
+        110,
+        20,
+        0
+      ]
+    },
+    {
+      "type": "servo",
+      "pinA": 6,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": 7,
+      "state": 0,
+      "data": [
+        60,
+        120,
+        15,
+        0
+      ]
+    },
+    {
+      "type": "doublePulse",
+      "pinA": 8,
+      "pinB": 9,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        25,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "doublePulse",
+      "pinA": 10,
+      "pinB": 11,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        25,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "fourToneSignal",
+      "pinA": 14,
+      "pinB": 15,
+      "pinC": 16,
+      "pinD": 17,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "singleSteady",
+      "pinA": 12,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "servo",
+      "pinA": 18,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        30,
+        150,
+        10,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "type": "momentary",
+      "address": 1,
+      "pin": 0,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "latching",
+      "address": 2,
+      "pin": null,
+      "output": 1,
+      "route": []
+    },
+    {
+      "type": "route",
+      "address": 10,
+      "pin": 1,
+      "output": 0,
+      "route": [
+        {
+          "output": 0,
+          "value": 1,
+          "raw": false,
+          "delay": 3
+        },
+        {
+          "output": 1,
+          "value": 0,
+          "raw": false,
+          "delay": 3
+        },
+        {
+          "output": 2,
+          "value": 1,
+          "raw": false,
+          "delay": 5
+        },
+        {
+          "output": 4,
+          "value": 3,
+          "raw": true,
+          "delay": 20
+        },
+        {
+          "output": 6,
+          "value": 45,
+          "raw": true,
+          "delay": 10
+        },
+        {
+          "output": 6,
+          "value": 135,
+          "raw": true,
+          "delay": 3
+        }
+      ]
+    },
+    {
+      "type": "route",
+      "address": 11,
+      "pin": null,
+      "output": 0,
+      "route": [
+        {
+          "output": 0,
+          "value": 0,
+          "raw": false,
+          "delay": 3
+        },
+        {
+          "output": 3,
+          "value": 1,
+          "raw": false,
+          "delay": 3
+        },
+        {
+          "output": 4,
+          "value": 1,
+          "raw": true,
+          "delay": 3
+        }
+      ]
+    },
+    {
+      "type": "recorder",
+      "address": null,
+      "pin": 13,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "feedback",
+      "address": null,
+      "pin": 19,
+      "output": 2,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": []
+    }
+  ]
+}
