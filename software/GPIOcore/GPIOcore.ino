@@ -192,6 +192,8 @@ void notifyEvent( uint8_t data1, uint16_t data2, uint8_t data3 )
 // ── Recorder control — called by Input with RECORDER type ─────────────────────
 void callbackRecorder( uint8_t action )
 {
+    if( !( board.flags & BOARD_RECORDER ) ) return ;   // recorder disabled: the input does nothing
+
     if( action == RECORD_TOGGLE )
     {
         if( recorder.getState() == evRecording ) recorder.stopRecording() ;

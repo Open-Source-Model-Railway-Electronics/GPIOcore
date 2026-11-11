@@ -23,7 +23,7 @@ void Input::saveEEPROM() { EEPROM.put(eeAddress, eedata) ; }
 void Input::loadEEPROM()
 {
     EEPROM.get(eeAddress, eedata) ;
-    if( eedata.pin != NA ) pinMode( eedata.pin, INPUT_PULLUP ) ;   // button / contact to GND
+    if( eedata.pin < 20 ) pinMode( eedata.pin, INPUT_PULLUP ) ;   // A6/A7 (20/21) are analog only   // button / contact to GND
 
     if( eedata.type == RECORDER )       // configure timer for long/short press detection
     {
@@ -45,7 +45,7 @@ void Input::defaults()
 void Input::set( InputSettings *data )
 {
     eedata = *data ;
-    if( eedata.pin != NA ) pinMode( eedata.pin, INPUT_PULLUP ) ;
+    if( eedata.pin < 20 ) pinMode( eedata.pin, INPUT_PULLUP ) ;   // A6/A7 (20/21) are analog only
     saveEEPROM() ;
 }
 
@@ -82,7 +82,7 @@ void Input::update()
     // ── FEEDBACK input ────────────────────────────────────────────────────────
     if( eedata.type == FEEDBACK_INPUT && eedata.pin != NA )
     {
-        trigger.update( digitalRead( eedata.pin ) ) ;
+        trigger.update( readPin() ) ;
         if( trigger.toggled() )
         {
             if( callbackFeedback ) callbackFeedback( eedata.outputID, trigger.state ) ;
@@ -93,7 +93,7 @@ void Input::update()
     // ── RECORDER input (long press = record toggle, short press = play toggle) ─
     if( eedata.type == RECORDER && eedata.pin != NA )
     {
-        trigger.update( digitalRead( eedata.pin ) ) ;
+        trigger.update( readPin() ) ;
         outputTimer.update( !trigger.state ) ;  // count while button is held (active low)
 
         if( trigger.rose() )    // button released → determine press duration
@@ -107,7 +107,7 @@ void Input::update()
     // ── Normal inputs ─────────────────────────────────────────────────────────
     if( eedata.type != NOT_IN_USE && eedata.pin != NA )
     {
-        trigger.update( digitalRead( eedata.pin ) ) ;
+        trigger.update( readPin() ) ;
 
         if( trigger.toggled() )         // trigger.state is the new level: 1 = rising, 0 = falling edge
         {
@@ -122,6 +122,13 @@ void Input::update()
         }
     }
     triggerOutputs() ;
+}
+
+// Nano A6/A7 (pin 20/21) are analog only, external pull-up: analogRead() < 512 = pressed (LOW)
+uint8_t Input::readPin()
+{
+    if( eedata.pin >= 20 ) return analogRead( eedata.pin ) >= 512 ? HIGH : LOW ;
+    return digitalRead( eedata.pin ) ;
 }
 
 uint8_t Input::movesTurnout()
