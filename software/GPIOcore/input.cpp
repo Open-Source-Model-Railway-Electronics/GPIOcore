@@ -61,7 +61,7 @@ void Input::setDccAddress( uint16_t address, uint8_t direction )
     if( address         != eedata.myAddress ) return ;
     if( direction       >                 1 ) direction = 1 ;
 
-    if( eedata.type ==     ROUTE ) settingOutputs = 1 ;   // any DCC command, direction 0 and 1
+    if( eedata.type ==     ROUTE ) startRoute() ;         // any DCC command, direction 0 and 1
     if( eedata.type == MOMENTARY ) state  ^= 1 ;
     if( eedata.type == LATCHING  ) state   = direction ;
 
@@ -111,7 +111,7 @@ void Input::update()
 
         if( trigger.toggled() )         // trigger.state is the new level: 1 = rising, 0 = falling edge
         {
-            if( eedata.type ==     ROUTE && !trigger.state ) settingOutputs = 1 ;   // on press only
+            if( eedata.type ==     ROUTE && !trigger.state ) startRoute() ;         // on press only
             if( eedata.type == MOMENTARY && !trigger.state ) state ^= 1 ;           // toggle on press only
             if( eedata.type == LATCHING  ) state   = trigger.state ;
 
@@ -122,6 +122,38 @@ void Input::update()
         }
     }
     triggerOutputs() ;
+}
+
+uint8_t Input::movesTurnout()
+{
+    uint8_t route = this - input ;
+    uint8_t step[4] ;
+
+    for( uint8_t i = 0 ; i < routeCount[ route ] ; i ++ )
+    {
+        readStep( route, i, step ) ;
+        if( callbackIsTurnout && callbackIsTurnout( step[0] & STEP_ID ) ) return 1 ;
+    }
+    return 0 ;
+}
+
+void Input::startRoute()
+{
+    if( settingOutputs ) return ;           // already running
+
+    uint8_t mode = ( board.flags & BOARD_INTERLOCK ) >> 2 ;
+    uint8_t mine = mode == INTERLOCK_AUTO && movesTurnout() ;
+
+    for( uint8_t i = 0 ; i < 16 ; i ++ )
+    {
+        if( !input[i].settingOutputs ) continue ;
+        if( mode == INTERLOCK_ON ) return ;                         // one route at a time
+        if( mine && input[i].movesTurnout() ) return ;              // auto: one turnout route at a time
+    }
+
+    settingOutputs = 1 ;
+    index          = 0 ;
+    outputTimer.PT = 1 ;                    // first step right away
 }
 
 void Input::triggerOutputs()
@@ -136,7 +168,13 @@ void Input::triggerOutputs()
         {
             uint8_t step[4] ;
             readStep( route, index, step ) ;
-            callbackInput( step[0] & STEP_ID, step[1], 0 ) ;
+
+            uint8_t id = step[0] & STEP_ID ;
+            if( step[0] & STEP_RAW ) { if( callbackRouteValue ) callbackRouteValue( id, step[1] ) ; }  // aspect, angle, PWM
+            else                     { callbackInput( id, step[1], 0 ) ; }                            // curved / straight
+
+            if( board.flags & BOARD_TIMING ) outputTimer.PT = ( ( (uint16_t)( step[3] & 0x3F ) << 8 ) | step[2] ) * 100UL ;
+            else                             outputTimer.PT = board.delay * 100UL ;   // wait after this step, x 0.1 s
             index ++ ;
         }
         else

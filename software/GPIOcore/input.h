@@ -30,8 +30,11 @@ public:
 
     InputSettings   eedata ;
 
+    void    startRoute() ;          // interlocking, PROTOCOL.md section 10: a refused route is ignored
+
 private:
     void    triggerOutputs() ;
+    uint8_t movesTurnout() ;
 
     Trigger         trigger ;
     uint16_t        eeAddress ;
@@ -44,3 +47,5 @@ private:
 void callbackInput(    uint8_t outputID, uint8_t state, uint8_t value ) __attribute__((weak)) ;
 void callbackRecorder( uint8_t action                                 ) __attribute__((weak)) ;
 void callbackFeedback( uint8_t id,       uint8_t state                ) __attribute__((weak)) ;
+void callbackRouteValue( uint8_t outputID, uint8_t value              ) __attribute__((weak)) ;   // raw route step
+uint8_t callbackIsTurnout( uint8_t outputID                           ) __attribute__((weak)) ;

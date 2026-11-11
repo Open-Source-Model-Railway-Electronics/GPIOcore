@@ -166,6 +166,20 @@ void callbackInput( uint8_t index, uint8_t state, uint8_t val )
     recorder.storeEvent( OUTPUT_EVENT, index, state ) ; // logged when recording
 }
 
+// ── Raw route step: signal aspect, PWM value or servo angle ───────────────────
+void callbackRouteValue( uint8_t index, uint8_t value )
+{
+    if( output[index].eedata.type == servoType ) output[index].setPosition( value ) ;
+    else                                         output[index].setVal( value ) ;
+}
+
+// ── Interlocking: a turnout is an output of type servo, single pulse or double pulse
+uint8_t callbackIsTurnout( uint8_t index )
+{
+    uint8_t type = output[index].eedata.type ;
+    return type == servoType || type == singlePulse || type == doublePulse ;
+}
+
 // ── Recorder playback — fires for each stored event ───────────────────────────
 void notifyEvent( uint8_t data1, uint16_t data2, uint8_t data3 )
 {

@@ -32,6 +32,17 @@ void Output::set( Settings *data )
     saveEEPROM() ; // Opslaan indien gewenst
 }
 
+void Output::setPosition( uint8_t angle )
+{
+    if( eedata.type != servoType ) return ;
+    if( !callbackAttach( eedata.pinA ) ) return ;   // no free servo slot
+
+    callbackSetServo( eedata.pinA, angle ) ;
+    pos      = angle ;                  // the next state change sweeps from here
+    live     = 1 ;
+    liveTime = millis() ;
+}
+
 Settings* Output::get()
 {
     return &eedata ; 
@@ -125,7 +136,13 @@ uint8_t Output::sweep()
 
 #define StateFunction( x ) uint8_t Output::x##F()
 StateFunction( idle )
-{    
+{
+    if( live && (uint16_t)millis() - liveTime > 1000 )   // setPosition() done: release the servo
+    {
+        callbackDetach( eedata.pinA ) ;
+        live     = 0 ;
+        attached = 0 ;
+    }
     return 0 ;
 }
 

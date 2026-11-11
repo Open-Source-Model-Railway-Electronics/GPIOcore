@@ -100,6 +100,7 @@ public:
     
     uint8_t     setVal(   uint8_t   _val ) ;
     uint8_t     setState( uint8_t _state ) ;
+    void        setPosition( uint8_t angle ) ;  // servo: move now, nothing stored, detach after ~1 s
     void        defaults() ;
     void        saveEEPROM() ;
     void        loadEEPROM() ;
@@ -131,4 +132,6 @@ private:
     Trigger     stopTrigger ;
     Timer       timer ;
     uint8_t     attached : 1 ;
+    uint8_t     live     : 1 ;              // moved by setPosition(), waiting to detach
+    uint16_t    liveTime ;
 } ;
