@@ -485,7 +485,7 @@ OPCODE( OPCODE_HELLO )
     msg->payload[1] = MAX_ROUTE_STEPS ;
     msg->payload[2] = pool & 0xFF ;
     msg->payload[3] = pool >> 8 ;
-    msg->payload[4] = HELLO_BOARD ;
+    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE ;
     transceiver.sendMessage( msg ) ;
 }
 
@@ -573,6 +573,11 @@ OPCODE( OPCODE_SET_ROUTE )
     }
 }
 
+OPCODE( OPCODE_SERVO_LIVE )             // <output> <angle>: move now, nothing stored
+{
+    if( msg->payload[0] < 16 ) output[ msg->payload[0] ].setPosition( msg->payload[1] ) ;
+}
+
 #undef OPCODE
 
 extern const char * version ;   // src/version.h, defined in GPIOcore.ino
@@ -609,6 +614,7 @@ void messageReceived( Message *msg, uint8 len )  // call back message
         process( OPCODE_SET_BOARD        ) ;
         process( OPCODE_GET_ROUTE        ) ;
         process( OPCODE_SET_ROUTE        ) ;
+        process( OPCODE_SERVO_LIVE       ) ;
     }
 }
 #undef process
