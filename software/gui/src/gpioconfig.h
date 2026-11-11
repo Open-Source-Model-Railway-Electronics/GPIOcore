@@ -191,7 +191,7 @@ struct BoardSettings
     QString name;                       // identifies the board, max 16 ASCII characters
     quint8  type      = BoardNano;
     bool    recorder  = true;           // recorder function enabled
-    bool    timing    = true;           // per-step wait times in routes (off: fixed 'delay')
+    bool    timing    = false;          // per-step wait times in routes (off: fixed delay), firmware default
     quint8  interlock = InterlockAuto;
     quint8  delay     = DefaultStepDelay; // 0.1 s units, used when timing is off
 

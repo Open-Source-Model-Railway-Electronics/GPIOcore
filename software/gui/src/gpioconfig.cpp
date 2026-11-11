@@ -469,7 +469,7 @@ BoardSettings BoardSettings::fromJson(const QJsonObject &o)
     for (quint8 i = 0; i < BoardTypeCount; ++i)
         if (t == QLatin1String(kBoardKeys[i])) b.type = i;
     b.recorder = o["recorder"].toBool(true);
-    b.timing   = o["timing"].toBool(true);
+    b.timing   = o["timing"].toBool(false);
     const QString il = o["interlock"].toString();
     for (quint8 i = 0; i < 3; ++i)
         if (il == QLatin1String(kInterlockKeys[i])) b.interlock = i;

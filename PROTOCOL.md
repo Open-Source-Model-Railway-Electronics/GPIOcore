@@ -299,3 +299,20 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
   wachtrij gezet): dat beschermt tegen een verkeerde druk op de knop. "Een wissel bewegen" = de route
   bevat een output van het type servo, single pulse of double pulse.
 - **NACK-redenen** in v2: 1 checksum, 2 te lang, 3 timeout, 4 vol (pool of route), 5 ongeldige pin.
+
+### 10.1 Zo doet de firmware het (2026-11-12, afwijkingen en keuzes)
+
+- **Standaardwaarden** nieuw board: Nano, recorder aan, timing **uit**, interlocking auto, delay 0,3 s.
+  Een gemigreerd v1-board krijgt delay 0,5 s, zodat routes even snel blijven. De oude opname wordt gewist.
+- **SET_ROUTE schrijft meteen.** `first = 0` maakt de route meteen de nieuwe lengte (de routes erachter
+  schuiven op, `NACK 4` als het niet past); elk volgend stuk wordt direct geschreven. Een afgebroken
+  overdracht laat dus een half geschreven route achter. De GUI leest de route daarna altijd terug.
+- **`NACK 4` bij de recorder:** recorder aanzetten terwijl er minder dan 160 B vrij is, wordt ook geweigerd.
+- **Recorder:** gebruikt hele events van 8 B van net boven de routes tot adres 1023. Verschuift dat begin
+  (route langer/korter, timing of recorder omgezet), dan wordt de opname gewist.
+- **Timing aanzetten** geeft elke bestaande stap de board-delay als wachttijd. De eerste stap start meteen
+  (v1 wachtte eerst 0,5 s). Wachttijden lopen af op de 50 ms-tik van de inputs.
+- **Interlocking:** een route telt als lopend tot de wachttijd na de laatste stap voorbij is.
+- **Nog open:** `setPosition()`/`SERVO_LIVE` zetten het unifrog-relais niet om; `SET_OUTPUT_DATA` zet geen
+  `pinMode` voor nieuw ingestelde pinnen (was in v1 ook zo); een output op D0/D1 wordt tijdens het
+  bootvenster niet tegengehouden.
