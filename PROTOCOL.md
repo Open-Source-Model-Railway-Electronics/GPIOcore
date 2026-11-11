@@ -59,6 +59,8 @@ Een GET krijgt eerst het data-antwoord en daarna die `ACK`.
 | **`82` GET_ROUTE** | → | `route first` → antwoord `8F` | **v2** |
 | **`8F` SET_ROUTE** | ↔ | `len route total first step[n]` (n ≤ 7) | **v2** |
 | **`A2` SERVO_LIVE** | → | `output angle` | **v2** |
+| **`C0` GET_BOARD** | → | – → antwoord `CF` | **v2** |
+| **`CF` SET_BOARD** | ↔ | `len type flags delay name[0..16]`, zie §10 | **v2** |
 
 \* In v2 stuurt de GUI de 8 `linked`-bytes nog mee, afgeleid van de route: eerste 8 stappen, alleen de stand.
 Een v2-decoder mag ze negeren; de echte route komt via `SET_ROUTE`.
@@ -148,6 +150,9 @@ device -> 95 <protocol> <max steps per route> <step pool lo> <step pool hi> <fla
 flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit1 = SERVO_LIVE supported
          bit2 = routes / recorder in external EEPROM
+         bit3 = BOARD settings (C0 / CF) supported, see section 10
+step pool: number of route steps that still fit with the current board settings
+           (timing on/off, recorder on/off), all routes together
 ```
 
 De GUI stuurt `HELLO` direct na het boot-bericht (versie). Dat is ongeveer 1,5 s na de reset die het
@@ -190,6 +195,9 @@ Voorbeeld: output 13, aspect 200, wachttijd 1638,3 s → `1D C8 FF 3F`.
   Een 4-lampsein krijgt een aspect-nummer. Een servo krijgt curved/straight **of** een hoek, en mag
   meerdere keren in één route voorkomen (tussenstanden). PWM krijgt een waarde.
 - **Nieuwe stappen** krijgen 0,3 s wachttijd.
+- **Timing uit** (board-instelling, §10): op de draad blijft een stap 4 bytes, maar de decoder bewaart
+  alleen byte 0 en 1 (2 B per stap) en wacht na elke stap de vaste `delay` uit de board-instellingen.
+  Bij teruglezen zijn byte 2 en 3 dan 0. De GUI verbergt de wachttijd-kolom.
 - **De decoder voert een stap zo uit:**
 
 ```cpp
@@ -223,24 +231,9 @@ state machine verandert niet.
 
 ## 6. EEPROM-budget
 
-Gemeten met avr-gcc 7.3: `Settings` = 10 B, `InputSettings` = 12 B (waarvan 8 B `linked`), `Event` = 8 B.
-
-| | ATmega328 intern (1024 B) | Met 24LC256 (32 KB) |
-|---|---|---|
-| Outputs 16 × 10 B | 160 | 160 (intern) |
-| Inputs 16 × 4 B (zonder `linked`) | 64 | 64 (intern) |
-| DEADBEEF | 4 | 4 (intern) |
-| **Over voor routes + recorder** | **796** | 32 768 extern |
-| Routes 16 × 16 stappen × 4 B | 1024 → past **niet** | 1024 ✓ |
-| Recorder (8 B per event) | – | ±3900 events ✓ |
-
-Ook 12 stappen per route past intern niet als de recorder blijft: 768 B routes plus een bruikbare
-recorder. Daarom staan de grenzen niet vast in het protocol. De decoder meldt ze in `HELLO`:
-- **met externe EEPROM:** `max steps = 16`, `pool = 256`;
-- **alleen intern:** bijvoorbeeld `max steps = 16`, `pool = 128` (512 B). De routes delen dan één pool
-  en de recorder krijgt de rest (±35 events).
-
-De GUI toont "x / 16 stappen · board totaal y / pool" en blokkeert slepen als een van beide vol is.
+Zie **`EEPROM.md`**: de indeling van v2, wat er in 1024 B past, en wat er nog te comprimeren valt.
+Kort: zonder `linked[8]` is een input 4 B, routes en recorder delen één pool van 762 B, en met timing
+uit past 16 × 16 stappen intern (512 B) met nog ±31 recorder-events over.
 
 ## 7. Wat de GUI doet bij v1-firmware (huidige stand)
 
@@ -264,12 +257,45 @@ De GUI toont "x / 16 stappen · board totaal y / pool" en blokkeert slepen als e
   ArCoMoRa noemt het schema "niet compleet", dus controleer het op je eigen board.
 - In de GUI zet je het vinkje *DCCnext board*. De pin-keuzes tonen dan "D3 · port 1", en D13 wordt rood.
 
-## 9. Nog te doen in de decoder-firmware (v2)
+## 9. Decoder-firmware v2
 
-1. `HELLO` met het 5 s-bootvenster en het vrijgeven van D0/D1 (§3).
-2. Route-opslag met 4 B per stap (§4). `linkedOutput[]` uit `InputSettings` halen geeft 128 B terug;
-   externe EEPROM via de I2C-hooks die al in `src/event.h` staan.
-3. `Input::triggerOutputs()`: per stap de eigen wachttijd gebruiken in plaats van de vaste 500 ms, en
-   `raw`-waarden uitvoeren.
-4. `Output::setPosition(angle)` voor servo-tussenstanden, en `SERVO_LIVE` (§5).
-5. Maximaal één recorder afdwingen. De GUI doet dat al; de firmware zou een tweede kunnen negeren.
+De taken staan in `EEPROM.md` §4 en in de commits van `software/GPIOcore`. Samengevat: HELLO met
+bootvenster, board-instellingen (§10), route-pool met dynamische toewijzing, per-stap timing,
+interlocking, SERVO_LIVE en `setPosition()`, A6/A7 als analoge input, en pin 2 beschermen.
+
+**Pin 2 (DCC-ingang)** mag nooit als input of output. Een `SET_INPUT_DATA` of `SET_OUTPUT_DATA` met
+pin 2 krijgt `NACK 5` (ongeldige pin) en wordt niet opgeslagen. Hetzelfde geldt voor D0/D1 zolang de
+decoder geen bit0 in HELLO meldt, en voor A6/A7 als output of op een ander board dan de Nano.
+
+## 10. Board-instellingen en naam (v2)
+
+```text
+host   -> C0                                        (GET_BOARD, no payload)
+device -> CF <len> <type> <flags> <delay> <name ...> (also SET_BOARD from host -> ACK)
+len    : 4 + name length (name 0..16 ASCII bytes, no terminator)
+type   : 0 = Arduino Uno, 1 = Arduino Nano, 2 = DCCnext, 3 = Jack of all trades
+flags  : bit0   = recorder enabled
+         bit1   = route step timing (per-step wait times stored)
+         bit2-3 = route interlocking: 0 = off (all routes may run in parallel)
+                                      1 = on  (one route at a time)
+                                      2 = auto (routes that move a turnout run one at a time,
+                                                other routes run in parallel)  <- default
+delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3 = 0.3 s)
+```
+
+- **Naam.** De naam identificeert het board. De GUI bewaart per board een bestand `<naam>.json` (namen
+  van in- en outputs plus alle instellingen). Bij verbinden leest hij `HELLO`, dan `GET_BOARD`, laadt hij
+  `<naam>.json` als dat bestaat, en leest daarna **alles** van het board. Wat het board zegt wint; de
+  namen komen uit het bestand. Een nieuw board heeft een lege naam; de GUI vraagt er dan om.
+- **Type.** Bepaalt welke pinnen bestaan. Op de Nano zijn A6/A7 (pin-index 20/21) alleen analoge
+  inputs zonder pull-up: de firmware leest ze met `analogRead() < 512` als "ingedrukt", en de knop heeft
+  een externe pull-up van 10 kΩ nodig. Het type wordt door de GUI gezet; de firmware gebruikt het alleen
+  om pinnen te controleren.
+- **Recorder uit.** Een input van het type recorder doet niets, en de recorder-ruimte gaat naar de
+  route-pool. HELLO meldt daarna de grotere pool.
+- **Timing aan/uit omzetten.** De decoder zet de opgeslagen routes om (2 ↔ 4 B per stap). Past het niet
+  (timing aan met te veel stappen), dan `NACK 4` en blijft de oude instelling staan.
+- **Interlocking.** Een route die door interlocking geweigerd wordt, wordt genegeerd (niet in een
+  wachtrij gezet): dat beschermt tegen een verkeerde druk op de knop. "Een wissel bewegen" = de route
+  bevat een output van het type servo, single pulse of double pulse.
+- **NACK-redenen** in v2: 1 checksum, 2 te lang, 3 timeout, 4 vol (pool of route), 5 ongeldige pin.
