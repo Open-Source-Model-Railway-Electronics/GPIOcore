@@ -20,6 +20,8 @@ uint16_t        nextEEAddress = 0 ;
 BoardSettings   board ;
 uint16_t        boardEEAddress = EE_BOARD ; // type, flags, delay, name[16]
 uint8_t         configSession  = 0 ;        // 1 after HELLO
+uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the boot window
+const uint16_t  BOOT_WINDOW_MS = 5000 ;
 
 // Recorder — uses the top of the shared EEPROM pool, the range is set by updateRecorderRange()
 const uint8_t   OUTPUT_EVENT      =   1 ;   // custom event type for output state changes
@@ -138,7 +140,19 @@ void setup()
 
 void loop()
 {
-    transceiver.receive() ;
+    if( !serialIsIO ) transceiver.receive() ;
+
+    if( !configSession && !serialIsIO && millis() >= BOOT_WINDOW_MS )   // no HELLO: D0/D1 become I/O
+    {
+        Serial.flush() ;
+        Serial.end() ;
+        serialIsIO = 1 ;
+        for( uint8_t i = 0 ; i < 16 ; i++ )
+        {
+            output[i].setPinModes() ;
+             input[i].setPinMode() ;
+        }
+    }
     recorder.update() ;
 
     static uint8_t index ;

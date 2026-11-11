@@ -105,6 +105,7 @@ public:
     void        saveEEPROM() ;
     void        loadEEPROM() ;
     void        assignEEPROM() ;
+    void        setPinModes() ;
 
     Settings    eedata ;
 

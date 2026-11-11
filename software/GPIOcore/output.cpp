@@ -76,16 +76,26 @@ void Output::saveEEPROM()
     
 }
 
+static void outputPin( uint8_t pin )    // D0/D1 only after the boot window (no HELLO)
+{
+    if( pin != NA && ( pin > 1 || serialIsIO ) ) pinMode( pin, OUTPUT ) ;
+}
+
+void Output::setPinModes()
+{
+    outputPin( eedata.pinA      ) ;
+    outputPin( eedata.pinB      ) ;
+    outputPin( eedata.pinC      ) ;
+    outputPin( eedata.pinD      ) ;
+    outputPin( eedata.relayPinA ) ;
+    outputPin( eedata.relayPinB ) ;
+    outputPin( eedata.relayPinC ) ;
+}
+
 void Output::loadEEPROM()
 {
     EEPROM.get(eeAddress, eedata);
-    if( eedata.pinA      != NA ) pinMode( eedata.pinA,      OUTPUT ) ;
-    if( eedata.pinB      != NA ) pinMode( eedata.pinB,      OUTPUT ) ;
-    if( eedata.pinC      != NA ) pinMode( eedata.pinC,      OUTPUT ) ;
-    if( eedata.pinD      != NA ) pinMode( eedata.pinD,      OUTPUT ) ;
-    if( eedata.relayPinA != NA ) pinMode( eedata.relayPinA, OUTPUT ) ;
-    if( eedata.relayPinB != NA ) pinMode( eedata.relayPinB, OUTPUT ) ;
-    if( eedata.relayPinC != NA ) pinMode( eedata.relayPinC, OUTPUT ) ;
+    setPinModes() ;
 
     // apply the stored state once after boot, except for coils (no burst of pulses at power up)
     oldPos = ( eedata.type == singlePulse || eedata.type == doublePulse ) ? eedata.state : !eedata.state ;

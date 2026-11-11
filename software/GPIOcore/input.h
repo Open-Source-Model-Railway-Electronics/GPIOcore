@@ -30,6 +30,7 @@ public:
 
     InputSettings   eedata ;
 
+    void    setPinMode() ;
     void    startRoute() ;          // interlocking, PROTOCOL.md section 10: a refused route is ignored
 
 private:

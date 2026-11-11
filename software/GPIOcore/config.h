@@ -44,5 +44,6 @@ typedef struct                      // name[16] is not kept in RAM, it is read f
 extern BoardSettings board ;
 extern uint16_t      boardEEAddress ;
 extern uint8_t       configSession ;    // set by HELLO
+extern uint8_t       serialIsIO ;       // D0/D1 are I/O: no HELLO within the boot window
 
 bool    isValidPin( uint8_t pin, uint8_t isOutput ) ;   // pin rules, PROTOCOL.md section 9

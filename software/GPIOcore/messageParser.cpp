@@ -18,7 +18,7 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
 {
     pin &= 0x3F ;
     if( pin == NA ) return true ;
-    if( pin <=  2 ) return false ;                  // D0/D1 = Serial, D2 = DCC input
+    if( pin ==  2 ) return false ;                  // D2 = DCC input (D0/D1: I/O after the boot window)
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type == BOARD_NANO ;   // A6/A7: analog inputs, Nano only
     return true ;
 }
@@ -485,7 +485,7 @@ OPCODE( OPCODE_HELLO )
     msg->payload[1] = MAX_ROUTE_STEPS ;
     msg->payload[2] = pool & 0xFF ;
     msg->payload[3] = pool >> 8 ;
-    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE ;
+    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL ;
     transceiver.sendMessage( msg ) ;
 }
 

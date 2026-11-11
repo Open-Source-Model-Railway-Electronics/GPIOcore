@@ -23,7 +23,7 @@ void Input::saveEEPROM() { EEPROM.put(eeAddress, eedata) ; }
 void Input::loadEEPROM()
 {
     EEPROM.get(eeAddress, eedata) ;
-    if( eedata.pin < 20 ) pinMode( eedata.pin, INPUT_PULLUP ) ;   // A6/A7 (20/21) are analog only   // button / contact to GND
+    setPinMode() ;
 
     if( eedata.type == RECORDER )       // configure timer for long/short press detection
     {
@@ -45,7 +45,7 @@ void Input::defaults()
 void Input::set( InputSettings *data )
 {
     eedata = *data ;
-    if( eedata.pin < 20 ) pinMode( eedata.pin, INPUT_PULLUP ) ;   // A6/A7 (20/21) are analog only
+    setPinMode() ;
     saveEEPROM() ;
 }
 
@@ -125,8 +125,14 @@ void Input::update()
 }
 
 // Nano A6/A7 (pin 20/21) are analog only, external pull-up: analogRead() < 512 = pressed (LOW)
+void Input::setPinMode()            // button / contact to GND. A6/A7 (20/21) are analog only, D0/D1 only after the boot window
+{
+    if( eedata.pin < 20 && ( eedata.pin > 1 || serialIsIO ) ) pinMode( eedata.pin, INPUT_PULLUP ) ;
+}
+
 uint8_t Input::readPin()
 {
+    if( eedata.pin < 2 && !serialIsIO ) return HIGH ;              // D0/D1 still Serial: not pressed
     if( eedata.pin >= 20 ) return analogRead( eedata.pin ) >= 512 ? HIGH : LOW ;
     return digitalRead( eedata.pin ) ;
 }
