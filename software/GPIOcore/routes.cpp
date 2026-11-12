@@ -1,7 +1,11 @@
 #include "routes.h"
 #include "src/event.h"
+#include "output.h"
+#include "input.h"
 
 extern EventHandler recorder ;
+extern Output       output[16] ;
+extern Input        input[16] ;
 
 uint8_t routeCount[16] ;    // cached copy of EE_COUNTS
 
@@ -37,7 +41,7 @@ uint16_t usedRouteSteps()
 
 uint16_t maxRouteBytes()
 {
-    return EE_END - EE_POOL - ( ( board.flags & BOARD_RECORDER ) ? RECORDER_MIN_BYTES : 0 ) ;
+    return EE_END - EE_POOL ;
 }
 
 uint16_t freeRouteSteps()
@@ -112,13 +116,29 @@ uint8_t setTiming( uint8_t on )
     return 1 ;
 }
 
-// the recorder uses whole events from the top of the pool down to the end of the routes
+// the recorder uses the external I2C EEPROM; I2C (A4/A5) only runs while the recorder is enabled
 void updateRecorderRange()
 {
-    uint16_t begin = EE_END ;
     if( board.flags & BOARD_RECORDER )
     {
-        begin = EE_END - ( ( EE_END - routeAddress( 16, 0 ) ) / sizeof( Event ) ) * sizeof( Event ) ;
+        recorder.begin() ;
+        recorder.setRange( 0, EXT_EEPROM_SIZE ) ;
     }
-    recorder.setRange( begin, EE_END ) ;
+    else
+    {
+        recorder.end() ;
+        recorder.setRange( 0, 0 ) ;
+    }
+}
+
+uint8_t pinInUse( uint8_t pin )
+{
+    for( uint8_t i = 0 ; i < 16 ; i ++ )
+    {
+        const Settings &o = output[i].eedata ;
+        if( o.pinA == pin || o.pinB == pin || o.pinC == pin || o.pinD == pin
+        ||  o.relayPinA == pin || o.relayPinB == pin || o.relayPinC == pin ) return 1 ;
+        if( input[i].eedata.pin == pin && input[i].eedata.type != NOT_IN_USE ) return 1 ;
+    }
+    return 0 ;
 }

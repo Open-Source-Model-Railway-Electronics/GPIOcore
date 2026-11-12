@@ -472,6 +472,7 @@ void MainWindow::setBoardType(int type)
 {
     m_edit.board.type = quint8(type);
     Gpio::setBoardType(m_edit.board.type);
+    boardOptions().recorder = m_edit.board.recorder;
     QSettings().setValue(QStringLiteral("board/type"), type);
     m_inEd->setTimingEnabled(m_edit.board.timing);
     if (m_boardType && m_boardType->currentIndex() != type)
@@ -1298,9 +1299,10 @@ void MainWindow::editBoardSettings()
     auto *type = new QComboBox;
     for (int t = 0; t < BoardTypeCount; ++t) type->addItem(boardTypeName(quint8(t)));
     type->setCurrentIndex(m_edit.board.type);
-    auto *recorder = new QCheckBox(tr("Use the recorder"));
+    auto *recorder = new QCheckBox(tr("Use the recorder (needs an I2C EEPROM on A4/A5)"));
     recorder->setChecked(m_edit.board.recorder);
-    recorder->setToolTip(tr("Off: the recorder's memory is used for routes instead"));
+    recorder->setToolTip(tr("The recorder stores its recording in an external 24LC256 EEPROM. "
+                            "While it is on, A4 and A5 cannot be used as inputs or outputs."));
     auto *timing = new QCheckBox(tr("Own wait time per route step"));
     timing->setChecked(m_edit.board.timing);
     timing->setToolTip(tr("Off: every step waits the same time and routes need half the memory"));
@@ -1337,6 +1339,17 @@ void MainWindow::editBoardSettings()
     if (d.exec() != QDialog::Accepted)
         return;
 
+    if (recorder->isChecked() && !m_edit.board.recorder)
+    {
+        const auto usage = Ui::pinUsage(m_edit);
+        if (!usage[18].isEmpty() || !usage[19].isEmpty())
+        {
+            QMessageBox::warning(this, tr("Board settings"),
+                                 tr("The recorder needs an I2C EEPROM on A4 (SDA) and A5 (SCL), but A4 or A5 is in use "
+                                    "by an input or output. Move that first, then switch the recorder on."));
+            return;
+        }
+    }
     BoardSettings b = m_edit.board;
     b.name      = cleanBoardName(name->text());
     b.type      = quint8(type->currentIndex());

@@ -190,7 +190,7 @@ struct BoardSettings
 {
     QString name;                       // identifies the board, max 16 ASCII characters
     quint8  type      = BoardNano;
-    bool    recorder  = true;           // recorder function enabled
+    bool    recorder  = false;          // recorder enabled (needs the I2C EEPROM on A4/A5)
     bool    timing    = false;          // per-step wait times in routes (off: fixed delay), firmware default
     quint8  interlock = InterlockAuto;
     quint8  delay     = DefaultStepDelay; // 0.1 s units, used when timing is off
@@ -223,6 +223,7 @@ struct BoardConfig
 struct BoardOptions
 {
     quint8 type           = BoardNano;
+    bool recorder         = false;   // A4/A5 are I2C for the recorder EEPROM
     bool dccNext          = false;   // ArCoMoRa DCCnext: ports 1-10 = D3-D12, 11-16 = A0-A5, no D13
     bool serialPinsUsable = true;    // decoder releases D0/D1 after its boot window (protocol v2)
 };

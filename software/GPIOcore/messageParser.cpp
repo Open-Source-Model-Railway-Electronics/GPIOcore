@@ -20,6 +20,7 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
     if( pin == NA ) return true ;
     if( pin ==  2 ) return false ;                  // D2 = DCC input (D0/D1: I/O after the boot window)
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type == BOARD_NANO ;   // A6/A7: analog inputs, Nano only
+    if( ( pin == 18 || pin == 19 ) && ( board.flags & BOARD_RECORDER ) ) return false ;  // A4/A5 = I2C for the recorder
     return true ;
 }
 
@@ -485,7 +486,8 @@ OPCODE( OPCODE_HELLO )
     msg->payload[1] = MAX_ROUTE_STEPS ;
     msg->payload[2] = pool & 0xFF ;
     msg->payload[3] = pool >> 8 ;
-    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL ;
+    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL
+                    | ( ( board.flags & BOARD_RECORDER ) ? HELLO_EXT_EEPROM : 0 ) ;
     transceiver.sendMessage( msg ) ;
 }
 
@@ -515,6 +517,13 @@ OPCODE( OPCODE_SET_BOARD )
 
     uint8_t oldFlags = board.flags ;
     uint8_t flags    = msg->payload[2] ;
+
+    if( ( flags & BOARD_RECORDER ) && !( oldFlags & BOARD_RECORDER )      // recorder needs A4/A5 for I2C
+    &&  ( pinInUse( 18 ) || pinInUse( 19 ) ) )
+    {
+        transceiver.nack = NACK_INVALID_PIN ;
+        return ;
+    }
 
     board.flags = ( flags & ~BOARD_TIMING ) | ( oldFlags & BOARD_TIMING ) ;   // recorder first, then convert the pool
     if( usedRouteSteps() * stepSize() > maxRouteBytes()

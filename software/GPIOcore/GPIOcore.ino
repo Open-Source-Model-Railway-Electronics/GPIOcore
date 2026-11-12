@@ -23,7 +23,7 @@ uint8_t         configSession  = 0 ;        // 1 after HELLO
 uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the boot window
 const uint16_t  BOOT_WINDOW_MS = 5000 ;
 
-// Recorder — uses the top of the shared EEPROM pool, the range is set by updateRecorderRange()
+// Recorder — in the external I2C EEPROM (A4/A5), started by updateRecorderRange() when enabled
 const uint8_t   OUTPUT_EVENT      =   1 ;   // custom event type for output state changes
 
 EventHandler    recorder( 0, 0 ) ;
@@ -79,7 +79,7 @@ void eepromBegin()
     }
 
     board.type  = BOARD_NANO ;
-    board.flags = BOARD_RECORDER | ( INTERLOCK_AUTO << 2 ) ;   // timing off: 2 B per step
+    board.flags = INTERLOCK_AUTO << 2 ;     // recorder off (needs the I2C EEPROM), timing off: 2 B per step
     board.delay = v1 ? 5 : 3 ;          // v1 routes waited 0.5 s per step
     EEPROM.put( boardEEAddress, board ) ;
     for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ ) EEPROM.update( boardEEAddress + sizeof( board ) + i, 0 ) ;
@@ -105,7 +105,6 @@ void eepromBegin()
     EEPROM.update( EE_MAGIC + 2, EE_LAYOUT ) ;
 
     routesBegin() ;
-    recorder.clearProgram() ;           // the old recorder space is now part of the pool
 }
 
 void setup()

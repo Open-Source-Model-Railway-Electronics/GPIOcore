@@ -14,8 +14,9 @@
 #pragma once
 #include <Arduino.h>
 
-// I2C EEPROM support — uncomment when hardware is available
-// #include "i2cEeprom.h"
+// The recorder always lives in an external I2C EEPROM (24LC256, 32 KB, address 0x50) on A4 (SDA) / A5 (SCL).
+const uint8_t  EXT_EEPROM_ADDR = 0x50 ;
+const uint32_t EXT_EEPROM_SIZE = 32768UL ;
 
 enum eventModes
 {
@@ -55,7 +56,9 @@ public:
     // I2C EEPROM constructor — uncomment when hardware is available
     // EventHandler( uint32_t beginAddress, uint32_t maxAddress, uint8_t i2cAddress ) ;
 
-    void    begin() ;
+    void    begin() ;                   // starts I2C (A4/A5 become SDA/SCL)
+    void    end() ;                     // releases A4/A5
+    uint8_t isActive() ;
     void    startRecording() ;
     void    stopRecording() ;
     void    startPlaying() ;

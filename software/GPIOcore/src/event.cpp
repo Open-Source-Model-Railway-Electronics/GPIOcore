@@ -11,8 +11,39 @@
  * https://creativecommons.org/publicdomain/zero/1.0/
  */
 
-#include <EEPROM.h>
+#include <Wire.h>
 #include "event.h"
+
+static uint8_t extActive = 0 ;          // 1 after begin(): I2C runs on A4/A5
+
+// write n bytes (n <= 30, must not cross a 64-byte page; events are 8 B and 8-aligned)
+static void extWrite( uint16_t address, const uint8_t *data, uint8_t n )
+{
+    if( !extActive ) return ;
+    Wire.beginTransmission( EXT_EEPROM_ADDR ) ;
+    Wire.write( (uint8_t)( address >> 8 ) ) ;
+    Wire.write( (uint8_t)( address & 0xFF ) ) ;
+    Wire.write( data, n ) ;
+    Wire.endTransmission() ;
+    for( uint8_t i = 0 ; i < 10 ; i ++ )       // ACK polling: the write cycle takes up to 5 ms
+    {
+        Wire.beginTransmission( EXT_EEPROM_ADDR ) ;
+        if( Wire.endTransmission() == 0 ) break ;
+        delay( 1 ) ;
+    }
+}
+
+static uint8_t extRead( uint16_t address, uint8_t *data, uint8_t n )
+{
+    if( !extActive ) return 0 ;
+    Wire.beginTransmission( EXT_EEPROM_ADDR ) ;
+    Wire.write( (uint8_t)( address >> 8 ) ) ;
+    Wire.write( (uint8_t)( address & 0xFF ) ) ;
+    if( Wire.endTransmission() != 0 ) return 0 ;     // no EEPROM on the bus
+    Wire.requestFrom( EXT_EEPROM_ADDR, n ) ;
+    for( uint8_t i = 0 ; i < n ; i ++ ) data[i] = Wire.available() ? Wire.read() : 0xFF ;
+    return 1 ;
+}
 
 EventHandler::EventHandler( uint32_t _beginAddress, uint32_t _maxAddress )
 {
@@ -34,7 +65,25 @@ EventHandler::EventHandler( uint32_t _beginAddress, uint32_t _maxAddress )
 
 void EventHandler::begin()
 {
-    // i2cEeprom.begin( i2cAddress ) ;  // uncomment when I2C EEPROM hardware is available
+    if( extActive ) return ;
+    Wire.begin() ;
+#ifdef WIRE_HAS_TIMEOUT
+    Wire.setWireTimeout( 3000, true ) ;     // a missing / broken EEPROM must not hang the decoder
+#endif
+    extActive = 1 ;
+}
+
+void EventHandler::end()
+{
+    if( !extActive ) return ;
+    recordingDevice = evStandby ;
+    Wire.end() ;
+    extActive = 0 ;
+}
+
+uint8_t EventHandler::isActive()
+{
+    return extActive ;
 }
 
 void EventHandler::startRecording()
@@ -66,10 +115,12 @@ Event EventHandler::getEvent()
         localEvent.time2nextEvent = 1 ;
         return localEvent ;
     }
-    EEPROM.get( eeAddress, localEvent ) ;
-
-    // I2C EEPROM read — uncomment when hardware is available
-    // i2cEeprom.get( eeAddress, localEvent ) ;
+    if( !extRead( eeAddress, (uint8_t *)&localEvent, sizeof( localEvent ) ) )
+    {
+        localEvent.data1          = STOP ;  // no EEPROM: behave like an empty program
+        localEvent.time2nextEvent = 1 ;
+        recordingDevice           = evFinishing ;
+    }
 
     eeAddress += sizeof( localEvent ) ;
     return localEvent ;
@@ -130,10 +181,7 @@ void EventHandler::storeEvent( uint8_t _data1, uint16_t _data2, uint8_t _data3 )
 
     prevTime = currTime ;
 
-    EEPROM.put( eeAddress, localEvent ) ;
-
-    // I2C EEPROM write — uncomment when hardware is available
-    // i2cEeprom.put( eeAddress, localEvent ) ;
+    extWrite( eeAddress, (const uint8_t *)&localEvent, sizeof( localEvent ) ) ;
 
     if( displayFreeMemory )
     {
@@ -209,7 +257,7 @@ void EventHandler::clearProgram()
     if( beginAddress + sizeof( Event ) <= maxAddress )
     {
         Event stop = { STOP, 1, 1, 1 } ;        // empty program
-        EEPROM.put( beginAddress, stop ) ;
+        extWrite( beginAddress, (const uint8_t *)&stop, sizeof( stop ) ) ;
     }
 }
 

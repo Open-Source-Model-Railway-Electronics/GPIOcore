@@ -468,7 +468,7 @@ BoardSettings BoardSettings::fromJson(const QJsonObject &o)
     const QString t = o["type"].toString();
     for (quint8 i = 0; i < BoardTypeCount; ++i)
         if (t == QLatin1String(kBoardKeys[i])) b.type = i;
-    b.recorder = o["recorder"].toBool(true);
+    b.recorder = o["recorder"].toBool(false);
     b.timing   = o["timing"].toBool(false);
     const QString il = o["interlock"].toString();
     for (quint8 i = 0; i < 3; ++i)
@@ -544,6 +544,8 @@ QString pinReservedReason(quint8 pin)
     case 1:  return b.serialPinsUsable ? QString() : trGpio("Serial TX (GUI link)");
     case 2:  return trGpio("DCC input");
     case 13: return b.dccNext ? trGpio("not available on a DCCnext") : QString();
+    case 18: return b.recorder ? trGpio("I2C SDA for the recorder EEPROM") : QString();
+    case 19: return b.recorder ? trGpio("I2C SCL for the recorder EEPROM") : QString();
     case 20:
     case 21: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
     }

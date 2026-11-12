@@ -232,8 +232,8 @@ state machine verandert niet.
 ## 6. EEPROM-budget
 
 Zie **`EEPROM.md`**: de indeling van v2, wat er in 1024 B past, en wat er nog te comprimeren valt.
-Kort: zonder `linked[8]` is een input 4 B, routes en recorder delen één pool van 762 B, en met timing
-uit past 16 × 16 stappen intern (512 B) met nog ±31 recorder-events over.
+Kort: zonder `linked[8]` is een input 4 B, de routes hebben een pool van 762 B voor zich alleen, en met
+timing uit past 16 × 16 stappen intern (512 B). De recorder staat altijd in de externe I2C-EEPROM.
 
 ## 7. Wat de GUI doet bij v1-firmware (huidige stand)
 
@@ -291,8 +291,9 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
   inputs zonder pull-up: de firmware leest ze met `analogRead() < 512` als "ingedrukt", en de knop heeft
   een externe pull-up van 10 kΩ nodig. Het type wordt door de GUI gezet; de firmware gebruikt het alleen
   om pinnen te controleren.
-- **Recorder uit.** Een input van het type recorder doet niets, en de recorder-ruimte gaat naar de
-  route-pool. HELLO meldt daarna de grotere pool.
+- **Recorder.** Vraagt **altijd** een externe I2C-EEPROM (24LC256) op A4 (SDA) / A5 (SCL). Recorder aan ⇒
+  A4/A5 mogen niet als in- of output (`NACK 5`), en aanzetten wordt geweigerd (`NACK 5`) zolang A4/A5 in
+  gebruik zijn. Recorder uit ⇒ een recorder-input doet niets en A4/A5 zijn vrij. HELLO-bit2 = recorder aan.
 - **Timing aan/uit omzetten.** De decoder zet de opgeslagen routes om (2 ↔ 4 B per stap). Past het niet
   (timing aan met te veel stappen), dan `NACK 4` en blijft de oude instelling staan.
 - **Interlocking.** Een route die door interlocking geweigerd wordt, wordt genegeerd (niet in een
@@ -302,14 +303,13 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 
 ### 10.1 Zo doet de firmware het (2026-11-12, afwijkingen en keuzes)
 
-- **Standaardwaarden** nieuw board: Nano, recorder aan, timing **uit**, interlocking auto, delay 0,3 s.
+- **Standaardwaarden** nieuw board: Nano, recorder **uit**, timing **uit**, interlocking auto, delay 0,3 s.
   Een gemigreerd v1-board krijgt delay 0,5 s, zodat routes even snel blijven. De oude opname wordt gewist.
 - **SET_ROUTE schrijft meteen.** `first = 0` maakt de route meteen de nieuwe lengte (de routes erachter
   schuiven op, `NACK 4` als het niet past); elk volgend stuk wordt direct geschreven. Een afgebroken
   overdracht laat dus een half geschreven route achter. De GUI leest de route daarna altijd terug.
-- **`NACK 4` bij de recorder:** recorder aanzetten terwijl er minder dan 160 B vrij is, wordt ook geweigerd.
-- **Recorder:** gebruikt hele events van 8 B van net boven de routes tot adres 1023. Verschuift dat begin
-  (route langer/korter, timing of recorder omgezet), dan wordt de opname gewist.
+- **Recorder** (sinds de I2C-wijziging): events van 8 B in de externe EEPROM vanaf adres 0. I2C draait alleen
+  als de recorder aan staat; zonder EEPROM op de bus gebeurt er niets (Wire-time-out 3 ms).
 - **Timing aanzetten** geeft elke bestaande stap de board-delay als wachttijd. De eerste stap start meteen
   (v1 wachtte eerst 0,5 s). Wachttijden lopen af op de 50 ms-tik van de inputs.
 - **Interlocking:** een route telt als lopend tot de wachttijd na de laatste stap voorbij is.
