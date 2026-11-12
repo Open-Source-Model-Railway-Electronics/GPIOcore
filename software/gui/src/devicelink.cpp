@@ -171,7 +171,8 @@ void DeviceLink::writeRoute(int route, const QVector<Gpio::RouteStep> &steps)
         p.append(char(first));
         for (int i = 0; i < n; ++i)
             p += Gpio::encodeStep(steps[first + i]);
-        enqueue(Kind::SetRoute, SET_ROUTE, p, route, timeoutMs);
+        // a route that changes length shifts the routes behind it in EEPROM (~3.4 ms per byte, up to ~2.6 s)
+        enqueue(Kind::SetRoute, SET_ROUTE, p, route, qMax(timeoutMs, eepromShiftMs));
         first += n;
     } while (first < total);
 }
@@ -224,7 +225,8 @@ void DeviceLink::readBoard()
 void DeviceLink::writeBoard(const Gpio::BoardSettings &b)
 {
     const QByteArray body = Gpio::encodeBoard(b);
-    enqueue(Kind::SetBoard, SET_BOARD, QByteArray(1, char(body.size() + 1)) + body, -1, timeoutMs);
+    // switching timing converts the whole route pool in EEPROM
+    enqueue(Kind::SetBoard, SET_BOARD, QByteArray(1, char(body.size() + 1)) + body, -1, qMax(timeoutMs, eepromShiftMs));
 }
 
 void DeviceLink::readOutput(int index)

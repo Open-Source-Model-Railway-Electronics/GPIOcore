@@ -76,6 +76,7 @@ public:
     // Timings (ms), shortened in unit tests.
     int bootWaitMs   = 2500;
     int timeoutMs    = 400;
+    int eepromShiftMs = 4000;   // SET_ROUTE / SET_BOARD may move the whole route pool
     int presetMs     = 10000;
     int drainMs      = 15;
     int retries      = 2;
