@@ -6,6 +6,7 @@
 
 #include <QPainterPath>
 #include <QVector>
+#include <QElapsedTimer>
 #include <QWidget>
 
 class ConnectionView : public QWidget
@@ -20,6 +21,13 @@ public:
     void selectInput(int index);
     // Hide inputs / outputs that are not in use (and not part of a route).
     void setHideUnused(bool hide);
+    // Live test: inputs get buttons, outputs show what the board reports.
+    void setLiveMode(bool on);
+    bool liveMode() const { return m_live; }
+    void setOutputLive(int output, int state, int value);   // state 0/1, 2 = raw value
+    void clearLive();
+    int  liveState(int output) const { return m_liveState.value(output, -1); }
+    QRectF liveButtonRect(int input, int direction) const;   // empty if the input has no such button
     bool hideUnused() const { return m_hideUnused; }
     bool inputShown(int index) const  { return m_inRow.value(index, -1) >= 0; }
     bool outputShown(int index) const { return m_outRow.value(index, -1) >= 0; }
@@ -47,6 +55,7 @@ signals:
     void disconnectRequested(int input, int step);      // step -1 = direct wire
     void toggleStepRequested(int input, int step);
     void moveStepRequested(int input, int step, int delta);
+    void liveTriggerRequested(int input, int direction);
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -86,6 +95,15 @@ private:
 
     int     m_selInput  = -1;
     bool    m_hideUnused = false;
+    bool    m_live = false;
+    QVector<int>    m_liveState, m_liveValue;
+    QVector<bool>   m_liveRaw;            // last report was a raw value (angle / aspect / PWM)
+    QVector<qint64> m_liveFlashOut, m_liveFlashIn;
+    QElapsedTimer   m_liveClock;
+    QTimer         *m_liveAnim = nullptr;
+    void    drawInputLive(QPainter &p, int i);
+    void    drawOutputLive(QPainter &p, int o);
+    qreal   flashLevel(qint64 t) const;
     QVector<int> m_inRow, m_outRow;   // row on the canvas, -1 = hidden
     void    updateRows();
     int     m_selOutput = -1;

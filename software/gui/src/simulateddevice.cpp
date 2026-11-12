@@ -229,6 +229,17 @@ void SimulatedDevice::messageReceived()
     {
         decodeBoard(QByteArray(reinterpret_cast<const char *>(p + 1), m_len - 1), m_board);
     }
+    else if (m_opt.protocol >= 2 && m_command == Proto::SET_INPUT_STATE)
+    {
+        if (index < NumInputs) triggerInput(index, p[1]);
+    }
+    else if (m_opt.protocol >= 2 && m_command == Proto::GET_OUTPUT_STATE)
+    {
+        if (index >= NumOutputs) return;
+        const quint32 now = quint32(m_clock.isValid() ? m_clock.elapsed() : 0);
+        const quint8 msg[5] = { index, m_out[index].state, m_out[index].data[0], quint8(now), quint8(now >> 8) };
+        sendMessage(Proto::OUTPUT_EVENT, msg);
+    }
     else if (m_opt.protocol >= 2 && m_command == Proto::GET_ROUTE)
     {
         if (index >= NumInputs) return;
@@ -383,4 +394,73 @@ void SimulatedDevice::applyPreset(quint8 preset)
     default: return;
     }
     clearUnusedOutputs(count);
+}
+
+// ── Live test (SET_INPUT_STATE / OUTPUT_EVENT), mirrors GPIOcore.ino + input.cpp ──
+void SimulatedDevice::reportOutput(int output, int state, int value)
+{
+    if (!m_session)
+        return;
+    if (!m_clock.isValid())
+        m_clock.start();
+    const quint32 now = quint32(m_clock.elapsed());
+    const quint8 msg[5] = { quint8(output), quint8(state), quint8(value), quint8(now), quint8(now >> 8) };
+    sendMessage(Proto::OUTPUT_EVENT, msg);
+}
+
+bool SimulatedDevice::routeMovesTurnout(int input) const
+{
+    for (const RouteStep &s : m_in[input].route)
+    {
+        const quint8 t = m_out[s.output].type;
+        if (t == ServoType || t == SinglePulse || t == DoublePulse)
+            return true;
+    }
+    return false;
+}
+
+void SimulatedDevice::triggerInput(int index, int direction)
+{
+    InputConfig &in = m_in[index];
+    if (isDirectType(in.type))
+    {
+        OutputConfig &o = m_out[in.outputId];
+        o.state = quint8(in.type == Latching ? (direction ? 1 : 0) : (o.state ^ 1));
+        reportOutput(in.outputId, o.state, o.data[0]);
+        return;
+    }
+    if (!isRouteType(in.type) || m_routeBusy[index] || in.route.isEmpty())
+        return;
+    // interlocking (PROTOCOL.md section 10): a refused route is ignored
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        if (!m_routeBusy[i]) continue;
+        if (m_board.interlock == InterlockOn) return;
+        if (m_board.interlock == InterlockAuto && routeMovesTurnout(i) && routeMovesTurnout(index)) return;
+    }
+    m_routeBusy[index] = true;
+    runRouteStep(index, 0);
+}
+
+void SimulatedDevice::runRouteStep(int input, int step)
+{
+    const QVector<RouteStep> &r = m_in[input].route;
+    if (step >= r.size())
+    {
+        m_routeBusy[input] = false;
+        return;
+    }
+    const RouteStep &s = r[step];
+    OutputConfig &o = m_out[s.output];
+    if (s.raw)
+    {
+        reportOutput(s.output, 2, s.value);
+    }
+    else
+    {
+        o.state = quint8(s.value ? 1 : 0);
+        reportOutput(s.output, o.state, o.data[0]);
+    }
+    const int waitMs = 100 * (m_board.timing ? s.delay : m_board.delay);
+    QTimer::singleShot(waitMs, this, [this, input, step] { runRouteStep(input, step + 1); });
 }

@@ -1,4 +1,7 @@
 #include "connectionview.h"
+
+#include <cmath>
+#include <QTimer>
 #include "connections.h"
 #include "uihelpers.h"
 
@@ -35,6 +38,21 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
     m_inDirty = m_inConflict = QVector<bool>(NumInputs, false);
+    m_liveState.fill(-1, NumOutputs);
+    m_liveValue.fill(0, NumOutputs);
+    m_liveRaw.fill(false, NumOutputs);
+    m_liveFlashOut.fill(-100000, NumOutputs);
+    m_liveFlashIn.fill(-100000, NumInputs);
+    m_liveClock.start();
+    m_liveAnim = new QTimer(this);
+    m_liveAnim->setInterval(33);
+    connect(m_liveAnim, &QTimer::timeout, this, [this] {
+        update();
+        bool busy = false;
+        for (qint64 t : m_liveFlashOut) busy |= flashLevel(t) > 0;
+        for (qint64 t : m_liveFlashIn)  busy |= flashLevel(t) > 0;
+        if (!busy) m_liveAnim->stop();
+    });
     m_outDirty = m_outConflict = QVector<bool>(NumOutputs, false);
 }
 
@@ -44,6 +62,172 @@ QSize ConnectionView::minimumSizeHint() const
     for (int r : m_inRow)  rows = qMax(rows, r + 1);
     for (int r : m_outRow) rows = qMax(rows, r + 1);
     return QSize(620, int(Top + rows * (NodeH + Gap) + Margin));
+}
+
+// ── Live test ───────────────────────────────────────────────────────────────
+void ConnectionView::setLiveMode(bool on)
+{
+    m_live = on;
+    m_drag = Drag::None;
+    m_dragging = false;
+    update();
+}
+
+void ConnectionView::clearLive()
+{
+    m_liveState.fill(-1, NumOutputs);
+    update();
+}
+
+void ConnectionView::setOutputLive(int o, int state, int value)
+{
+    if (o < 0 || o >= NumOutputs)
+        return;
+    m_liveRaw[o]   = (state == 2);
+    m_liveValue[o] = value;
+    if (state != 2)            m_liveState[o] = state;
+    else if (m_liveState[o] < 0) m_liveState[o] = 1;
+    m_liveFlashOut[o] = m_liveClock.elapsed();
+    m_liveAnim->start();
+    update();
+}
+
+qreal ConnectionView::flashLevel(qint64 t) const
+{
+    const qint64 age = m_liveClock.elapsed() - t;
+    return age < 0 || age > 700 ? 0.0 : 1.0 - age / 700.0;
+}
+
+QRectF ConnectionView::liveButtonRect(int i, int direction) const
+{
+    if (!m_live || !inputShown(i))
+        return QRectF();
+    const InputConfig &c = m_board.inputs[i];
+    const QRectF r = inputRect(i);
+    const qreal h = 20, y = r.top() + 22;
+    if (c.type == Latching)
+        return direction ? QRectF(r.right() - 46, y, 38, h) : QRectF(r.right() - 88, y, 38, h);
+    if (c.type == Momentary || isRouteType(c.type))
+        return direction ? QRectF(r.right() - 88, y, 80, h) : QRectF();
+    return QRectF();
+}
+
+static void drawLiveDot(QPainter &p, const QPointF &c, qreal radius, int state, qreal flash)
+{
+    const QColor blue(0x25, 0x63, 0xEB), red(0xDC, 0x26, 0x26), grey(0xCB, 0xD5, 0xE1);
+    const QColor col = state == 1 ? blue : state == 0 ? red : grey;
+    p.save();
+    if (flash > 0)
+    {
+        QColor halo = col;
+        halo.setAlphaF(0.35 * flash);
+        p.setPen(Qt::NoPen);
+        p.setBrush(halo);
+        p.drawEllipse(c, radius + 7 * flash, radius + 7 * flash);
+    }
+    p.setPen(QPen(Qt::white, 2));
+    p.setBrush(col);
+    p.drawEllipse(c, radius, radius);
+    p.restore();
+}
+
+void ConnectionView::drawInputLive(QPainter &p, int i)
+{
+    const InputConfig &c = m_board.inputs[i];
+    const qreal flash = flashLevel(m_liveFlashIn[i]);
+    p.save();
+    p.setBrush(Qt::NoBrush);
+    for (int dir = 0; dir < 2; ++dir)
+    {
+        const QRectF b = liveButtonRect(i, dir);
+        if (b.isEmpty()) continue;
+        QPainterPath path;
+        path.addRoundedRect(b, 6, 6);
+        p.fillPath(path, flash > 0 ? QColor(0xFE, 0xF3, 0xC7) : QColor(0xF1, 0xF5, 0xF9));
+        p.setPen(QPen(kBorder, 1));
+        p.drawPath(path);
+        if (c.type == Latching)
+        {
+            drawLiveDot(p, QPointF(b.left() + 11, b.center().y()), 5, dir, 0);
+            p.setPen(kText);
+            p.drawText(b.adjusted(18, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter, dir ? QStringLiteral("▶") : QStringLiteral("◀"));
+        }
+        else
+        {
+            p.setPen(kText);
+            p.drawText(b, Qt::AlignCenter, isRouteType(c.type) ? tr("▶ start") : tr("▶ press"));
+        }
+    }
+    p.restore();
+}
+
+void ConnectionView::drawOutputLive(QPainter &p, int o)
+{
+    const OutputConfig &c = m_board.outputs[o];
+    if (c.type == OutputNotInUse)
+        return;
+    const QRectF r = outputRect(o);
+    const QRectF box(r.right() - 44, r.top() + 4, 40, r.height() - 8);
+    QPainterPath bg;
+    bg.addRoundedRect(box, 6, 6);
+    p.fillPath(bg, QColor(Qt::white));
+    const qreal flash = flashLevel(m_liveFlashOut[o]);
+    const int state = m_liveState[o];
+    const QPointF centre = box.center();
+    p.save();
+    p.setRenderHint(QPainter::Antialiasing);
+    if (c.type == ServoType)
+    {
+        // dial: 0 degrees on the left, 180 on the right
+        const int angle = m_liveRaw[o] ? m_liveValue[o]
+                        : state == 1   ? c.servoMax()
+                        : state == 0   ? c.servoMin() : -1;
+        const QPointF pivot(centre.x(), box.bottom() - 6);
+        const qreal rad = 15;
+        p.setPen(QPen(kBorder, 2));
+        p.setBrush(Qt::NoBrush);
+        p.drawArc(QRectF(pivot.x() - rad, pivot.y() - rad, 2 * rad, 2 * rad), 0, 180 * 16);
+        if (angle >= 0)
+        {
+            const qreal a = M_PI * (1.0 - angle / 180.0);
+            const QPointF tip(pivot.x() + rad * std::cos(a), pivot.y() - rad * std::sin(a));
+            p.setPen(QPen(flash > 0 ? QColor(0xF5, 0x9E, 0x0B) : QColor(0x0F, 0x17, 0x2A), 2.5, Qt::SolidLine, Qt::RoundCap));
+            p.drawLine(pivot, tip);
+            QFont f = font(); f.setPointSizeF(qMax(6.5, f.pointSizeF() - 2)); p.setFont(f);
+            p.setPen(kMuted);
+            p.drawText(QRectF(box.left(), box.top() - 1, box.width(), 12), Qt::AlignCenter, QStringLiteral("%1°").arg(angle));
+        }
+        p.setPen(Qt::NoPen);
+        p.setBrush(kText);
+        p.drawEllipse(pivot, 2.5, 2.5);
+    }
+    else if (c.type == FourToneSignal)
+    {
+        const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.data[0];
+        for (int k = 0; k < 4; ++k)
+        {
+            const bool on = state >= 0 && (aspect >> k) & 1;
+            const bool blink = (aspect >> (k + 4)) & 1;
+            p.setPen(QPen(kBorder, 1));
+            p.setBrush(on ? (blink ? QColor(0xFB, 0xBF, 0x24) : QColor(0xFA, 0xCC, 0x15)) : QColor(0xE2, 0xE8, 0xF0));
+            p.drawEllipse(QPointF(box.left() + 8 + k * 8, centre.y()), 3.2, 3.2);
+        }
+    }
+    else if (c.type == Pwm)
+    {
+        const qreal level = m_liveRaw[o] ? m_liveValue[o] / 255.0 : (state == 1 ? c.pwmValue() / 255.0 : 0.0);
+        const QRectF bar(box.left() + 8, box.top() + 4, box.width() - 16, box.height() - 8);
+        p.setPen(QPen(kBorder, 1));
+        p.setBrush(QColor(0xF1, 0xF5, 0xF9));
+        p.drawRect(bar);
+        p.fillRect(QRectF(bar.left(), bar.bottom() - bar.height() * level, bar.width(), bar.height() * level),
+                   QColor(0x25, 0x63, 0xEB));
+    }
+    else
+    {
+        drawLiveDot(p, centre, 8, state, flash);
+    }
+    p.restore();
 }
 
 void ConnectionView::setHideUnused(bool hide)
@@ -433,8 +617,8 @@ void ConnectionView::paintEvent(QPaintEvent *)
         p.drawPath(curve(a, b));
     }
 
-    for (int i = 0; i < NumInputs; ++i)  if (inputShown(i))  drawInput(p, i);
-    for (int o = 0; o < NumOutputs; ++o) if (outputShown(o)) drawOutput(p, o);
+    for (int i = 0; i < NumInputs; ++i)  if (inputShown(i))  { drawInput(p, i);  if (m_live) drawInputLive(p, i); }
+    for (int o = 0; o < NumOutputs; ++o) if (outputShown(o)) { drawOutput(p, o); if (m_live) drawOutputLive(p, o); }
 }
 
 // ── Mouse ───────────────────────────────────────────────────────────────────
@@ -447,6 +631,20 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
     m_pressPos = pos;
     m_dragging = false;
     m_drag = Drag::None;
+
+    if (m_live)          // live test: only the input buttons do something
+    {
+        for (int i = 0; i < NumInputs; ++i)
+            for (int dir = 0; dir < 2; ++dir)
+                if (liveButtonRect(i, dir).contains(pos))
+                {
+                    m_liveFlashIn[i] = m_liveClock.elapsed();
+                    m_liveAnim->start();
+                    emit liveTriggerRequested(i, dir);
+                    return;
+                }
+        return;
+    }
 
     const int in = inputAt(pos), out = outputAt(pos);
     if (in >= 0)       { m_drag = Drag::FromInput;  m_dragIndex = in;  }

@@ -106,6 +106,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(m_link, &DeviceLink::inputReceived,  this, &MainWindow::onInputReceived);
     connect(m_link, &DeviceLink::routeReceived,  this, &MainWindow::onRouteReceived);
     connect(m_link, &DeviceLink::boardReceived,  this, &MainWindow::onBoardReceived);
+    connect(m_link, &DeviceLink::outputEvent, this, [this](int o, int state, int value) {
+        m_view->setOutputLive(o, state, value);
+        if (m_view->liveMode() && o >= 0 && o < NumOutputs)
+        {
+            const QString name = m_edit.outputs[o].name.isEmpty() ? tr("Output %1").arg(o) : m_edit.outputs[o].name;
+            const QString what = state == 2 ? tr("value %1").arg(value)
+                                            : (state ? tr("straight / on") : tr("curved / off"));
+            statusBar()->showMessage(tr("%1 → %2").arg(name, what), 4000);
+        }
+    });
     connect(m_link, &DeviceLink::capabilitiesChanged, this, [this] { applyCapabilities(); });
     connect(m_link, &DeviceLink::logMessage,     this, &MainWindow::appendLog);
     connect(m_link, &DeviceLink::errorOccurred,  this, [this](const QString &m) {
@@ -297,6 +307,9 @@ void MainWindow::buildUi()
 
     // Wiring
     connect(m_view, &ConnectionView::inputSelected,  this, &MainWindow::selectInput);
+    connect(m_view, &ConnectionView::liveTriggerRequested, this, [this](int in, int dir) {
+        m_link->triggerInput(in, dir);
+    });
     connect(m_view, &ConnectionView::outputSelected, this, &MainWindow::selectOutput);
     connect(m_view, &ConnectionView::connectRequested, this, [this](int in, int out) {
         switch (connectOutput(m_edit, in, out, routeLimits()))
@@ -533,6 +546,12 @@ void MainWindow::buildToolbar()
     tb->addWidget(m_boardType);
     tb->addWidget(Info::button(QStringLiteral("board.dccnext")));
     m_actBoardSettings = tb->addAction(tr("Board settings…"), this, &MainWindow::editBoardSettings);
+    tb->addSeparator();
+    m_actLive = tb->addAction(tr("● Live test"));
+    m_actLive->setCheckable(true);
+    m_actLive->setToolTip(tr("Test the board without anything connected: click the buttons on an input and watch "
+                             "the outputs. Blue = straight / on, red = curved / off; servos show their angle."));
+    connect(m_actLive, &QAction::toggled, this, &MainWindow::setLiveTest);
 
     // Menus
     QMenu *file = menuBar()->addMenu(tr("&File"));
@@ -708,6 +727,8 @@ void MainWindow::onConnectionChanged()
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
     m_outEd->setConnected(open);
+    if (!open && m_actLive && m_actLive->isChecked())
+        m_actLive->setChecked(false);
     updateActions();
 }
 
@@ -986,6 +1007,8 @@ void MainWindow::refreshAll()
 
 void MainWindow::selectOutput(int i)
 {
+    if (m_view->liveMode())
+        return;
     m_view->selectOutput(i);
     m_outEd->setOutput(i, m_edit.outputs[i]);
     m_outEd->setWarnings(outputWarnings(i));
@@ -995,6 +1018,8 @@ void MainWindow::selectOutput(int i)
 
 void MainWindow::selectInput(int i)
 {
+    if (m_view->liveMode())
+        return;
     m_view->selectInput(i);
     m_inEd->setInput(i, m_edit.inputs[i]);
     m_inEd->setWarnings(inputWarnings(i));
@@ -1156,6 +1181,29 @@ void MainWindow::closeEvent(QCloseEvent *e)
         return;
     }
     e->accept();
+}
+
+// ── Live test ───────────────────────────────────────────────────────────────
+void MainWindow::setLiveTest(bool on)
+{
+    if (on && !(m_link->isReady() && m_link->caps().protocol >= 2))
+    {
+        QMessageBox::information(this, windowTitle(),
+                                 tr("Live test needs a connected board with firmware v2 (or the Demo)."));
+        m_actLive->setChecked(false);
+        return;
+    }
+    closePanels();
+    m_view->setLiveMode(on);
+    if (on)
+    {
+        m_view->clearLive();
+        for (int o = 0; o < NumOutputs; ++o)
+            if (m_edit.outputs[o].type != OutputNotInUse)
+                m_link->readOutputState(o);
+        statusBar()->showMessage(tr("Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and "
+                                    "reports back; nothing needs to be connected."), 8000);
+    }
 }
 
 // ── Simple / expert mode ────────────────────────────────────────────────────

@@ -66,6 +66,8 @@ public:
     void writeRoute(int route, const QVector<Gpio::RouteStep> &steps);
     void servoLive(int output, int angle);   // coalesced: only the latest angle is sent
     void readBoard();                        // v2 with board settings only
+    void triggerInput(int index, int direction);   // v2: as if a DCC command for this input arrived
+    void readOutputState(int output);              // v2: answered with an outputEvent
     void writeBoard(const Gpio::BoardSettings &b);
 
     const DeviceCaps &caps() const { return m_caps; }
@@ -90,6 +92,8 @@ signals:
     void capabilitiesChanged(const DeviceCaps &caps);
     void routeReceived(int route, const QVector<Gpio::RouteStep> &steps);
     void boardReceived(const Gpio::BoardSettings &board);
+    // An output changed on the board (v2). state 0/1, or 2 = raw value (aspect / angle / PWM) in 'value'.
+    void outputEvent(int output, int state, int value);
     void progress(int done, int total);
     void finished(int failures);            // queue became empty
     void errorOccurred(const QString &message);
@@ -97,7 +101,8 @@ signals:
 
 private:
     enum class Kind { Version, Hello, GetInput, GetOutput, SetInput, SetOutput, Preset,
-                      GetRoute, SetRoute, ServoLive, GetBoard, SetBoard };
+                      GetRoute, SetRoute, ServoLive, GetBoard, SetBoard,
+                      TriggerInput, GetOutputState };
 
     struct Txn
     {
@@ -113,7 +118,8 @@ private:
     void enqueue(Kind kind, quint8 command, const QByteArray &payload, int index, int timeout,
                  bool front = false);
     static bool needsV2(Kind k) { return k == Kind::GetRoute || k == Kind::SetRoute || k == Kind::ServoLive
-                                      || k == Kind::GetBoard || k == Kind::SetBoard; }
+                                      || k == Kind::GetBoard || k == Kind::SetBoard
+                                      || k == Kind::TriggerInput || k == Kind::GetOutputState; }
     void setCaps(const DeviceCaps &caps);
     void sendNext();
     void transmit();

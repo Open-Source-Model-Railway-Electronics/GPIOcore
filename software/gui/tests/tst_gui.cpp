@@ -92,6 +92,11 @@ class TestGui : public QObject
             w.grab().save(QString::fromLocal8Bit(dir) + QLatin1Char('/') + QLatin1String(name));
     }
 
+    void waitIdleOrNot(DeviceLink *link)
+    {
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
+    }
+
 private slots:
     void editWriteReadBack()
     {
@@ -163,6 +168,43 @@ private slots:
         // dragging the other way (input port -> output) works too
         drag(view, view->inputPort(2), view->outputRect(9).center());
         QCOMPARE(view->board().inputs[2].outputId, quint8(9));
+    }
+
+    void liveTest()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        QAction *live = nullptr;
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text().contains(QLatin1String("Live test"))) live = a;
+        QVERIFY(live);
+
+        // a route on input 4: output 1 on, output 2 off (sent to the simulator by live write)
+        InputConfig c = view->board().inputs[4];
+        c.type = Route;
+        c.route = { RouteStep{ 1, 1, false, 3 }, RouteStep{ 2, 0, false, 3 } };
+        emit w.findChild<InputEditor *>()->changed(4, c);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy() && view->board().inputs[4].route.size() == 2, 3000);
+        QTest::qWait(600);
+        waitIdleOrNot(link);
+
+        live->setChecked(true);
+        QVERIFY(view->liveMode());
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveState(0) >= 0, 3000);        // states read from the board
+
+        click(view, view->liveButtonRect(0, 1).center());                 // input 0 (absolute) -> straight
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveState(0), 1, 2000);
+        click(view, view->liveButtonRect(0, 0).center());                 // -> curved
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveState(0), 0, 2000);
+
+        click(view, view->liveButtonRect(4, 1).center());                 // route
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveState(1), 1, 2000);
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveState(2), 0, 2000);
+        maybeScreenshot(w, "live.png");
+
+        live->setChecked(false);
+        QVERIFY(!view->liveMode());
     }
 
     void routeByDragging()

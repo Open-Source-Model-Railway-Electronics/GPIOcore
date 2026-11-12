@@ -11,6 +11,7 @@
 
 #include "gpioconfig.h"
 
+#include <QElapsedTimer>
 #include <QIODevice>
 #include <array>
 
@@ -70,6 +71,10 @@ private:
     void   sendNack(quint8 reason);
     void   sendVersion();
     void   scheduleFlush();
+    void   reportOutput(int output, int state, int value);   // OUTPUT_EVENT after HELLO
+    void   triggerInput(int index, int direction);           // like the firmware's setDccAddress()
+    void   runRouteStep(int input, int step);
+    bool   routeMovesTurnout(int input) const;
 
     quint8 outCmd() const;
     quint8 firstPin() const { return m_opt.oldDefaults ? 0 : 3; }
@@ -99,4 +104,6 @@ private:
     std::array<int, Gpio::NumOutputs> m_live;
     bool       m_session = false;
     Gpio::BoardSettings m_board;
+    QElapsedTimer       m_clock;
+    std::array<bool, Gpio::NumInputs> m_routeBusy {};
 };

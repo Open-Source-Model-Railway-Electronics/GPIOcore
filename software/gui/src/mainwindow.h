@@ -80,6 +80,7 @@ private:
     void addBlock(bool output);
     void removeSelected();
     void flashFirmware();
+    void setLiveTest(bool on);
     QWidget *buildStartPage();
     void refreshRows();
     void refreshAll();
@@ -125,6 +126,7 @@ private:
     QAction        *m_actExpert = nullptr;
     QAction        *m_actShowUnused = nullptr;
     QAction        *m_actBoardSettings = nullptr;
+    QAction        *m_actLive = nullptr;
     QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
     bool            m_expert = false;
     bool            m_nameAsked = false;

@@ -188,6 +188,19 @@ void DeviceLink::servoLive(int output, int angle)
     enqueue(Kind::ServoLive, SERVO_LIVE, p, output, 150);
 }
 
+void DeviceLink::triggerInput(int index, int direction)
+{
+    QByteArray p;
+    p.append(char(index));
+    p.append(char(direction ? 1 : 0));
+    enqueue(Kind::TriggerInput, SET_INPUT_STATE, p, index, timeoutMs);
+}
+
+void DeviceLink::readOutputState(int output)
+{
+    enqueue(Kind::GetOutputState, GET_OUTPUT_STATE, QByteArray(1, char(output)), output, timeoutMs);
+}
+
 void DeviceLink::readBoard()
 {
     enqueue(Kind::GetBoard, GET_BOARD, QByteArray(), -1, timeoutMs);
@@ -388,6 +401,12 @@ void DeviceLink::handleFrame(const Frame &f)
         emit logMessage(QStringLiteral("RX"),
                         QStringLiteral("%1  %2").arg(commandName(f.command), -30).arg(toHex(frameBytes(f))));
 
+    if (f.command == OUTPUT_EVENT && f.payload.size() >= 3)
+    {
+        emit outputEvent(f.byte(0), f.byte(1), f.byte(2));    // may arrive at any time
+        return;
+    }
+
     if (!m_current.active)
     {
         handleUnsolicited(f);
@@ -499,6 +518,8 @@ void DeviceLink::handleFrame(const Frame &f)
         break;
 
     case Kind::SetBoard:
+    case Kind::TriggerInput:
+    case Kind::GetOutputState:
         if (f.isAck()) { complete(true); return; }
         break;
 
@@ -600,6 +621,8 @@ QString DeviceLink::describe(const Txn &t) const
     case Kind::ServoLive: return tr("live servo %1").arg(t.index);
     case Kind::GetBoard:  return tr("read board settings");
     case Kind::SetBoard:  return tr("write board settings");
+    case Kind::TriggerInput:   return tr("trigger input %1").arg(t.index);
+    case Kind::GetOutputState: return tr("read state of output %1").arg(t.index);
     }
     return QString();
 }

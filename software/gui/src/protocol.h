@@ -26,7 +26,9 @@ constexpr quint8 GET_OUTPUT_DATA        = 0x21;  //  1 byte  (index)
 constexpr quint8 SET_INPUT_STATE        = 0x32;
 constexpr quint8 GET_INPUT_STATE        = 0x31;
 constexpr quint8 SET_OUTPUT_STATE       = 0x42;
-constexpr quint8 GET_OUTPUT_STATE       = 0x41;
+constexpr quint8 GET_OUTPUT_STATE       = 0x41;  // v2: <output> -> OUTPUT_EVENT
+// v2, device -> host, unsolicited after HELLO: <output> <state 0/1, 2 = raw> <value> <ms lo> <ms hi>
+constexpr quint8 OUTPUT_EVENT           = 0x45;
 constexpr quint8 REQ_VERSION            = 0x50;  //  0 bytes
 constexpr quint8 VERSION_GROUP          = 0x5;   // reply: 0x5n, n = string length
 constexpr quint8 SET_PRESET             = 0x61;  //  1 byte  (preset number)
