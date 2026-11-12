@@ -170,9 +170,25 @@ void loop()
 }
 
 
+// ── Report an output change to the GUI (only during a configuration session) ──
+void reportOutput( uint8_t index, uint8_t state, uint8_t value )
+{
+    if( !configSession || serialIsIO ) return ;
+    uint32_t now = millis() ;
+    Message m ;
+    m.command    = OPCODE_OUTPUT_EVENT ;
+    m.payload[0] = index ;
+    m.payload[1] = state ;
+    m.payload[2] = value ;
+    m.payload[3] = now & 0xFF ;
+    m.payload[4] = ( now >> 8 ) & 0xFF ;
+    transceiver.sendMessage( &m ) ;
+}
+
 // ── Output callback — central point for all output state changes ───────────────
 void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 {
+    reportOutput( index, state, val ) ;
     output[index].setState( state ) ;
     if( output[index].eedata.type == PWM || output[index].eedata.type == fourToneSignal ) output[index].setVal( val ) ;   // val shares the union with servo / time settings
 
@@ -182,6 +198,7 @@ void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 // ── Raw route step: signal aspect, PWM value or servo angle ───────────────────
 void callbackRouteValue( uint8_t index, uint8_t value )
 {
+    reportOutput( index, 2, value ) ;   // state 2 = raw value (aspect / angle / PWM)
     if( output[index].eedata.type == servoType ) output[index].setPosition( value ) ;
     else                                         output[index].setVal( value ) ;
 }

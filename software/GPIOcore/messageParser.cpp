@@ -204,8 +204,12 @@ OPCODE( OPCODE_GET_OUTPUT_DATA )
 }
 
 
+// <input> <direction>: acts as if a DCC command for this input's address arrived (toggle, absolute, route)
 OPCODE( OPCODE_SET_INPUT_STATE )
 {
+    uint8_t i = msg->payload[0] ;
+    if( i >= 16 ) return ;
+    input[i].setDccAddress( input[i].eedata.myAddress, msg->payload[1] ) ;
 }
 
 OPCODE( OPCODE_GET_INPUT_STATE )
@@ -216,8 +220,18 @@ OPCODE( OPCODE_SET_OUTPUT_STATE )
 {
 }
 
+// <output> -> OUTPUT_EVENT with the current state
 OPCODE( OPCODE_GET_OUTPUT_STATE )
 {
+    uint8_t i = msg->payload[0] ;
+    if( i >= 16 ) return ;
+    uint32_t now = millis() ;
+    msg->command    = OPCODE_OUTPUT_EVENT ;
+    msg->payload[1] = output[i].eedata.state ;
+    msg->payload[2] = output[i].eedata.data[0] ;
+    msg->payload[3] = now & 0xFF ;
+    msg->payload[4] = ( now >> 8 ) & 0xFF ;
+    transceiver.sendMessage( msg ) ;
 }
 
 OPCODE( OPCODE_REQ_VERSION )
