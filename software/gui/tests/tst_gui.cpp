@@ -207,6 +207,25 @@ private slots:
         QVERIFY(!view->liveMode());
     }
 
+    void liveWriteStopsWhenSettled()
+    {
+        // Timing off (default): the board keeps no wait times. A route edit must be sent once,
+        // not again and again because the read-back route has wait time 0.
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        int writes = 0;
+        connect(link, &DeviceLink::inputWritten, this, [&writes](int) { ++writes; });
+
+        InputConfig c = view->board().inputs[4];
+        c.type = Route;
+        c.route = { RouteStep{ 1, 1, false, 3 }, RouteStep{ 2, 0, false, 7 } };
+        emit w.findChild<InputEditor *>()->changed(4, c);
+        QTest::qWait(2500);
+        QCOMPARE(writes, 1);
+        QCOMPARE(view->board().inputs[4].route.size(), 2);
+    }
+
     void routeByDragging()
     {
         MainWindow w;

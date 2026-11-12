@@ -3,6 +3,7 @@
 #include "gpioconfig.h"
 
 #include <QMainWindow>
+#include <QSet>
 #include <array>
 
 class ConnectionView;
@@ -72,6 +73,8 @@ private:
     void setBoardType(int type);
     void userEdited();                        // an edit by the user: send it to the board soon
     void sendLive();
+    void writeDirty(bool live);               // live: skip items the board already refused to take
+    Gpio::InputConfig asStored(const Gpio::InputConfig &c) const;   // what the board keeps of an input
     void onBoardReceived(const Gpio::BoardSettings &b);
     void editBoardSettings();
     void askBoardName();
@@ -130,6 +133,9 @@ private:
     QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
     bool            m_expert = false;
     bool            m_nameAsked = false;
+    QSet<int>       m_liveTried;                // live write: items sent since the last user edit
+                                                // (inputs 0-15, outputs 100-115)
+    bool            m_liveWarned = false;
     QAction        *m_actRefresh = nullptr;
     QAction        *m_actConnect = nullptr;
     QAction        *m_actDemo = nullptr;

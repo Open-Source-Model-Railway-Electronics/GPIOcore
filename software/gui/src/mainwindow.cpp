@@ -139,7 +139,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         if (failures)
             statusBar()->showMessage(tr("Done with %1 error(s)").arg(failures), 6000);
         if (dirtyCount() > 0 && m_liveTimer->isActive() == false && failures == 0)
-            m_liveTimer->start();        // edits made while the board was busy
+            m_liveTimer->start();        // edits made while the board was busy (sendLive skips refused items)
         saveBoardFile();
         if (!m_nameAsked && m_link->caps().boardSettings && m_dev.board.name.isEmpty())
             QTimer::singleShot(0, this, &MainWindow::askBoardName);
@@ -371,6 +371,8 @@ void MainWindow::buildUi()
 
 void MainWindow::userEdited()
 {
+    m_liveTried.clear();                 // a new edit: everything may be sent again
+    m_liveWarned = false;
     boardEdited();
     if (m_link->isReady())
         m_liveTimer->start();           // (re)start: send after a short pause
@@ -387,7 +389,7 @@ void MainWindow::sendLive()
         m_liveTimer->start();            // try again when the board is free
         return;
     }
-    writeChanges();
+    writeDirty(true);
 }
 
 void MainWindow::boardEdited()
@@ -781,7 +783,8 @@ void MainWindow::onInputReceived(int i, const InputConfig &received)
 
 void MainWindow::onRouteReceived(int i, const QVector<RouteStep> &steps)
 {
-    const bool keep = m_keepEdits || (m_inKnown[i] && m_edit.inputs[i].route != m_dev.inputs[i].route);
+    const bool keep = m_keepEdits
+                   || (m_inKnown[i] && asStored(m_edit.inputs[i]).route != asStored(m_dev.inputs[i]).route);
     setRouteSteps(m_dev.inputs[i], steps);
     m_inKnown[i] = true;
     if (!keep)
@@ -806,18 +809,45 @@ void MainWindow::readFromBoard()
 
 void MainWindow::writeChanges()
 {
+    m_liveTried.clear();
+    writeDirty(false);
+}
+
+void MainWindow::writeDirty(bool live)
+{
+    // Live writing sends every edited item once. If the board still reports something else
+    // afterwards (it cannot store it), the item is not sent again until the user edits again:
+    // otherwise the GUI would write the same thing forever.
     int n = 0;
+    QStringList refused;
     for (int i = 0; i < NumInputs; ++i)
         if (inputDirty(i))
         {
+            if (live && m_liveTried.contains(i)) { refused << tr("input %1").arg(i); continue; }
+            m_liveTried.insert(i);
             m_link->writeInput(i, m_edit.inputs[i]);
             m_link->writeRoute(i, m_edit.inputs[i].route);   // skipped on v1 boards (linked bytes)
             m_link->readInput(i);                             // also reads the route back
             ++n;
         }
     for (int i = 0; i < NumOutputs; ++i)
-        if (outputDirty(i)) { m_link->writeOutput(i, m_edit.outputs[i]); m_link->readOutput(i); ++n; }
-    appendLog(QStringLiteral("INFO"), tr("Writing %1 item(s), each is read back for verification").arg(n));
+        if (outputDirty(i))
+        {
+            if (live && m_liveTried.contains(100 + i)) { refused << tr("output %1").arg(i); continue; }
+            m_liveTried.insert(100 + i);
+            m_link->writeOutput(i, m_edit.outputs[i]);
+            m_link->readOutput(i);
+            ++n;
+        }
+    if (n)
+        appendLog(QStringLiteral("INFO"), tr("Writing %1 item(s), each is read back for verification").arg(n));
+    if (!refused.isEmpty() && !m_liveWarned)
+    {
+        m_liveWarned = true;
+        const QString msg = tr("The board keeps a different value for %1; not sending it again.").arg(refused.join(QStringLiteral(", ")));
+        appendLog(QStringLiteral("WARN"), msg);
+        statusBar()->showMessage(msg, 8000);
+    }
 }
 
 void MainWindow::revertChanges()
@@ -926,13 +956,22 @@ bool MainWindow::outputDirty(int i) const
     return m_outKnown[i] && !sameOutput(m_edit.outputs[i], m_dev.outputs[i], m_link->legacyOutputFormat());
 }
 
+InputConfig MainWindow::asStored(const InputConfig &c) const
+{
+    InputConfig s = c;
+    if (!m_dev.board.timing)             // timing off: the board keeps no wait time per step
+        for (RouteStep &step : s.route)
+            step.delay = 0;
+    return s;
+}
+
 bool MainWindow::inputDirty(int i) const
 {
     if (!m_inKnown[i])
         return false;
     if (m_link->isOpen() && m_link->caps().known && m_link->caps().protocol < 2)
         return m_edit.inputs[i].asV1() != m_dev.inputs[i];   // v1 stores only what fits in linked[]
-    return m_edit.inputs[i] != m_dev.inputs[i];
+    return asStored(m_edit.inputs[i]) != asStored(m_dev.inputs[i]);
 }
 
 int MainWindow::dirtyCount() const
@@ -1410,8 +1449,14 @@ void MainWindow::editBoardSettings()
     m_inEd->setTimingEnabled(b.timing);
     if (m_link->isReady() && m_link->caps().boardSettings)
     {
+        const bool timingChanged = b.timing != m_dev.board.timing;
         m_link->writeBoard(b);
         m_link->readBoard();
+        if (timingChanged)
+        {
+            m_inKnown.fill(false);       // the board converted all routes (wait times added / dropped)
+            m_link->readAll();
+        }
     }
     saveBoardFile();
     setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));

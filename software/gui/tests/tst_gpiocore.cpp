@@ -488,6 +488,8 @@ private slots:
     void routeRoundTripV2()
     {
         Rig r; makeRig(r, SimulatedDevice::Options());
+        BoardSettings timed; timed.timing = true;
+        r.sim->setBoard(timed);                             // keep per-step wait times
         InputConfig in;
         in.type = Route; in.address = 40;
         for (int i = 0; i < 16; ++i)

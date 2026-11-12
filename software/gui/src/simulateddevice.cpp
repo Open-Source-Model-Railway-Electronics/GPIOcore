@@ -252,7 +252,12 @@ void SimulatedDevice::messageReceived()
         msg[2] = quint8(r.size());
         msg[3] = quint8(first);
         for (int i = 0; i < n; ++i)
-            memcpy(msg + 4 + 4 * i, encodeStep(r[first + i]).constData(), 4);
+        {
+            RouteStep st = r[first + i];
+            if (!m_board.timing && (m_opt.helloFlags & Proto::HELLO_FLAG_BOARD))
+                st.delay = 0;            // firmware: timing off stores 2 bytes per step, no wait time
+            memcpy(msg + 4 + 4 * i, encodeStep(st).constData(), 4);
+        }
         sendMessage(Proto::SET_ROUTE, msg);
     }
     else if (m_opt.protocol >= 2 && m_command == Proto::SET_ROUTE)
