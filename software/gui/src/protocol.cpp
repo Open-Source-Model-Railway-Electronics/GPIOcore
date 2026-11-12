@@ -64,6 +64,7 @@ QString commandName(quint8 command)
     case SERVO_LIVE:             return QStringLiteral("SERVO_LIVE");
     case GET_BOARD:              return QStringLiteral("GET_BOARD");
     case OUTPUT_EVENT:           return QStringLiteral("OUTPUT_EVENT");
+    case DCC_EXT:                return QStringLiteral("DCC_EXT");
     case SET_BOARD:              return QStringLiteral("SET_BOARD");
     }
     if ((command >> 4) == HELLO_GROUP)

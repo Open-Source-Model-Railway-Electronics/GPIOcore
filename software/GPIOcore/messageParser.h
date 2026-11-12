@@ -28,6 +28,7 @@ const int OPCODE_HELLO_REPLY       = 0x95 ;   // <protocol> <max steps> <pool lo
 const int OPCODE_GET_ROUTE         = 0x82 ;   // <route> <first> -> reply SET_ROUTE
 const int OPCODE_SET_ROUTE         = 0x8F ;   // <len> <route> <total> <first> <step ...>
 const int OPCODE_SERVO_LIVE        = 0xA2 ;   // <output> <angle>
+const int OPCODE_DCC_EXT          = 0x33 ;   // <addr H> <addr L> <value>: as if a DCC extended accessory packet arrived
 const int OPCODE_OUTPUT_EVENT      = 0x45 ;   // device -> host: <output> <state> <value> <ms lo> <ms hi>
 const int OPCODE_GET_BOARD         = 0xC0 ;   // no payload -> reply SET_BOARD
 const int OPCODE_SET_BOARD         = 0xCF ;   // <len> <type> <flags> <delay> <name 0..16>

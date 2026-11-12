@@ -75,6 +75,8 @@ private:
     void   triggerInput(int index, int direction);           // like the firmware's setDccAddress()
     void   runRouteStep(int input, int step);
     bool   routeMovesTurnout(int input) const;
+    void   setOutputState(int output, quint8 state);          // state change + report, servos sweep
+    void   sweepServo(int output);
 
     quint8 outCmd() const;
     quint8 firstPin() const { return m_opt.oldDefaults ? 0 : 3; }
@@ -106,4 +108,6 @@ private:
     Gpio::BoardSettings m_board;
     QElapsedTimer       m_clock;
     std::array<bool, Gpio::NumInputs> m_routeBusy {};
+    std::array<int,  Gpio::NumOutputs> m_servoPos;            // -1 = unknown
+    std::array<bool, Gpio::NumOutputs> m_sweeping {};
 };

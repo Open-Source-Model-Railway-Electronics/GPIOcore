@@ -83,6 +83,17 @@ void ConnectionView::setOutputLive(int o, int state, int value)
 {
     if (o < 0 || o >= NumOutputs)
         return;
+    const OutputConfig &c = m_board.outputs[o];
+    if (c.type == ServoType && state != 2 && m_liveState[o] >= 0 && state != m_liveState[o])
+    {
+        if (!m_liveRaw[o]) m_liveValue[o] = m_liveState[o] ? c.servoMax() : c.servoMin();
+        m_liveRaw[o]   = true;          // stay at the current angle, the degrees follow
+        m_liveState[o] = state;
+        m_liveFlashOut[o] = m_liveClock.elapsed();
+        m_liveAnim->start();
+        update();
+        return;
+    }
     m_liveRaw[o]   = (state == 2);
     m_liveValue[o] = value;
     if (state != 2)            m_liveState[o] = state;
@@ -98,6 +109,15 @@ qreal ConnectionView::flashLevel(qint64 t) const
     return age < 0 || age > 700 ? 0.0 : 1.0 - age / 700.0;
 }
 
+bool ConnectionView::liveValueInput(int i) const
+{
+    const InputConfig &c = m_board.inputs[i];
+    if (!isDirectType(c.type))
+        return false;
+    const quint8 t = m_board.outputs[c.outputId].type;
+    return t == FourToneSignal || t == Pwm;
+}
+
 QRectF ConnectionView::liveButtonRect(int i, int direction) const
 {
     if (!m_live || !inputShown(i))
@@ -105,6 +125,8 @@ QRectF ConnectionView::liveButtonRect(int i, int direction) const
     const InputConfig &c = m_board.inputs[i];
     const QRectF r = inputRect(i);
     const qreal h = 20, y = r.top() + 22;
+    if (liveValueInput(i))
+        return direction ? QRectF(r.right() - 88, y, 80, h) : QRectF();
     if (c.type == Latching)
         return direction ? QRectF(r.right() - 46, y, 38, h) : QRectF(r.right() - 88, y, 38, h);
     if (c.type == Momentary || isRouteType(c.type))
@@ -146,7 +168,12 @@ void ConnectionView::drawInputLive(QPainter &p, int i)
         p.fillPath(path, flash > 0 ? QColor(0xFE, 0xF3, 0xC7) : QColor(0xF1, 0xF5, 0xF9));
         p.setPen(QPen(kBorder, 1));
         p.drawPath(path);
-        if (c.type == Latching)
+        if (liveValueInput(i))
+        {
+            p.setPen(kText);
+            p.drawText(b, Qt::AlignCenter, m_board.outputs[c.outputId].type == Pwm ? tr("value ▾") : tr("aspect ▾"));
+        }
+        else if (c.type == Latching)
         {
             drawLiveDot(p, QPointF(b.left() + 11, b.center().y()), 5, dir, 0);
             p.setPen(kText);
@@ -578,8 +605,27 @@ void ConnectionView::paintEvent(QPaintEvent *)
     p.setFont(small);
     p.setPen(kMuted);
     const QRectF hintRect(Margin + nodeWidth() + 8, 8, width() - 2 * (Margin + nodeWidth() + 8), 26);
-    p.drawText(hintRect, Qt::AlignCenter,
-               p.fontMetrics().elidedText(tr("drag an output onto an input"), Qt::ElideRight, int(hintRect.width())));
+    if (m_live)
+    {
+        // unmistakable: blue frame and a banner while live test is on
+        const QColor blue(0x25, 0x63, 0xEB);
+        p.setPen(QPen(blue, 5));
+        p.setBrush(Qt::NoBrush);
+        p.drawRoundedRect(QRectF(rect()).adjusted(2.5, 2.5, -2.5, -2.5), 8, 8);
+        QPainterPath banner;
+        const qreal bw = qMin<qreal>(300, qMax<qreal>(120, hintRect.width()));
+        banner.addRoundedRect(QRectF(hintRect.center().x() - bw / 2, hintRect.top() + 2, bw, hintRect.height() - 4), 10, 10);
+        p.fillPath(banner, blue);
+        QFont bf = font();
+        bf.setBold(true);
+        p.setFont(bf);
+        p.setPen(Qt::white);
+        p.drawText(banner.boundingRect(), Qt::AlignCenter, tr("● LIVE TEST — click the input buttons"));
+        p.setFont(small);
+    }
+    else
+        p.drawText(hintRect, Qt::AlignCenter,
+                   p.fontMetrics().elidedText(tr("drag an output onto an input"), Qt::ElideRight, int(hintRect.width())));
 
     // wires below the nodes
     for (int w = 0; w < m_wires.size(); ++w)
@@ -640,7 +686,8 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                 {
                     m_liveFlashIn[i] = m_liveClock.elapsed();
                     m_liveAnim->start();
-                    emit liveTriggerRequested(i, dir);
+                    if (liveValueInput(i)) emit liveValueRequested(i);
+                    else                   emit liveTriggerRequested(i, dir);
                     return;
                 }
         return;

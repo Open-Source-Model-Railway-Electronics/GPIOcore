@@ -226,6 +226,48 @@ private slots:
         QCOMPARE(view->board().inputs[4].route.size(), 2);
     }
 
+    void liveServoAndSignal()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *oed = w.findChild<OutputEditor *>();
+
+        OutputConfig servo = view->board().outputs[3];
+        servo.type = ServoType; servo.data = { { 80, 100, 2, 0 } };
+        emit oed->changed(3, servo);
+        OutputConfig sig = view->board().outputs[5];
+        sig.type = FourToneSignal; sig.data = { { 0, 0, 0, 0 } };
+        emit oed->changed(5, sig);
+        QTRY_VERIFY_WITH_TIMEOUT(view->board().outputs[5].type == FourToneSignal && !link->isBusy(), 3000);
+        QTest::qWait(800);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
+
+        QVector<int> angles;
+        int aspect = -1;
+        connect(link, &DeviceLink::outputEvent, this, [&](int o, int st, int v) {
+            if (o == 3 && st == 2) angles << v;
+            if (o == 5 && st == 2) aspect = v;
+        });
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text().contains(QLatin1String("Live test"))) a->setChecked(true);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveState(3) >= 0, 3000);
+
+        // input 3 (absolute) -> other end: every degree is reported
+        const int dir = view->liveState(3) ? 0 : 1;
+        click(view, view->liveButtonRect(3, 1).center());
+        if (dir == 0) click(view, view->liveButtonRect(3, 0).center());
+        QTRY_VERIFY_WITH_TIMEOUT(angles.size() >= 20, 3000);
+        for (int k = 1; k < angles.size(); ++k)
+            QCOMPARE(qAbs(angles[k] - angles[k - 1]), 1);
+
+        // input 5 drives the signal: DCC extended with aspect 0x21
+        QVERIFY(view->liveValueInput(5));
+        link->dccExt(view->board().inputs[5].address, 0x21);
+        QTRY_COMPARE_WITH_TIMEOUT(aspect, 0x21, 2000);
+        maybeScreenshot(w, "live_servo_signal.png");
+    }
+
     void routeByDragging()
     {
         MainWindow w;

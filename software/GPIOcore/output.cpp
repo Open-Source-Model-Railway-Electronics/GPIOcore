@@ -117,8 +117,10 @@ uint8_t Output::sweep()
         if( eedata.state ) { setPoint = eedata.servo.servoMax ; }
         else               { setPoint = eedata.servo.servoMin ; }
 
+        uint8_t before = pos ;
         if( pos < setPoint ) { pos ++ ; }
         if( pos > setPoint ) { pos -- ; }
+        if( pos != before && callbackServoPos ) callbackServoPos( this, pos, pos == setPoint ) ;
 
         uint8_t servoDelay = 500 / ( timer.PT > 2 ? timer.PT : 2 ) ;   // speed 0 would divide by zero
 

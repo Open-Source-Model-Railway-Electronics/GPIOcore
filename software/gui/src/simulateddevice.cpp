@@ -3,6 +3,9 @@
 
 #include <QTimer>
 
+#include <functional>
+#include <memory>
+
 using namespace Gpio;
 
 SimulatedDevice::SimulatedDevice(QObject *parent) : SimulatedDevice(Options(), parent) {}
@@ -11,6 +14,7 @@ SimulatedDevice::SimulatedDevice(const Options &options, QObject *parent)
     : QIODevice(parent), m_opt(options)
 {
     m_live.fill(-1);
+    m_servoPos.fill(-1);
     factoryDefaults();
 }
 
@@ -233,6 +237,18 @@ void SimulatedDevice::messageReceived()
     {
         if (index < NumInputs) triggerInput(index, p[1]);
     }
+    else if (m_opt.protocol >= 2 && m_command == Proto::DCC_EXT)
+    {
+        const int address = p[0] << 8 | p[1];
+        for (int i = 0; i < NumInputs; ++i)          // input.cpp setDccAddressExt(): direct inputs only
+            if (m_in[i].address == address && isDirectType(m_in[i].type))
+            {
+                OutputConfig &o = m_out[m_in[i].outputId];
+                if (o.type == FourToneSignal || o.type == Pwm) o.data[0] = p[2];
+                if (o.type == FourToneSignal) reportOutput(m_in[i].outputId, 2, p[2]);
+                else                          setOutputState(m_in[i].outputId, 0);
+            }
+    }
     else if (m_opt.protocol >= 2 && m_command == Proto::GET_OUTPUT_STATE)
     {
         if (index >= NumOutputs) return;
@@ -429,9 +445,8 @@ void SimulatedDevice::triggerInput(int index, int direction)
     InputConfig &in = m_in[index];
     if (isDirectType(in.type))
     {
-        OutputConfig &o = m_out[in.outputId];
-        o.state = quint8(in.type == Latching ? (direction ? 1 : 0) : (o.state ^ 1));
-        reportOutput(in.outputId, o.state, o.data[0]);
+        const OutputConfig &o = m_out[in.outputId];
+        setOutputState(in.outputId, quint8(in.type == Latching ? (direction ? 1 : 0) : (o.state ^ 1)));
         return;
     }
     if (!isRouteType(in.type) || m_routeBusy[index] || in.route.isEmpty())
@@ -456,16 +471,48 @@ void SimulatedDevice::runRouteStep(int input, int step)
         return;
     }
     const RouteStep &s = r[step];
-    OutputConfig &o = m_out[s.output];
     if (s.raw)
     {
         reportOutput(s.output, 2, s.value);
     }
     else
     {
-        o.state = quint8(s.value ? 1 : 0);
-        reportOutput(s.output, o.state, o.data[0]);
+        setOutputState(s.output, quint8(s.value ? 1 : 0));
     }
     const int waitMs = 100 * (m_board.timing ? s.delay : m_board.delay);
     QTimer::singleShot(waitMs, this, [this, input, step] { runRouteStep(input, step + 1); });
+}
+
+void SimulatedDevice::setOutputState(int output, quint8 state)
+{
+    OutputConfig &o = m_out[output];
+    const bool changed = o.state != state;
+    o.state = state;
+    reportOutput(output, state, o.data[0]);
+    if (o.type == ServoType && changed)
+        sweepServo(output);
+}
+
+// like Output::sweep(): one degree per 'speed' ms, every degree is reported
+void SimulatedDevice::sweepServo(int output)
+{
+    OutputConfig &o = m_out[output];
+    const int target = o.state ? o.servoMax() : o.servoMin();
+    if (m_servoPos[output] < 0)
+        m_servoPos[output] = o.state ? o.servoMin() : o.servoMax();
+    if (m_sweeping[output])
+        return;                          // the running sweep follows the new target
+    m_sweeping[output] = true;
+    auto step = std::make_shared<std::function<void()>>();
+    *step = [this, output, step] {
+        const OutputConfig &c = m_out[output];
+        const int to = c.state ? c.servoMax() : c.servoMin();
+        int &pos = m_servoPos[output];
+        if (pos == to) { m_sweeping[output] = false; return; }
+        pos += pos < to ? 1 : -1;
+        reportOutput(output, 2, pos);
+        QTimer::singleShot(qMax(1, int(c.servoSpeed())), this, *step);
+    };
+    Q_UNUSED(target);
+    QTimer::singleShot(qMax(1, int(o.servoSpeed())), this, *step);
 }

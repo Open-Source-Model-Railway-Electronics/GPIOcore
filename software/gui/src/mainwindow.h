@@ -84,6 +84,7 @@ private:
     void removeSelected();
     void flashFirmware();
     void setLiveTest(bool on);
+    void openLiveValue(int input);           // live test: aspect / PWM value via DCC extended
     QWidget *buildStartPage();
     void refreshRows();
     void refreshAll();

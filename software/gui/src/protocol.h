@@ -26,6 +26,7 @@ constexpr quint8 GET_OUTPUT_DATA        = 0x21;  //  1 byte  (index)
 constexpr quint8 SET_INPUT_STATE        = 0x32;
 constexpr quint8 GET_INPUT_STATE        = 0x31;
 constexpr quint8 SET_OUTPUT_STATE       = 0x42;
+constexpr quint8 DCC_EXT                = 0x33;  // v2: <addr H> <addr L> <value>, as if a DCC extended packet arrived
 constexpr quint8 GET_OUTPUT_STATE       = 0x41;  // v2: <output> -> OUTPUT_EVENT
 // v2, device -> host, unsolicited after HELLO: <output> <state 0/1, 2 = raw> <value> <ms lo> <ms hi>
 constexpr quint8 OUTPUT_EVENT           = 0x45;

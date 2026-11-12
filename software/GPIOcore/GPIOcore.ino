@@ -188,11 +188,20 @@ void reportOutput( uint8_t index, uint8_t state, uint8_t value )
 // ── Output callback — central point for all output state changes ───────────────
 void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 {
-    reportOutput( index, state, val ) ;
+    uint8_t type = output[index].eedata.type ;
+    reportOutput( index, ( type == fourToneSignal ) ? 2 : state, val ) ;   // a signal reports its aspect
     output[index].setState( state ) ;
     if( output[index].eedata.type == PWM || output[index].eedata.type == fourToneSignal ) output[index].setVal( val ) ;   // val shares the union with servo / time settings
 
     recorder.storeEvent( OUTPUT_EVENT, index, state ) ; // logged when recording
+}
+
+// ── Servo sweep: every degree is reported (skipped when the serial buffer is full, never the last one)
+void callbackServoPos( Output *o, uint8_t pos, uint8_t done )
+{
+    if( !configSession || serialIsIO ) return ;
+    if( !done && Serial.availableForWrite() < 8 ) return ;
+    reportOutput( o - output, 2, pos ) ;
 }
 
 // ── Raw route step: signal aspect, PWM value or servo angle ───────────────────

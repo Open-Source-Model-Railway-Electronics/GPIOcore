@@ -4,6 +4,8 @@
 #include "input.h"
 #include "routes.h"
 
+#include "src/NmraDcc.h"     // notifyDccSigOutputState() (extern "C")
+
 extern Output      output[16] ;
 extern Input       input[16]  ;
 extern Transceiver transceiver ;
@@ -214,6 +216,11 @@ OPCODE( OPCODE_SET_INPUT_STATE )
 
 OPCODE( OPCODE_GET_INPUT_STATE )
 {
+}
+
+OPCODE( OPCODE_DCC_EXT )
+{
+    notifyDccSigOutputState( ( msg->payload[0] << 8 ) | msg->payload[1], msg->payload[2] ) ;
 }
 
 OPCODE( OPCODE_SET_OUTPUT_STATE )
@@ -628,6 +635,7 @@ void messageReceived( Message *msg, uint8 len )  // call back message
         process( OPCODE_GET_OUTPUT_DATA  ) ;
         process( OPCODE_SET_INPUT_STATE  ) ;
         process( OPCODE_GET_INPUT_STATE  ) ;
+        process( OPCODE_DCC_EXT          ) ;
         process( OPCODE_SET_OUTPUT_STATE ) ;
         process( OPCODE_GET_OUTPUT_STATE ) ;
         process( OPCODE_REQ_VERSION      ) ;

@@ -24,6 +24,7 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSlider>
 #include <QSpinBox>
 #include <QStandardPaths>
 #include <QActionGroup>
@@ -310,6 +311,7 @@ void MainWindow::buildUi()
     connect(m_view, &ConnectionView::liveTriggerRequested, this, [this](int in, int dir) {
         m_link->triggerInput(in, dir);
     });
+    connect(m_view, &ConnectionView::liveValueRequested, this, &MainWindow::openLiveValue);
     connect(m_view, &ConnectionView::outputSelected, this, &MainWindow::selectOutput);
     connect(m_view, &ConnectionView::connectRequested, this, [this](int in, int out) {
         switch (connectOutput(m_edit, in, out, routeLimits()))
@@ -1243,6 +1245,72 @@ void MainWindow::setLiveTest(bool on)
         statusBar()->showMessage(tr("Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and "
                                     "reports back; nothing needs to be connected."), 8000);
     }
+}
+
+void MainWindow::openLiveValue(int input)
+{
+    const InputConfig &in = m_edit.inputs[input];
+    if (in.address == AddrNone)
+    {
+        QMessageBox::information(this, windowTitle(),
+                                 tr("Input %1 has no DCC address, so it cannot receive a DCC extended command.").arg(input));
+        return;
+    }
+    const int address = in.address;
+    const OutputConfig &out = m_edit.outputs[in.outputId];
+    auto *d = new QDialog(this);
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->setWindowTitle(tr("DCC extended — address %1").arg(address));
+    auto *form = new QFormLayout(d);
+    auto *value = new QLabel;
+    auto send = [this, address, value](int v) {
+        value->setText(tr("Value sent: %1 (0x%2)").arg(v).arg(v, 2, 16, QLatin1Char('0')));
+        m_link->dccExt(address, v);
+    };
+    if (out.type == FourToneSignal)
+    {
+        // aspect byte: bits 0-3 lamp on, bits 4-7 lamp flashing
+        auto *lamps = new QVector<QComboBox *>;
+        auto collect = [lamps, send] {
+            int v = 0;
+            for (int k = 0; k < 4; ++k)
+            {
+                const int m = (*lamps)[k]->currentIndex();
+                if (m >= 1) v |= 1 << k;
+                if (m == 2) v |= 1 << (k + 4);
+            }
+            send(v);
+        };
+        for (int k = 0; k < 4; ++k)
+        {
+            auto *c = new QComboBox;
+            c->addItems({ tr("off"), tr("on"), tr("flashing") });
+            const quint8 a = out.data[0];
+            c->setCurrentIndex((a >> (k + 4)) & 1 ? 2 : ((a >> k) & 1 ? 1 : 0));
+            lamps->append(c);
+            form->addRow(tr("Lamp %1").arg(k + 1), c);
+            connect(c, QOverload<int>::of(&QComboBox::activated), d, collect);
+        }
+        connect(d, &QObject::destroyed, [lamps] { delete lamps; });
+    }
+    else
+    {
+        auto *slider = new QSlider(Qt::Horizontal);
+        slider->setRange(0, 255);
+        slider->setValue(out.pwmValue());
+        form->addRow(tr("PWM value"), slider);
+        connect(slider, &QSlider::valueChanged, d, send);
+    }
+    form->addRow(value);
+    auto *note = new QLabel(tr("Sent as if your command station sent a DCC extended accessory command to "
+                               "address %1. Every change is sent straight away.").arg(address));
+    note->setWordWrap(true);
+    note->setObjectName(QStringLiteral("help"));
+    form->addRow(note);
+    auto *close = new QPushButton(tr("Close"));
+    connect(close, &QPushButton::clicked, d, &QDialog::close);
+    form->addRow(close);
+    d->show();
 }
 
 // ── Simple / expert mode ────────────────────────────────────────────────────

@@ -89,6 +89,9 @@ enum state
 } ;
 
 
+class Output ;
+extern void callbackServoPos( Output *o, uint8_t pos, uint8_t done ) __attribute__((weak)) ;   // every degree of a sweep
+
 class Output
 {
 public:

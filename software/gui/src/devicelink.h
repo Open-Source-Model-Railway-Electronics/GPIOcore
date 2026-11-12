@@ -68,6 +68,7 @@ public:
     void readBoard();                        // v2 with board settings only
     void triggerInput(int index, int direction);   // v2: as if a DCC command for this input arrived
     void readOutputState(int output);              // v2: answered with an outputEvent
+    void dccExt(int address, int value);           // v2: as if a DCC extended accessory packet arrived
     void writeBoard(const Gpio::BoardSettings &b);
 
     const DeviceCaps &caps() const { return m_caps; }
@@ -102,7 +103,7 @@ signals:
 private:
     enum class Kind { Version, Hello, GetInput, GetOutput, SetInput, SetOutput, Preset,
                       GetRoute, SetRoute, ServoLive, GetBoard, SetBoard,
-                      TriggerInput, GetOutputState };
+                      TriggerInput, GetOutputState, DccExt };
 
     struct Txn
     {
@@ -119,7 +120,7 @@ private:
                  bool front = false);
     static bool needsV2(Kind k) { return k == Kind::GetRoute || k == Kind::SetRoute || k == Kind::ServoLive
                                       || k == Kind::GetBoard || k == Kind::SetBoard
-                                      || k == Kind::TriggerInput || k == Kind::GetOutputState; }
+                                      || k == Kind::TriggerInput || k == Kind::GetOutputState || k == Kind::DccExt; }
     void setCaps(const DeviceCaps &caps);
     void sendNext();
     void transmit();

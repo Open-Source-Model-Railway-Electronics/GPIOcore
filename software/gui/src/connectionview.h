@@ -28,6 +28,7 @@ public:
     void clearLive();
     int  liveState(int output) const { return m_liveState.value(output, -1); }
     QRectF liveButtonRect(int input, int direction) const;   // empty if the input has no such button
+    bool   liveValueInput(int input) const;   // direct input on a signal / PWM output: sends a value
     bool hideUnused() const { return m_hideUnused; }
     bool inputShown(int index) const  { return m_inRow.value(index, -1) >= 0; }
     bool outputShown(int index) const { return m_outRow.value(index, -1) >= 0; }
@@ -56,6 +57,7 @@ signals:
     void toggleStepRequested(int input, int step);
     void moveStepRequested(int input, int step, int delta);
     void liveTriggerRequested(int input, int direction);
+    void liveValueRequested(int input);             // signal aspect / PWM value (DCC extended)
 
 protected:
     void paintEvent(QPaintEvent *) override;

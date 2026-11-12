@@ -196,6 +196,21 @@ void DeviceLink::triggerInput(int index, int direction)
     enqueue(Kind::TriggerInput, SET_INPUT_STATE, p, index, timeoutMs);
 }
 
+void DeviceLink::dccExt(int address, int value)
+{
+    QByteArray p;
+    p.append(char(address >> 8));
+    p.append(char(address & 0xFF));
+    p.append(char(value));
+    for (Txn &t : m_queue)
+        if (t.kind == Kind::DccExt && t.index == address)
+        {
+            t.payload = p;               // still waiting: just send the newest value
+            return;
+        }
+    enqueue(Kind::DccExt, DCC_EXT, p, address, timeoutMs);
+}
+
 void DeviceLink::readOutputState(int output)
 {
     enqueue(Kind::GetOutputState, GET_OUTPUT_STATE, QByteArray(1, char(output)), output, timeoutMs);
@@ -520,6 +535,7 @@ void DeviceLink::handleFrame(const Frame &f)
     case Kind::SetBoard:
     case Kind::TriggerInput:
     case Kind::GetOutputState:
+    case Kind::DccExt:
         if (f.isAck()) { complete(true); return; }
         break;
 
@@ -623,6 +639,7 @@ QString DeviceLink::describe(const Txn &t) const
     case Kind::SetBoard:  return tr("write board settings");
     case Kind::TriggerInput:   return tr("trigger input %1").arg(t.index);
     case Kind::GetOutputState: return tr("read state of output %1").arg(t.index);
+    case Kind::DccExt:         return tr("DCC extended to address %1").arg(t.index);
     }
     return QString();
 }
