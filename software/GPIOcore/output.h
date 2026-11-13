@@ -141,6 +141,7 @@ private:
     uint8_t     attached : 1 ;
     uint8_t     live     : 1 ;              // moved by setPosition(), waiting to detach
     uint8_t     relays   : 3 ;              // last level written to relay A, B, C
+    uint8_t     phase    : 1 ;              // signal: blink phase, flips every 500 ms
     void        relayWrite( uint8_t which, uint8_t level ) ;   // 0 = A, 1 = B, 2 = C
     uint16_t    liveTime ;
 } ;

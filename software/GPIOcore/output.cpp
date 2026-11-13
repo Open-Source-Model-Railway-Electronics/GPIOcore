@@ -495,7 +495,7 @@ StateFunction( fourToneSignalState )
 
     const uint8_t pins[4] = { eedata.pinA, eedata.pinB, eedata.pinC, eedata.pinD } ;
 
-    timer.update(1) ;
+    if( timer.update(1) ) phase ^= 1 ;     // timer.Q is high for one call only: keep our own phase
 
     for( uint8_t i = 0 ; i < 4 ; i++ )
     {
@@ -506,11 +506,11 @@ StateFunction( fourToneSignalState )
 
         if( on && blink )                   // blink in phase
         {
-            digitalWrite( pins[i], timer.Q ? HIGH : LOW ) ;
+            digitalWrite( pins[i], phase ? HIGH : LOW ) ;
         }
         else if( !on && blink )             // blink in opposite phase
         {
-            digitalWrite( pins[i], timer.Q ? LOW : HIGH ) ;
+            digitalWrite( pins[i], phase ? LOW : HIGH ) ;
         }
         else                                // steady on or off
         {

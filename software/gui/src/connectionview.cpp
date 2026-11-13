@@ -52,6 +52,12 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
         bool busy = false;
         for (qint64 t : m_liveFlashOut) busy |= flashLevel(t) > 0;
         for (qint64 t : m_liveFlashIn)  busy |= flashLevel(t) > 0;
+        for (int o = 0; o < NumOutputs && m_live && !busy; ++o)      // flashing signal lamps keep it running
+        {
+            const OutputConfig &c = m_board.outputs[o];
+            const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.data[0];
+            busy = c.type == FourToneSignal && m_liveState[o] >= 0 && (aspect & 0xF0);
+        }
         if (!busy) m_liveAnim->stop();
     });
     m_outDirty = m_outConflict = QVector<bool>(NumOutputs, false);
@@ -241,10 +247,13 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
     else if (c.type == FourToneSignal)
     {
         const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.data[0];
+        // like output.cpp: on + blink = flashes in phase, blink only = in opposite phase, 500 ms
+        const bool phase = (m_liveClock.elapsed() / 500) % 2;
         for (int k = 0; k < 4; ++k)
         {
-            const bool on = state >= 0 && (aspect >> k) & 1;
+            const bool lit   = (aspect >> k) & 1;
             const bool blink = (aspect >> (k + 4)) & 1;
+            const bool on    = state >= 0 && (blink ? (lit ? phase : !phase) : lit);
             p.setPen(QPen(kBorder, 1));
             p.setBrush(on ? (blink ? QColor(0xFB, 0xBF, 0x24) : QColor(0xFA, 0xCC, 0x15)) : Ui::themed(QColor(0xE2, 0xE8, 0xF0)));
             p.drawEllipse(QPointF(box.left() + 8 + k * 8, centre.y()), 3.2, 3.2);
