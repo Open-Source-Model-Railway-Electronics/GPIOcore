@@ -1,10 +1,11 @@
-<h3>Pins — where the wires go</h3>
-<p>Choose the Arduino pin(s) for this output. Pin names are printed on the board: <b>D3 … D13</b> and
-<b>A0 … A5</b>.</p>
+<h3>Pins: where the wires go</h3>
+<p>Choose the Arduino pin(s) for this output. Pin names are printed on the board: <b>D3 &hellip; D12</b> and
+<b>A0 &hellip; A5</b>.</p>
 <ul>
-<li>One pin can only be used <b>once</b>. A pin used twice turns red.</li>
-<li><b>D2</b> is the DCC input. <b>D0 / D1</b> are the USB connection; only some boards can use them (see the
-warning when you pick one).</li>
+<li>Pins already used show <b>red</b> with who uses them ("in use: Out 3"). If you choose one anyway, the other
+input or output becomes <i>not in use</i>.</li>
+<li><b>D2</b> is the DCC input, <b>D13</b> the config LED and <b>A7</b> the config button: never available.
+<b>D0 / D1</b> are the USB connection; they work as I/O only when no computer is connected.</li>
 <li><b>~PWM</b> pins (D3, D5, D6, D9, D10, D11) can dim. Lighting effects need one of those.
 While any servo is in use, D9 and D10 can <i>not</i> dim.</li>
 <li>On a <b>DCCnext</b> the list also shows the port number printed on that board.</li>

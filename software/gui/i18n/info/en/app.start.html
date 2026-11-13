@@ -5,31 +5,45 @@ layout and switches things: turnouts, lights, signals, relays. You tell the boar
 
 <h3>The two kinds of things</h3>
 <ul>
-<li><b>Outputs</b> (right column) are things the board <i>does</i>: move a servo, pulse a turnout coil, light an LED,
-switch a relay. There are 16 of them.</li>
-<li><b>Inputs</b> (left column) are things that <i>tell the board to do something</i>: a push button on your control
-panel, or a command from your DCC command station (your digital system / handheld). There are 16 of them.</li>
+<li><b>Outputs</b> (middle, right column) are things the board <i>does</i>: move a servo, pulse a turnout coil,
+light an LED, switch a relay. There are 16 of them.</li>
+<li><b>Inputs</b> (middle, left column) are things that <i>tell the board to do something</i>: a push button on
+your control panel, or a command from your DCC command station (your digital system / handheld). There are 16.</li>
+</ul>
+<p>The settings of the selected input are always on the <b>left</b>, those of the selected output on the
+<b>right</b>.</p>
+
+<h3>Three ways of working: the coloured buttons at the top</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Configure</b> (red frame): connect to the board on the chosen port. Everything you
+change goes to the board <b>straight away</b>; there is no separate save button.</li>
+<li><b style="color:#A16207">&#9679; Simulate</b> (yellow frame): no board needed. Your own settings run on a pretend
+board; click the buttons on the inputs and watch the outputs. Nothing can break.</li>
+<li><b style="color:#15803D">&#9679; Live test</b> (green frame): on a real board, click the buttons on the inputs and
+see what the board does, even when nothing is wired up yet.</li>
 </ul>
 
 <h3>Step by step</h3>
 <ol>
-<li><b>Connect.</b> Plug the board into the USB port. Choose its port at the top (it usually says CH340, USB Serial or
-Arduino) and click <b>Connect</b>. No board at hand? Click <b>Demo</b> to try everything with a pretend board.</li>
-<li><b>Set up an output.</b> Click an output on the right. A panel slides in from the right. Choose the <b>type</b>
-(for example <i>Servo</i>) and the <b>pin</b> where the wire goes.</li>
-<li><b>Set up an input.</b> Click an input on the left. A panel slides in from the left. Choose what starts it:
-a <b>button pin</b>, a <b>DCC address</b>, or both.</li>
-<li><b>Connect them.</b> Drag the output (right) onto the input (left). A coloured line appears: that input now
-operates that output. The output gets the colour of its input, so you can see at a glance what belongs together.</li>
-<li><b>Send it to the board.</b> Everything you changed gets an orange dot. Click <b>Write … change(s)</b> at the
-top. The board stores it, even when the power is off.</li>
+<li><b>Connect.</b> Plug the board into the USB port, choose its port at the top (it usually says CH340, USB Serial
+or Arduino) and click <b>&#9679; Configure</b>. The first time, the program asks for a <b>name</b> for the board.</li>
+<li><b>Add an output.</b> Click <b>+ Add output</b>, or click an output. Choose the <b>type</b> (for example
+<i>Servo</i>) and the <b>pin</b> where the wire goes.</li>
+<li><b>Add an input.</b> Click <b>+ Add input</b>, or click an input. Choose what starts it: a <b>button pin</b>,
+a <b>DCC address</b>, or both.</li>
+<li><b>Connect them.</b> Drag the output onto the input. A coloured line appears: that input now operates that
+output. The output gets the colour of its input.</li>
+<li><b>Try it.</b> Click <b>&#9679; Live test</b> and press the buttons on the input.</li>
 </ol>
 
 <h3>Good to know</h3>
 <ul>
-<li>Every <b>(i)</b> button explains the thing next to it. Click it whenever you are unsure.</li>
-<li>Red text means something is wrong, for example two things on the same pin.</li>
-<li><b>Test state 0 / 1</b> in an output panel makes it move right away, so you can check your wiring.</li>
-<li><b>File → Save</b> keeps a copy of your setup on the computer. Do this before you experiment.</li>
-<li>Made a mess? <b>Revert</b> throws away everything you have not written to the board yet.</li>
+<li>Every <b>(i)</b> button explains the thing next to it.</li>
+<li>Give inputs and outputs a <b>name</b> (field at the top of each panel). Names and all settings are kept on
+this computer in <i>Documents\GPIOcore\boards\&lt;board name&gt;.json</i>, one file per board.</li>
+<li>A pin that is already used shows <b>red</b> in the pin list. If you choose it anyway, the input or output that
+had it becomes <i>not in use</i>.</li>
+<li>Unused inputs and outputs are hidden; <b>View &rarr; Show unused inputs and outputs</b> shows them all.</li>
+<li><b>View &rarr; Expert mode</b> shows the bytes, the serial log and the presets. <b>View &rarr; Theme</b> switches to dark.</li>
+<li><b>Board &rarr; Flash firmware&hellip;</b> puts new firmware on the Arduino.</li>
 </ul>

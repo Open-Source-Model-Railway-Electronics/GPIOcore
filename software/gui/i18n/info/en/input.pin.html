@@ -1,11 +1,13 @@
-<h3>Input pin — where the button is wired</h3>
+<h3>Input pin: where the button is wired</h3>
 <p>Choose the Arduino pin that the button, switch or sensor is connected to.</p>
 <p><b>How to wire it:</b> one wire of the button to the pin, the other wire to <b>GND</b> (minus, 0 V).
-That is all: no resistor needed, the board switches on its own internal “pull-up” resistor.</p>
-<pre>  pin D7 ───[ button ]─── GND</pre>
+No resistor needed: the board switches on its own internal "pull-up" resistor.</p>
+<pre>  pin D7 ---[ button ]--- GND</pre>
 <ul>
 <li>Do <b>not</b> connect a button to 5 V or 12 V: that can damage the Arduino.</li>
-<li>Pin <b>D2</b> is the DCC input and cannot be used.</li>
-<li>A pin can only be used once: not by two inputs, and not by an input and an output.</li>
+<li><b>D2</b> (DCC input), <b>D13</b> (config LED) and <b>A7</b> (config button) cannot be used.</li>
+<li><b>A6</b> (Arduino Nano only) is an analog-only input without a pull-up: add a 10 k&Omega; resistor from the pin to 5 V.</li>
+<li>Pins already used show <b>red</b>. Choosing one takes it from the other input or output, which becomes
+<i>not in use</i>.</li>
 </ul>
-<p>Only DCC, no button? Choose “not used”.</p>
+<p>Only DCC, no button? Choose "not used".</p>

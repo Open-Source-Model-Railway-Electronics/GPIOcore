@@ -1,20 +1,23 @@
 <h3>Setting up a servo</h3>
-<p>A servo turns to an angle between 0° and 180°. As a turnout motor it moves between two positions:</p>
+<p>A servo turns to an angle between 0&deg; and 180&deg;. As a turnout motor it moves between two positions:</p>
 <ul>
-<li><b>Position 0 (curved)</b> — the angle for “curved”.</li>
-<li><b>Position 1 (straight)</b> — the angle for “straight”.</li>
-<li><b>Speed</b> — milliseconds per degree. 20 ms/° is calm and realistic; 5 is fast; 50 is very slow.
-A full movement takes |position 1 − position 0| × speed.</li>
+<li><b>Position 0 (curved)</b>: the angle for "curved".</li>
+<li><b>Position 1 (straight)</b>: the angle for "straight".</li>
+<li><b>Speed</b>: milliseconds per degree. 20 ms/&deg; is calm and realistic; 5 is fast; 50 is very slow.</li>
 </ul>
-<h4>Finding the right positions — use “Live”</h4>
+<h4>Finding the right positions</h4>
 <ol>
-<li>Connect the board and tick <b>Live</b>.</li>
-<li>Drag the <i>Position 0</i> slider slowly. The servo on the layout moves along with it.
-Stop when the turnout blade just touches the rail.</li>
-<li>Do the same for <i>Position 1</i>.</li>
-<li>Click <b>Write</b> to store it.</li>
+<li>With the board connected, tick <b>Live</b> and drag the <i>Position 0</i> slider slowly. The servo moves along.
+Stop when the turnout blade just touches the rail, then do the same for <i>Position 1</i>. It is stored at once.</li>
+<li>Or without a computer: use the <b>config button</b> and loco address 9999 on your throttle (see
+<i>Help &rarr; Config button</i>).</li>
 </ol>
 <p><b>Tip:</b> do not push the blade too hard against the rail: the servo will hum and get warm.
-Go back 2–3° from the point where it touches.</p>
-<p>Wiring: brown/black = GND, red = 5 V (from a separate 5 V supply for several servos!), orange/yellow = signal to
-the pin.</p>
+Go back 2&ndash;3&deg; from the point where it touches.</p>
+<h4>Good to know</h4>
+<ul>
+<li>At power-up the servos start <b>one by one</b>, half a second apart, each to its last position. That avoids a
+big current peak.</li>
+<li>At most 6 servos move at the same time; the others wait for their turn.</li>
+<li>Wiring: brown/black = GND, red = 5 V (from a separate 5 V supply for several servos!), orange/yellow = signal.</li>
+</ul>

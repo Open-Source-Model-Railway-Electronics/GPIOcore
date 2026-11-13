@@ -1,10 +1,13 @@
-<h3>DCCnext</h3>
-<p>The <b>DCCnext</b> (by ArCoMoRa) is a ready-made decoder board with an Arduino Nano, a DCC input with optocoupler
-and screw terminals. Tick this box if you use one: the program then shows the <b>port numbers</b> printed on the
-board next to the Arduino pin names.</p>
+<h3>Board type</h3>
+<ul>
+<li><b>Arduino Uno / Nano</b>: pins D3&ndash;D12 and A0&ndash;A5. The Nano also has <b>A6</b> (analog input only).</li>
+<li><b>DCCnext</b> (by ArCoMoRa): a ready-made board with an Arduino Nano, DCC input and screw terminals. The pin
+lists then also show the <b>port numbers</b> printed on the board.</li>
+<li><b>Jack of all trades</b>: our own board.</li>
+</ul>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Port</th><td>1–10</td><td>11–16</td></tr>
-<tr><th>Arduino pin</th><td>D3–D12</td><td>A0–A5</td></tr>
+<tr><th>DCCnext port</th><td>1&ndash;10</td><td>11&ndash;16</td></tr>
+<tr><th>Arduino pin</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p>D13 is not available on a DCCnext and turns red when you choose it. Dimming (PWM) works on ports 1, 3, 4 and 9.</p>
-<p>Not sure what you have? A plain Arduino Nano on a breadboard or your own PCB: leave this unticked.</p>
+<p>On every board <b>D2</b> (DCC), <b>D13</b> (config LED) and <b>A7</b> (config button) are reserved.
+Dimming (PWM) works on D3, D5, D6, D9, D10 and D11 (DCCnext ports 1, 3, 4, 7, 8 and 9).</p>

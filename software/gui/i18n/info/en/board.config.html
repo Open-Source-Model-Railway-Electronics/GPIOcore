@@ -1,0 +1,18 @@
+<h3>Config button (A7) and teaching servos with your throttle</h3>
+<p>Without a computer you can set the end positions of servos with the config button and your DCC throttle.</p>
+<p><b>Wiring:</b> a push button from <b>A7</b> to <b>GND</b>, plus a 10 k&Omega; resistor from A7 to <b>5 V</b>
+(A7 has no built-in pull-up). An LED with resistor on <b>D13</b> shows the mode (most Arduinos already have one).</p>
+<ol>
+<li>Hold the config button for <b>2 seconds</b>: the LED starts blinking. You are in config mode.</li>
+<li>Press it <b>briefly</b>: the next servo is selected and moves over, so you can see which one it is. Press again
+for the next servo.</li>
+<li>On your throttle select <b>loco address 9999</b>.
+  <ul>
+  <li>Turn the <b>speed knob</b>: the selected servo moves. The direction button decides which way, the knob how fast.</li>
+  <li><b>F1</b> = store this angle as <i>curved</i>, <b>F2</b> = store it as <i>straight</i>.</li>
+  <li><b>F3</b> = move the servo over (to check), <b>F4</b> = next servo.</li>
+  </ul></li>
+<li>Hold the config button for 2 seconds again: the LED stays on. Back to normal.</li>
+</ol>
+<p>The new positions are stored at once. Connect the program later and it reads them back.</p>
+<p>Because of this, <b>D13</b> and <b>A7</b> can never be used for inputs or outputs.</p>

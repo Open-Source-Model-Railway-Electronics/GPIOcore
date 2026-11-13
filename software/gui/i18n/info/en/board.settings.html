@@ -1,0 +1,15 @@
+<h3>Board settings</h3>
+<ul>
+<li><b>Name</b>: up to 16 letters, stored on the board. The program finds this board's file (names of inputs and
+outputs) by this name, so give every board its own name.</li>
+<li><b>Board type</b>: Arduino Uno, Arduino Nano, DCCnext or Jack of all trades. It decides which pins exist.</li>
+<li><b>Use the recorder</b>: needs an extra memory chip (24LC256) on A4 and A5. While it is on, A4 and A5
+cannot be used for anything else.</li>
+<li><b>Own wait time per route step</b>: off = every step waits the same time (set below) and routes need half
+the memory. On = each step has its own wait time.</li>
+<li><b>Route interlocking</b>: what happens when a route is started while another one is still running.
+<i>Off</i> = both run, <i>on</i> = the second one is ignored, <i>automatic</i> = routes that move a turnout run one
+at a time, routes with only lights may run together.</li>
+</ul>
+<p>Pins with a fixed job on every board: <b>D2</b> (DCC input), <b>D13</b> (config LED) and <b>A7</b>
+(config button).</p>

@@ -623,6 +623,7 @@ void MainWindow::buildToolbar()
     if (QWidget *w = tb->widgetForAction(m_actConfigure)) w->setObjectName(QStringLiteral("modeConfigure"));
     if (QWidget *w = tb->widgetForAction(m_actDemo))      w->setObjectName(QStringLiteral("modeSimulate"));
     if (QWidget *w = tb->widgetForAction(m_actLive))      w->setObjectName(QStringLiteral("modeLive"));
+    tb->addWidget(Info::button(QStringLiteral("modes")));
     tb->addSeparator();
 
     m_actRead   = tb->addAction(style()->standardIcon(QStyle::SP_ArrowDown), tr("Read board"), this, &MainWindow::readFromBoard);
@@ -759,6 +760,16 @@ void MainWindow::buildToolbar()
         Info::showDialog(QStringLiteral("app.start"), tr("Getting started"), this);
     });
     start->setShortcut(QKeySequence::HelpContents);
+    help->addAction(tr("&Configure, simulate and live test"), this, [this] {
+        Info::showDialog(QStringLiteral("modes"), tr("Configure, simulate and live test"), this);
+    });
+    help->addAction(tr("&Board settings"), this, [this] {
+        Info::showDialog(QStringLiteral("board.settings"), tr("Board settings"), this);
+    });
+    help->addAction(tr("Config &button and teaching servos (9999)"), this, [this] {
+        Info::showDialog(QStringLiteral("board.config"), tr("Config button and teaching servos"), this);
+    });
+    help->addSeparator();
     help->addAction(tr("&About"), this, [this] {
         QMessageBox::about(this, windowTitle(),
                            tr("<b>GPIOcore Configurator</b> %1<br><br>Configures GPIOcore boards (Arduino Nano / Uno, "
@@ -1676,6 +1687,7 @@ void MainWindow::editBoardSettings()
     QDialog d(this);
     d.setWindowTitle(tr("Board settings"));
     auto *form = new QFormLayout(&d);
+    form->addRow(Info::button(QStringLiteral("board.settings")));
     auto *name = new QLineEdit(m_edit.board.name);
     name->setMaxLength(MaxBoardName);
     auto *type = new QComboBox;

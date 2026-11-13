@@ -1,0 +1,33 @@
+<h3>Configure, Simulate and Live test</h3>
+<p>The three coloured buttons at the top show what the program is doing. The same colour is drawn around the
+middle of the screen, so you always know where you are.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Button</th><th>Frame</th><th>What happens</th></tr>
+<tr><td><b>&#9679; Configure</b></td><td style="color:#DC2626">red</td><td>Connected to a real board. Every change goes to the
+board at once and is read back to check it.</td></tr>
+<tr><td><b>&#9679; Simulate</b></td><td style="color:#A16207">yellow</td><td>A pretend board runs <i>your</i> settings (from
+the board you had connected, a board file, or a new board). The input buttons are on. Changes are kept in the board
+file, so you can prepare a board at home.</td></tr>
+<tr><td><b>&#9679; Live test</b></td><td style="color:#15803D">green</td><td>On a real board: the inputs get buttons and the
+outputs show what the board reports.</td></tr>
+</table>
+
+<h4>The input buttons</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absolute inputs): &#9664; = curved / off, &#9654; = straight / on.</li>
+<li><b>&#9654; press</b> (toggle) and <b>&#9654; start</b> (route): like pressing the button or sending a DCC command.</li>
+<li><b>aspect &#9662; / value &#9662;</b>: for an input that drives a signal or a PWM output. Choose per lamp off, on,
+flashing or flashing in opposite phase.</li>
+</ul>
+<p>A button acts like a DCC command: a second click within half a second is ignored, just like a repeated packet
+from a command station.</p>
+
+<h4>What the outputs show</h4>
+<ul>
+<li><b>Blue dot</b> = straight / on, <b>red dot</b> = curved / off, grey = not known yet.</li>
+<li><b>Servo</b>: a dial with the angle; it turns degree by degree as the board reports it.</li>
+<li><b>Signal</b>: four lamps in their colours, flashing like on the board.</li>
+<li><b>Frog relays</b>: a small relay drawing. The arm and the frog show which contact is live (red = curved,
+blue = straight). An electrofrog is grey (dead) while the turnout moves; a unifrog flips over at once.</li>
+</ul>
+<p>Nothing needs to be connected to the board for a live test: you see what the board <i>would</i> switch.</p>
