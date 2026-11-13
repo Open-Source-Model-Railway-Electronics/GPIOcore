@@ -1,16 +1,20 @@
 <h3>Configure, Simulate and Live test</h3>
-<p>The three coloured buttons at the top show what the program is doing. The same colour is drawn around the
-middle of the screen, so you always know where you are.</p>
+<p>The program is always in one of three modes: the coloured buttons at the top. The connection is separate:
+<b>Connect / Disconnect</b> next to the port, with the state shown beside it (Offline, Connected: <i>name</i>,
+Simulation).</p>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Button</th><th>Frame</th><th>What happens</th></tr>
-<tr><td><b>&#9679; Configure</b></td><td style="color:#DC2626">red</td><td>Connected to a real board. Every change goes to the
-board at once and is read back to check it.</td></tr>
-<tr><td><b>&#9679; Simulate</b></td><td style="color:#A16207">yellow</td><td>A pretend board runs <i>your</i> settings (from
-the board you had connected, a board file, or a new board). The input buttons are on. Changes are kept in the board
-file, so you can prepare a board at home.</td></tr>
-<tr><td><b>&#9679; Live test</b></td><td style="color:#15803D">green</td><td>On a real board: the inputs get buttons and the
-outputs show what the board reports.</td></tr>
+<tr><th>Mode</th><th>Frame</th><th>What you can do</th></tr>
+<tr><td><b>&#9679; Configure</b></td><td>none offline, <span style="color:#DC2626">red</span> when connected</td><td>Change
+everything. Offline you prepare a board; connected, every change goes to the board at once. Nothing is read from
+the board automatically: use <b>Read board</b> or <b>Write all</b>.</td></tr>
+<tr><td><b>&#9679; Simulate</b></td><td style="color:#A16207">yellow</td><td>Your configuration runs on a pretend board.
+Press the input buttons and watch; nothing can be changed.</td></tr>
+<tr><td><b>&#9679; Live test</b></td><td><span style="color:#15803D">green</span> when connected</td><td>Connects by
+itself. Press the input buttons and watch what the real board does; nothing can be changed. If the board has
+another name than the screen, the program offers to read the board first.</td></tr>
 </table>
+<p>Nothing is saved to a file by itself: <b>Save</b> (Ctrl+S) always asks where, and closing the program asks
+about unsaved changes.</p>
 
 <h4>The input buttons</h4>
 <ul>
