@@ -40,14 +40,14 @@ void PinMapView::paintEvent(QPaintEvent *)
     titleFont.setPointSizeF(titleFont.pointSizeF() + 2);
     titleFont.setBold(true);
     p.setFont(titleFont);
-    p.setPen(QColor(0x0F, 0x17, 0x2A));
+    p.setPen(Ui::themed(QColor(0x0F, 0x17, 0x2A)));
     p.drawText(QRectF(16, 8, width() - 32, 30), Qt::AlignLeft | Qt::AlignVCenter,
                tr("Pin usage (Arduino Uno / Nano)"));
 
     QFont small = font();
     small.setPointSizeF(qMax(7.0, font().pointSizeF() - 1));
     p.setFont(small);
-    p.setPen(QColor(0x64, 0x74, 0x8B));
+    p.setPen(Ui::themed(QColor(0x64, 0x74, 0x8B)));
     p.drawText(QRectF(16, 8, width() - 32, 30), Qt::AlignRight | Qt::AlignVCenter,
                tr("click a card to edit  ·  red = conflict"));
 
@@ -60,7 +60,7 @@ void PinMapView::paintEvent(QPaintEvent *)
         const QString reserved = pinReservedReason(quint8(pin));
         const bool conflict = users.size() > 1 || (!reserved.isEmpty() && !users.isEmpty());
 
-        QColor accent = QColor(0xE2, 0xE8, 0xF0);
+        QColor accent = Ui::themed(QColor(0xE2, 0xE8, 0xF0));
         if (!users.isEmpty())
         {
             const Ui::PinUse &u = users.first();
@@ -70,8 +70,8 @@ void PinMapView::paintEvent(QPaintEvent *)
 
         QPainterPath path;
         path.addRoundedRect(r, 8, 8);
-        p.fillPath(path, reserved.isEmpty() ? QColor(Qt::white) : QColor(0xF1, 0xF5, 0xF9));
-        p.setPen(QPen(conflict ? QColor(0xDC, 0x26, 0x26) : QColor(0xE2, 0xE8, 0xF0), conflict ? 2.0 : 1.0));
+        p.fillPath(path, reserved.isEmpty() ? Ui::themed(QColor(Qt::white)) : Ui::themed(QColor(0xF1, 0xF5, 0xF9)));
+        p.setPen(QPen(conflict ? QColor(0xDC, 0x26, 0x26) : Ui::themed(QColor(0xE2, 0xE8, 0xF0)), conflict ? 2.0 : 1.0));
         p.drawPath(path);
 
         // accent bar
@@ -84,7 +84,7 @@ void PinMapView::paintEvent(QPaintEvent *)
         nameFont.setBold(true);
         nameFont.setPointSizeF(font().pointSizeF() + 1);
         p.setFont(nameFont);
-        p.setPen(QColor(0x0F, 0x17, 0x2A));
+        p.setPen(Ui::themed(QColor(0x0F, 0x17, 0x2A)));
         p.drawText(QRectF(r.left() + 14, r.top() + 6, r.width() - 20, 22), Qt::AlignLeft | Qt::AlignVCenter,
                    pinName(quint8(pin)));
 
@@ -93,8 +93,8 @@ void PinMapView::paintEvent(QPaintEvent *)
         {
             const QRectF badge(r.right() - 44, r.top() + 8, 36, 17);
             QPainterPath b; b.addRoundedRect(badge, 8, 8);
-            p.fillPath(b, QColor(0xFC, 0xE7, 0xF3));
-            p.setPen(QColor(0x9D, 0x17, 0x4D));
+            p.fillPath(b, Ui::themed(QColor(0xFC, 0xE7, 0xF3)));
+            p.setPen(Ui::themed(QColor(0x9D, 0x17, 0x4D)));
             p.drawText(badge, Qt::AlignCenter, QStringLiteral("PWM"));
         }
 

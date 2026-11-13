@@ -609,6 +609,27 @@ void MainWindow::buildToolbar()
     if (auto *dock = findChild<QDockWidget *>(QStringLiteral("logDock")))
         view->addAction(dock->toggleViewAction());
 
+    // Theme: automatic (Windows), light, dark; applied at once
+    view->addSeparator();
+    QMenu *theme = view->addMenu(tr("Theme"));
+    auto *themeGroup = new QActionGroup(theme);
+    const QList<QPair<QString, QString>> themes = { { QStringLiteral("auto"), tr("Automatic (Windows)") },
+                                                    { QStringLiteral("light"), tr("Light") },
+                                                    { QStringLiteral("dark"), tr("Dark") } };
+    for (const auto &t : themes)
+    {
+        QAction *a = theme->addAction(t.second);
+        a->setCheckable(true);
+        a->setChecked(Ui::themeSetting() == t.first);
+        themeGroup->addAction(a);
+        const QString key = t.first;
+        connect(a, &QAction::triggered, this, [this, key] {
+            Ui::setThemeSetting(key);
+            m_view->update();
+            m_pinMap->update();
+        });
+    }
+
     // Language: every language with a translation or help texts is listed
     view->addSeparator();
     QMenu *language = view->addMenu(tr("Language"));

@@ -7,33 +7,106 @@
 #include <QPalette>
 #include <QPixmap>
 #include <QStyleFactory>
+#include <QGuiApplication>
+#include <QHash>
+#include <QRegularExpression>
+#include <QSettings>
+#include <QStyleHints>
 
 using namespace Gpio;
 
 namespace Ui {
 
+// ── Theme ───────────────────────────────────────────────────────────────────
+static bool g_dark = false;
+
+static QString g_themeOverride;
+
+void setThemeOverride(const QString &theme) { g_themeOverride = theme; }
+
+QString themeSetting()
+{
+    if (!g_themeOverride.isEmpty())
+        return g_themeOverride;
+    return QSettings().value(QStringLiteral("ui/theme"), QStringLiteral("auto")).toString();
+}
+
+static bool systemIsDark()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark;
+#else
+    return false;
+#endif
+}
+
+bool isDark() { return g_dark; }
+
+QColor themed(const QColor &light)
+{
+    if (!g_dark)
+        return light;
+    // light-theme colour -> dark-theme colour (slate scale); accent colours stay the same
+    static const QHash<QRgb, QRgb> map = {
+        { 0xFFF4F6F9, 0xFF0F172A }, { 0xFFFFFFFF, 0xFF1E293B }, { 0xFFF8FAFC, 0xFF18222F },
+        { 0xFFF1F5F9, 0xFF273449 }, { 0xFFEEF2F7, 0xFF2A3A52 }, { 0xFFE2E8F0, 0xFF334155 },
+        { 0xFFCBD5E1, 0xFF475569 }, { 0xFF0F172A, 0xFFE2E8F0 }, { 0xFF1F2937, 0xFFE5E7EB },
+        { 0xFF334155, 0xFFCBD5E1 }, { 0xFF475569, 0xFF94A3B8 }, { 0xFF64748B, 0xFF94A3B8 },
+        { 0xFFFEF3C7, 0xFF422006 }, { 0xFF92400E, 0xFFFCD34D }, { 0xFFFEE2E2, 0xFF450A0A },
+        { 0xFF991B1B, 0xFFFCA5A5 }, { 0xFFDCFCE7, 0xFF052E16 }, { 0xFF166534, 0xFF86EFAC },
+        { 0xFFEFF6FF, 0xFF172554 }, { 0xFFDBEAFE, 0xFF1E3A8A }, { 0xFFFCE7F3, 0xFF500724 },
+        { 0xFF9D174D, 0xFFF9A8D4 }, { 0xFFBFD0F5, 0xFF1E3A8A }, { 0xFFA0A8B4, 0xFF64748B },
+        { 0xFF94A3B8, 0xFF64748B }, { 0xFF93C5FD, 0xFF3B82F6 }, { 0xFFFCA5A5, 0xFFB91C1C },
+    };
+    const auto it = map.constFind(light.rgb() | 0xFF000000u);
+    if (it == map.constEnd())
+        return light;
+    QColor c = QColor::fromRgb(*it);
+    c.setAlpha(light.alpha());
+    return c;
+}
+
+void setThemeSetting(const QString &theme)
+{
+    QSettings().setValue(QStringLiteral("ui/theme"), theme);
+    applyAppStyle(*qApp);
+}
+
 void applyAppStyle(QApplication &app)
 {
+    const QString theme = themeSetting();
+    g_dark = theme == QLatin1String("dark") || (theme == QLatin1String("auto") && systemIsDark());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    static bool hooked = false;
+    if (!hooked)
+    {
+        hooked = true;     // follow Windows when the theme is automatic
+        QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, &app, [&app] {
+            if (themeSetting() == QLatin1String("auto"))
+                applyAppStyle(app);
+        });
+    }
+#endif
     app.setStyle(QStyleFactory::create(QStringLiteral("Fusion")));
 
     QPalette p;
-    p.setColor(QPalette::Window,          QColor(0xF4, 0xF6, 0xF9));
-    p.setColor(QPalette::WindowText,      QColor(0x1F, 0x29, 0x37));
-    p.setColor(QPalette::Base,            Qt::white);
-    p.setColor(QPalette::AlternateBase,   QColor(0xF8, 0xFA, 0xFC));
-    p.setColor(QPalette::Text,            QColor(0x1F, 0x29, 0x37));
-    p.setColor(QPalette::Button,          QColor(0xFF, 0xFF, 0xFF));
-    p.setColor(QPalette::ButtonText,      QColor(0x1F, 0x29, 0x37));
-    p.setColor(QPalette::Highlight,       QColor(0x25, 0x63, 0xEB));
-    p.setColor(QPalette::HighlightedText, Qt::white);
-    p.setColor(QPalette::ToolTipBase,     QColor(0x1F, 0x29, 0x37));
-    p.setColor(QPalette::ToolTipText,     Qt::white);
-    p.setColor(QPalette::PlaceholderText, QColor(0x94, 0xA3, 0xB8));
-    p.setColor(QPalette::Disabled, QPalette::Text,       QColor(0xA0, 0xA8, 0xB4));
-    p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(0xA0, 0xA8, 0xB4));
+    p.setColor(QPalette::Window,          themed(QColor(0xF4, 0xF6, 0xF9)));
+    p.setColor(QPalette::WindowText,      themed(QColor(0x1F, 0x29, 0x37)));
+    p.setColor(QPalette::Base,            themed(QColor(Qt::white)));
+    p.setColor(QPalette::AlternateBase,   themed(QColor(0xF8, 0xFA, 0xFC)));
+    p.setColor(QPalette::Text,            themed(QColor(0x1F, 0x29, 0x37)));
+    p.setColor(QPalette::Button,          themed(QColor(0xFF, 0xFF, 0xFF)));
+    p.setColor(QPalette::ButtonText,      themed(QColor(0x1F, 0x29, 0x37)));
+    p.setColor(QPalette::Highlight,       themed(QColor(0x25, 0x63, 0xEB)));
+    p.setColor(QPalette::HighlightedText, QColor(Qt::white));
+    p.setColor(QPalette::ToolTipBase,     QColor(0x1F, 0x29, 0x37));   // TOOLTIP
+    p.setColor(QPalette::ToolTipText,     QColor(Qt::white));
+    p.setColor(QPalette::PlaceholderText, themed(QColor(0x94, 0xA3, 0xB8)));
+    p.setColor(QPalette::Disabled, QPalette::Text,       themed(QColor(0xA0, 0xA8, 0xB4)));
+    p.setColor(QPalette::Disabled, QPalette::ButtonText, themed(QColor(0xA0, 0xA8, 0xB4)));
     app.setPalette(p);
 
-    app.setStyleSheet(QStringLiteral(R"(
+    QString css = QStringLiteral(R"(
         QMainWindow { background: #F4F6F9; }
         QToolBar { background: #FFFFFF; border: none; border-bottom: 1px solid #E2E8F0; spacing: 6px; padding: 6px; }
         QToolBar QToolButton { padding: 5px 10px; border-radius: 6px; }
@@ -74,7 +147,27 @@ void applyAppStyle(QApplication &app)
         QComboBox:disabled, QSpinBox:disabled { background: #F1F5F9; }
         QScrollArea { border: none; background: transparent; }
         QStatusBar { background: #FFFFFF; border-top: 1px solid #E2E8F0; }
-    )"));
+    )");
+    if (g_dark)
+    {
+        css.replace(QStringLiteral("background: white"), QStringLiteral("background: #FFFFFF"));
+        static const QRegularExpression hex(QStringLiteral("#[0-9A-Fa-f]{6}\\b"));
+        QString out;
+        int last = 0;
+        auto it = hex.globalMatch(css);
+        while (it.hasNext())
+        {
+            const auto m = it.next();
+            out += css.mid(last, m.capturedStart() - last);
+            out += themed(QColor(m.captured())).name(QColor::HexRgb).toUpper();
+            last = m.capturedEnd();
+        }
+        css = out + css.mid(last);
+        css += QStringLiteral(" QPlainTextEdit#log { background: #020617; }");
+    }
+    app.setStyleSheet(css);
+    for (QWidget *w : QApplication::allWidgets())
+        w->update();
 }
 
 QColor outputTypeColor(quint8 type)

@@ -26,8 +26,14 @@ int main(int argc, char *argv[])
     QCommandLineOption preset(QStringLiteral("preset"), QStringLiteral("Apply this preset after connecting (no confirmation)."), QStringLiteral("n"));
     QCommandLineOption open(QStringLiteral("open"), QStringLiteral("Load this configuration file at start."), QStringLiteral("file"));
     QCommandLineOption size(QStringLiteral("size"), QStringLiteral("Window size, e.g. 1680x900 (for screenshots)."), QStringLiteral("WxH"));
-    cli.addOptions({ demo, port, shot, tab, select, preset, open, size });
+    QCommandLineOption theme(QStringLiteral("theme"), QStringLiteral("auto, light or dark for this run (not saved)."), QStringLiteral("theme"));
+    cli.addOptions({ demo, port, shot, tab, select, preset, open, size, theme });
     cli.process(app);
+    if (cli.isSet(theme))
+    {
+        Ui::setThemeOverride(cli.value(theme));
+        Ui::applyAppStyle(app);
+    }
 
     MainWindow w;
     if (cli.isSet(preset))

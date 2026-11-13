@@ -24,10 +24,10 @@ static constexpr qreal Top    = 44;     // below the column headers
 static constexpr qreal NodeH  = 46;
 static constexpr qreal Gap    = 8;
 
-static const QColor kText   (0x0F, 0x17, 0x2A);
-static const QColor kMuted  (0x64, 0x74, 0x8B);
-static const QColor kBorder (0xE2, 0xE8, 0xF0);
-static const QColor kIdle   (0xCB, 0xD5, 0xE1);
+#define kText Ui::themed(QColor(0x0F, 0x17, 0x2A))
+#define kMuted Ui::themed(QColor(0x64, 0x74, 0x8B))
+#define kBorder Ui::themed(QColor(0xE2, 0xE8, 0xF0))
+#define kIdle Ui::themed(QColor(0xCB, 0xD5, 0xE1))
 static const QColor kAccent (0x25, 0x63, 0xEB);
 static const QColor kRed    (0xDC, 0x26, 0x26);
 static const QColor kAmber  (0xD9, 0x77, 0x06);
@@ -147,7 +147,7 @@ static void drawLiveDot(QPainter &p, const QPointF &c, qreal radius, int state, 
         p.setBrush(halo);
         p.drawEllipse(c, radius + 7 * flash, radius + 7 * flash);
     }
-    p.setPen(QPen(Qt::white, 2));
+    p.setPen(QPen(Ui::themed(QColor(Qt::white)), 2));
     p.setBrush(col);
     p.drawEllipse(c, radius, radius);
     p.restore();
@@ -165,7 +165,7 @@ void ConnectionView::drawInputLive(QPainter &p, int i)
         if (b.isEmpty()) continue;
         QPainterPath path;
         path.addRoundedRect(b, 6, 6);
-        p.fillPath(path, flash > 0 ? QColor(0xFE, 0xF3, 0xC7) : QColor(0xF1, 0xF5, 0xF9));
+        p.fillPath(path, flash > 0 ? Ui::themed(QColor(0xFE, 0xF3, 0xC7)) : Ui::themed(QColor(0xF1, 0xF5, 0xF9)));
         p.setPen(QPen(kBorder, 1));
         p.drawPath(path);
         if (liveValueInput(i))
@@ -197,7 +197,7 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
     const QRectF box(r.right() - 44, r.top() + 4, 40, r.height() - 8);
     QPainterPath bg;
     bg.addRoundedRect(box, 6, 6);
-    p.fillPath(bg, QColor(Qt::white));
+    p.fillPath(bg, Ui::themed(QColor(Qt::white)));
     const qreal flash = flashLevel(m_liveFlashOut[o]);
     const int state = m_liveState[o];
     const QPointF centre = box.center();
@@ -218,7 +218,7 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
         {
             const qreal a = M_PI * (1.0 - angle / 180.0);
             const QPointF tip(pivot.x() + rad * std::cos(a), pivot.y() - rad * std::sin(a));
-            p.setPen(QPen(flash > 0 ? QColor(0xF5, 0x9E, 0x0B) : QColor(0x0F, 0x17, 0x2A), 2.5, Qt::SolidLine, Qt::RoundCap));
+            p.setPen(QPen(flash > 0 ? QColor(0xF5, 0x9E, 0x0B) : Ui::themed(QColor(0x0F, 0x17, 0x2A)), 2.5, Qt::SolidLine, Qt::RoundCap));
             p.drawLine(pivot, tip);
             QFont f = font(); f.setPointSizeF(qMax(6.5, f.pointSizeF() - 2)); p.setFont(f);
             p.setPen(kMuted);
@@ -236,7 +236,7 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
             const bool on = state >= 0 && (aspect >> k) & 1;
             const bool blink = (aspect >> (k + 4)) & 1;
             p.setPen(QPen(kBorder, 1));
-            p.setBrush(on ? (blink ? QColor(0xFB, 0xBF, 0x24) : QColor(0xFA, 0xCC, 0x15)) : QColor(0xE2, 0xE8, 0xF0));
+            p.setBrush(on ? (blink ? QColor(0xFB, 0xBF, 0x24) : QColor(0xFA, 0xCC, 0x15)) : Ui::themed(QColor(0xE2, 0xE8, 0xF0)));
             p.drawEllipse(QPointF(box.left() + 8 + k * 8, centre.y()), 3.2, 3.2);
         }
     }
@@ -245,7 +245,7 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
         const qreal level = m_liveRaw[o] ? m_liveValue[o] / 255.0 : (state == 1 ? c.pwmValue() / 255.0 : 0.0);
         const QRectF bar(box.left() + 8, box.top() + 4, box.width() - 16, box.height() - 8);
         p.setPen(QPen(kBorder, 1));
-        p.setBrush(QColor(0xF1, 0xF5, 0xF9));
+        p.setBrush(Ui::themed(QColor(0xF1, 0xF5, 0xF9)));
         p.drawRect(bar);
         p.fillRect(QRectF(bar.left(), bar.bottom() - bar.height() * level, bar.width(), bar.height() * level),
                    QColor(0x25, 0x63, 0xEB));
@@ -472,7 +472,7 @@ void ConnectionView::drawInput(QPainter &p, int i)
 
     QPainterPath node;
     node.addRoundedRect(r, 8, 8);
-    p.fillPath(node, Qt::white);
+    p.fillPath(node, Ui::themed(QColor(Qt::white)));
     p.setPen(QPen(sel || hot ? kAccent : kBorder, sel || hot ? 2.0 : 1.0));
     p.drawPath(node);
 
@@ -500,7 +500,7 @@ void ConnectionView::drawInput(QPainter &p, int i)
     p.setFont(small);
     const bool idle = (c.type == InputNotInUse);
     drawBadge(p, QRectF(r.right() - 96, r.top() + 6, 84, 17), inputModeText(c),
-              idle ? QColor(0xF1, 0xF5, 0xF9) : Ui::inputTypeColor(c.type).lighter(185),
+              idle ? Ui::themed(QColor(0xF1, 0xF5, 0xF9)) : Ui::inputTypeColor(c.type).lighter(185),
               idle ? kMuted : Ui::inputTypeColor(c.type).darker(170));
     p.setPen(m_inConflict.value(i) ? kRed : kMuted);
     p.drawText(QRectF(r.left() + 14, r.top() + 24, r.width() - 24, 18), Qt::AlignLeft | Qt::AlignVCenter,
@@ -509,7 +509,7 @@ void ConnectionView::drawInput(QPainter &p, int i)
     // port
     const QPointF port = inputPort(i);
     p.setPen(QPen(col.darker(115), 1.5));
-    p.setBrush(inputConnected(c) ? col : QColor(Qt::white));
+    p.setBrush(inputConnected(c) ? col : Ui::themed(QColor(Qt::white)));
     p.drawEllipse(port, 6, 6);
     p.setBrush(Qt::NoBrush);
 }
@@ -524,7 +524,7 @@ void ConnectionView::drawOutput(QPainter &p, int o)
 
     QPainterPath node;
     node.addRoundedRect(r, 8, 8);
-    p.fillPath(node, c.type == OutputNotInUse ? QColor(0xF8, 0xFA, 0xFC) : QColor(Qt::white));
+    p.fillPath(node, c.type == OutputNotInUse ? Ui::themed(QColor(0xF8, 0xFA, 0xFC)) : Ui::themed(QColor(Qt::white)));
     p.setPen(QPen(sel || hot ? kAccent : kBorder, sel || hot ? 2.0 : 1.0));
     p.drawPath(node);
 
@@ -583,7 +583,7 @@ void ConnectionView::drawOutput(QPainter &p, int o)
 
     const QPointF port = outputPort(o);
     p.setPen(QPen(col.darker(115), 1.5));
-    p.setBrush(src.isEmpty() ? QColor(Qt::white) : col);
+    p.setBrush(src.isEmpty() ? Ui::themed(QColor(Qt::white)) : col);
     p.drawEllipse(port, 6, 6);
     p.setBrush(Qt::NoBrush);
 }
@@ -646,7 +646,7 @@ void ConnectionView::paintEvent(QPaintEvent *)
         const QColor col = Ui::inputColor(wire.input);
         const QRectF lr = wire.labelRect;
         QPainterPath b; b.addRoundedRect(lr, 9, 9);
-        p.fillPath(b, Qt::white);
+        p.fillPath(b, Ui::themed(QColor(Qt::white)));
         p.setPen(QPen(col, 1.2));
         p.drawPath(b);
         p.setPen(col.darker(150));

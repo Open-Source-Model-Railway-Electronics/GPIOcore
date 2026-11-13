@@ -12,6 +12,12 @@ class QComboBox;
 namespace Ui {
 
 void   applyAppStyle(QApplication &app);
+// Theme: "auto" (follows Windows), "light" or "dark"; stored in QSettings "ui/theme".
+QString themeSetting();
+void    setThemeOverride(const QString &theme);  // this run only, not saved (--theme)
+void    setThemeSetting(const QString &theme);   // and applies it
+bool    isDark();
+QColor  themed(const QColor &light);              // the dark-mode equivalent of a light-theme colour
 
 QColor outputTypeColor(quint8 type);
 QColor inputTypeColor(quint8 type);
