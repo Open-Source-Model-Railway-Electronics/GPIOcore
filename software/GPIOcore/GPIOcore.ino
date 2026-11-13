@@ -133,6 +133,10 @@ void setup()
         output[i].loadEEPROM() ;
          input[i].loadEEPROM() ;
     }
+    for( uint8_t i = 0 ; i < 16 ; i++ )     // a toggle input continues from the stored output state
+    {
+        input[i].syncState( output[ input[i].eedata.outputID ].eedata.state ) ;
+    }
 
     debounce.set( TIMER_BLEEP, 50 ) ;
 }

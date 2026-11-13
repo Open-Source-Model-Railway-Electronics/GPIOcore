@@ -107,6 +107,18 @@ void Output::loadEEPROM()
 
     // a servo starts where it was left (its stored end position), not at 0 degrees: no sweep at power up (F15)
     if( eedata.type == servoType ) pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
+
+    // coil turnouts are not pulsed at power up, so set their frog relays for the stored position here
+    // (otherwise an electrofrog stays dead and a unifrog can have the wrong polarity)
+    if( eedata.type == singlePulse || eedata.type == doublePulse )
+    {
+        if( eedata.relayPinA != NA && eedata.relayPinB != NA )
+        {
+            relayWrite( 0,  eedata.state ) ;
+            relayWrite( 1, !eedata.state ) ;
+        }
+        relayWrite( 2, eedata.state ) ;
+    }
 }
 
 // all frog relay writes go through here, so a change can be reported

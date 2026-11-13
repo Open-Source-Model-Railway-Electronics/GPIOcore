@@ -33,6 +33,8 @@ public:
     void    setPinMode() ;
     void    startRoute() ;          // interlocking, PROTOCOL.md section 10: a refused route is ignored
 
+    void    syncState( uint8_t outputState ) { state = outputState ; }   // after boot: toggle from the stored output state
+
 private:
     void    triggerOutputs() ;
     uint8_t movesTurnout() ;
