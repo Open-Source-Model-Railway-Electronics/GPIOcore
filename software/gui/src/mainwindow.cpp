@@ -1293,24 +1293,26 @@ void MainWindow::openLiveValue(int input)
     };
     if (out.type == FourToneSignal)
     {
-        // aspect byte: bits 0-3 lamp on, bits 4-7 lamp flashing
+        // aspect byte: bits 0-3 lamp on, bits 4-7 lamp flashing; flashing without 'on' = opposite phase
+        // modes: 0 off, 1 on, 2 flashing, 3 flashing in opposite phase
         auto *lamps = new QVector<QComboBox *>;
         auto collect = [lamps, send] {
             int v = 0;
             for (int k = 0; k < 4; ++k)
             {
                 const int m = (*lamps)[k]->currentIndex();
-                if (m >= 1) v |= 1 << k;
-                if (m == 2) v |= 1 << (k + 4);
+                if (m == 1 || m == 2) v |= 1 << k;
+                if (m == 2 || m == 3) v |= 1 << (k + 4);
             }
             send(v);
         };
         for (int k = 0; k < 4; ++k)
         {
             auto *c = new QComboBox;
-            c->addItems({ tr("off"), tr("on"), tr("flashing") });
+            c->addItems({ tr("off"), tr("on"), tr("flashing"), tr("flashing, opposite phase") });
             const quint8 a = out.data[0];
-            c->setCurrentIndex((a >> (k + 4)) & 1 ? 2 : ((a >> k) & 1 ? 1 : 0));
+            const bool lit = (a >> k) & 1, blink = (a >> (k + 4)) & 1;
+            c->setCurrentIndex(blink ? (lit ? 2 : 3) : (lit ? 1 : 0));
             lamps->append(c);
             form->addRow(tr("Lamp %1").arg(k + 1), c);
             connect(c, QOverload<int>::of(&QComboBox::activated), d, collect);
