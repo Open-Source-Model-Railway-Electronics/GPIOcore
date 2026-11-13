@@ -1360,7 +1360,7 @@ void MainWindow::updateActions()
     m_actWrite->setEnabled(ready && !busy && dirty > 0);
     m_actWrite->setText(dirty ? tr("Write %1 change(s)").arg(dirty) : tr("Write changes"));
     m_actRevert->setEnabled(dirty > 0);
-    m_actPreset->setEnabled(ready && !busy);
+    m_actPreset->setEnabled(m_mode == ModeConfigure && !m_simulating);   // presets are computed by the GUI: also offline
     m_port->setEnabled(!m_link->isOpen());
     m_actRefresh->setEnabled(!m_link->isOpen());
     if (m_link->isReady())
@@ -1678,6 +1678,19 @@ void MainWindow::setupWebRemote()
         userEdited();
         statusBar()->showMessage(tr("Phone: output %1 %2 = %3°").arg(o)
                                      .arg(which ? tr("straight") : tr("curved")).arg(angle), 5000);
+    });
+    connect(m_web, &WebRemote::adjustRequested, this, [this](int o, int which, int angle) {
+        // like dragging a position slider with Live on: the servo follows, the angle is stored,
+        // and the GUI shows this servo with its slider moving along
+        if (o < 0 || o >= NumOutputs || m_edit.outputs[o].type != ServoType) return;
+        if (m_mode != ModeConfigure && m_mode != ModeLive) return;
+        if (m_link->isReady()) m_link->servoLive(o, angle);
+        OutputConfig &c = m_edit.outputs[o];
+        c.data[which ? 1 : 0] = quint8(angle);
+        c.state = quint8(which);
+        if (m_outEd->index() != o) selectOutput(o);
+        else showOutput(o);
+        userEdited();
     });
     connect(m_web, &WebRemote::moveRequested, this, [this](int o, int state) {
         if (o < 0 || o >= NumOutputs) return;
@@ -2038,7 +2051,7 @@ void MainWindow::updateEditing()
     m_inEd->setEnabled(edit);
     m_outEd->setEnabled(edit);
     for (QWidget *w : m_editWidgets) if (w) w->setEnabled(edit);
-    if (m_actPreset) m_actPreset->setEnabled(edit && m_actPreset->isEnabled());
+    if (m_actPreset) m_actPreset->setEnabled(edit);
     if (m_actBoardSettings) m_actBoardSettings->setEnabled(edit);
     if (m_boardType) m_boardType->setEnabled(edit);
 }
