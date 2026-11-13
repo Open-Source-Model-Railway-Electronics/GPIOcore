@@ -128,6 +128,19 @@ void InputEditor::buildUi()
     addrRow->addStretch();
     addrRow->addWidget(Info::button(QStringLiteral("input.dcc")));
     srcForm->addRow(tr("DCC"), addrRow);
+    // routes: which DCC command starts the route (so two routes can share one address)
+    m_routeTrigger = new QComboBox;
+    m_routeTrigger->addItem(Ui::swatchIcon(QColor(0x8B, 0x5C, 0xF6)), tr("any command (straight and curved)"), int(Route));
+    m_routeTrigger->addItem(Ui::swatchIcon(QColor(0x25, 0x63, 0xEB)), tr("straight only"), int(RouteStraight));
+    m_routeTrigger->addItem(Ui::swatchIcon(QColor(0xDC, 0x26, 0x26)), tr("curved only"), int(RouteCurved));
+    m_routeTrigger->setToolTip(tr("With 'straight only' and 'curved only' two routes can share one DCC address, "
+                                  "e.g. a level crossing: curved = close, straight = open. A button always starts the route."));
+    m_routeTriggerRow = new QWidget;
+    QHBoxLayout *trig = withInfo(m_routeTrigger, QStringLiteral("route.steps"));
+    trig->setContentsMargins(0, 0, 0, 0);
+    m_routeTriggerRow->setLayout(trig);
+    m_routeTriggerLabel = new QLabel(tr("Route starts on"));
+    srcForm->addRow(m_routeTriggerLabel, m_routeTriggerRow);
     m_pin = new QComboBox;
     m_pin->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_pin->setMinimumContentsLength(10);
@@ -167,16 +180,6 @@ void InputEditor::buildUi()
     routeHead->addWidget(m_routeCount, 1);
     routeHead->addWidget(Info::button(QStringLiteral("route.steps")));
     routeLay->addLayout(routeHead);
-    auto *trigRow = new QHBoxLayout;
-    trigRow->addWidget(new QLabel(tr("Starts on DCC")));
-    m_routeTrigger = new QComboBox;
-    m_routeTrigger->addItem(tr("any command (straight and curved)"), int(Route));
-    m_routeTrigger->addItem(tr("straight only"), int(RouteStraight));
-    m_routeTrigger->addItem(tr("curved only"), int(RouteCurved));
-    m_routeTrigger->setToolTip(tr("With 'straight only' and 'curved only' two routes can share one DCC address, "
-                                  "e.g. a level crossing: curved = close, straight = open. A button always starts the route."));
-    trigRow->addWidget(m_routeTrigger, 1);
-    routeLay->addLayout(trigRow);
     m_routeV1 = new QLabel(tr("This board speaks protocol v1: max. 8 steps, curved / straight only, "
                               "fixed 0.5 s per step."));
     m_routeV1->setObjectName(QStringLiteral("warn"));
@@ -507,6 +510,9 @@ void InputEditor::refresh()
     m_infoFeedback->setVisible(m_cfg.type == FeedbackInput);
     m_recorderBox->setVisible(fn == FnRecorder);
     m_routeBox->setVisible(fn == FnRoute);
+    m_routeTriggerRow->setVisible(fn == FnRoute);
+    m_routeTriggerLabel->setVisible(fn == FnRoute);
+    m_routeTrigger->setEnabled(m_useAddr->isChecked() || m_cfg.address != AddrNone);
 
     const QString sig = stepSignature();
     if (sig != m_signature || m_rows.size() != m_cfg.route.size() || m_cfg.route.isEmpty())

@@ -1026,15 +1026,18 @@ void MainWindow::revertChanges()
 void MainWindow::applyPreset()
 {
     const QString name = m_preset->currentText();
-    if (QMessageBox::question(this, windowTitle(),
-                              tr("Apply preset \"%1\"?\n\nThis replaces all outputs and inputs (and their routes). "
-                                 "Names stay.").arg(name))
-        != QMessageBox::Yes)
+    QMessageBox box(QMessageBox::Question, windowTitle(),
+                    tr("Apply preset \"%1\"?\n\nThis replaces all outputs and inputs (and their routes).").arg(name),
+                    QMessageBox::Yes | QMessageBox::No, this);
+    auto *clear = new QCheckBox(tr("Also clear the names of inputs and outputs (recommended)"));
+    clear->setChecked(true);
+    box.setCheckBox(clear);
+    if (box.exec() != QMessageBox::Yes)
         return;
-    applyPresetNow(m_preset->currentIndex());
+    applyPresetNow(m_preset->currentIndex(), clear->isChecked());
 }
 
-void MainWindow::applyPresetNow(int preset)
+void MainWindow::applyPresetNow(int preset, bool clearNames)
 {
     // The GUI computes the preset; it reaches the board as normal output / input data (live write),
     // so it also works offline and in a simulation.
@@ -1042,20 +1045,28 @@ void MainWindow::applyPresetNow(int preset)
     for (int i = 0; i < NumOutputs; ++i)
     {
         OutputConfig c = p.outputs[i];
-        c.name = m_edit.outputs[i].name;
-        c.lampColors = m_edit.outputs[i].lampColors;
+        if (!clearNames)
+        {
+            c.name = m_edit.outputs[i].name;
+            c.lampColors = m_edit.outputs[i].lampColors;
+        }
         m_edit.outputs[i] = c;
     }
     for (int i = 0; i < NumInputs; ++i)
     {
         InputConfig c = p.inputs[i];
-        c.name = m_edit.inputs[i].name;
+        if (!clearNames)
+            c.name = m_edit.inputs[i].name;
         m_edit.inputs[i] = c;
     }
     showOutput(m_outEd->index());
     showInput(m_inEd->index());
+    m_outName->setText(m_edit.outputs[m_outEd->index()].name);
+    m_inName->setText(m_edit.inputs[m_inEd->index()].name);
     m_inEd->setOutputs(outputNames(), outputTypes());
+    refreshRows();
     userEdited();
+    saveBoardFile();
     statusBar()->showMessage(tr("Preset applied"), 4000);
 }
 

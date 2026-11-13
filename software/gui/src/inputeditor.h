@@ -90,6 +90,8 @@ private:
     QGroupBox    *m_recorderBox = nullptr;
     QGroupBox    *m_routeBox = nullptr;
     QComboBox    *m_routeTrigger = nullptr;   // any / straight only / curved only
+    QWidget      *m_routeTriggerRow = nullptr;
+    QLabel       *m_routeTriggerLabel = nullptr;
     QLabel       *m_routeCount = nullptr;
     QLabel       *m_routeV1 = nullptr;
     QGridLayout  *m_stepGrid = nullptr;

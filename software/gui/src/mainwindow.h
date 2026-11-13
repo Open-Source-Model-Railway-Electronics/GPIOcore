@@ -57,7 +57,7 @@ private:
     void writeChanges();
     void revertChanges();
     void applyPreset();
-    void applyPresetNow(int preset);          // replace the configuration (names stay), then live write
+    void applyPresetNow(int preset, bool clearNames = true);   // replace the configuration, then live write
     void openFile();
     void saveFile();
     void testOutput(int index, int state);
