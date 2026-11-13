@@ -1,0 +1,19 @@
+<h3>¿Qué hay conectado a esta salida?</h3>
+<ul>
+<li><b>Simple fijo</b> — un pin encendido o apagado. LED, un módulo de relé, lámparas (a través de un transistor o un relé).</li>
+<li><b>Simple pulso</b> — un pin recibe un pulso corto. Para un desenganchador o un aparato de una bobina.</li>
+<li><b>Simple intermitente</b> — un pin parpadea mientras está activado. Una luz de aviso.</li>
+<li><b>Doble fijo</b> — dos pines: A encendido y B apagado, o al revés. Señales de dos colores, dos relés.</li>
+<li><b>Doble pulso</b> — dos pines, uno de ellos recibe un pulso corto. Para <b>motores de desvío de bobinas</b>
+(Peco, Roco, Fleischmann …): A = una bobina, B = la otra bobina.</li>
+<li><b>Doble intermitente</b> — dos pines parpadean alternativamente.</li>
+<li><b>Luz alterna</b> — dos luces por turnos con una pausa: luces de paso a nivel.</li>
+<li><b>Chimenea / tubo fluorescente / soldador</b> — efectos de luz: fuego que parpadea, un tubo fluorescente que se
+enciende parpadeando, destellos de soldadura. (Chimenea y tubo fluorescente necesitan pines PWM.)</li>
+<li><b>Señal de 4 aspectos</b> — cuatro LED (rojo, verde, amarillo, blanco …), puestos por órdenes de señal DCC o por un itinerario.</li>
+<li><b>Servo</b> — un servo de modelismo como motor de desvío. Movimiento lento y realista.</li>
+<li><b>PWM</b> — un brillo fijo para una lámpara o una tira de LED.</li>
+<li><b>Sin uso</b> — no hay nada conectado.</li>
+</ul>
+<p><b>Importante con bobinas:</b> un pin de Arduino no puede accionar una bobina directamente. Use una placa de
+potencia (por ejemplo un ULN2803 o un módulo MOSFET) entre el pin y la bobina.</p>

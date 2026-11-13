@@ -1,31 +1,36 @@
 <h3>Fahrstraßen-Schritte</h3>
 <p>Eine Fahrstraße ist eine Liste von Dingen, die von oben nach unten abgearbeitet werden. Jede Zeile (Schritt)
 stellt <b>einen Ausgang</b> und <b>wartet</b> dann kurz bis zum nächsten Schritt.</p>
-<p><b>Wann startet die Fahrstraße?</b> Wenn der Taster am Eingangspin <b>gedrückt</b> wird oder wenn die Zentrale
-<b>einen beliebigen Befehl</b> (Gerade oder Abzweig) an die DCC-Adresse des Eingangs sendet.</p>
+
+<h4>Wann startet die Fahrstraße?</h4>
+<p>Wenn der Taster am Eingangspin <b>gedrückt</b> wird, oder bei einem DCC-Befehl an die Adresse des Eingangs. Welcher
+DCC-Befehl, wählen Sie unter <b>Start per DCC</b>:</p>
+<ul>
+<li><b>jeder Befehl</b>: Gerade und Abzweig starten sie beide;</li>
+<li><b>nur Gerade</b> oder <b>nur Abzweig</b>: So können sich zwei Fahrstraßen eine Adresse teilen. Beispiel, ein
+Bahnübergang auf Adresse 1: Fahrstraße A auf <i>nur Abzweig</i> schaltet die Lichter ein und schließt die Schranken,
+Fahrstraße B auf <i>nur Gerade</i> öffnet sie wieder.</li>
+</ul>
+<p>Eine Zentrale wiederholt einen Befehl mehrmals; die Fahrstraße nimmt den ersten.</p>
 
 <h4>Die Spalten</h4>
 <ul>
-<li><b>Ausgang</b> — was dieser Schritt bedient.</li>
-<li><b>Wert</b> — was der Ausgang tun soll. Das hängt von der Art des Ausgangs ab:
+<li><b>Ausgang</b>: was dieser Schritt bedient.</li>
+<li><b>Wert</b>: was der Ausgang tun soll:
   <ul>
   <li>Weiche, Licht, Relais: <b>Abzweig (0)</b> oder <b>Gerade (1)</b>;</li>
-  <li>4-begriffiges Signal: eine <b>Signalbild-Nummer</b> (0–255) — dieselbe Nummer, die Ihre Zentrale verwendet;</li>
-  <li>Servo: Abzweig, Gerade oder ein genauer <b>Winkel</b> zwischen 10° und 170°;</li>
-  <li>PWM: ein Helligkeits- / Geschwindigkeitswert 0–255.</li>
+  <li>4-begriffiges Signal: eine <b>Signalbild-Nummer</b> (0&ndash;255);</li>
+  <li>Servo: Abzweig, Gerade oder ein genauer <b>Winkel</b> zwischen 10&deg; und 170&deg;;</li>
+  <li>PWM: ein Helligkeits- / Geschwindigkeitswert 0&ndash;255.</li>
   </ul></li>
-<li><b>Warten danach</b> — wie lange vor dem nächsten Schritt gewartet wird, in Zehntelsekunden
-(Standard 0,3 s, bis 1638 s ≈ 27 Minuten). Weichen mit Spulen, die gleichzeitig viel Strom ziehen, können Ihr
-Netzteil einbrechen lassen: eine kurze Wartezeit dazwischen hilft.</li>
+<li><b>Warten danach</b>: nur wenn <i>Eigene Wartezeit pro Fahrstraßen-Schritt</i> in den Platineneinstellungen
+eingeschaltet ist; sonst wartet jeder Schritt die feste Zeit der Platine (Standard 0,3 s).</li>
 </ul>
 
 <h4>So legen Sie eine an</h4>
 <ol>
-<li>Wählen Sie in der ersten Zeile einen Ausgang, <i>oder</i> ziehen Sie in der Bildschirmmitte einen Ausgang auf
-diesen Eingang.</li>
+<li>Wählen Sie in der ersten Zeile einen Ausgang, <i>oder</i> ziehen Sie einen Ausgang auf diesen Eingang.</li>
 <li>Klicken Sie auf <b>+ Schritt hinzufügen</b> (oder ziehen Sie erneut) für den nächsten.</li>
-<li>Mit ▲ ▼ ändern Sie die Reihenfolge, mit dem <b>Papierkorb</b> löschen Sie einen Schritt.</li>
+<li>Mit &#9650; &#9660; ändern Sie die Reihenfolge, mit dem <b>Papierkorb</b> löschen Sie einen Schritt.</li>
 </ol>
-<p>Derselbe Ausgang darf mehrmals vorkommen. Beispiel: ein Servo, der erst auf 45° und später auf 135° fährt, für
-eine langsame Bewegung in zwei Stufen.</p>
-<p>Ältere Platinen (Protokoll v1) speichern nur 8 Schritte mit Abzweig / Gerade und fest 0,5 s.</p>
+<p>Derselbe Ausgang darf mehrmals vorkommen, zum Beispiel ein Servo, der erst auf 45&deg; und dann auf 135&deg; fährt.</p>

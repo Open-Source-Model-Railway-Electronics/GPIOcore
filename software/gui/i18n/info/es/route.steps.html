@@ -1,0 +1,36 @@
+<h3>Pasos del itinerario</h3>
+<p>Un itinerario es una lista de cosas que hacer, de arriba abajo. Cada línea (paso) pone <b>una salida</b> y luego
+<b>espera</b> un momento antes del paso siguiente.</p>
+
+<h4>¿Cuándo se inicia el itinerario?</h4>
+<p>Cuando se <b>pulsa</b> el botón del pin de entrada, o con una orden DCC para la dirección de la entrada. Elija qué
+orden DCC en <b>Se inicia por DCC</b>:</p>
+<ul>
+<li><b>cualquier orden</b>: recto y desviado lo inician los dos;</li>
+<li><b>solo recto</b> o <b>solo desviado</b>: así dos itinerarios pueden compartir una dirección. Ejemplo, un paso a
+nivel en la dirección 1: el itinerario A en <i>solo desviado</i> enciende las luces y baja las barreras, el
+itinerario B en <i>solo recto</i> las vuelve a subir.</li>
+</ul>
+<p>Una central repite una orden varias veces; el itinerario toma la primera.</p>
+
+<h4>Las columnas</h4>
+<ul>
+<li><b>Salida</b>: lo que maneja este paso.</li>
+<li><b>Valor</b>: lo que debe hacer la salida:
+  <ul>
+  <li>desvío, luz, relé: <b>desviado (0)</b> o <b>recto (1)</b>;</li>
+  <li>señal de 4 aspectos: un <b>número de aspecto</b> (0&ndash;255);</li>
+  <li>servo: desviado, recto, o un <b>ángulo</b> exacto entre 10&deg; y 170&deg;;</li>
+  <li>PWM: un valor de brillo / velocidad de 0&ndash;255.</li>
+  </ul></li>
+<li><b>Esperar después</b>: solo si <i>Tiempo de espera propio por paso del itinerario</i> está activado en los ajustes
+de la placa; si no, cada paso espera el tiempo fijo de la placa (0,3 s por defecto).</li>
+</ul>
+
+<h4>Cómo crear uno</h4>
+<ol>
+<li>Elija una salida en la primera línea, <i>o</i> arrastre una salida sobre esta entrada.</li>
+<li>Haga clic en <b>+ Añadir paso</b> (o vuelva a arrastrar) para el siguiente.</li>
+<li>Use &#9650; &#9660; para cambiar el orden, y la <b>papelera</b> para borrar un paso.</li>
+</ol>
+<p>La misma salida puede aparecer más de una vez, por ejemplo un servo que primero va a 45&deg; y luego a 135&deg;.</p>

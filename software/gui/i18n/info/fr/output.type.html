@@ -1,0 +1,19 @@
+<h3>Qu'est-ce qui est branché sur cette sortie ?</h3>
+<ul>
+<li><b>Simple fixe</b> — une broche allumée ou éteinte. LED, module relais, lampes (via un transistor ou un relais).</li>
+<li><b>Simple impulsion</b> — une broche reçoit une courte impulsion. Pour un dételeur ou un appareil à une bobine.</li>
+<li><b>Simple clignotant</b> — une broche clignote tant qu'elle est active. Un feu d'avertissement.</li>
+<li><b>Double fixe</b> — deux broches : A allumée et B éteinte, ou l'inverse. Signaux bicolores, deux relais.</li>
+<li><b>Double impulsion</b> — deux broches, l'une reçoit une courte impulsion. Pour les <b>moteurs d'aiguillage à
+bobines</b> (Peco, Roco, Fleischmann …) : A = une bobine, B = l'autre bobine.</li>
+<li><b>Double clignotant</b> — deux broches clignotent en alternance.</li>
+<li><b>Feux alternés</b> — deux feux à tour de rôle avec une pause : feux de passage à niveau.</li>
+<li><b>Feu de cheminée / tube néon / soudeur</b> — effets lumineux : feu vacillant, tube fluorescent qui s'allume en
+clignotant, éclairs de soudure. (Feu de cheminée et tube néon ont besoin de broches PWM.)</li>
+<li><b>Signal 4 feux</b> — quatre LED (rouge, vert, jaune, blanc …), positionnées par des commandes de signal DCC ou par un itinéraire.</li>
+<li><b>Servo</b> — un servo de modélisme comme moteur d'aiguillage. Mouvement lent et réaliste.</li>
+<li><b>PWM</b> — une luminosité fixe pour une lampe ou un ruban de LED.</li>
+<li><b>Non utilisé</b> — rien n'est branché.</li>
+</ul>
+<p><b>Important pour les bobines :</b> une broche Arduino ne peut pas piloter une bobine directement. Utilisez une carte
+de puissance (par exemple un ULN2803 ou un module MOSFET) entre la broche et la bobine.</p>

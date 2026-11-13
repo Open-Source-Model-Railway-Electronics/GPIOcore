@@ -1,0 +1,24 @@
+<h3>Régler un servo</h3>
+<p>Un servo tourne jusqu'à un angle entre 0&deg; et 180&deg;. Comme moteur d'aiguillage, il se déplace entre deux positions :</p>
+<ul>
+<li><b>Position 0 (dévié)</b> : l'angle pour « dévié ».</li>
+<li><b>Position 1 (direct)</b> : l'angle pour « direct ».</li>
+<li><b>Vitesse</b> : millisecondes par degré. 20 ms/&deg; est calme et réaliste ; 5 est rapide ; 50 est très lent.</li>
+</ul>
+<h4>Trouver les bonnes positions</h4>
+<ol>
+<li>Carte connectée, cochez <b>En direct</b> et déplacez lentement le curseur de <i>Position 0</i>. Le servo suit.
+Arrêtez-vous quand la lame d'aiguille touche juste le rail, puis faites de même pour <i>Position 1</i>. C'est
+mémorisé tout de suite.</li>
+<li>Ou sans ordinateur : utilisez le <b>bouton de config</b> et l'adresse de loco 9999 sur votre régulateur (voir
+<i>Aide &rarr; Bouton de config et apprentissage des servos</i>).</li>
+</ol>
+<p><b>Astuce :</b> ne poussez pas la lame trop fort contre le rail : le servo bourdonne et chauffe.
+Revenez de 2&ndash;3&deg; à partir du point de contact.</p>
+<h4>Bon à savoir</h4>
+<ul>
+<li>À la mise sous tension, les servos démarrent <b>un par un</b>, à une demi-seconde d'intervalle, chacun vers sa
+dernière position. Cela évite un gros pic de courant.</li>
+<li>6 servos au maximum bougent en même temps ; les autres attendent leur tour.</li>
+<li>Câblage : marron/noir = GND, rouge = 5 V (d'une alimentation 5 V séparée pour plusieurs servos !), orange/jaune = signal.</li>
+</ul>

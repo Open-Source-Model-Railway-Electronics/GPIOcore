@@ -54,15 +54,14 @@ Kies in het programma *View → Language → Deutsch (de)* en start het programm
 - **Nieuwe teksten na een update:** bouw opnieuw `update_translations`. Bestaande vertalingen blijven staan;
   nieuwe teksten verschijnen in Linguist als "onvertaald".
 
-## Status (2026-11-12)
+## Status (2026-11-13)
 
 | Taal | Schermteksten | Uitlegteksten |
 |---|---|---|
-| English (`en`) | bron (376 teksten) | volledig (18) |
-| Nederlands (`nl`), Deutsch (`de`) | 263 van 376 vertaald | volledig (18) |
-| `fr` `es` `it` `pl` `cs` `da` `nb` `sv` `hu` `pt` | 263 van 376 vertaald | nog niet (valt terug op Engels) |
+| English (`en`) | bron (441 teksten) | volledig (21) |
+| Nederlands (`nl`), Deutsch (`de`), Français (`fr`), Español (`es`), Italiano (`it`) | 441 van 441 vertaald | volledig (21) |
+| `pl` `cs` `da` `nb` `sv` `hu` `pt` | 441 van 441 vertaald | nog niet (valt terug op Engels) |
 
-De 113 open teksten zijn nieuw sinds 2026-11-12 (boardinstellingen, startpagina, flashen); ze verschijnen
-in het Engels tot ze vertaald zijn. Termen zijn nog **niet** op forums gecontroleerd. Afwijkingen van de
-bestaande handleidingen: NL puntstuk (niet "hartpunt"), SV hjärtstycke, HU szív, NB sporveksel, en ES/IT/PT/NB
-een eigen woord voor frog (corazón, cuore, coração, hjertestykke).
+Termen zijn nog **niet** op forums gecontroleerd. Afwijkingen van de bestaande handleidingen: NL puntstuk (niet
+"hartpunt"), SV hjärtstycke, HU szív, NB sporveksel, en ES/IT/PT/NB een eigen woord voor frog (corazón, cuore, coração,
+hjertestykke). In het Nederlands heet de print in de GUI "board" (het product heet "GPIOcore board").

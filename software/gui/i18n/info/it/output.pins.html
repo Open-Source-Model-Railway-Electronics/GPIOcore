@@ -1,0 +1,14 @@
+<h3>Pin: dove vanno i fili</h3>
+<p>Scegli il pin o i pin dell'Arduino per questa uscita. I nomi dei pin sono stampati sulla scheda: <b>D3 &hellip; D12</b>
+e <b>A0 &hellip; A5</b>.</p>
+<ul>
+<li>I pin già usati appaiono in <b>rosso</b> con chi li usa ("in uso: Usc. 3"). Se ne scegli uno comunque, l'altro
+ingresso o uscita diventa <i>non usato</i>.</li>
+<li><b>D2</b> è l'ingresso DCC, <b>D13</b> il LED di config e <b>A7</b> il pulsante di config: mai disponibili.
+<b>D0 / D1</b> sono il collegamento USB; funzionano come I/O solo quando nessun computer è collegato.</li>
+<li>I pin <b>~PWM</b> (D3, D5, D6, D9, D10, D11) possono regolare la luminosità. Gli effetti luminosi ne richiedono uno.
+Finché è in uso un servo, D9 e D10 <i>non</i> possono regolare.</li>
+<li>Su una <b>DCCnext</b> l'elenco mostra anche il numero di porta stampato su quella scheda.</li>
+</ul>
+<p>Un pin dell'Arduino fornisce poca corrente (max. 20 mA). Basta per un LED con resistenza o per il filo di segnale di
+un servo. Per relè, bobine e lampade metti in mezzo un driver o un modulo relè.</p>

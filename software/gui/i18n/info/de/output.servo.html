@@ -1,21 +1,25 @@
 <h3>Einen Servo einrichten</h3>
-<p>Ein Servo dreht auf einen Winkel zwischen 0° und 180°. Als Weichenantrieb bewegt er sich zwischen zwei
+<p>Ein Servo dreht sich auf einen Winkel zwischen 0&deg; und 180&deg;. Als Weichenantrieb bewegt er sich zwischen zwei
 Stellungen:</p>
 <ul>
-<li><b>Stellung 0 (Abzweig)</b> — der Winkel für „Abzweig“.</li>
-<li><b>Stellung 1 (Gerade)</b> — der Winkel für „Gerade“.</li>
-<li><b>Geschwindigkeit</b> — Millisekunden pro Grad. 20 ms/° ist ruhig und vorbildgerecht; 5 ist schnell; 50 ist
-sehr langsam. Eine volle Bewegung dauert |Stellung 1 − Stellung 0| × Geschwindigkeit.</li>
+<li><b>Stellung 0 (Abzweig)</b>: der Winkel für „Abzweig“.</li>
+<li><b>Stellung 1 (Gerade)</b>: der Winkel für „Gerade“.</li>
+<li><b>Geschwindigkeit</b>: Millisekunden pro Grad. 20 ms/&deg; ist ruhig und vorbildgerecht; 5 ist schnell; 50 ist sehr langsam.</li>
 </ul>
-<h4>Die richtigen Stellungen finden — mit „Live“</h4>
+<h4>Die richtigen Stellungen finden</h4>
 <ol>
-<li>Verbinden Sie die Platine und haken Sie <b>Live</b> an.</li>
-<li>Schieben Sie den Regler <i>Stellung 0</i> langsam. Der Servo auf der Anlage bewegt sich mit.
-Hören Sie auf, wenn die Weichenzunge gerade an der Backenschiene anliegt.</li>
-<li>Machen Sie dasselbe für <i>Stellung 1</i>.</li>
-<li>Klicken Sie auf <b>Schreiben</b>, um es zu speichern.</li>
+<li>Setzen Sie bei verbundener Platine den Haken bei <b>Live</b> und schieben Sie den Regler von <i>Stellung 0</i>
+langsam. Der Servo bewegt sich mit. Hören Sie auf, wenn die Weichenzunge gerade an der Backenschiene anliegt, und
+machen Sie dasselbe für <i>Stellung 1</i>. Es wird sofort gespeichert.</li>
+<li>Oder ohne Computer: mit dem <b>Konfig-Taster</b> und der Lokadresse 9999 an Ihrem Handregler (siehe
+<i>Hilfe &rarr; Konfig-Taster und Servos einlernen</i>).</li>
 </ol>
-<p><b>Tipp:</b> drücken Sie die Zunge nicht zu fest an die Schiene: der Servo brummt dann und wird warm.
-Gehen Sie 2–3° vom Berührungspunkt zurück.</p>
-<p>Verdrahtung: braun/schwarz = GND, rot = 5 V (bei mehreren Servos aus einem eigenen 5-V-Netzteil!),
-orange/gelb = Signal zum Pin.</p>
+<p><b>Tipp:</b> Drücken Sie die Zunge nicht zu fest an die Schiene: Der Servo brummt dann und wird warm.
+Gehen Sie 2&ndash;3&deg; vom Berührungspunkt zurück.</p>
+<h4>Gut zu wissen</h4>
+<ul>
+<li>Beim Einschalten starten die Servos <b>einer nach dem anderen</b>, im Abstand von einer halben Sekunde, jeder in
+seine letzte Stellung. So entsteht keine große Stromspitze.</li>
+<li>Höchstens 6 Servos bewegen sich gleichzeitig; die anderen warten, bis sie an der Reihe sind.</li>
+<li>Verdrahtung: braun/schwarz = GND, rot = 5 V (bei mehreren Servos aus einem eigenen 5-V-Netzteil!), orange/gelb = Signal.</li>
+</ul>

@@ -1,0 +1,50 @@
+<h2>Premiers pas</h2>
+<p>Ce programme configure une <b>carte GPIOcore</b> : un petit Arduino (Nano / Uno, ou un DCCnext) placé sous votre
+réseau, qui commande des choses : aiguillages, éclairages, signaux, relais. Vous indiquez à la carte <i>ce qui</i> est
+branché sur <i>quelle</i> broche, et <i>ce qui</i> doit le faire bouger.</p>
+
+<h3>Les deux sortes de choses</h3>
+<ul>
+<li>Les <b>sorties</b> (au centre, colonne de droite) sont ce que la carte <i>fait</i> : bouger un servo, envoyer une
+impulsion à une bobine d'aiguillage, allumer une LED, commuter un relais. Il y en a 16.</li>
+<li>Les <b>entrées</b> (au centre, colonne de gauche) sont ce qui <i>donne un ordre à la carte</i> : un bouton-poussoir
+de votre TCO, ou une commande de votre centrale DCC (votre système digital / régulateur à main). Il y en a 16.</li>
+</ul>
+<p>Les paramètres de l'entrée sélectionnée sont toujours à <b>gauche</b>, ceux de la sortie sélectionnée à
+<b>droite</b>.</p>
+
+<h3>Trois façons de travailler : les boutons de couleur en haut</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Configurer</b> (cadre rouge) : connexion à la carte sur le port choisi. Tout ce que vous
+modifiez part <b>tout de suite</b> vers la carte ; il n'y a pas de bouton d'enregistrement séparé.</li>
+<li><b style="color:#A16207">&#9679; Simuler</b> (cadre jaune) : pas besoin de carte. Vos propres paramètres tournent sur une
+carte simulée ; cliquez sur les boutons des entrées et observez les sorties. Rien ne peut casser.</li>
+<li><b style="color:#15803D">&#9679; Test en direct</b> (cadre vert) : sur une vraie carte, cliquez sur les boutons des entrées et
+voyez ce que fait la carte, même si rien n'est encore câblé.</li>
+</ul>
+
+<h3>Pas à pas</h3>
+<ol>
+<li><b>Connecter.</b> Branchez la carte sur le port USB, choisissez son port en haut (il indique en général CH340,
+USB Serial ou Arduino) et cliquez sur <b>&#9679; Configurer</b>. La première fois, le programme demande un <b>nom</b> pour la carte.</li>
+<li><b>Ajouter une sortie.</b> Cliquez sur <b>+ Ajouter une sortie</b>, ou cliquez sur une sortie. Choisissez le
+<b>type</b> (par exemple <i>Servo</i>) et la <b>broche</b> où va le fil.</li>
+<li><b>Ajouter une entrée.</b> Cliquez sur <b>+ Ajouter une entrée</b>, ou cliquez sur une entrée. Choisissez ce qui la
+déclenche : une <b>broche de bouton</b>, une <b>adresse DCC</b>, ou les deux.</li>
+<li><b>Reliez-les.</b> Glissez la sortie sur l'entrée. Une ligne de couleur apparaît : cette entrée commande maintenant
+cette sortie. La sortie prend la couleur de son entrée.</li>
+<li><b>Essayez.</b> Cliquez sur <b>&#9679; Test en direct</b> et appuyez sur les boutons de l'entrée.</li>
+</ol>
+
+<h3>Bon à savoir</h3>
+<ul>
+<li>Chaque bouton <b>(i)</b> explique l'élément à côté.</li>
+<li>Donnez un <b>nom</b> aux entrées et aux sorties (champ en haut de chaque panneau). Les noms et tous les paramètres
+sont conservés sur cet ordinateur dans <i>Documents\GPIOcore\boards\&lt;nom de la carte&gt;.json</i>, un fichier par carte.</li>
+<li>Une broche déjà utilisée apparaît en <b>rouge</b> dans la liste des broches. Si vous la choisissez quand même,
+l'entrée ou la sortie qui l'avait devient <i>non utilisée</i>.</li>
+<li>Les entrées et sorties non utilisées sont masquées ; <b>Affichage &rarr; Afficher les entrées et sorties non
+utilisées</b> les montre toutes.</li>
+<li><b>Affichage &rarr; Mode expert</b> affiche les octets, le journal série et les préréglages. <b>Affichage &rarr; Thème</b> passe en sombre.</li>
+<li><b>Carte &rarr; Flasher le firmware&hellip;</b> installe un nouveau firmware sur l'Arduino.</li>
+</ul>

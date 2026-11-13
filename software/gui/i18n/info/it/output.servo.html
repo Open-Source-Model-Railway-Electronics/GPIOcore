@@ -1,0 +1,24 @@
+<h3>Impostare un servo</h3>
+<p>Un servo ruota fino a un angolo tra 0&deg; e 180&deg;. Come motore per scambi si muove tra due posizioni:</p>
+<ul>
+<li><b>Posizione 0 (deviato)</b>: l'angolo per "deviato".</li>
+<li><b>Posizione 1 (dritto)</b>: l'angolo per "dritto".</li>
+<li><b>Velocità</b>: millisecondi per grado. 20 ms/&deg; è calmo e realistico; 5 è veloce; 50 è molto lento.</li>
+</ul>
+<h4>Trovare le posizioni giuste</h4>
+<ol>
+<li>Con la scheda collegata, spunta <b>Dal vivo</b> e sposta lentamente il cursore di <i>Posizione 0</i>. Il servo si
+muove insieme. Fermati quando l'ago tocca appena la rotaia, poi fai lo stesso per <i>Posizione 1</i>. Viene
+memorizzato subito.</li>
+<li>Oppure senza computer: usa il <b>pulsante di config</b> e l'indirizzo locomotiva 9999 sul tuo regolatore (vedi
+<i>Aiuto &rarr; Pulsante di config e taratura dei servo</i>).</li>
+</ol>
+<p><b>Suggerimento:</b> non spingere l'ago troppo forte contro la rotaia: il servo ronza e si scalda.
+Torna indietro di 2&ndash;3&deg; dal punto in cui tocca.</p>
+<h4>Buono a sapersi</h4>
+<ul>
+<li>All'accensione i servo partono <b>uno alla volta</b>, a mezzo secondo di distanza, ciascuno verso la sua ultima
+posizione. Così si evita un grosso picco di corrente.</li>
+<li>Al massimo 6 servo si muovono contemporaneamente; gli altri aspettano il loro turno.</li>
+<li>Cablaggio: marrone/nero = GND, rosso = 5 V (da un alimentatore 5 V separato per più servo!), arancione/giallo = segnale.</li>
+</ul>

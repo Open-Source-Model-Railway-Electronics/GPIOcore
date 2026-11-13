@@ -1,0 +1,14 @@
+<h3>Broches : où vont les fils</h3>
+<p>Choisissez la ou les broches Arduino de cette sortie. Les noms des broches sont imprimés sur la carte :
+<b>D3 &hellip; D12</b> et <b>A0 &hellip; A5</b>.</p>
+<ul>
+<li>Les broches déjà utilisées apparaissent en <b>rouge</b> avec leur utilisateur (« utilisée : Sort. 3 »). Si vous en
+choisissez une quand même, l'autre entrée ou sortie devient <i>non utilisée</i>.</li>
+<li><b>D2</b> est l'entrée DCC, <b>D13</b> la LED de config et <b>A7</b> le bouton de config : jamais disponibles.
+<b>D0 / D1</b> sont la liaison USB ; elles ne fonctionnent comme E/S que lorsqu'aucun ordinateur n'est connecté.</li>
+<li>Les broches <b>~PWM</b> (D3, D5, D6, D9, D10, D11) peuvent faire varier l'intensité. Les effets lumineux en ont
+besoin. Tant qu'un servo est utilisé, D9 et D10 ne peuvent <i>pas</i> faire varier l'intensité.</li>
+<li>Sur une <b>DCCnext</b>, la liste montre aussi le numéro de port imprimé sur cette carte.</li>
+</ul>
+<p>Une broche Arduino ne fournit que peu de courant (20 mA max.). Assez pour une LED avec résistance ou le fil de
+signal d'un servo. Pour des relais, des bobines et des lampes, intercalez un driver ou un module relais.</p>

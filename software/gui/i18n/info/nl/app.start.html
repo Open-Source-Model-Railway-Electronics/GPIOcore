@@ -1,39 +1,49 @@
 <h2>Aan de slag</h2>
-<p>Dit programma stelt een <b>GPIOcore-print</b> in: een kleine Arduino (Nano / Uno, of een DCCnext) die onder je
-baan zit en dingen schakelt: wissels, verlichting, seinen, relais. Je vertelt de print <i>wat</i> er op
+<p>Dit programma stelt een <b>GPIOcore board</b> in: een kleine Arduino (Nano / Uno, of een DCCnext) die onder je
+baan zit en dingen schakelt: wissels, verlichting, seinen, relais. Je vertelt het board <i>wat</i> er op
 <i>welke</i> pin is aangesloten, en <i>waardoor</i> het moet bewegen.</p>
 
 <h3>De twee soorten</h3>
 <ul>
-<li><b>Uitgangen</b> (rechterkolom) zijn dingen die de print <i>doet</i>: een servo bewegen, een wisselspoel een puls
-geven, een LED laten branden, een relais schakelen. Er zijn er 16.</li>
-<li><b>Ingangen</b> (linkerkolom) zijn dingen die <i>de print opdracht geven</i>: een drukknop op je
+<li><b>Uitgangen</b> (midden, rechterkolom) zijn dingen die het board <i>doet</i>: een servo bewegen, een wisselspoel
+een puls geven, een LED laten branden, een relais schakelen. Er zijn er 16.</li>
+<li><b>Ingangen</b> (midden, linkerkolom) zijn dingen die <i>het board opdracht geven</i>: een drukknop op je
 bedieningspaneel, of een commando van je DCC-centrale (je digitale systeem / handregelaar). Er zijn er 16.</li>
+</ul>
+<p>De instellingen van de gekozen ingang staan altijd <b>links</b>, die van de gekozen uitgang <b>rechts</b>.</p>
+
+<h3>Drie manieren van werken: de gekleurde knoppen bovenaan</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Configureren</b> (rode rand): verbinden met het board op de gekozen poort. Alles wat je
+verandert, gaat <b>meteen</b> naar het board; er is geen aparte knop om op te slaan.</li>
+<li><b style="color:#A16207">&#9679; Simuleren</b> (gele rand): geen board nodig. Je eigen instellingen draaien op een
+nagebootst board; klik op de knoppen van de ingangen en kijk naar de uitgangen. Er kan niets kapot.</li>
+<li><b style="color:#15803D">&#9679; Live test</b> (groene rand): klik op een echt board op de knoppen van de ingangen en
+zie wat het board doet, ook als er nog niets is aangesloten.</li>
 </ul>
 
 <h3>Stap voor stap</h3>
 <ol>
-<li><b>Verbinden.</b> Steek de print in de USB-poort. Kies bovenaan de poort (meestal staat er CH340, USB Serial of
-Arduino bij) en klik op <b>Verbinden</b>. Geen print bij de hand? Klik op <b>Demo</b> om alles te proberen met een
-nagebootste print.</li>
-<li><b>Een uitgang instellen.</b> Klik rechts op een uitgang. Er schuift een paneel in vanaf rechts. Kies het
-<b>type</b> (bijvoorbeeld <i>Servo</i>) en de <b>pin</b> waar de draad op zit.</li>
-<li><b>Een ingang instellen.</b> Klik links op een ingang. Er schuift een paneel in vanaf links. Kies waardoor hij
-start: een <b>knop-pin</b>, een <b>DCC-adres</b>, of allebei.</li>
-<li><b>Verbind ze.</b> Sleep de uitgang (rechts) naar de ingang (links). Er verschijnt een gekleurde lijn: die
-ingang bedient nu die uitgang. De uitgang krijgt de kleur van zijn ingang, zodat je in één oogopslag ziet wat bij
-elkaar hoort.</li>
-<li><b>Naar de print sturen.</b> Alles wat je hebt veranderd krijgt een oranje stip. Klik bovenaan op
-<b>… wijziging(en) schrijven</b>. De print bewaart het, ook als de stroom eraf is.</li>
+<li><b>Verbinden.</b> Steek het board in de USB-poort, kies bovenaan de poort (meestal staat er CH340, USB Serial of
+Arduino bij) en klik op <b>&#9679; Configureren</b>. De eerste keer vraagt het programma om een <b>naam</b> voor het board.</li>
+<li><b>Een uitgang toevoegen.</b> Klik op <b>+ Uitgang toevoegen</b>, of klik op een uitgang. Kies het <b>type</b>
+(bijvoorbeeld <i>Servo</i>) en de <b>pin</b> waar de draad op zit.</li>
+<li><b>Een ingang toevoegen.</b> Klik op <b>+ Ingang toevoegen</b>, of klik op een ingang. Kies waardoor hij start:
+een <b>knop-pin</b>, een <b>DCC-adres</b>, of allebei.</li>
+<li><b>Verbind ze.</b> Sleep de uitgang naar de ingang. Er verschijnt een gekleurde lijn: die ingang bedient nu die
+uitgang. De uitgang krijgt de kleur van zijn ingang.</li>
+<li><b>Probeer het.</b> Klik op <b>&#9679; Live test</b> en druk op de knoppen van de ingang.</li>
 </ol>
 
 <h3>Goed om te weten</h3>
 <ul>
-<li>Elk <b>(i)</b>-knopje legt uit wat ernaast staat. Klik erop als je twijfelt.</li>
-<li>Rode tekst betekent dat er iets mis is, bijvoorbeeld twee dingen op dezelfde pin.</li>
-<li><b>Test stand 0 / 1</b> in een uitgangspaneel laat hem meteen bewegen, zo kun je je bedrading controleren.</li>
-<li><b>Bestand → Configuratie opslaan</b> bewaart een kopie van je instellingen op de computer. Doe dit voordat je
-gaat experimenteren.</li>
-<li>Er een rommeltje van gemaakt? <b>Terugdraaien</b> gooit alles weg wat je nog niet naar de print hebt
-geschreven.</li>
+<li>Elk <b>(i)</b>-knopje legt uit wat ernaast staat.</li>
+<li>Geef ingangen en uitgangen een <b>naam</b> (veld bovenaan elk paneel). Namen en alle instellingen worden op
+deze computer bewaard in <i>Documenten\GPIOcore\boards\&lt;naam van het board&gt;.json</i>, één bestand per board.</li>
+<li>Een pin die al gebruikt wordt, is <b>rood</b> in de pinlijst. Kies je hem toch, dan wordt de ingang of uitgang
+die hem had <i>niet in gebruik</i>.</li>
+<li>Ongebruikte ingangen en uitgangen zijn verborgen; <b>Beeld &rarr; Ongebruikte ingangen en uitgangen tonen</b>
+laat ze allemaal zien.</li>
+<li><b>Beeld &rarr; Expertmodus</b> toont de bytes, de seriële log en de presets. <b>Beeld &rarr; Thema</b> schakelt naar donker.</li>
+<li><b>Board &rarr; Firmware flashen&hellip;</b> zet nieuwe firmware op de Arduino.</li>
 </ul>

@@ -1,0 +1,9 @@
+<h3>État et test</h3>
+<p>Chaque sortie a un <b>état</b> : 0 ou 1. Ce que cela signifie dépend de la sortie : pour un aiguillage
+0 = dévié et 1 = direct ; pour une lampe 0 = éteint et 1 = allumé.</p>
+<p><b>État mémorisé</b> : la carte retient le dernier état, même hors tension. À la mise sous tension, la sortie y
+revient (sauf les aiguillages à bobines : ils ne reçoivent pas d'impulsion au démarrage, pour qu'ils ne basculent pas
+tous en même temps).</p>
+<p><b>Tester l'état 0 / Tester l'état 1</b> envoie tout de suite cette sortie à la carte et la commute. Utilisez-le
+pour vérifier votre câblage : est-ce le bon aiguillage qui bouge, dans le bon sens ? Si « direct » et « dévié » sont
+inversés, inversez les deux positions (servo) ou les deux fils / broches (moteur à bobines).</p>

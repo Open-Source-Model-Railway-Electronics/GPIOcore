@@ -6,22 +6,22 @@
     <message>
         <location filename="../src/connectionview.cpp" line="192"/>
         <source>value ▾</source>
-        <translation type="unfinished"></translation>
+        <translation>valeur ▾</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="192"/>
         <source>aspect ▾</source>
-        <translation type="unfinished"></translation>
+        <translation>aspect ▾</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="203"/>
         <source>▶ start</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ départ</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="203"/>
         <source>▶ press</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ appui</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="563"/>
@@ -46,22 +46,22 @@
     <message>
         <location filename="../src/connectionview.cpp" line="690"/>
         <source>● SIMULATION — click the input buttons</source>
-        <translation type="unfinished"></translation>
+        <translation>● SIMULATION — cliquez sur les boutons des entrées</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="690"/>
         <source>SIMULATION</source>
-        <translation type="unfinished"></translation>
+        <translation>SIMULATION</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="695"/>
         <source>● LIVE TEST</source>
-        <translation type="unfinished"></translation>
+        <translation>● TEST EN DIRECT</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="700"/>
         <source>CONFIGURING THE BOARD</source>
-        <translation type="unfinished"></translation>
+        <translation>CONFIGURATION DE LA CARTE</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="721"/>
@@ -261,27 +261,27 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/devicelink.cpp" line="640"/>
         <source>read board settings</source>
-        <translation type="unfinished"></translation>
+        <translation>lire les paramètres de la carte</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="641"/>
         <source>write board settings</source>
-        <translation type="unfinished"></translation>
+        <translation>écrire les paramètres de la carte</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="642"/>
         <source>trigger input %1</source>
-        <translation type="unfinished"></translation>
+        <translation>déclencher l&apos;entrée %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="643"/>
         <source>read state of output %1</source>
-        <translation type="unfinished"></translation>
+        <translation>lire l&apos;état de la sortie %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="644"/>
         <source>DCC extended to address %1</source>
-        <translation type="unfinished"></translation>
+        <translation>DCC étendu vers l&apos;adresse %1</translation>
     </message>
 </context>
 <context>
@@ -289,183 +289,183 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/flasher.cpp" line="387"/>
         <source>Update firmware</source>
-        <translation type="unfinished"></translation>
+        <translation>Mettre à jour le firmware</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="394"/>
         <source>Puts the GPIOcore program (firmware) on your Arduino. Plug the board in with USB, check the settings below and click &lt;b&gt;Flash&lt;/b&gt;. Your settings on the board are normally kept.</source>
-        <translation type="unfinished"></translation>
+        <translation>Installe le programme GPIOcore (firmware) sur votre Arduino. Branchez la carte en USB, vérifiez les réglages ci-dessous et cliquez sur &lt;b&gt;Flasher&lt;/b&gt;. Vos paramètres sur la carte sont normalement conservés.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="407"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualiser</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="408"/>
         <source>Look again for connected boards</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechercher à nouveau les cartes branchées</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="412"/>
         <source>Port:</source>
-        <translation type="unfinished"></translation>
+        <translation>Port :</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="416"/>
         <source>Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>Parcourir…</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="420"/>
         <source>Firmware file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier firmware :</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="424"/>
         <source>Arduino Uno / Nano (new bootloader)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arduino Uno / Nano (nouveau bootloader)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="425"/>
         <source>Arduino Nano (old bootloader)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arduino Nano (ancien bootloader)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="426"/>
         <source>Via ArduinoISP programmer (advanced)</source>
-        <translation type="unfinished"></translation>
+        <translation>Via un programmateur ArduinoISP (avancé)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="432"/>
         <source>Board type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de carte :</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="435"/>
         <source>&lt;b&gt;Advanced:&lt;/b&gt; choose the port of the &lt;i&gt;programmer&lt;/i&gt; Arduino (running ArduinoISP), wired to the ICSP pins of your board. This also sets the fuses and &lt;b&gt;removes the USB bootloader&lt;/b&gt;: afterwards the board can only be updated with the programmer again. The settings stored on the board are erased.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Avancé :&lt;/b&gt; choisissez le port de l&apos;Arduino &lt;i&gt;programmateur&lt;/i&gt; (avec ArduinoISP), relié aux broches ICSP de votre carte. Cela règle aussi les fusibles (fuses) et &lt;b&gt;supprime le bootloader USB&lt;/b&gt; : ensuite, la carte ne peut plus être mise à jour qu&apos;avec le programmateur. Les paramètres enregistrés sur la carte sont effacés.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="444"/>
         <source>Flash</source>
-        <translation type="unfinished"></translation>
+        <translation>Flasher</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="483"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="508"/>
         <source>Trying again with the old Nano bootloader…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvel essai avec l&apos;ancien bootloader Nano…</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="509"/>
         <location filename="../src/flasher.cpp" line="573"/>
         <source>Uploading… do not unplug the board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléversement… ne débranchez pas la carte.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="529"/>
         <source>(no board found – plug it in and click Refresh)</source>
-        <translation type="unfinished"></translation>
+        <translation>(aucune carte trouvée – branchez-la et cliquez sur Actualiser)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="544"/>
         <source>Choose firmware file</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir le fichier firmware</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="545"/>
         <source>Firmware (*.hex);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Firmware (*.hex);;Tous les fichiers (*)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="560"/>
         <source>The firmware file was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier firmware est introuvable.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="565"/>
         <source>No board found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune carte trouvée.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="599"/>
         <source>Done! The new firmware is on the board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminé ! Le nouveau firmware est sur la carte.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="602"/>
         <source>Your board has the old Nano bootloader. Next time choose &quot;Arduino Nano (old bootloader)&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Votre carte a l&apos;ancien bootloader Nano. La prochaine fois, choisissez &quot;Arduino Nano (ancien bootloader)&quot;.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="610"/>
         <source>Uploading did not work.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le téléversement n&apos;a pas fonctionné.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="624"/>
         <source>The folder &lt;i&gt;tools/avrdude&lt;/i&gt; next to GPIOcoreGUI is missing. Install the program again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le dossier &lt;i&gt;tools/avrdude&lt;/i&gt; à côté de GPIOcoreGUI est absent. Réinstallez le programme.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="626"/>
         <source>Click &lt;b&gt;Browse…&lt;/b&gt; and choose the GPIOcore &lt;i&gt;.hex&lt;/i&gt; file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez sur &lt;b&gt;Parcourir…&lt;/b&gt; et choisissez le fichier GPIOcore &lt;i&gt;.hex&lt;/i&gt;.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="628"/>
         <source>Close other programs that use the board (Arduino IDE serial monitor, other configuration tools) and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermez les autres programmes qui utilisent la carte (moniteur série de l&apos;IDE Arduino, autres outils de configuration) et réessayez.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="631"/>
         <source>Check the USB cable, click &lt;b&gt;Refresh&lt;/b&gt; and choose the right port.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifiez le câble USB, cliquez sur &lt;b&gt;Actualiser&lt;/b&gt; et choisissez le bon port.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="634"/>
         <source>Check that the programmer Arduino runs ArduinoISP, that the right port is chosen and that the wires to the board are correct. A 10 µF capacitor between RESET and GND of the programmer often helps.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifiez que l&apos;Arduino programmateur exécute ArduinoISP, que le bon port est choisi et que les fils vers la carte sont corrects. Un condensateur de 10 µF entre RESET et GND du programmateur aide souvent.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="637"/>
         <source>Choose another &lt;b&gt;board type&lt;/b&gt; (for example &quot;Arduino Nano (old bootloader)&quot;) and try again. Also check that the right port is chosen and close other programs that use the board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez un autre &lt;b&gt;type de carte&lt;/b&gt; (par exemple &quot;Arduino Nano (ancien bootloader)&quot;) et réessayez. Vérifiez aussi que le bon port est choisi et fermez les autres programmes qui utilisent la carte.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="640"/>
         <source>Check the six wires between the programmer and the board, and that the board has power.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifiez les six fils entre le programmateur et la carte, et que la carte est alimentée.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="641"/>
         <source>This board does not have an ATmega328P chip. GPIOcore needs an Arduino Uno or Nano.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette carte n&apos;a pas de puce ATmega328P. GPIOcore a besoin d&apos;un Arduino Uno ou Nano.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="643"/>
         <source>Try again. If it keeps failing, try another USB cable or USB port.</source>
-        <translation type="unfinished"></translation>
+        <translation>Réessayez. Si cela échoue encore, essayez un autre câble USB ou un autre port USB.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="647"/>
         <source>Click &lt;b&gt;Show details&lt;/b&gt; to see what happened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez sur &lt;b&gt;Afficher les détails&lt;/b&gt; pour voir ce qui s&apos;est passé.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="673"/>
         <source>Hide details</source>
-        <translation type="unfinished"></translation>
+        <translation>Masquer les détails</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="673"/>
         <source>Show details</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les détails</translation>
     </message>
 </context>
 <context>
@@ -473,77 +473,77 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/flasher.cpp" line="167"/>
         <source>The upload program (avrdude) was not found next to GPIOcoreGUI (tools/avrdude).</source>
-        <translation type="unfinished"></translation>
+        <translation>Le programme de téléversement (avrdude) est introuvable à côté de GPIOcoreGUI (tools/avrdude).</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="170"/>
         <source>The firmware file was not found: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier firmware est introuvable : %1</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="173"/>
         <source>No port selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun port choisi.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="308"/>
         <source>Cancelled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulé.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="312"/>
         <source>Firmware written and checked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Firmware écrit et vérifié.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="319"/>
         <source>No answer at 115200 baud. Trying again at 57600 baud (old Nano bootloader)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de réponse à 115200 bauds. Nouvel essai à 57600 bauds (ancien bootloader Nano)...</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="326"/>
         <source>The port could not be opened: another program is using it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;ouvrir le port : un autre programme l&apos;utilise.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="327"/>
         <source>The port could not be opened: the board was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;ouvrir le port : la carte est introuvable.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="328"/>
         <source>The firmware file could not be read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de lire le fichier firmware.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="329"/>
         <source>The board did not answer.</source>
-        <translation type="unfinished"></translation>
+        <translation>La carte n&apos;a pas répondu.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="330"/>
         <source>The chip on the board was not recognised.</source>
-        <translation type="unfinished"></translation>
+        <translation>La puce de la carte n&apos;a pas été reconnue.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="331"/>
         <source>Writing failed: the check after writing found differences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec de l&apos;écriture : la vérification après écriture a trouvé des différences.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="333"/>
         <source>Uploading failed (avrdude exit code %1).</source>
-        <translation type="unfinished"></translation>
+        <translation>Échec du téléversement (code de sortie avrdude %1).</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="334"/>
         <source>The upload program stopped unexpectedly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le programme de téléversement s&apos;est arrêté de façon inattendue.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="344"/>
         <source>The upload program (avrdude) could not be started: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de démarrer le programme de téléversement (avrdude) : %1</translation>
     </message>
 </context>
 <context>
@@ -760,12 +760,12 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/gpioconfig.cpp" line="59"/>
         <source>Route that starts on a button press, or only on a DCC &apos;straight&apos; command for its address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Itinéraire lancé par un appui sur le bouton, ou seulement par une commande DCC &apos;direct&apos; pour son adresse.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="60"/>
         <source>Route that starts on a button press, or only on a DCC &apos;curved&apos; command for its address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Itinéraire lancé par un appui sur le bouton, ou seulement par une commande DCC &apos;dévié&apos; pour son adresse.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="61"/>
@@ -945,27 +945,27 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/inputeditor.cpp" line="171"/>
         <source>Starts on DCC</source>
-        <translation type="unfinished"></translation>
+        <translation>Démarre sur DCC</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="173"/>
         <source>any command (straight and curved)</source>
-        <translation type="unfinished"></translation>
+        <translation>toute commande (direct et dévié)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="174"/>
         <source>straight only</source>
-        <translation type="unfinished"></translation>
+        <translation>direct seulement</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="175"/>
         <source>curved only</source>
-        <translation type="unfinished"></translation>
+        <translation>dévié seulement</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="176"/>
         <source>With &apos;straight only&apos; and &apos;curved only&apos; two routes can share one DCC address, e.g. a level crossing: curved = close, straight = open. A button always starts the route.</source>
-        <translation type="unfinished"></translation>
+        <translation>Avec &apos;direct seulement&apos; et &apos;dévié seulement&apos;, deux itinéraires peuvent partager une adresse DCC, par ex. un passage à niveau : dévié = fermer, direct = ouvrir. Un bouton lance toujours l&apos;itinéraire.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="180"/>
@@ -1110,17 +1110,17 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="201"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="202"/>
         <source>Set this to &apos;not in use&apos; and take it off the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Mettre sur &apos;non utilisé&apos; et le retirer du plan</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="213"/>
         <source>Name, e.g. &quot;Turnout station left&quot; (kept on this computer)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom, par ex. &quot;Aiguillage gare gauche&quot; (conservé sur cet ordinateur)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="224"/>
@@ -1135,22 +1135,22 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="278"/>
         <source>+ Add input</source>
-        <translation type="unfinished"></translation>
+        <translation>+ Ajouter une entrée</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="279"/>
         <source>+ Add output</source>
-        <translation type="unfinished"></translation>
+        <translation>+ Ajouter une sortie</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="280"/>
         <source>Take the next free input and open its settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Prendre la prochaine entrée libre et ouvrir ses paramètres</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="281"/>
         <source>Take the next free output and open its settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Prendre la prochaine sortie libre et ouvrir ses paramètres</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="312"/>
@@ -1241,7 +1241,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="630"/>
         <source>Read everything from the board again</source>
-        <translation type="unfinished"></translation>
+        <translation>Tout relire depuis la carte</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="631"/>
@@ -1267,273 +1267,276 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="649"/>
         <source>Which board this is: decides which pins exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Quelle carte c&apos;est : détermine les broches disponibles</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="656"/>
         <source> Board </source>
-        <translation type="unfinished"></translation>
+        <translation> Carte </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="659"/>
         <source>Board settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres de la carte…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1011"/>
         <source>The board keeps a different value for %1; not sending it again.</source>
-        <translation type="unfinished"></translation>
+        <translation>La carte garde une autre valeur pour %1 ; elle n&apos;est pas renvoyée.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1030"/>
         <source>Apply preset &quot;%1&quot;?
 
 This replaces all outputs and inputs (and their routes). Names stay.</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer le préréglage &quot;%1&quot; ?
+
+Cela remplace toutes les sorties et entrées (et leurs itinéraires). Les noms sont conservés.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1059"/>
         <source>Preset applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Préréglage appliqué</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1101"/>
         <source>Send this configuration to the connected board now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyer maintenant cette configuration à la carte connectée ?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1119"/>
         <source>Loaded %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 chargé</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1333"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on D9 and D10 stops working as soon as at least one servo output exists. Use D3, D5, D6 or D11 for PWM, or remove the servo.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) : conflit avec le(s) servo(s). La bibliothèque Servo utilise le timer 1, donc le PWM sur D9 et D10 ne fonctionne plus dès qu&apos;il existe au moins une sortie servo. Utilisez D3, D5, D6 ou D11 pour le PWM, ou retirez le servo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1450"/>
         <source>The pin was in use: %1 is now not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>La broche était utilisée : %1 est maintenant non utilisé.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1459"/>
         <source>Live test needs a connected board with firmware v2 (or the Demo).</source>
-        <translation type="unfinished"></translation>
+        <translation>Le test en direct nécessite une carte connectée avec le firmware v2 (ou la simulation).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1471"/>
         <source>Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and reports back; nothing needs to be connected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Test en direct : cliquez sur ◀ / ▶ ou ▶ départ sur une entrée. La carte commute ses broches et renvoie l&apos;état ; rien ne doit être branché.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1482"/>
         <source>Input %1 has no DCC address, so it cannot receive a DCC extended command.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;entrée %1 n&apos;a pas d&apos;adresse DCC, elle ne peut donc pas recevoir de commande DCC étendue.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1489"/>
         <source>DCC extended — address %1</source>
-        <translation type="unfinished"></translation>
+        <translation>DCC étendu — adresse %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1493"/>
         <source>Value sent: %1 (0x%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Valeur envoyée : %1 (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1514"/>
         <source>flashing</source>
-        <translation type="unfinished"></translation>
+        <translation>clignotant</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1514"/>
         <source>flashing, opposite phase</source>
-        <translation type="unfinished"></translation>
+        <translation>clignotant, en opposition de phase</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1519"/>
         <source>Lamp %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Feu %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1529"/>
         <source>PWM value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valeur PWM</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1533"/>
         <source>Sent as if your command station sent a DCC extended accessory command to address %1. Every change is sent straight away.</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyé comme si votre centrale envoyait une commande d&apos;accessoire DCC étendue à l&apos;adresse %1. Chaque modification est envoyée tout de suite.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1538"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1591"/>
         <source>&lt;h2&gt;GPIOcore Configurator&lt;/h2&gt;&lt;p&gt;Plug a GPIOcore board into a USB port, choose its port at the top and press &lt;b&gt;Connect&lt;/b&gt;. Everything you change is sent to the board straight away.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h2&gt;GPIOcore Configurator&lt;/h2&gt;&lt;p&gt;Branchez une carte GPIOcore sur un port USB, choisissez son port en haut et cliquez sur &lt;b&gt;Connecter&lt;/b&gt;. Tout ce que vous modifiez est envoyé tout de suite à la carte.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1607"/>
         <source>Connect to the board</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter à la carte</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1607"/>
         <source>Uses the port selected at the top.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilise le port choisi en haut.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1610"/>
         <source>Open a board file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir un fichier de carte…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1610"/>
         <source>Look at or prepare the settings of a board without connecting it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Consulter ou préparer les paramètres d&apos;une carte sans la connecter.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1611"/>
         <source>New board (offline)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle carte (hors ligne)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1611"/>
         <source>Prepare a new board on this computer and send it later.</source>
-        <translation type="unfinished"></translation>
+        <translation>Préparer une nouvelle carte sur cet ordinateur et l&apos;envoyer plus tard.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1612"/>
         <source>Flash firmware…</source>
-        <translation type="unfinished"></translation>
+        <translation>Flasher le firmware…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1612"/>
         <source>Put the GPIOcore firmware on an Arduino.</source>
-        <translation type="unfinished"></translation>
+        <translation>Installer le firmware GPIOcore sur un Arduino.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1646"/>
         <source>Names loaded from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Noms chargés depuis %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1651"/>
         <location filename="../src/mainwindow.cpp" line="1769"/>
         <source>%1 — GPIOcore Configurator</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 — GPIOcore Configurator</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1652"/>
         <source>● %1 — %2</source>
-        <translation type="unfinished"></translation>
+        <translation>● %1 — %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1652"/>
         <source>board without a name</source>
-        <translation type="unfinished"></translation>
+        <translation>carte sans nom</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1672"/>
         <source>Name this board</source>
-        <translation type="unfinished"></translation>
+        <translation>Nommer cette carte</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1673"/>
         <source>This board has no name yet. Give it a short, unique name (max. 16 letters, e.g. &quot;Station-left&quot;).
 The name is stored on the board; your names for inputs and outputs are kept in a file with this name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette carte n&apos;a pas encore de nom. Donnez-lui un nom court et unique (16 lettres max., par ex. &quot;Gare-gauche&quot;).
+Le nom est enregistré sur la carte ; vos noms d&apos;entrées et de sorties sont conservés dans un fichier portant ce nom.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="767"/>
         <location filename="../src/mainwindow.cpp" line="1688"/>
         <location filename="../src/mainwindow.cpp" line="1741"/>
         <source>Board settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres de la carte</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1700"/>
         <source>Own wait time per route step</source>
-        <translation type="unfinished"></translation>
+        <translation>Temporisation propre à chaque étape d&apos;itinéraire</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1702"/>
         <source>Off: every step waits the same time and routes need half the memory</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactivé : chaque étape attend le même temps et les itinéraires utilisent deux fois moins de mémoire</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1707"/>
         <source> s</source>
-        <translation type="unfinished"> s</translation>
+        <translation> s</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1710"/>
         <source>Off — routes may run at the same time</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactivé — les itinéraires peuvent s&apos;exécuter en même temps</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1711"/>
         <source>On — one route at a time</source>
-        <translation type="unfinished"></translation>
+        <translation>Activé — un seul itinéraire à la fois</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1712"/>
         <source>Automatic — turnout routes one at a time, lights in parallel</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatique — itinéraires avec aiguillages un par un, éclairage en parallèle</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1714"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1715"/>
         <source>Board type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de carte</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1718"/>
         <source>Wait time per step</source>
-        <translation type="unfinished"></translation>
+        <translation>Attente par étape</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1719"/>
         <source>Route interlocking</source>
-        <translation type="unfinished"></translation>
+        <translation>Enclenchement des itinéraires</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1721"/>
         <source>This board&apos;s firmware cannot store these settings yet; they are only kept in the file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le firmware de cette carte ne peut pas encore enregistrer ces paramètres ; ils sont seulement conservés dans le fichier.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1742"/>
         <source>The recorder needs an I2C EEPROM on A4 (SDA) and A5 (SCL), but A4 or A5 is in use by an input or output. Move that first, then switch the recorder on.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;enregistreur a besoin d&apos;une EEPROM I2C sur A4 (SDA) et A5 (SCL), mais A4 ou A5 est utilisée par une entrée ou une sortie. Déplacez-la d&apos;abord, puis activez l&apos;enregistreur.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1777"/>
         <source>New board</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle carte</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1778"/>
         <source>Name of the new board (max. 16 letters). When you later connect a board and give it this name, these settings belong to it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la nouvelle carte (16 lettres max.). Si vous connectez plus tard une carte et lui donnez ce nom, ces paramètres lui appartiennent.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1807"/>
         <source>All 16 outputs are in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les 16 sorties sont toutes utilisées.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1819"/>
         <source>All 16 inputs are in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les 16 entrées sont toutes utilisées.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="662"/>
@@ -1543,94 +1546,94 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="115"/>
         <source>Output %1</source>
-        <translation type="unfinished">Sortie %1</translation>
+        <translation>Sortie %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="116"/>
         <source>frog relays A %1, B %2, unifrog %3</source>
-        <translation type="unfinished"></translation>
+        <translation>relais du cœur A %1, B %2, unifrog %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="117"/>
         <location filename="../src/mainwindow.cpp" line="118"/>
         <location filename="../src/mainwindow.cpp" line="1514"/>
         <source>on</source>
-        <translation type="unfinished"></translation>
+        <translation>marche</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="117"/>
         <location filename="../src/mainwindow.cpp" line="118"/>
         <location filename="../src/mainwindow.cpp" line="1514"/>
         <source>off</source>
-        <translation type="unfinished"></translation>
+        <translation>arrêt</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="119"/>
         <source>value %1</source>
-        <translation type="unfinished"></translation>
+        <translation>valeur %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="120"/>
         <source>straight / on</source>
-        <translation type="unfinished"></translation>
+        <translation>direct / marche</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="120"/>
         <source>curved / off</source>
-        <translation type="unfinished"></translation>
+        <translation>dévié / arrêt</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="121"/>
         <source>%1 → %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 → %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="235"/>
         <source>Lamp colours (only shown in the GUI):</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleurs des feux (affichées seulement dans le programme) :</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="239"/>
         <location filename="../src/mainwindow.cpp" line="245"/>
         <source>Colour of lamp %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur du feu %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="602"/>
         <location filename="../src/mainwindow.cpp" line="871"/>
         <source>● Configure</source>
-        <translation type="unfinished"></translation>
+        <translation>● Configurer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="604"/>
         <source>Connect to the board on the selected port. Every change goes to the board at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter à la carte sur le port choisi. Chaque modification est envoyée tout de suite à la carte.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="614"/>
         <location filename="../src/mainwindow.cpp" line="868"/>
         <source>● Simulate</source>
-        <translation type="unfinished"></translation>
+        <translation>● Simuler</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="616"/>
         <source>Try your own configuration without a board: a simulated GPIOcore runs it. Use Live test to press inputs and watch the outputs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Essayez votre propre configuration sans carte : un GPIOcore simulé l&apos;exécute. Utilisez le test en direct pour actionner les entrées et observer les sorties.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="618"/>
         <source>● Live test</source>
-        <translation type="unfinished"></translation>
+        <translation>● Test en direct</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="620"/>
         <source>Test the board without anything connected: click the buttons on an input and watch the outputs. Blue = straight / on, red = curved / off; servos show their angle.</source>
-        <translation type="unfinished"></translation>
+        <translation>Testez la carte sans rien brancher : cliquez sur les boutons d&apos;une entrée et observez les sorties. Bleu = direct / marche, rouge = dévié / arrêt ; les servos affichent leur angle.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="663"/>
         <source>&amp;New board (offline)…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nouvelle carte (hors ligne)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="664"/>
@@ -1645,7 +1648,7 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="670"/>
         <source>Open the boards folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le dossier des cartes</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="675"/>
@@ -1660,12 +1663,12 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="686"/>
         <source>Apply a preset…</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer un préréglage…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="688"/>
         <source>&amp;Flash firmware…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Flasher le firmware…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="692"/>
@@ -1675,17 +1678,17 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="693"/>
         <source>&amp;Expert mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode &amp;expert</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="695"/>
         <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les octets, le journal série, les détails du protocole et les préréglages</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="697"/>
         <source>Show unused inputs and outputs</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les entrées et sorties non utilisées</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="706"/>
@@ -1700,22 +1703,22 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="715"/>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Thème</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="717"/>
         <source>Automatic (Windows)</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatique (Windows)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="718"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clair</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="719"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombre</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="736"/>
@@ -1735,7 +1738,7 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="758"/>
         <source>&amp;Help</source>
-        <translation>&amp;Aide</translation>
+        <translation>A&amp;ide</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="759"/>
@@ -1750,32 +1753,32 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="763"/>
         <source>&amp;Configure, simulate and live test</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Configurer, simuler et tester en direct</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="764"/>
         <source>Configure, simulate and live test</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurer, simuler et tester en direct</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="766"/>
         <source>&amp;Board settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres de la car&amp;te</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="769"/>
         <source>Config &amp;button and teaching servos (9999)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bouton de config et apprentissage des servos (9999)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="770"/>
         <source>Config button and teaching servos</source>
-        <translation type="unfinished"></translation>
+        <translation>Bouton de config et apprentissage des servos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="773"/>
         <source>&amp;About</source>
-        <translation>À &amp;propos</translation>
+        <translation>À pr&amp;opos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="775"/>
@@ -1802,12 +1805,12 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="868"/>
         <source>● Stop simulation</source>
-        <translation type="unfinished"></translation>
+        <translation>● Arrêter la simulation</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="871"/>
         <source>● Configuring</source>
-        <translation type="unfinished"></translation>
+        <translation>● Configuration en cours</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="877"/>
@@ -1838,13 +1841,13 @@ The name is stored on the board; your names for inputs and outputs are kept in a
         <location filename="../src/mainwindow.cpp" line="990"/>
         <location filename="../src/mainwindow.cpp" line="1445"/>
         <source>input %1</source>
-        <translation type="unfinished"></translation>
+        <translation>entrée %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1000"/>
         <location filename="../src/mainwindow.cpp" line="1435"/>
         <source>output %1</source>
-        <translation type="unfinished"></translation>
+        <translation>sortie %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1007"/>
@@ -1854,22 +1857,22 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="1608"/>
         <source>Simulate</source>
-        <translation type="unfinished"></translation>
+        <translation>Simuler</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1608"/>
         <source>Try a configuration without a board: open a board file or start a new one, then simulate it. Nothing can break.</source>
-        <translation type="unfinished"></translation>
+        <translation>Essayez une configuration sans carte : ouvrez un fichier de carte ou commencez-en un nouveau, puis simulez-le. Rien ne peut casser.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1696"/>
         <source>Use the recorder (needs an I2C EEPROM on A4/A5)</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser l&apos;enregistreur (nécessite une EEPROM I2C sur A4/A5)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1698"/>
         <source>The recorder stores its recording in an external 24LC256 EEPROM. While it is on, A4 and A5 cannot be used as inputs or outputs.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;enregistreur mémorise sa séquence dans une EEPROM externe 24LC256. Tant qu&apos;il est activé, A4 et A5 ne peuvent pas servir d&apos;entrées ou de sorties.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1074"/>
@@ -1900,12 +1903,12 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/mainwindow.cpp" line="1187"/>
         <source>Saving on the board…</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrement sur la carte…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1187"/>
         <source>%1 change(s) waiting</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 modification(s) en attente</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1189"/>
@@ -2160,12 +2163,12 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/outputeditor.cpp" line="232"/>
         <source>▶ Test: curved / off</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ Test : dévié / arrêt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="233"/>
         <source>▶ Test: straight / on</source>
-        <translation type="unfinished"></translation>
+        <translation>▶ Test : direct / marche</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="236"/>
@@ -2246,12 +2249,12 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/connectionview.cpp" line="524"/>
         <source>DCC %1 straight</source>
-        <translation type="unfinished"></translation>
+        <translation>DCC %1 direct</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="525"/>
         <source>DCC %1 curved</source>
-        <translation type="unfinished"></translation>
+        <translation>DCC %1 dévié</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="529"/>
@@ -2261,17 +2264,17 @@ The name is stored on the board; your names for inputs and outputs are kept in a
     <message>
         <location filename="../src/uihelpers.cpp" line="321"/>
         <source>Out %1</source>
-        <translation type="unfinished">Sort. %1</translation>
+        <translation>Sort. %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="321"/>
         <source>In %1</source>
-        <translation type="unfinished">Ent. %1</translation>
+        <translation>Ent. %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="332"/>
         <source>in use: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>utilisée : %1</translation>
     </message>
 </context>
 </TS>

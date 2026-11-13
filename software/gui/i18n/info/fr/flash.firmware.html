@@ -1,0 +1,35 @@
+<h2>Mettre à jour le firmware</h2>
+<p>Le <b>firmware</b> est le programme qui tourne sur l'Arduino de votre carte GPIOcore. Il existe parfois une version
+plus récente avec des corrections ou de nouvelles fonctions. Cette fenêtre l'installe sur votre carte.</p>
+
+<h3>Pas à pas</h3>
+<ol>
+<li><b>Branchez la carte</b> avec un câble USB.</li>
+<li><b>Port :</b> choisissez la carte. Elle indique en général CH340, USB Serial ou Arduino. Vous ne la voyez pas ?
+Vérifiez le câble et cliquez sur <b>Actualiser</b>.</li>
+<li><b>Fichier firmware :</b> c'est le fichier qui contient le nouveau programme (il se termine par <i>.hex</i>).
+Normalement, le bon fichier est déjà indiqué. Sinon, cliquez sur <b>Parcourir…</b> et choisissez <i>GPIOcore.hex</i>.</li>
+<li><b>Type de carte :</b> la plupart des cartes fonctionnent avec <i>Arduino Uno / Nano (nouveau bootloader)</i>. Les
+Nano bon marché ou anciens ont souvent besoin de <i>Arduino Nano (ancien bootloader)</i>. Pas sûr ? Commencez par le
+premier : si la carte ne répond pas, le programme essaie l'autre tout seul.</li>
+<li>Cliquez sur <b>Flasher</b> et attendez que la barre soit pleine. Cela prend environ 10 à 30 secondes. <b>Ne
+débranchez pas la carte</b> pendant l'opération.</li>
+</ol>
+
+<h3>Bon à savoir</h3>
+<ul>
+<li>Ce programme libère la carte pendant le téléversement et se reconnecte ensuite. Vous n'avez rien à faire.</li>
+<li>Vos paramètres sur la carte (sorties, entrées, liaisons) sont normalement conservés. Par sécurité, utilisez
+d'abord <b>Fichier → Enregistrer la configuration</b>.</li>
+<li>Les autres programmes qui utilisent la carte, comme le moniteur série de l'IDE Arduino, doivent d'abord être fermés.</li>
+<li>Un problème ? Lisez le message rouge : il indique quoi essayer. <b>Afficher les détails</b> montre le rapport
+complet, pratique pour demander de l'aide à quelqu'un.</li>
+<li>Un téléversement raté n'abîme pas la carte. Réessayez simplement.</li>
+</ul>
+
+<h3>Via un programmateur ArduinoISP (avancé)</h3>
+<p>Seulement pour les cartes sans bootloader USB, ou une carte qui ne répond plus. Il vous faut un second Arduino avec
+le sketch <i>ArduinoISP</i>, relié aux six broches ICSP de votre carte. Choisissez le port de cet Arduino
+<i>programmateur</i>. Cela règle aussi les paramètres de la puce (fuses) et supprime le bootloader USB : ensuite, cette
+carte ne peut plus être mise à jour qu'avec le programmateur. Cela <b>efface aussi vos paramètres</b> sur la carte :
+enregistrez-les d'abord avec <b>Fichier → Enregistrer la configuration</b>, puis réécrivez-les ensuite.</p>

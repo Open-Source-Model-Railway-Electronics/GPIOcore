@@ -1,11 +1,13 @@
-<h3>Ingangspin — waar de knop op zit</h3>
+<h3>Ingangspin: waar de knop op zit</h3>
 <p>Kies de Arduino-pin waarop de knop, schakelaar of sensor is aangesloten.</p>
 <p><b>Zo sluit je hem aan:</b> één draad van de knop naar de pin, de andere draad naar <b>GND</b> (min, 0 V).
-Meer niet: geen weerstand nodig, de print zet zijn eigen interne “pull-up”-weerstand aan.</p>
-<pre>  pin D7 ───[ knop ]─── GND</pre>
+Geen weerstand nodig: het board zet zijn eigen interne “pull-up”-weerstand aan.</p>
+<pre>  pin D7 ---[ knop ]--- GND</pre>
 <ul>
 <li>Sluit een knop <b>niet</b> aan op 5 V of 12 V: dat kan de Arduino beschadigen.</li>
-<li>Pin <b>D2</b> is de DCC-ingang en kan niet gebruikt worden.</li>
-<li>Een pin kan maar één keer gebruikt worden: niet door twee ingangen, en niet door een ingang en een uitgang.</li>
+<li><b>D2</b> (DCC-ingang), <b>D13</b> (config-LED) en <b>A7</b> (config-knop) kunnen niet gebruikt worden.</li>
+<li><b>A6</b> (alleen Arduino Nano) is een alleen-analoge ingang zonder pull-up: zet een weerstand van 10 k&Omega; van de pin naar 5 V.</li>
+<li>Pinnen die al gebruikt worden, zijn <b>rood</b>. Kies je er een, dan neem je hem af van de andere ingang of
+uitgang, die dan <i>niet in gebruik</i> wordt.</li>
 </ul>
 <p>Alleen DCC, geen knop? Kies “niet gebruikt”.</p>

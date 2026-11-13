@@ -1,0 +1,35 @@
+<h2>Aggiornare il firmware</h2>
+<p>Il <b>firmware</b> è il programma che gira sull'Arduino della tua scheda GPIOcore. A volte c'è una versione più
+recente con correzioni o nuove funzioni. Questa finestra la carica sulla tua scheda.</p>
+
+<h3>Passo dopo passo</h3>
+<ol>
+<li><b>Collega la scheda</b> con un cavo USB.</li>
+<li><b>Porta:</b> scegli la scheda. Di solito c'è scritto CH340, USB Serial o Arduino. Non la vedi? Controlla il cavo e
+clicca <b>Aggiorna</b>.</li>
+<li><b>File firmware:</b> è il file con il nuovo programma (termina con <i>.hex</i>). Di solito il file giusto è già
+inserito. Altrimenti clicca <b>Sfoglia…</b> e scegli <i>GPIOcore.hex</i>.</li>
+<li><b>Tipo di scheda:</b> la maggior parte delle schede funziona con <i>Arduino Uno / Nano (bootloader nuovo)</i>. I
+Nano più economici o vecchi spesso richiedono <i>Arduino Nano (bootloader vecchio)</i>. Non sei sicuro? Comincia dal
+primo: se la scheda non risponde, il programma prova da solo l'altro.</li>
+<li>Clicca <b>Flash</b> e aspetta che la barra sia piena. Ci vogliono circa 10-30 secondi. <b>Non scollegare la
+scheda</b> mentre è occupata.</li>
+</ol>
+
+<h3>Buono a sapersi</h3>
+<ul>
+<li>Questo programma rilascia la scheda durante il caricamento e poi si ricollega. Non devi fare niente.</li>
+<li>Le impostazioni sulla scheda (uscite, ingressi, collegamenti) di solito vengono mantenute. Per sicurezza usa prima
+<b>File → Salva configurazione</b>.</li>
+<li>Gli altri programmi che usano la scheda, come il monitor seriale dell'IDE Arduino, devono prima essere chiusi.</li>
+<li>Qualcosa è andato storto? Leggi il messaggio rosso: dice cosa provare. <b>Mostra dettagli</b> mostra il rapporto
+completo, utile se chiedi aiuto a qualcuno.</li>
+<li>Un caricamento fallito non rovina la scheda. Riprova semplicemente.</li>
+</ul>
+
+<h3>Tramite programmatore ArduinoISP (avanzato)</h3>
+<p>Solo per schede senza bootloader USB, o una scheda che non risponde più. Ti serve un secondo Arduino con lo sketch
+<i>ArduinoISP</i>, collegato ai sei pin ICSP della tua scheda. Scegli la porta di quell'Arduino <i>programmatore</i>.
+Questo imposta anche le impostazioni del chip (fuse) e rimuove il bootloader USB, quindi in seguito potrai aggiornare
+questa scheda solo con il programmatore. <b>Cancella anche le tue impostazioni</b> sulla scheda: salvale prima con
+<b>File → Salva configurazione</b> e riscrivile dopo.</p>

@@ -1,13 +1,15 @@
-<h3>Pins — wo die Drähte hinkommen</h3>
-<p>Wählen Sie den oder die Arduino-Pins für diesen Ausgang. Die Pinnamen stehen auf der Platine: <b>D3 … D13</b> und
-<b>A0 … A5</b>.</p>
+<h3>Pins: wo die Drähte hingehören</h3>
+<p>Wählen Sie den oder die Arduino-Pins für diesen Ausgang. Die Pinnamen stehen auf der Platine: <b>D3 &hellip; D12</b>
+und <b>A0 &hellip; A5</b>.</p>
 <ul>
-<li>Ein Pin kann nur <b>einmal</b> verwendet werden. Ein doppelt verwendeter Pin wird rot.</li>
-<li><b>D2</b> ist der DCC-Eingang. <b>D0 / D1</b> sind die USB-Verbindung; nur manche Platinen können sie nutzen
-(siehe die Warnung, wenn Sie einen wählen).</li>
+<li>Bereits belegte Pins erscheinen <b>rot</b>, mit dem, der sie benutzt („belegt: Ausg. 3“). Wählen Sie trotzdem
+einen, wird der andere Eingang oder Ausgang <i>nicht benutzt</i>.</li>
+<li><b>D2</b> ist der DCC-Eingang, <b>D13</b> die Konfig-LED und <b>A7</b> der Konfig-Taster: nie verfügbar.
+<b>D0 / D1</b> sind die USB-Verbindung; sie funktionieren nur dann als Ein- oder Ausgang, wenn kein Computer
+verbunden ist.</li>
 <li><b>~PWM</b>-Pins (D3, D5, D6, D9, D10, D11) können dimmen. Lichteffekte brauchen einen davon.
-Solange ein Servo verwendet wird, können D9 und D10 <i>nicht</i> dimmen.</li>
-<li>Bei einem <b>DCCnext</b> zeigt die Liste auch die auf dieser Platine aufgedruckte Portnummer.</li>
+Solange ein Servo benutzt wird, können D9 und D10 <i>nicht</i> dimmen.</li>
+<li>Bei einem <b>DCCnext</b> zeigt die Liste auch die Portnummer, die auf dieser Platine aufgedruckt ist.</li>
 </ul>
 <p>Ein Arduino-Pin liefert nur wenig Strom (max. 20 mA). Genug für eine LED mit Vorwiderstand oder die Signalleitung
-eines Servos. Für Relais, Spulen und Lampen einen Treiber oder ein Relaismodul dazwischenschalten.</p>
+eines Servos. Für Relais, Spulen und Lampen schalten Sie einen Treiber oder ein Relaismodul dazwischen.</p>

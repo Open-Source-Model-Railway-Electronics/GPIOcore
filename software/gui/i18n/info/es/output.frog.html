@@ -1,0 +1,17 @@
+<h3>Polarización del corazón — ¿electrofrog o unifrog?</h3>
+<p>El <b>corazón</b> es el punto de un desvío donde se cruzan los dos carriles. En los desvíos con “corazón
+alimentado” esta pieza es metálica y debe recibir <b>la misma polaridad que la dirección establecida</b>. Si recibe la
+equivocada, las locomotoras se paran o provocan un cortocircuito. Un relé conmuta el corazón cuando el desvío se mueve.</p>
+<p>Mire su desvío y elija <b>una</b> opción:</p>
+<ul>
+<li><b>Ninguna (corazón aislado)</b> — el corazón es de plástico (Peco <i>Insulfrog</i>, la mayoría de las vías con
+balasto). No hay nada que hacer.</li>
+<li><b>Electrofrog — 2 relés</b> (Peco <i>Electrofrog</i> y similares). El relé A se activa para “recto”, el relé B para
+“desviado”. Mientras el desvío se mueve, <b>los dos están apagados</b> un momento, así nunca hay cortocircuito (primero
+abrir, luego cerrar).</li>
+<li><b>Unifrog — 1 relé</b> (Peco <i>Unifrog</i>). El corazón tiene un cable. Un relé conmutado lo une al carril
+correcto. Con un servo conmuta justo cuando el servo pasa por el centro; con un motor de bobinas, al final del pulso.</li>
+</ul>
+<p>Solo puede usar uno de los dos. Al elegir uno se quitan los pines del otro.</p>
+<p><b>Cableado:</b> use un <i>módulo</i> de relé (con transistor y diodo) — un pin de Arduino no puede accionar un relé
+suelto.</p>

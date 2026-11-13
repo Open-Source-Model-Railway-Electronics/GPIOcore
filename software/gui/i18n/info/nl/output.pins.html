@@ -1,13 +1,14 @@
-<h3>Pinnen — waar de draden op gaan</h3>
-<p>Kies de Arduino-pin(nen) voor deze uitgang. De pinnamen staan op de print: <b>D3 … D13</b> en
-<b>A0 … A5</b>.</p>
+<h3>Pinnen: waar de draden op gaan</h3>
+<p>Kies de Arduino-pin(nen) voor deze uitgang. De pinnamen staan op het board: <b>D3 &hellip; D12</b> en
+<b>A0 &hellip; A5</b>.</p>
 <ul>
-<li>Een pin kan maar <b>één keer</b> gebruikt worden. Een pin die twee keer gebruikt wordt, wordt rood.</li>
-<li><b>D2</b> is de DCC-ingang. <b>D0 / D1</b> zijn de USB-verbinding; alleen sommige printen kunnen ze gebruiken
-(zie de waarschuwing als je er een kiest).</li>
+<li>Pinnen die al gebruikt worden, zijn <b>rood</b>, met erbij wie ze gebruikt (“in gebruik: Uit 3”). Kies je er toch
+een, dan wordt de andere ingang of uitgang <i>niet in gebruik</i>.</li>
+<li><b>D2</b> is de DCC-ingang, <b>D13</b> de config-LED en <b>A7</b> de config-knop: nooit beschikbaar.
+<b>D0 / D1</b> zijn de USB-verbinding; ze werken alleen als in- of uitgang als er geen computer is verbonden.</li>
 <li><b>~PWM</b>-pinnen (D3, D5, D6, D9, D10, D11) kunnen dimmen. Lichteffecten hebben er een van nodig.
 Zolang er een servo in gebruik is, kunnen D9 en D10 <i>niet</i> dimmen.</li>
-<li>Op een <b>DCCnext</b> toont de lijst ook het poortnummer dat op die print staat.</li>
+<li>Op een <b>DCCnext</b> toont de lijst ook het poortnummer dat op dat board staat.</li>
 </ul>
 <p>Een Arduino-pin geeft maar weinig stroom (max. 20 mA). Genoeg voor één LED met weerstand of de signaaldraad van
 een servo. Zet voor relais, spoelen en lampjes een driver of relaismodule ertussen.</p>

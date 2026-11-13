@@ -1,0 +1,35 @@
+<h3>Konfigurieren, Simulieren und Live-Test</h3>
+<p>Die drei farbigen Knöpfe oben zeigen, was das Programm gerade tut. Dieselbe Farbe umrahmt die Mitte des
+Bildschirms, so wissen Sie immer, wo Sie sind.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Knopf</th><th>Rahmen</th><th>Was passiert</th></tr>
+<tr><td><b>&#9679; Konfigurieren</b></td><td style="color:#DC2626">rot</td><td>Mit einer echten Platine verbunden. Jede
+Änderung geht sofort an die Platine und wird zur Kontrolle zurückgelesen.</td></tr>
+<tr><td><b>&#9679; Simulieren</b></td><td style="color:#A16207">gelb</td><td>Eine simulierte Platine führt <i>Ihre</i>
+Einstellungen aus (von der zuletzt verbundenen Platine, einer Platinendatei oder einer neuen Platine). Die Tasten der
+Eingänge sind aktiv. Änderungen werden in der Platinendatei gespeichert, so können Sie eine Platine zu Hause
+vorbereiten.</td></tr>
+<tr><td><b>&#9679; Live-Test</b></td><td style="color:#15803D">grün</td><td>An einer echten Platine: Die Eingänge bekommen
+Tasten und die Ausgänge zeigen, was die Platine zurückmeldet.</td></tr>
+</table>
+
+<h4>Die Tasten der Eingänge</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absolute Eingänge): &#9664; = Abzweig / aus, &#9654; = Gerade / ein.</li>
+<li><b>&#9654; drücken</b> (Umschalten) und <b>&#9654; Start</b> (Fahrstraße): wie ein Tastendruck oder ein DCC-Befehl.</li>
+<li><b>Signalbild &#9662; / Wert &#9662;</b>: für einen Eingang, der ein Signal oder einen PWM-Ausgang steuert. Wählen Sie
+pro Lampe aus, ein, blinkend oder gegenphasig blinkend.</li>
+</ul>
+<p>Eine Taste wirkt wie ein DCC-Befehl: Ein zweiter Klick innerhalb einer halben Sekunde wird ignoriert, genau wie ein
+wiederholtes Paket einer Zentrale.</p>
+
+<h4>Was die Ausgänge zeigen</h4>
+<ul>
+<li><b>Blauer Punkt</b> = Gerade / ein, <b>roter Punkt</b> = Abzweig / aus, grau = noch unbekannt.</li>
+<li><b>Servo</b>: eine Skala mit dem Winkel; sie dreht sich Grad für Grad mit, so wie die Platine ihn meldet.</li>
+<li><b>Signal</b>: vier Lampen in ihren Farben, blinkend wie auf der Platine.</li>
+<li><b>Herzstück-Relais</b>: eine kleine Relaiszeichnung. Der Kontaktarm und das Herzstück zeigen, welcher Kontakt
+Spannung führt (rot = Abzweig, blau = Gerade). Ein Electrofrog ist grau (stromlos), während die Weiche umläuft; ein
+Unifrog schaltet sofort um.</li>
+</ul>
+<p>Für einen Live-Test muss nichts an der Platine angeschlossen sein: Sie sehen, was die Platine schalten <i>würde</i>.</p>

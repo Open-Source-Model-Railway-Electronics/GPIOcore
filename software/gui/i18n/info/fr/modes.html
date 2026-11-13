@@ -1,0 +1,34 @@
+<h3>Configurer, simuler et tester en direct</h3>
+<p>Les trois boutons de couleur en haut montrent ce que fait le programme. La même couleur encadre le centre de
+l'écran, pour que vous sachiez toujours où vous en êtes.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Bouton</th><th>Cadre</th><th>Ce qui se passe</th></tr>
+<tr><td><b>&#9679; Configurer</b></td><td style="color:#DC2626">rouge</td><td>Connecté à une vraie carte. Chaque modification
+part tout de suite vers la carte et est relue pour vérification.</td></tr>
+<tr><td><b>&#9679; Simuler</b></td><td style="color:#A16207">jaune</td><td>Une carte simulée exécute <i>vos</i> paramètres (ceux de
+la carte que vous aviez connectée, d'un fichier de carte, ou d'une nouvelle carte). Les boutons des entrées sont
+actifs. Les modifications sont conservées dans le fichier de carte, vous pouvez donc préparer une carte chez vous.</td></tr>
+<tr><td><b>&#9679; Test en direct</b></td><td style="color:#15803D">vert</td><td>Sur une vraie carte : les entrées reçoivent des
+boutons et les sorties montrent ce que la carte renvoie.</td></tr>
+</table>
+
+<h4>Les boutons des entrées</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (entrées en absolu) : &#9664; = dévié / arrêt, &#9654; = direct / marche.</li>
+<li><b>&#9654; appui</b> (bascule) et <b>&#9654; départ</b> (itinéraire) : comme un appui sur le bouton ou l'envoi d'une commande DCC.</li>
+<li><b>aspect &#9662; / valeur &#9662;</b> : pour une entrée qui commande un signal ou une sortie PWM. Choisissez pour chaque
+feu éteint, allumé, clignotant ou clignotant en opposition de phase.</li>
+</ul>
+<p>Un bouton agit comme une commande DCC : un second clic dans la demi-seconde est ignoré, exactement comme un paquet
+répété par une centrale.</p>
+
+<h4>Ce que montrent les sorties</h4>
+<ul>
+<li><b>Point bleu</b> = direct / marche, <b>point rouge</b> = dévié / arrêt, gris = pas encore connu.</li>
+<li><b>Servo</b> : un cadran avec l'angle ; il tourne degré par degré au fur et à mesure que la carte le transmet.</li>
+<li><b>Signal</b> : quatre feux dans leurs couleurs, clignotant comme sur la carte.</li>
+<li><b>Relais du cœur</b> : un petit schéma de relais. Le contact mobile et le cœur montrent quel contact est sous
+tension (rouge = dévié, bleu = direct). Un electrofrog est gris (hors tension) pendant que l'aiguillage manœuvre ; un
+unifrog bascule tout de suite.</li>
+</ul>
+<p>Rien ne doit être branché sur la carte pour un test en direct : vous voyez ce que la carte <i>commuterait</i>.</p>

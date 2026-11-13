@@ -1,0 +1,49 @@
+<h2>Primeros pasos</h2>
+<p>Este programa configura una <b>placa GPIOcore</b>: un pequeño Arduino (Nano / Uno, o un DCCnext) que va debajo de su
+maqueta y acciona cosas: desvíos, luces, señales, relés. Usted le indica a la placa <i>qué</i> está conectado a
+<i>qué</i> pin y <i>qué</i> debe hacer que se mueva.</p>
+
+<h3>Los dos tipos de cosas</h3>
+<ul>
+<li>Las <b>salidas</b> (en el centro, columna derecha) son lo que la placa <i>hace</i>: mover un servo, dar un pulso a
+la bobina de un desvío, encender un LED, conmutar un relé. Hay 16.</li>
+<li>Las <b>entradas</b> (en el centro, columna izquierda) son lo que <i>le da órdenes a la placa</i>: un pulsador de su
+panel de control, o una orden de su central DCC (su sistema digital / mando). Hay 16.</li>
+</ul>
+<p>Los ajustes de la entrada seleccionada están siempre a la <b>izquierda</b>, los de la salida seleccionada a la
+<b>derecha</b>.</p>
+
+<h3>Tres formas de trabajar: los botones de colores de arriba</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Configurar</b> (marco rojo): conecta con la placa en el puerto elegido. Todo lo que
+cambie va a la placa <b>al instante</b>; no hay un botón aparte para guardar.</li>
+<li><b style="color:#A16207">&#9679; Simular</b> (marco amarillo): no hace falta placa. Sus propios ajustes funcionan en una
+placa simulada; haga clic en los botones de las entradas y observe las salidas. No se puede romper nada.</li>
+<li><b style="color:#15803D">&#9679; Prueba en vivo</b> (marco verde): en una placa real, haga clic en los botones de las
+entradas y vea lo que hace la placa, aunque todavía no haya nada cableado.</li>
+</ul>
+
+<h3>Paso a paso</h3>
+<ol>
+<li><b>Conectar.</b> Enchufe la placa al puerto USB, elija su puerto arriba (suele poner CH340, USB Serial o Arduino)
+y haga clic en <b>&#9679; Configurar</b>. La primera vez, el programa pide un <b>nombre</b> para la placa.</li>
+<li><b>Añadir una salida.</b> Haga clic en <b>+ Añadir salida</b>, o en una salida. Elija el <b>tipo</b> (por ejemplo
+<i>Servo</i>) y el <b>pin</b> al que va el cable.</li>
+<li><b>Añadir una entrada.</b> Haga clic en <b>+ Añadir entrada</b>, o en una entrada. Elija qué la activa: un
+<b>pin de pulsador</b>, una <b>dirección DCC</b>, o ambos.</li>
+<li><b>Conéctelas.</b> Arrastre la salida sobre la entrada. Aparece una línea de color: esa entrada maneja ahora esa
+salida. La salida toma el color de su entrada.</li>
+<li><b>Pruébelo.</b> Haga clic en <b>&#9679; Prueba en vivo</b> y pulse los botones de la entrada.</li>
+</ol>
+
+<h3>Conviene saber</h3>
+<ul>
+<li>Cada botón <b>(i)</b> explica lo que tiene al lado.</li>
+<li>Dé un <b>nombre</b> a las entradas y salidas (campo en la parte superior de cada panel). Los nombres y todos los
+ajustes se guardan en este ordenador en <i>Documentos\GPIOcore\boards\&lt;nombre de la placa&gt;.json</i>, un archivo por placa.</li>
+<li>Un pin que ya está en uso aparece en <b>rojo</b> en la lista de pines. Si lo elige de todos modos, la entrada o
+salida que lo tenía pasa a estar <i>sin uso</i>.</li>
+<li>Las entradas y salidas sin uso están ocultas; <b>Ver &rarr; Mostrar entradas y salidas sin uso</b> las muestra todas.</li>
+<li><b>Ver &rarr; Modo experto</b> muestra los bytes, el registro serie y los preajustes. <b>Ver &rarr; Tema</b> cambia a oscuro.</li>
+<li><b>Placa &rarr; Flashear firmware&hellip;</b> carga un firmware nuevo en el Arduino.</li>
+</ul>

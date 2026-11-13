@@ -1,0 +1,49 @@
+<h2>Primi passi</h2>
+<p>Questo programma configura una <b>scheda GPIOcore</b>: un piccolo Arduino (Nano / Uno, o un DCCnext) che sta sotto il
+tuo plastico e comanda varie cose: scambi, luci, segnali, relè. Dici alla scheda <i>cosa</i> è collegato a <i>quale</i>
+pin, e <i>cosa</i> deve farlo muovere.</p>
+
+<h3>I due tipi di cose</h3>
+<ul>
+<li>Le <b>uscite</b> (al centro, colonna di destra) sono ciò che la scheda <i>fa</i>: muovere un servo, dare un impulso
+alla bobina di uno scambio, accendere un LED, commutare un relè. Ce ne sono 16.</li>
+<li>Gli <b>ingressi</b> (al centro, colonna di sinistra) sono ciò che <i>dà un comando alla scheda</i>: un pulsante sul
+tuo quadro di comando, o un comando della tua centrale DCC (il tuo sistema digitale / regolatore). Ce ne sono 16.</li>
+</ul>
+<p>Le impostazioni dell'ingresso selezionato sono sempre a <b>sinistra</b>, quelle dell'uscita selezionata a
+<b>destra</b>.</p>
+
+<h3>Tre modi di lavorare: i pulsanti colorati in alto</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Configura</b> (cornice rossa): si collega alla scheda sulla porta scelta. Tutto ciò che
+modifichi va alla scheda <b>subito</b>; non c'è un pulsante di salvataggio separato.</li>
+<li><b style="color:#A16207">&#9679; Simula</b> (cornice gialla): non serve una scheda. Le tue impostazioni girano su una scheda
+simulata; clicca i pulsanti degli ingressi e osserva le uscite. Non si può rompere niente.</li>
+<li><b style="color:#15803D">&#9679; Test dal vivo</b> (cornice verde): su una scheda vera, clicca i pulsanti degli ingressi e
+guarda cosa fa la scheda, anche se non è ancora cablato niente.</li>
+</ul>
+
+<h3>Passo dopo passo</h3>
+<ol>
+<li><b>Collegare.</b> Inserisci la scheda nella porta USB, scegli la sua porta in alto (di solito c'è scritto CH340,
+USB Serial o Arduino) e clicca <b>&#9679; Configura</b>. La prima volta il programma chiede un <b>nome</b> per la scheda.</li>
+<li><b>Aggiungere un'uscita.</b> Clicca <b>+ Aggiungi uscita</b>, oppure clicca un'uscita. Scegli il <b>tipo</b> (per
+esempio <i>Servo</i>) e il <b>pin</b> a cui va il filo.</li>
+<li><b>Aggiungere un ingresso.</b> Clicca <b>+ Aggiungi ingresso</b>, oppure clicca un ingresso. Scegli cosa lo avvia:
+un <b>pin del pulsante</b>, un <b>indirizzo DCC</b>, o entrambi.</li>
+<li><b>Collegali.</b> Trascina l'uscita sull'ingresso. Compare una linea colorata: quell'ingresso ora comanda quell'uscita.
+L'uscita prende il colore del suo ingresso.</li>
+<li><b>Provalo.</b> Clicca <b>&#9679; Test dal vivo</b> e premi i pulsanti dell'ingresso.</li>
+</ol>
+
+<h3>Buono a sapersi</h3>
+<ul>
+<li>Ogni pulsante <b>(i)</b> spiega l'elemento accanto.</li>
+<li>Dai un <b>nome</b> a ingressi e uscite (campo in cima a ogni pannello). I nomi e tutte le impostazioni sono
+conservati su questo computer in <i>Documenti\GPIOcore\boards\&lt;nome della scheda&gt;.json</i>, un file per scheda.</li>
+<li>Un pin già usato appare in <b>rosso</b> nell'elenco dei pin. Se lo scegli comunque, l'ingresso o l'uscita che lo
+aveva diventa <i>non usato</i>.</li>
+<li>Gli ingressi e le uscite non usati sono nascosti; <b>Visualizza &rarr; Mostra ingressi e uscite non usati</b> li mostra tutti.</li>
+<li><b>Visualizza &rarr; Modalità esperto</b> mostra i byte, il log seriale e i preset. <b>Visualizza &rarr; Tema</b> passa allo scuro.</li>
+<li><b>Scheda &rarr; Flash del firmware&hellip;</b> carica un nuovo firmware sull'Arduino.</li>
+</ul>

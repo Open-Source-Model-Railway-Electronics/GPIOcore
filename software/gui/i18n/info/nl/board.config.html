@@ -1,0 +1,18 @@
+<h3>Config-knop (A7) en servo's inleren met je handregelaar</h3>
+<p>Zonder computer kun je de eindstanden van servo's instellen met de config-knop en je DCC-handregelaar.</p>
+<p><b>Bedrading:</b> een drukknop van <b>A7</b> naar <b>GND</b>, plus een weerstand van 10 k&Omega; van A7 naar <b>5 V</b>
+(A7 heeft geen ingebouwde pull-up). Een LED met weerstand op <b>D13</b> toont de modus (de meeste Arduino's hebben er al een).</p>
+<ol>
+<li>Houd de config-knop <b>2 seconden</b> ingedrukt: de LED gaat knipperen. Je zit nu in de configuratiemodus.</li>
+<li>Druk er <b>kort</b> op: de volgende servo wordt gekozen en gaat om, zodat je ziet welke het is. Druk nog eens
+voor de volgende servo.</li>
+<li>Kies op je handregelaar <b>locadres 9999</b>.
+  <ul>
+  <li>Draai aan de <b>snelheidsknop</b>: de gekozen servo beweegt. De rijrichtingknop bepaalt welke kant op, de knop hoe snel.</li>
+  <li><b>F1</b> = deze hoek bewaren als <i>afbuigend</i>, <b>F2</b> = bewaren als <i>rechtdoor</i>.</li>
+  <li><b>F3</b> = de servo omzetten (ter controle), <b>F4</b> = volgende servo.</li>
+  </ul></li>
+<li>Houd de config-knop opnieuw 2 seconden ingedrukt: de LED blijft aan. Terug naar normaal.</li>
+</ol>
+<p>De nieuwe standen worden meteen bewaard. Verbind je later het programma, dan leest het ze terug.</p>
+<p>Daarom kunnen <b>D13</b> en <b>A7</b> nooit gebruikt worden voor ingangen of uitgangen.</p>

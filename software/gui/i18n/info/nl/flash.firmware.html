@@ -1,35 +1,35 @@
 <h2>De firmware bijwerken</h2>
-<p>De <b>firmware</b> is het programma dat op de Arduino van je GPIOcore-print draait. Soms is er een nieuwere versie
-met reparaties of nieuwe mogelijkheden. Dit venster zet hem op je print.</p>
+<p>De <b>firmware</b> is het programma dat op de Arduino van je GPIOcore board draait. Soms is er een nieuwere versie
+met reparaties of nieuwe mogelijkheden. Dit venster zet hem op je board.</p>
 
 <h3>Stap voor stap</h3>
 <ol>
-<li><b>Sluit de print aan</b> met een USB-kabel.</li>
-<li><b>Port:</b> kies de print. Meestal staat er CH340, USB Serial of Arduino bij. Zie je hem niet? Controleer de
-kabel en klik op <b>Refresh</b>.</li>
-<li><b>Firmware file:</b> dit is het bestand met het nieuwe programma (het eindigt op <i>.hex</i>). Normaal is het
-juiste bestand al ingevuld. Zo niet, klik dan op <b>Browse…</b> en kies <i>GPIOcore.hex</i>.</li>
-<li><b>Board type:</b> de meeste printen werken met <i>Arduino Uno / Nano (new bootloader)</i>. Goedkopere of oudere
-Nano's hebben vaak <i>Arduino Nano (old bootloader)</i> nodig. Twijfel je? Begin gewoon met de eerste: als de print
+<li><b>Sluit het board aan</b> met een USB-kabel.</li>
+<li><b>Poort:</b> kies het board. Meestal staat er CH340, USB Serial of Arduino bij. Zie je het niet? Controleer de
+kabel en klik op <b>Vernieuwen</b>.</li>
+<li><b>Firmwarebestand:</b> dit is het bestand met het nieuwe programma (het eindigt op <i>.hex</i>). Normaal is het
+juiste bestand al ingevuld. Zo niet, klik dan op <b>Bladeren…</b> en kies <i>GPIOcore.hex</i>.</li>
+<li><b>Boardtype:</b> de meeste boards werken met <i>Arduino Uno / Nano (nieuwe bootloader)</i>. Goedkopere of oudere
+Nano's hebben vaak <i>Arduino Nano (oude bootloader)</i> nodig. Twijfel je? Begin gewoon met de eerste: als het board
 niet antwoordt, probeert het programma vanzelf de andere.</li>
-<li>Klik op <b>Flash</b> en wacht tot de balk vol is. Dit duurt ongeveer 10 tot 30 seconden. <b>Haal de print niet
-los</b> zolang hij bezig is.</li>
+<li>Klik op <b>Flashen</b> en wacht tot de balk vol is. Dit duurt ongeveer 10 tot 30 seconden. <b>Haal het board niet
+los</b> zolang het bezig is.</li>
 </ol>
 
 <h3>Goed om te weten</h3>
 <ul>
-<li>Dit programma laat de print los tijdens het uploaden en verbindt daarna opnieuw. Je hoeft niets te doen.</li>
-<li>Je instellingen op de print (uitgangen, ingangen, verbindingen) blijven normaal bewaard. Gebruik voor de
+<li>Dit programma laat het board los tijdens het uploaden en verbindt daarna opnieuw. Je hoeft niets te doen.</li>
+<li>Je instellingen op het board (uitgangen, ingangen, verbindingen) blijven normaal bewaard. Gebruik voor de
 zekerheid eerst <b>Bestand → Configuratie opslaan</b>.</li>
-<li>Andere programma's die de print gebruiken, zoals de seriële monitor van de Arduino IDE, moeten eerst dicht.</li>
-<li>Ging er iets mis? Lees de rode melding: daar staat wat je kunt proberen. <b>Show details</b> toont het volledige
+<li>Andere programma's die het board gebruiken, zoals de seriële monitor van de Arduino IDE, moeten eerst dicht.</li>
+<li>Ging er iets mis? Lees de rode melding: daar staat wat je kunt proberen. <b>Details tonen</b> toont het volledige
 verslag; handig als je iemand om hulp vraagt.</li>
-<li>Een mislukte upload maakt de print niet kapot. Probeer het gewoon opnieuw.</li>
+<li>Een mislukte upload maakt het board niet kapot. Probeer het gewoon opnieuw.</li>
 </ul>
 
-<h3>Via een ArduinoISP-programmer (gevorderd)</h3>
-<p>Alleen voor printen zonder USB-bootloader, of een print die niet meer antwoordt. Je hebt een tweede Arduino nodig
-met de sketch <i>ArduinoISP</i>, aangesloten op de zes ICSP-pinnen van je print. Kies de poort van die
+<h3>Via ArduinoISP-programmer (gevorderd)</h3>
+<p>Alleen voor boards zonder USB-bootloader, of een board dat niet meer antwoordt. Je hebt een tweede Arduino nodig
+met de sketch <i>ArduinoISP</i>, aangesloten op de zes ICSP-pinnen van je board. Kies de poort van die
 <i>programmer</i>-Arduino. Dit zet ook de chipinstellingen (fuses) en verwijdert de USB-bootloader, dus daarna kun je
-deze print alleen nog met de programmer bijwerken. Het <b>wist ook je instellingen</b> op de print: bewaar ze eerst
+dit board alleen nog met de programmer bijwerken. Het <b>wist ook je instellingen</b> op het board: bewaar ze eerst
 met <b>Bestand → Configuratie opslaan</b> en schrijf ze daarna terug.</p>

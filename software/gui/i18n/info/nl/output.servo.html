@@ -1,20 +1,24 @@
 <h3>Een servo instellen</h3>
-<p>Een servo draait naar een hoek tussen 0° en 180°. Als wisselaandrijving beweegt hij tussen twee standen:</p>
+<p>Een servo draait naar een hoek tussen 0&deg; en 180&deg;. Als wisselaandrijving beweegt hij tussen twee standen:</p>
 <ul>
-<li><b>Stand 0 (afbuigend)</b> — de hoek voor “afbuigend”.</li>
-<li><b>Stand 1 (rechtdoor)</b> — de hoek voor “rechtdoor”.</li>
-<li><b>Snelheid</b> — milliseconden per graad. 20 ms/° is rustig en realistisch; 5 is snel; 50 is heel langzaam.
-Een volle beweging duurt |stand 1 − stand 0| × snelheid.</li>
+<li><b>Stand 0 (afbuigend)</b>: de hoek voor “afbuigend”.</li>
+<li><b>Stand 1 (rechtdoor)</b>: de hoek voor “rechtdoor”.</li>
+<li><b>Snelheid</b>: milliseconden per graad. 20 ms/&deg; is rustig en realistisch; 5 is snel; 50 is heel langzaam.</li>
 </ul>
-<h4>De juiste standen vinden — gebruik “Live”</h4>
+<h4>De juiste standen vinden</h4>
 <ol>
-<li>Verbind de print en vink <b>Live</b> aan.</li>
-<li>Schuif de schuifregelaar van <i>Stand 0</i> langzaam. De servo op de baan beweegt mee.
-Stop als de wisseltong net tegen de spoorstaaf ligt.</li>
-<li>Doe hetzelfde voor <i>Stand 1</i>.</li>
-<li>Klik op <b>Schrijven</b> om het te bewaren.</li>
+<li>Vink met het board verbonden <b>Live</b> aan en schuif de schuifregelaar van <i>Stand 0</i> langzaam. De servo
+beweegt mee. Stop als de wisseltong net tegen de spoorstaaf ligt en doe daarna hetzelfde voor <i>Stand 1</i>. Het
+wordt meteen bewaard.</li>
+<li>Of zonder computer: gebruik de <b>config-knop</b> en locadres 9999 op je handregelaar (zie
+<i>Help &rarr; Config-knop en servo's inleren</i>).</li>
 </ol>
 <p><b>Tip:</b> druk de tong niet te hard tegen de spoorstaaf: de servo gaat dan zoemen en wordt warm.
-Ga 2–3° terug vanaf het punt waar hij raakt.</p>
-<p>Bedrading: bruin/zwart = GND, rood = 5 V (bij meerdere servo's uit een aparte 5V-voeding!), oranje/geel = signaal
-naar de pin.</p>
+Ga 2&ndash;3&deg; terug vanaf het punt waar hij raakt.</p>
+<h4>Goed om te weten</h4>
+<ul>
+<li>Bij het inschakelen starten de servo's <b>één voor één</b>, een halve seconde na elkaar, elk naar zijn laatste
+stand. Zo ontstaat er geen grote stroompiek.</li>
+<li>Er bewegen maximaal 6 servo's tegelijk; de andere wachten op hun beurt.</li>
+<li>Bedrading: bruin/zwart = GND, rood = 5 V (bij meerdere servo's uit een aparte 5V-voeding!), oranje/geel = signaal.</li>
+</ul>

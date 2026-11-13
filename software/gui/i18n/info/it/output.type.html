@@ -1,0 +1,19 @@
+<h3>Cosa è collegato a questa uscita?</h3>
+<ul>
+<li><b>Singolo fisso</b> — un pin acceso o spento. LED, un modulo relè, lampade (tramite un transistor o un relè).</li>
+<li><b>Singolo impulso</b> — un pin riceve un breve impulso. Per uno sganciatore o un dispositivo a una bobina.</li>
+<li><b>Singolo lampeggiante</b> — un pin lampeggia finché è acceso. Una luce di avviso.</li>
+<li><b>Doppio fisso</b> — due pin: A acceso e B spento, o viceversa. Segnali bicolori, due relè.</li>
+<li><b>Doppio impulso</b> — due pin, uno dei due riceve un breve impulso. Per i <b>motori per scambi a bobine</b>
+(Peco, Roco, Fleischmann …): A = una bobina, B = l'altra bobina.</li>
+<li><b>Doppio lampeggiante</b> — due pin lampeggiano alternativamente.</li>
+<li><b>Luci alternate</b> — due luci a turno con una pausa: luci del passaggio a livello.</li>
+<li><b>Caminetto / tubo al neon / saldatore</b> — effetti luminosi: fuoco tremolante, un tubo fluorescente che si
+accende tremolando, lampi di saldatura. (Caminetto e tubo al neon richiedono pin PWM.)</li>
+<li><b>Segnale a 4 aspetti</b> — quattro LED (rosso, verde, giallo, bianco …), impostati da comandi di segnale DCC o da un itinerario.</li>
+<li><b>Servo</b> — un servo da modellismo come motore per scambi. Movimento lento e realistico.</li>
+<li><b>PWM</b> — una luminosità fissa per una lampada o una striscia LED.</li>
+<li><b>Non usato</b> — non è collegato niente.</li>
+</ul>
+<p><b>Importante per le bobine:</b> un pin dell'Arduino non può pilotare direttamente una bobina. Usa una scheda driver
+(per esempio un ULN2803 o un modulo MOSFET) tra il pin e la bobina.</p>

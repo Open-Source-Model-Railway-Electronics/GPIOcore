@@ -1,0 +1,17 @@
+<h3>Polarizzazione del cuore — electrofrog o unifrog?</h3>
+<p>Il <b>cuore</b> è il punto di uno scambio dove le due rotaie si incrociano. Negli scambi con “cuore alimentato”
+questo pezzo è di metallo e deve ricevere <b>la stessa polarità del percorso impostato</b>. Se riceve quella sbagliata,
+le locomotive si fermano o provocano un cortocircuito. Un relè commuta il cuore quando lo scambio si muove.</p>
+<p>Guarda il tuo scambio e scegli <b>una</b> opzione:</p>
+<ul>
+<li><b>Nessuna (cuore isolato)</b> — il cuore è di plastica (Peco <i>Insulfrog</i>, la maggior parte dei binari con
+massicciata). Non c'è niente da fare.</li>
+<li><b>Electrofrog — 2 relè</b> (Peco <i>Electrofrog</i> e simili). Il relè A viene attivato per “dritto”, il relè B
+per “deviato”. Mentre lo scambio si muove, <b>sono entrambi spenti</b> per un attimo, così non c'è mai cortocircuito
+(prima apre, poi chiude).</li>
+<li><b>Unifrog — 1 relè</b> (Peco <i>Unifrog</i>). Il cuore ha un solo filo. Un relè in scambio lo collega alla rotaia
+giusta. Con un servo commuta esattamente quando il servo passa per il centro; con un motore a bobine alla fine
+dell'impulso.</li>
+</ul>
+<p>Puoi usarne solo uno dei due. Sceglierne uno toglie i pin dell'altro.</p>
+<p><b>Cablaggio:</b> usa un <i>modulo</i> relè (con transistor e diodo) — un pin dell'Arduino non può pilotare un relè nudo.</p>

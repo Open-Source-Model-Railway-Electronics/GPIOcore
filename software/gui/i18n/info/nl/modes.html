@@ -1,0 +1,34 @@
+<h3>Configureren, simuleren en live testen</h3>
+<p>De drie gekleurde knoppen bovenaan laten zien wat het programma doet. Dezelfde kleur staat als rand om het
+midden van het scherm, zodat je altijd weet waar je bent.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Knop</th><th>Rand</th><th>Wat er gebeurt</th></tr>
+<tr><td><b>&#9679; Configureren</b></td><td style="color:#DC2626">rood</td><td>Verbonden met een echt board. Elke wijziging gaat
+meteen naar het board en wordt ter controle teruggelezen.</td></tr>
+<tr><td><b>&#9679; Simuleren</b></td><td style="color:#A16207">geel</td><td>Een nagebootst board draait <i>jouw</i> instellingen
+(van het board dat je verbonden had, een boardbestand, of een nieuw board). De knoppen van de ingangen staan aan.
+Wijzigingen worden in het boardbestand bewaard, zodat je thuis een board kunt voorbereiden.</td></tr>
+<tr><td><b>&#9679; Live test</b></td><td style="color:#15803D">groen</td><td>Op een echt board: de ingangen krijgen knoppen en de
+uitgangen tonen wat het board terugmeldt.</td></tr>
+</table>
+
+<h4>De knoppen van de ingangen</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absolute ingangen): &#9664; = afbuigend / uit, &#9654; = rechtdoor / aan.</li>
+<li><b>&#9654; druk</b> (omschakelen) en <b>&#9654; start</b> (rijweg): alsof je op de knop drukt of een DCC-commando stuurt.</li>
+<li><b>seinbeeld &#9662; / waarde &#9662;</b>: voor een ingang die een sein of een PWM-uitgang aanstuurt. Kies per lamp uit,
+aan, knipperend of knipperend in tegenfase.</li>
+</ul>
+<p>Een knop werkt als een DCC-commando: een tweede klik binnen een halve seconde wordt genegeerd, net als een
+herhaald pakket van een centrale.</p>
+
+<h4>Wat de uitgangen tonen</h4>
+<ul>
+<li><b>Blauwe stip</b> = rechtdoor / aan, <b>rode stip</b> = afbuigend / uit, grijs = nog niet bekend.</li>
+<li><b>Servo</b>: een wijzerplaat met de hoek; die draait graad voor graad mee terwijl het board hem doorgeeft.</li>
+<li><b>Sein</b>: vier lampen in hun kleuren, knipperend zoals op het board.</li>
+<li><b>Puntstukrelais</b>: een kleine relaistekening. De arm en het puntstuk tonen welk contact spanning heeft (rood =
+afbuigend, blauw = rechtdoor). Een electrofrog is grijs (spanningsloos) terwijl de wissel omloopt; een unifrog
+schakelt meteen om.</li>
+</ul>
+<p>Voor een live test hoeft er niets op het board aangesloten te zijn: je ziet wat het board <i>zou</i> schakelen.</p>

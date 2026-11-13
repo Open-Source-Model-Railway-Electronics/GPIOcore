@@ -1,0 +1,18 @@
+<h3>Konfig-Taster (A7) und Servos mit dem Handregler einlernen</h3>
+<p>Ohne Computer können Sie die Endlagen von Servos mit dem Konfig-Taster und Ihrem DCC-Handregler einstellen.</p>
+<p><b>Verdrahtung:</b> ein Taster von <b>A7</b> nach <b>GND</b>, dazu ein 10-k&Omega;-Widerstand von A7 nach <b>5 V</b>
+(A7 hat keinen eingebauten Pull-up). Eine LED mit Vorwiderstand an <b>D13</b> zeigt den Modus (die meisten Arduinos haben schon eine).</p>
+<ol>
+<li>Halten Sie den Konfig-Taster <b>2 Sekunden</b> gedrückt: Die LED beginnt zu blinken. Sie sind im Konfigurationsmodus.</li>
+<li>Drücken Sie ihn <b>kurz</b>: Der nächste Servo wird gewählt und stellt um, damit Sie sehen, welcher es ist. Erneut
+drücken für den nächsten Servo.</li>
+<li>Wählen Sie am Handregler die <b>Lokadresse 9999</b>.
+  <ul>
+  <li>Drehen Sie am <b>Fahrregler</b>: Der gewählte Servo bewegt sich. Die Richtungstaste bestimmt die Richtung, der Regler die Geschwindigkeit.</li>
+  <li><b>F1</b> = diesen Winkel als <i>Abzweig</i> speichern, <b>F2</b> = als <i>Gerade</i> speichern.</li>
+  <li><b>F3</b> = den Servo umstellen (zur Kontrolle), <b>F4</b> = nächster Servo.</li>
+  </ul></li>
+<li>Halten Sie den Konfig-Taster erneut 2 Sekunden gedrückt: Die LED leuchtet dauerhaft. Zurück im Normalbetrieb.</li>
+</ol>
+<p>Die neuen Stellungen werden sofort gespeichert. Verbinden Sie später das Programm, liest es sie zurück.</p>
+<p>Deshalb können <b>D13</b> und <b>A7</b> nie für Eingänge oder Ausgänge benutzt werden.</p>

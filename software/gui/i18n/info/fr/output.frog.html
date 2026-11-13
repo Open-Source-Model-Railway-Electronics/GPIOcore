@@ -1,0 +1,17 @@
+<h3>Polarisation du cœur — electrofrog ou unifrog ?</h3>
+<p>Le <b>cœur</b> est l'endroit d'un aiguillage où les deux rails se croisent. Sur les aiguillages à « cœur alimenté »,
+cette pièce est en métal et doit recevoir <b>la même polarité que la direction choisie</b>. Si elle reçoit la mauvaise,
+les locos calent ou provoquent un court-circuit. Un relais commute le cœur quand l'aiguillage bouge.</p>
+<p>Regardez votre aiguillage et choisissez <b>une</b> option :</p>
+<ul>
+<li><b>Aucune (cœur isolé)</b> — le cœur est en plastique (Peco <i>Insulfrog</i>, la plupart des voies avec ballast
+intégré). Rien à faire.</li>
+<li><b>Electrofrog — 2 relais</b> (Peco <i>Electrofrog</i> et similaires). Le relais A est activé pour « direct », le
+relais B pour « dévié ». Pendant que l'aiguillage bouge, <b>les deux sont coupés</b> un instant, il n'y a donc jamais de
+court-circuit (coupure avant fermeture).</li>
+<li><b>Unifrog — 1 relais</b> (Peco <i>Unifrog</i>). Le cœur a un seul fil. Un relais inverseur le relie au bon rail.
+Avec un servo, il commute exactement quand le servo passe le milieu ; avec un moteur à bobines, à la fin de l'impulsion.</li>
+</ul>
+<p>Vous ne pouvez utiliser qu'une des deux. En choisir une retire les broches de l'autre.</p>
+<p><b>Câblage :</b> utilisez un <i>module</i> relais (avec transistor et diode) — une broche Arduino ne peut pas
+piloter un relais nu.</p>

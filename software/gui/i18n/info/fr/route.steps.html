@@ -1,0 +1,36 @@
+<h3>Étapes de l'itinéraire</h3>
+<p>Un itinéraire est une liste d'actions, de haut en bas. Chaque ligne (étape) positionne <b>une sortie</b> puis
+<b>attend</b> un moment avant l'étape suivante.</p>
+
+<h4>Quand l'itinéraire démarre-t-il ?</h4>
+<p>Quand le bouton sur la broche d'entrée est <b>appuyé</b>, ou sur une commande DCC pour l'adresse de l'entrée.
+Choisissez quelle commande DCC sous <b>Démarre sur DCC</b> :</p>
+<ul>
+<li><b>toute commande</b> : direct et dévié le lancent tous les deux ;</li>
+<li><b>direct seulement</b> ou <b>dévié seulement</b> : ainsi deux itinéraires peuvent partager une adresse. Exemple,
+un passage à niveau sur l'adresse 1 : l'itinéraire A sur <i>dévié seulement</i> allume les feux et ferme les
+barrières, l'itinéraire B sur <i>direct seulement</i> les rouvre.</li>
+</ul>
+<p>Une centrale répète une commande plusieurs fois ; l'itinéraire prend la première.</p>
+
+<h4>Les colonnes</h4>
+<ul>
+<li><b>Sortie</b> : ce que commande cette étape.</li>
+<li><b>Valeur</b> : ce que la sortie doit faire :
+  <ul>
+  <li>aiguillage, lampe, relais : <b>dévié (0)</b> ou <b>direct (1)</b> ;</li>
+  <li>signal 4 feux : un <b>numéro d'aspect</b> (0&ndash;255) ;</li>
+  <li>servo : dévié, direct, ou un <b>angle</b> précis entre 10&deg; et 170&deg; ;</li>
+  <li>PWM : une valeur de luminosité / vitesse de 0&ndash;255.</li>
+  </ul></li>
+<li><b>Attente après</b> : seulement si <i>Temporisation propre à chaque étape d'itinéraire</i> est activée dans les
+paramètres de la carte ; sinon chaque étape attend le temps fixe de la carte (0,3 s par défaut).</li>
+</ul>
+
+<h4>Comment en créer un</h4>
+<ol>
+<li>Choisissez une sortie dans la première ligne, <i>ou</i> glissez une sortie sur cette entrée.</li>
+<li>Cliquez sur <b>+ Ajouter une étape</b> (ou glissez de nouveau) pour la suivante.</li>
+<li>Utilisez &#9650; &#9660; pour changer l'ordre, et la <b>corbeille</b> pour supprimer une étape.</li>
+</ol>
+<p>La même sortie peut apparaître plusieurs fois, par exemple un servo qui va d'abord à 45&deg; puis à 135&deg;.</p>

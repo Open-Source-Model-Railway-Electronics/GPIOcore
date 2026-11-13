@@ -1,0 +1,34 @@
+<h3>Configurar, simular y probar en vivo</h3>
+<p>Los tres botones de colores de arriba muestran lo que está haciendo el programa. El mismo color enmarca el centro
+de la pantalla, para que siempre sepa dónde está.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Botón</th><th>Marco</th><th>Qué ocurre</th></tr>
+<tr><td><b>&#9679; Configurar</b></td><td style="color:#DC2626">rojo</td><td>Conectado a una placa real. Cada cambio va a la
+placa al instante y se vuelve a leer para comprobarlo.</td></tr>
+<tr><td><b>&#9679; Simular</b></td><td style="color:#A16207">amarillo</td><td>Una placa simulada ejecuta <i>sus</i> ajustes (los de
+la placa que tenía conectada, un archivo de placa o una placa nueva). Los botones de las entradas están activos. Los
+cambios se guardan en el archivo de placa, así que puede preparar una placa en casa.</td></tr>
+<tr><td><b>&#9679; Prueba en vivo</b></td><td style="color:#15803D">verde</td><td>En una placa real: las entradas reciben botones y
+las salidas muestran lo que informa la placa.</td></tr>
+</table>
+
+<h4>Los botones de las entradas</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (entradas absolutas): &#9664; = desviado / apagado, &#9654; = recto / encendido.</li>
+<li><b>&#9654; pulsar</b> (conmutar) y <b>&#9654; iniciar</b> (itinerario): como pulsar el botón o enviar una orden DCC.</li>
+<li><b>aspecto &#9662; / valor &#9662;</b>: para una entrada que maneja una señal o una salida PWM. Elija para cada lámpara
+apagada, encendida, intermitente o intermitente en contrafase.</li>
+</ul>
+<p>Un botón actúa como una orden DCC: un segundo clic antes de medio segundo se ignora, igual que un paquete repetido
+de una central.</p>
+
+<h4>Qué muestran las salidas</h4>
+<ul>
+<li><b>Punto azul</b> = recto / encendido, <b>punto rojo</b> = desviado / apagado, gris = todavía desconocido.</li>
+<li><b>Servo</b>: una esfera con el ángulo; gira grado a grado a medida que la placa lo informa.</li>
+<li><b>Señal</b>: cuatro lámparas en sus colores, parpadeando como en la placa.</li>
+<li><b>Relés del corazón</b>: un pequeño dibujo de relé. El contacto móvil y el corazón muestran qué contacto tiene
+tensión (rojo = desviado, azul = recto). Un electrofrog está gris (sin tensión) mientras el desvío se mueve; un
+unifrog cambia al instante.</li>
+</ul>
+<p>Para una prueba en vivo no hace falta conectar nada a la placa: ve lo que la placa <i>accionaría</i>.</p>

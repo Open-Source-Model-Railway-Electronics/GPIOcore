@@ -1,14 +1,15 @@
 <h3>DCC-Zubehöradresse</h3>
-<p>Ihre DCC-Zentrale (das Digitalsystem, das Ihre Züge fährt) kann auch Befehle an <b>Zubehör</b> wie Weichen
-senden. Jedes Zubehör hat eine Nummer: seine <b>Adresse</b>.</p>
-<p>Haken Sie dieses Feld an und tippen Sie die Adresse ein, die Sie am Handregler oder im Computerprogramm verwenden
-(zum Beispiel <i>12</i>). Schaltet die Zentrale Adresse 12, reagiert dieser Eingang, als wäre sein Taster gedrückt
-worden.</p>
+<p>Ihre DCC-Zentrale kann auch Befehle an <b>Zubehör</b> wie Weichen senden. Jeder Zubehörartikel hat eine
+Nummer: seine <b>Adresse</b>.</p>
+<p>Setzen Sie hier den Haken und geben Sie die Adresse ein, die Sie an Ihrem Handregler oder in Ihrem Computerprogramm
+verwenden (zum Beispiel <i>12</i>). Schaltet die Zentrale die Adresse 12, reagiert dieser Eingang.</p>
 <ul>
-<li>Bei <b>direkt schalten</b>: „Gerade“ und „Abzweig“ von der Zentrale stellen den Ausgang (Absolut), oder jeder
-Befehl schaltet ihn um (Umschalten).</li>
-<li>Bei einer <b>Fahrstraße</b>: sowohl „Gerade“ als auch „Abzweig“ starten die Fahrstraße.</li>
+<li><b>Absolut</b>: „Gerade“ und „Abzweig“ stellen den Ausgang.</li>
+<li><b>Umschalten</b>: Jeder Befehl schaltet den Ausgang um.</li>
+<li><b>Fahrstraße</b>: jeder Befehl, oder nur „Gerade“ / nur „Abzweig“ (siehe die Einstellungen der Fahrstraße).</li>
 </ul>
-<p><b>Häufiger Fehler:</b> zwei Eingänge mit derselben Adresse reagieren beide. Das kann gewollt sein, ist aber
-meist ein Tippfehler.</p>
-<p>Kein DCC? Lassen Sie das Feld leer und verwenden Sie nur einen Pin.</p>
+<p>Eine Zentrale sendet jeden Befehl mehrmals. Ein Umschalt-Eingang und eine Fahrstraße nehmen den ersten und
+ignorieren dieselbe Adresse danach eine halbe Sekunde lang, damit ein Umschalt-Eingang nicht zurückspringt.</p>
+<p><b>Häufiger Fehler:</b> Zwei Eingänge mit derselben Adresse reagieren beide. Das kann gewollt sein (zwei
+Fahrstraßen auf einer Adresse), meistens ist es aber ein Tippfehler.</p>
+<p>Kein DCC? Lassen Sie den Haken weg und verwenden Sie nur einen Pin.</p>

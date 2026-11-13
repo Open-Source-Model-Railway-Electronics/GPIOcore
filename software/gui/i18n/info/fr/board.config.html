@@ -1,0 +1,19 @@
+<h3>Bouton de config (A7) et apprentissage des servos avec votre régulateur</h3>
+<p>Sans ordinateur, vous pouvez régler les positions de fin de course des servos avec le bouton de config et votre
+régulateur DCC.</p>
+<p><b>Câblage :</b> un bouton-poussoir de <b>A7</b> vers <b>GND</b>, plus une résistance de 10 k&Omega; de A7 vers <b>5 V</b>
+(A7 n'a pas de pull-up interne). Une LED avec résistance sur <b>D13</b> indique le mode (la plupart des Arduino en ont déjà une).</p>
+<ol>
+<li>Maintenez le bouton de config <b>2 secondes</b> : la LED se met à clignoter. Vous êtes en mode configuration.</li>
+<li>Appuyez <b>brièvement</b> : le servo suivant est sélectionné et bascule, pour que vous voyiez lequel c'est.
+Appuyez encore pour le servo suivant.</li>
+<li>Sur votre régulateur, sélectionnez l'<b>adresse de loco 9999</b>.
+  <ul>
+  <li>Tournez le <b>bouton de vitesse</b> : le servo sélectionné bouge. Le sens de marche décide de quel côté, le bouton à quelle vitesse.</li>
+  <li><b>F1</b> = mémoriser cet angle comme <i>dévié</i>, <b>F2</b> = le mémoriser comme <i>direct</i>.</li>
+  <li><b>F3</b> = faire basculer le servo (pour vérifier), <b>F4</b> = servo suivant.</li>
+  </ul></li>
+<li>Maintenez de nouveau le bouton de config 2 secondes : la LED reste allumée. Retour au fonctionnement normal.</li>
+</ol>
+<p>Les nouvelles positions sont mémorisées tout de suite. Quand vous connectez le programme plus tard, il les relit.</p>
+<p>C'est pourquoi <b>D13</b> et <b>A7</b> ne peuvent jamais servir d'entrées ou de sorties.</p>

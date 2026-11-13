@@ -1,0 +1,36 @@
+<h3>Passi dell'itinerario</h3>
+<p>Un itinerario è un elenco di cose da fare, dall'alto in basso. Ogni riga (passo) imposta <b>un'uscita</b> e poi
+<b>attende</b> un momento prima del passo successivo.</p>
+
+<h4>Quando parte l'itinerario?</h4>
+<p>Quando il pulsante sul pin di ingresso viene <b>premuto</b>, oppure con un comando DCC per l'indirizzo dell'ingresso.
+Scegli quale comando DCC in <b>Parte con DCC</b>:</p>
+<ul>
+<li><b>qualsiasi comando</b>: dritto e deviato lo avviano entrambi;</li>
+<li><b>solo dritto</b> o <b>solo deviato</b>: così due itinerari possono condividere un indirizzo. Esempio, un passaggio
+a livello sull'indirizzo 1: l'itinerario A su <i>solo deviato</i> accende le luci e chiude le barriere, l'itinerario B
+su <i>solo dritto</i> le riapre.</li>
+</ul>
+<p>Una centrale ripete un comando più volte; l'itinerario prende il primo.</p>
+
+<h4>Le colonne</h4>
+<ul>
+<li><b>Uscita</b>: cosa comanda questo passo.</li>
+<li><b>Valore</b>: cosa deve fare l'uscita:
+  <ul>
+  <li>scambio, luce, relè: <b>deviato (0)</b> o <b>dritto (1)</b>;</li>
+  <li>segnale a 4 aspetti: un <b>numero di aspetto</b> (0&ndash;255);</li>
+  <li>servo: deviato, dritto, o un <b>angolo</b> esatto tra 10&deg; e 170&deg;;</li>
+  <li>PWM: un valore di luminosità / velocità da 0&ndash;255.</li>
+  </ul></li>
+<li><b>Attesa dopo</b>: solo se <i>Tempo di attesa proprio per ogni passo dell'itinerario</i> è attivo nelle impostazioni
+della scheda; altrimenti ogni passo attende il tempo fisso della scheda (0,3 s di default).</li>
+</ul>
+
+<h4>Come crearne uno</h4>
+<ol>
+<li>Scegli un'uscita nella prima riga, <i>oppure</i> trascina un'uscita su questo ingresso.</li>
+<li>Clicca <b>+ Aggiungi passo</b> (o trascina di nuovo) per il successivo.</li>
+<li>Usa &#9650; &#9660; per cambiare l'ordine e il <b>cestino</b> per eliminare un passo.</li>
+</ol>
+<p>La stessa uscita può comparire più volte, per esempio un servo che va prima a 45&deg; e poi a 135&deg;.</p>

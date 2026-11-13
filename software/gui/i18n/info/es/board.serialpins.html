@@ -1,0 +1,10 @@
+<h3>Pines D0 y D1</h3>
+<p>D0 y D1 son los cables por los que el Arduino habla con este programa a través del USB. Las placas más nuevas
+pueden usarlos igualmente para su maqueta:</p>
+<ul>
+<li>Al arrancar, la placa espera <b>5 segundos</b> a este programa.</li>
+<li>Si el programa se conecta, D0 / D1 quedan reservados para el USB mientras configura. Lo que esté conectado a esos
+pines <b>no</b> funciona entonces.</li>
+<li>Si no se conecta nada (uso normal en la maqueta), D0 / D1 pasan a ser pines normales.</li>
+</ul>
+<p>Úselos para cosas sencillas como LED. Evite cargas grandes en D0: pueden interferir al cargar un firmware nuevo.</p>
