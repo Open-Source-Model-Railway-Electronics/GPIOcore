@@ -495,19 +495,30 @@ void SimulatedDevice::setOutputState(int output, quint8 state)
     const bool changed = o.state != state;
     o.state = state;
     reportOutput(output, state, o.data[0]);
-    if (o.type == ServoType && changed)
-        sweepServo(output);
     if (!changed)
         return;
-    if (o.relayA != PinNA && o.relayB != PinNA)          // electrofrog: both off, 100 ms later the new side on
+    const bool electro = o.relayA != PinNA && o.relayB != PinNA;
+    if (electro)                         // output.cpp: turnOffRelays, 100 ms, then the actuator moves
     {
         setFrog(output, 0, false);
         setFrog(output, 1, false);
-        QTimer::singleShot(100, this, [this, output] {
-            const bool st = m_out[output].state;
-            setFrog(output, 0, st);
-            setFrog(output, 1, !st);
-        });
+    }
+    auto relaysOn = [this, output] {     // turnOnRelays, after the actuator is done
+        const OutputConfig &c = m_out[output];
+        if (c.relayA == PinNA || c.relayB == PinNA) return;
+        setFrog(output, 0, c.state);
+        setFrog(output, 1, !c.state);
+    };
+    if (o.type == ServoType)
+    {
+        QTimer::singleShot(electro ? 100 : 0, this, [this, output] { sweepServo(output); });
+    }
+    else if (electro)
+    {
+        int ms = 0;
+        if (o.type == SinglePulse) ms = int(o.switchTime()) * 100;
+        if (o.type == DoublePulse) ms = int(o.switchTime()) * 10;
+        QTimer::singleShot(100 + ms, this, relaysOn);
     }
     if (o.relayC != PinNA && (o.type == SinglePulse || o.type == DoublePulse))   // unifrog at the end of the pulse
     {
@@ -540,7 +551,18 @@ void SimulatedDevice::sweepServo(int output)
         const OutputConfig &c = m_out[output];
         const int to = c.state ? c.servoMax() : c.servoMin();
         int &pos = m_servoPos[output];
-        if (pos == to) { m_sweeping[output] = false; return; }
+        if (pos == to)
+        {
+            m_sweeping[output] = false;
+            // the servo holds ~500 ms before it detaches; then turnOnRelays (electrofrog)
+            QTimer::singleShot(500, this, [this, output] {
+                const OutputConfig &e = m_out[output];
+                if (m_sweeping[output] || e.relayA == PinNA || e.relayB == PinNA) return;
+                setFrog(output, 0, e.state);
+                setFrog(output, 1, !e.state);
+            });
+            return;
+        }
         pos += pos < to ? 1 : -1;
         reportOutput(output, 2, pos);
         if (c.relayC != PinNA)                               // unifrog switches at the middle of the sweep
