@@ -780,6 +780,10 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                     else                   emit liveTriggerRequested(i, dir);
                     return;
                 }
+        // anywhere else on a block: select it, so its settings show in the panel (no dragging)
+        const int in = inputAt(pos), out = outputAt(pos);
+        if (in >= 0)       emit inputSelected(in);
+        else if (out >= 0) emit outputSelected(out);
         return;
     }
 

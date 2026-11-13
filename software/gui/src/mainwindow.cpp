@@ -1151,8 +1151,6 @@ void MainWindow::refreshAll()
 
 void MainWindow::selectOutput(int i)
 {
-    if (m_view->liveMode())
-        return;
     m_view->selectOutput(i);
     showOutput(i);
     m_outEd->setWarnings(outputWarnings(i));
@@ -1163,8 +1161,6 @@ void MainWindow::selectOutput(int i)
 
 void MainWindow::selectInput(int i)
 {
-    if (m_view->liveMode())
-        return;
     m_view->selectInput(i);
     showInput(i);
     m_inEd->setWarnings(inputWarnings(i));
