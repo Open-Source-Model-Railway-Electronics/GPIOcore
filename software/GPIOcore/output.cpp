@@ -29,6 +29,11 @@ void Output::set( Settings *data )
 {
     eedata = *data ;
     oldPos = !eedata.state ;    // new settings: apply the state once, also when unchanged
+
+    uint8_t lo = min( eedata.servo.servoMin, eedata.servo.servoMax ) ;
+    uint8_t hi = max( eedata.servo.servoMin, eedata.servo.servoMax ) ;
+    if( eedata.type == servoType && ( pos < lo || pos > hi ) )      // position unknown (new servo): start at the end position
+        pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
     saveEEPROM() ; // Opslaan indien gewenst
 }
 
@@ -99,6 +104,9 @@ void Output::loadEEPROM()
 
     // apply the stored state once after boot, except for coils (no burst of pulses at power up)
     oldPos = ( eedata.type == singlePulse || eedata.type == doublePulse ) ? eedata.state : !eedata.state ;
+
+    // a servo starts where it was left (its stored end position), not at 0 degrees: no sweep at power up (F15)
+    if( eedata.type == servoType ) pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
 }
 
 uint8_t Output::sweep()
@@ -155,7 +163,7 @@ StateFunction( idle )
         live     = 0 ;
         attached = 0 ;
     }
-    return 0 ;
+    return 1 ;      // the idle state body in update() must run every time: it starts the actions
 }
 
 StateFunction( pwm )

@@ -235,7 +235,7 @@ OPCODE( OPCODE_GET_OUTPUT_STATE )
     uint32_t now = millis() ;
     msg->command    = OPCODE_OUTPUT_EVENT ;
     msg->payload[1] = output[i].eedata.state ;
-    msg->payload[2] = output[i].eedata.data[0] ;
+    msg->payload[2] = output[i].eedata.type == servoType ? output[i].position() : output[i].eedata.data[0] ;
     msg->payload[3] = now & 0xFF ;
     msg->payload[4] = ( now >> 8 ) & 0xFF ;
     transceiver.sendMessage( msg ) ;

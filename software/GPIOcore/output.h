@@ -111,6 +111,7 @@ public:
     void        setPinModes() ;
 
     Settings    eedata ;
+    uint8_t     position() { return pos ; }   // servo: current angle
 
 private:
     StateMachine sm ;
