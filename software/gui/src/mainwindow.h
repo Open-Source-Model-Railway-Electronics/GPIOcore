@@ -137,6 +137,7 @@ private:
     QAction        *m_actShowUnused = nullptr;
     QAction        *m_actBoardSettings = nullptr;
     QAction        *m_actLive = nullptr;
+    QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board
     QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
     bool            m_expert = false;
     bool            m_nameAsked = false;

@@ -576,10 +576,36 @@ void MainWindow::buildToolbar()
     tb->addWidget(m_port);
     m_actRefresh = tb->addAction(style()->standardIcon(QStyle::SP_BrowserReload), QString(), this, &MainWindow::refreshPorts);
     m_actRefresh->setToolTip(tr("Refresh port list"));
-    m_actConnect = tb->addAction(tr("Connect"), this, &MainWindow::toggleConnection);
-    m_actDemo    = tb->addAction(tr("Simulate"), this, &MainWindow::connectDemo);
+    m_actConnect = new QAction(tr("Connect"), this);          // Board menu
+    connect(m_actConnect, &QAction::triggered, this, &MainWindow::toggleConnection);
+    tb->addSeparator();
+
+    // Mode buttons in the colours of the canvas frame: red = configure a real board,
+    // yellow = simulation, green = live test. The active one is filled.
+    m_actConfigure = tb->addAction(tr("● Configure"));
+    m_actConfigure->setCheckable(true);
+    m_actConfigure->setToolTip(tr("Connect to the board on the selected port. Every change goes to the board at once."));
+    connect(m_actConfigure, &QAction::triggered, this, [this] {
+        if (m_link->isOpen() && !m_simulating) m_link->close();
+        else
+        {
+            if (m_link->isOpen()) m_link->close();
+            connectPort(m_port->currentData().toString());
+        }
+        updateFrame();
+    });
+    m_actDemo = tb->addAction(tr("● Simulate"), this, &MainWindow::connectDemo);
+    m_actDemo->setCheckable(true);
     m_actDemo->setToolTip(tr("Try your own configuration without a board: a simulated GPIOcore runs it. "
                              "Use Live test to press inputs and watch the outputs."));
+    m_actLive = tb->addAction(tr("● Live test"));
+    m_actLive->setCheckable(true);
+    m_actLive->setToolTip(tr("Test the board without anything connected: click the buttons on an input and watch "
+                             "the outputs. Blue = straight / on, red = curved / off; servos show their angle."));
+    connect(m_actLive, &QAction::toggled, this, &MainWindow::setLiveTest);
+    if (QWidget *w = tb->widgetForAction(m_actConfigure)) w->setObjectName(QStringLiteral("modeConfigure"));
+    if (QWidget *w = tb->widgetForAction(m_actDemo))      w->setObjectName(QStringLiteral("modeSimulate"));
+    if (QWidget *w = tb->widgetForAction(m_actLive))      w->setObjectName(QStringLiteral("modeLive"));
     tb->addSeparator();
 
     m_actRead   = tb->addAction(style()->standardIcon(QStyle::SP_ArrowDown), tr("Read board"), this, &MainWindow::readFromBoard);
@@ -613,12 +639,6 @@ void MainWindow::buildToolbar()
     tb->addWidget(m_boardType);
     tb->addWidget(Info::button(QStringLiteral("board.dccnext")));
     m_actBoardSettings = tb->addAction(tr("Board settings…"), this, &MainWindow::editBoardSettings);
-    tb->addSeparator();
-    m_actLive = tb->addAction(tr("● Live test"));
-    m_actLive->setCheckable(true);
-    m_actLive->setToolTip(tr("Test the board without anything connected: click the buttons on an input and watch "
-                             "the outputs. Blue = straight / on, red = curved / off; servos show their angle."));
-    connect(m_actLive, &QAction::toggled, this, &MainWindow::setLiveTest);
 
     // Menus
     QMenu *file = menuBar()->addMenu(tr("&File"));
@@ -809,7 +829,11 @@ void MainWindow::updateFrame()
 {
     using F = ConnectionView::Frame;
     m_view->setFrame(!m_link->isOpen() ? F::None : m_simulating ? F::Simulate : F::Configure);
-    m_actDemo->setText(m_simulating && m_link->isOpen() ? tr("Stop simulation") : tr("Simulate"));
+    const bool open = m_link->isOpen();
+    m_actDemo->setText(m_simulating && open ? tr("● Stop simulation") : tr("● Simulate"));
+    m_actDemo->setChecked(m_simulating && open);
+    m_actConfigure->setChecked(open && !m_simulating);
+    m_actConfigure->setText(open && !m_simulating ? tr("● Configuring") : tr("● Configure"));
 }
 
 void MainWindow::onConnectionChanged()

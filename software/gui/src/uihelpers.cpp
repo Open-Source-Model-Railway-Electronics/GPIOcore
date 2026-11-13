@@ -155,6 +155,16 @@ void applyAppStyle(QApplication &app)
         QComboBox:disabled, QSpinBox:disabled { background: #F1F5F9; }
         QScrollArea { border: none; background: transparent; }
         QStatusBar { background: #FFFFFF; border-top: 1px solid #E2E8F0; }
+        QToolButton#modeConfigure, QToolButton#modeSimulate, QToolButton#modeLive {
+            border: 2px solid; border-radius: 7px; padding: 4px 12px; font-weight: 700; margin: 0 2px; }
+        QToolButton#modeConfigure { border-color: #DC2626; color: #DC2626; }
+        QToolButton#modeSimulate  { border-color: #CA8A04; color: #A16207; }
+        QToolButton#modeLive      { border-color: #16A34A; color: #15803D; }
+        QToolButton#modeConfigure:checked { background: #DC2626; color: white; }
+        QToolButton#modeSimulate:checked  { background: #EAB308; color: #111827; border-color: #EAB308; }
+        QToolButton#modeLive:checked      { background: #16A34A; color: white; }
+        QToolButton#modeConfigure:hover:!checked, QToolButton#modeSimulate:hover:!checked,
+        QToolButton#modeLive:hover:!checked { background: #EEF2F7; }
     )");
     if (g_dark)
     {
