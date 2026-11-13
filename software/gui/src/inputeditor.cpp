@@ -378,6 +378,15 @@ void InputEditor::rebuildSteps()
         vl->setSpacing(4);
         vl->addWidget(r.mode);
         vl->addWidget(r.value);
+        r.pick = new QToolButton;
+        r.pick->setText(QStringLiteral("▾"));
+        r.pick->setToolTip(tr("Choose the aspect lamp by lamp"));
+        vl->addWidget(r.pick);
+        connect(r.pick, &QToolButton::clicked, this, [this, i] {
+            if (i >= m_cfg.route.size() || i >= m_rows.size()) return;
+            const int v = Ui::pickAspect(this, m_rows[i].value->value(), m_cfg.route[i].output);
+            if (v >= 0) m_rows[i].value->setValue(v);
+        });
 
         const int row = i + 1;
         m_stepGrid->addWidget(r.number, row, 0);
@@ -424,6 +433,8 @@ void InputEditor::updateSteps()
         const StepKind kind = m_limits.v1 ? StepKind::State : stepKind(outputType(s.output));
 
         Ui::selectData(r.output, s.output);
+        r.pick->setVisible(kind == StepKind::Aspect);
+        r.value->setToolTip(QString());
         r.mode->clear();
         if (kind == StepKind::State || kind == StepKind::ServoStateOrAngle)
         {
@@ -452,6 +463,7 @@ void InputEditor::updateSteps()
             r.value->setSuffix(QString());
             r.value->setVisible(true);
             r.value->setValue(s.value);
+            r.value->setToolTip(Ui::aspectText(s.value));
             break;
         case StepKind::PwmValue:
             r.value->setRange(0, 255);

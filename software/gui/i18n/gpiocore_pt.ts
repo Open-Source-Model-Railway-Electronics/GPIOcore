@@ -808,37 +808,37 @@ passo %1: %2, depois esperar %3</translation>
         <translation>Unifrog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="349"/>
+        <location filename="../src/uihelpers.cpp" line="427"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="349"/>
+        <location filename="../src/uihelpers.cpp" line="427"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="349"/>
+        <location filename="../src/uihelpers.cpp" line="427"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="350"/>
+        <location filename="../src/uihelpers.cpp" line="428"/>
         <source>D</source>
         <translation>D</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="350"/>
+        <location filename="../src/uihelpers.cpp" line="428"/>
         <source>relay A</source>
         <translation>relé A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="351"/>
+        <location filename="../src/uihelpers.cpp" line="429"/>
         <source>relay B</source>
         <translation>relé B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="351"/>
+        <location filename="../src/uihelpers.cpp" line="429"/>
         <source>relay C</source>
         <translation>relé C</translation>
     </message>
@@ -928,7 +928,7 @@ passo %1: %2, depois esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="157"/>
         <location filename="../src/inputeditor.cpp" line="311"/>
-        <location filename="../src/inputeditor.cpp" line="510"/>
+        <location filename="../src/inputeditor.cpp" line="522"/>
         <source>Output</source>
         <translation>Saída</translation>
     </message>
@@ -950,7 +950,7 @@ passo %1: %2, depois esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="87"/>
         <source>Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Função</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="135"/>
@@ -1038,52 +1038,57 @@ passo %1: %2, depois esperar %3</translation>
         <translation>Eliminar passo %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="430"/>
+        <location filename="../src/inputeditor.cpp" line="383"/>
+        <source>Choose the aspect lamp by lamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/inputeditor.cpp" line="441"/>
         <source>Curved (0)</source>
         <translation>Desviado (0)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="431"/>
+        <location filename="../src/inputeditor.cpp" line="442"/>
         <source>Straight (1)</source>
         <translation>Directo (1)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="433"/>
+        <location filename="../src/inputeditor.cpp" line="444"/>
         <source>Angle</source>
         <translation>Ângulo</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="451"/>
+        <location filename="../src/inputeditor.cpp" line="462"/>
         <source>aspect </source>
         <translation>aspecto </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="458"/>
+        <location filename="../src/inputeditor.cpp" line="470"/>
         <source>PWM </source>
         <translation>PWM </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="476"/>
+        <location filename="../src/inputeditor.cpp" line="488"/>
         <source>%1 / %2 steps  ·  board total %3 / %4</source>
         <translation>%1 / %2 passos  ·  total da placa %3 / %4</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="487"/>
+        <location filename="../src/inputeditor.cpp" line="499"/>
         <source>Input %1</source>
         <translation>Entrada %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="496"/>
+        <location filename="../src/inputeditor.cpp" line="508"/>
         <source>Toggle — every press switches the output over</source>
         <translation>Comutar — cada pressão inverte a saída</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="497"/>
+        <location filename="../src/inputeditor.cpp" line="509"/>
         <source>Absolute — the output follows the input</source>
         <translation>Absoluto — a saída segue a entrada</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="510"/>
+        <location filename="../src/inputeditor.cpp" line="522"/>
         <source>Feedback id</source>
         <translation>Id de retroalimentação</translation>
     </message>
@@ -1100,7 +1105,7 @@ passo %1: %2, depois esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="154"/>
         <source>Board read</source>
-        <translation type="unfinished"></translation>
+        <translation>Placa lida</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="158"/>
@@ -1230,23 +1235,23 @@ passo %1: %2, depois esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="614"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="615"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="616"/>
         <source>Open a board file (Ctrl+O)</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir um ficheiro de placa (Ctrl+O)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="617"/>
         <location filename="../src/mainwindow.cpp" line="705"/>
         <source>Save to this board&apos;s file (Ctrl+S)</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar no ficheiro desta placa (Ctrl+S)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="625"/>
@@ -1308,41 +1313,45 @@ passo %1: %2, depois esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="702"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Guardar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="706"/>
         <source>Save &amp;as…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar &amp;como…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="727"/>
         <source>&amp;Phone remote…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Comando pelo telemóvel…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="955"/>
         <source>Connected. Read board loads its configuration; Write all puts the one on screen on the board. Changes you make now go to the board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligado. Ler placa carrega a configuração da placa; Escrever tudo põe na placa a que está no ecrã. As alterações que fizer agora vão para a placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1015"/>
         <source>Read everything from the board?
 
 What is on screen now is replaced by the board&apos;s configuration. Save it first (Ctrl+S) if you want to keep it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ler tudo da placa?
+
+O que está agora no ecrã é substituído pela configuração da placa. Guarde-o primeiro (Ctrl+S) se o quiser manter.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1035"/>
         <source>the board</source>
-        <translation type="unfinished"></translation>
+        <translation>a placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1037"/>
         <source>Write the whole configuration on screen to %1?
 
 Everything on the board is replaced.</source>
-        <translation type="unfinished"></translation>
+        <translation>Escrever toda a configuração do ecrã em %1?
+
+Tudo o que está na placa é substituído.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1086"/>
@@ -1377,47 +1386,47 @@ Everything on the board is replaced.</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="1580"/>
         <source>Phone: output %1 %2 = %3°</source>
-        <translation type="unfinished"></translation>
+        <translation>Telemóvel: saída %1 %2 = %3°</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1581"/>
         <source>straight</source>
-        <translation type="unfinished"></translation>
+        <translation>directo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1581"/>
         <source>curved</source>
-        <translation type="unfinished"></translation>
+        <translation>desviado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1593"/>
         <source>Phone remote</source>
-        <translation type="unfinished"></translation>
+        <translation>Comando pelo telemóvel</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1595"/>
         <source>Adjust servos from your phone: it must be on the same Wi-Fi as this computer. Scan the code with the phone&apos;s camera, or type the address in its browser. Keep this program open; the code changes every time the remote is switched on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste os servos a partir do seu telemóvel: tem de estar na mesma rede Wi-Fi que este computador. Leia o código com a câmara do telemóvel ou escreva o endereço no browser dele. Mantenha este programa aberto; o código muda sempre que o comando é ligado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1600"/>
         <source>Allow phones on my network</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir telemóveis na minha rede</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1614"/>
         <source>The first time, Windows may ask whether the program may use the network: allow it for private networks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Na primeira vez, o Windows pode perguntar se o programa pode usar a rede: permita-o para redes privadas.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1628"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Desligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1647"/>
         <source>Could not open a network port (8080-8089).</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível abrir uma porta de rede (8080-8089).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1662"/>
@@ -1522,7 +1531,7 @@ Everything on the board is replaced.</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="1843"/>
         <source>Connected to &quot;%1&quot;, the screen shows &quot;%2&quot;. Read board or Write all.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligado a &quot;%1&quot;, o ecrã mostra &quot;%2&quot;. Ler placa ou Escrever tudo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1859"/>
@@ -1538,32 +1547,32 @@ Everything on the board is replaced.</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2035"/>
         <source>max. 16 letters, e.g. Station-left</source>
-        <translation type="unfinished"></translation>
+        <translation>máx. 16 caracteres, p. ex. Estação-esq</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2038"/>
         <source>Empty (1 input, 1 output)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vazia (1 entrada, 1 saída)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2040"/>
         <source>Preset: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinição: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2042"/>
         <source>Start with</source>
-        <translation type="unfinished"></translation>
+        <translation>Começar com</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2043"/>
         <source>When you later connect a board and give it this name, these settings belong to it. Use Write all to put them on the board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Quando mais tarde ligar uma placa e lhe der este nome, estas definições pertencem-lhe. Use Escrever tudo para as pôr na placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2124"/>
         <source>Output %1 removed; %2 drove it and is now not in use as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Saída %1 removida; %2 controlava-a e agora também não está em uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1838"/>
@@ -2019,17 +2028,17 @@ Isto substitui todas as saídas e entradas (e os seus itinerários).</translatio
     <message>
         <location filename="../src/mainwindow.cpp" line="663"/>
         <source>Load the configuration from the board (replaces what is on screen)</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar a configuração da placa (substitui o que está no ecrã)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="664"/>
         <source>Write all</source>
-        <translation type="unfinished"></translation>
+        <translation>Escrever tudo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="665"/>
         <source>Put the whole configuration on screen on the board</source>
-        <translation type="unfinished"></translation>
+        <translation>Pôr na placa toda a configuração do ecrã</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1161"/>
@@ -2175,7 +2184,7 @@ Isto substitui todas as saídas e entradas (e os seus itinerários).</translatio
     <message>
         <location filename="../src/outputeditor.cpp" line="76"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="93"/>
@@ -2420,17 +2429,77 @@ Isto substitui todas as saídas e entradas (e os seus itinerários).</translatio
         <translation>sem accionador</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="329"/>
+        <location filename="../src/uihelpers.cpp" line="324"/>
+        <source>lamp %1 flashing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="325"/>
+        <source>lamp %1 flashing, opposite phase</source>
+        <translation>lâmpada %1 pisca em contrafase</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="326"/>
+        <source>lamp %1 on</source>
+        <translation>lâmpada %1 acesa</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="328"/>
+        <source>all lamps off</source>
+        <translation>todas as lâmpadas apagadas</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="334"/>
+        <source>Signal aspect</source>
+        <translation>Aspecto do sinal</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="336"/>
+        <source>Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
+        <translation>Escolha por lâmpada. A lâmpada 1 é o pino A, a lâmpada 2 o pino B, etc.</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="356"/>
+        <source>Value: %1  (0x%2)</source>
+        <translation>Valor: %1  (0x%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="362"/>
+        <source>off</source>
+        <translation>desligado</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="362"/>
+        <source>on</source>
+        <translation>ligado</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="362"/>
+        <source>flashing</source>
+        <translation>intermitente</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="363"/>
+        <source>flashing, opposite phase</source>
+        <translation>intermitente, em oposição de fase</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="372"/>
+        <source>Lamp %1</source>
+        <translation>Lâmpada %1</translation>
+    </message>
+    <message>
+        <location filename="../src/uihelpers.cpp" line="407"/>
         <source>Out %1</source>
         <translation>Saí. %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="329"/>
+        <location filename="../src/uihelpers.cpp" line="407"/>
         <source>In %1</source>
         <translation>Ent. %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="340"/>
+        <location filename="../src/uihelpers.cpp" line="418"/>
         <source>in use: %1</source>
         <translation>em uso: %1</translation>
     </message>

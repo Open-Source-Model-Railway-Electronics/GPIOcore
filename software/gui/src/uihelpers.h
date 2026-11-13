@@ -2,6 +2,7 @@
 #include "gpioconfig.h"
 
 #include <QColor>
+class QWidget;
 #include <QIcon>
 #include <QString>
 #include <QVector>
@@ -43,6 +44,11 @@ QVector<QVector<PinUse>> pinUsage(const Gpio::BoardConfig &board);
 // Pins in use elsewhere are shown red with who uses them. setPinBoard() is called by the main
 // window after every change; markUsedPins() updates a combo's texts without refilling it.
 void setPinBoard(const Gpio::BoardConfig &board);
+// 4-aspect signal value: bits 0-3 lamp 1-4 on (pin A-D), bits 4-7 flashing; flashing without 'on' =
+// opposite phase. aspectText() explains a value, pickAspect() lets you choose lamp by lamp
+// (returns -1 on cancel; 'output' gives the lamp colours).
+QString aspectText(int aspect);
+int     pickAspect(QWidget *parent, int current, int output);
 void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex);
 
 QString outputSummaryPins(const Gpio::OutputConfig &c);

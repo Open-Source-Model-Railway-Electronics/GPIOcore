@@ -2,6 +2,11 @@
 
 #include <QApplication>
 #include <QComboBox>
+#include <QHBoxLayout>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QLabel>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPalette>
@@ -307,6 +312,79 @@ void setPinBoard(const BoardConfig &board)
 {
     g_pinBoard = board;
     g_pinBoardSet = true;
+}
+
+QString aspectText(int aspect)
+{
+    QStringList parts;
+    for (int k = 0; k < 4; ++k)
+    {
+        const bool on = (aspect >> k) & 1, flash = (aspect >> (k + 4)) & 1;
+        if (!on && !flash) continue;
+        parts << (flash ? (on ? QObject::tr("lamp %1 flashing").arg(k + 1)
+                              : QObject::tr("lamp %1 flashing, opposite phase").arg(k + 1))
+                        : QObject::tr("lamp %1 on").arg(k + 1));
+    }
+    return parts.isEmpty() ? QObject::tr("all lamps off") : parts.join(QStringLiteral(", "));
+}
+
+int pickAspect(QWidget *parent, int current, int output)
+{
+    QDialog d(parent);
+    d.setWindowTitle(QObject::tr("Signal aspect"));
+    auto *form = new QFormLayout(&d);
+    auto *intro = new QLabel(QObject::tr("Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on."));
+    intro->setWordWrap(true);
+    form->addRow(intro);
+    QVector<QComboBox *> lamps;
+    auto *value = new QLabel;
+    auto *meaning = new QLabel;
+    meaning->setWordWrap(true);
+    meaning->setObjectName(QStringLiteral("help"));
+    auto compute = [&lamps] {
+        int v = 0;
+        for (int k = 0; k < 4; ++k)
+        {
+            const int m = lamps[k]->currentIndex();
+            if (m == 1 || m == 2) v |= 1 << k;
+            if (m == 2 || m == 3) v |= 1 << (k + 4);
+        }
+        return v;
+    };
+    auto show = [&] {
+        const int v = compute();
+        value->setText(QObject::tr("Value: %1  (0x%2)").arg(v).arg(v, 2, 16, QLatin1Char('0')));
+        meaning->setText(aspectText(v));
+    };
+    for (int k = 0; k < 4; ++k)
+    {
+        auto *c = new QComboBox;
+        c->addItems({ QObject::tr("off"), QObject::tr("on"), QObject::tr("flashing"),
+                      QObject::tr("flashing, opposite phase") });
+        const bool on = (current >> k) & 1, flash = (current >> (k + 4)) & 1;
+        c->setCurrentIndex(flash ? (on ? 2 : 3) : (on ? 1 : 0));
+        QColor col = g_pinBoardSet && output >= 0 && output < NumOutputs
+                         ? lampColor(g_pinBoard.outputs[output], k) : lampColor(OutputConfig(), k);
+        auto *lbl = new QLabel;
+        lbl->setPixmap(swatchIcon(col).pixmap(14, 14));
+        auto *row = new QHBoxLayout;
+        row->addWidget(lbl);
+        row->addWidget(new QLabel(QObject::tr("Lamp %1").arg(k + 1)));
+        auto *rowW = new QWidget;
+        rowW->setLayout(row);
+        row->setContentsMargins(0, 0, 0, 0);
+        form->addRow(rowW, c);
+        lamps << c;
+        QObject::connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), &d, show);
+    }
+    form->addRow(value);
+    form->addRow(meaning);
+    auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    QObject::connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    QObject::connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    form->addRow(bb);
+    show();
+    return d.exec() == QDialog::Accepted ? compute() : -1;
 }
 
 void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex)

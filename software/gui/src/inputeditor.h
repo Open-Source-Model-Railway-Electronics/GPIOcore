@@ -47,6 +47,7 @@ private:
         QComboBox      *output = nullptr;
         QComboBox      *mode   = nullptr;     // curved / straight [/ angle]
         QSpinBox       *value  = nullptr;     // aspect, PWM or servo angle
+        QToolButton    *pick   = nullptr;     // aspect: choose lamp by lamp
         QDoubleSpinBox *wait   = nullptr;
         QToolButton    *up = nullptr, *down = nullptr, *remove = nullptr;
     };
