@@ -77,6 +77,7 @@ private:
     bool   routeMovesTurnout(int input) const;
     void   setOutputState(int output, quint8 state);          // state change + report, servos sweep
     void   sweepServo(int output);
+    void   setFrog(int output, int bit, bool on);
 
     quint8 outCmd() const;
     quint8 firstPin() const { return m_opt.oldDefaults ? 0 : 3; }
@@ -110,4 +111,5 @@ private:
     std::array<bool, Gpio::NumInputs> m_routeBusy {};
     std::array<int,  Gpio::NumOutputs> m_servoPos;            // -1 = unknown
     std::array<bool, Gpio::NumOutputs> m_sweeping {};
+    std::array<quint8, Gpio::NumOutputs> m_frog {};
 };

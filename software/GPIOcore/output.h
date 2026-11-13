@@ -91,6 +91,7 @@ enum state
 
 class Output ;
 extern void callbackServoPos( Output *o, uint8_t pos, uint8_t done ) __attribute__((weak)) ;   // every degree of a sweep
+extern void callbackFrog(     Output *o, uint8_t relays )             __attribute__((weak)) ;   // frog relays changed: bit0 A, bit1 B, bit2 C
 
 class Output
 {
@@ -112,6 +113,7 @@ public:
 
     Settings    eedata ;
     uint8_t     position() { return pos ; }   // servo: current angle
+    uint8_t     frogRelays() { return relays ; }   // bit0 relay A, bit1 relay B, bit2 relay C (unifrog)
 
 private:
     StateMachine sm ;
@@ -138,5 +140,7 @@ private:
     Timer       timer ;
     uint8_t     attached : 1 ;
     uint8_t     live     : 1 ;              // moved by setPosition(), waiting to detach
+    uint8_t     relays   : 3 ;              // last level written to relay A, B, C
+    void        relayWrite( uint8_t which, uint8_t level ) ;   // 0 = A, 1 = B, 2 = C
     uint16_t    liveTime ;
 } ;

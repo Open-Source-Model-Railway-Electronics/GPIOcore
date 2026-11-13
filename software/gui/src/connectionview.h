@@ -27,6 +27,7 @@ public:
     void setOutputLive(int output, int state, int value);   // state 0/1, 2 = raw value
     void clearLive();
     int  liveState(int output) const { return m_liveState.value(output, -1); }
+    int  liveFrog(int output) const  { return m_liveFrog.value(output, -1); }   // bit0 A, bit1 B, bit2 C
     QRectF liveButtonRect(int input, int direction) const;   // empty if the input has no such button
     bool   liveValueInput(int input) const;   // direct input on a signal / PWM output: sends a value
     bool hideUnused() const { return m_hideUnused; }
@@ -99,7 +100,8 @@ private:
     bool    m_hideUnused = false;
     bool    m_live = false;
     QVector<int>    m_liveState, m_liveValue;
-    QVector<bool>   m_liveRaw;            // last report was a raw value (angle / aspect / PWM)
+    QVector<bool>   m_liveRaw;
+    QVector<int>    m_liveFrog;           // frog relays reported by the board, -1 = unknown            // last report was a raw value (angle / aspect / PWM)
     QVector<qint64> m_liveFlashOut, m_liveFlashIn;
     QElapsedTimer   m_liveClock;
     QTimer         *m_liveAnim = nullptr;

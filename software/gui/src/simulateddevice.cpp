@@ -255,6 +255,12 @@ void SimulatedDevice::messageReceived()
         const quint32 now = quint32(m_clock.isValid() ? m_clock.elapsed() : 0);
         const quint8 msg[5] = { index, m_out[index].state, m_out[index].data[0], quint8(now), quint8(now >> 8) };
         sendMessage(Proto::OUTPUT_EVENT, msg);
+        const OutputConfig &o = m_out[index];
+        if (o.relayA != PinNA || o.relayB != PinNA || o.relayC != PinNA)
+        {
+            const quint8 frog[5] = { index, 3, m_frog[index], quint8(now), quint8(now >> 8) };
+            sendMessage(Proto::OUTPUT_EVENT, frog);
+        }
     }
     else if (m_opt.protocol >= 2 && m_command == Proto::GET_ROUTE)
     {
@@ -491,6 +497,32 @@ void SimulatedDevice::setOutputState(int output, quint8 state)
     reportOutput(output, state, o.data[0]);
     if (o.type == ServoType && changed)
         sweepServo(output);
+    if (!changed)
+        return;
+    if (o.relayA != PinNA && o.relayB != PinNA)          // electrofrog: both off, 100 ms later the new side on
+    {
+        setFrog(output, 0, false);
+        setFrog(output, 1, false);
+        QTimer::singleShot(100, this, [this, output] {
+            const bool st = m_out[output].state;
+            setFrog(output, 0, st);
+            setFrog(output, 1, !st);
+        });
+    }
+    if (o.relayC != PinNA && (o.type == SinglePulse || o.type == DoublePulse))   // unifrog at the end of the pulse
+    {
+        const int ms = int(o.switchTime()) * (o.type == SinglePulse ? 100 : 10);
+        QTimer::singleShot(qMax(1, ms), this, [this, output] { setFrog(output, 2, m_out[output].state); });
+    }
+}
+
+void SimulatedDevice::setFrog(int output, int bit, bool on)
+{
+    const quint8 bits = on ? quint8(m_frog[output] | (1 << bit)) : quint8(m_frog[output] & ~(1 << bit));
+    if (bits == m_frog[output])
+        return;
+    m_frog[output] = bits;
+    reportOutput(output, 3, bits);
 }
 
 // like Output::sweep(): one degree per 'speed' ms, every degree is reported
@@ -511,6 +543,8 @@ void SimulatedDevice::sweepServo(int output)
         if (pos == to) { m_sweeping[output] = false; return; }
         pos += pos < to ? 1 : -1;
         reportOutput(output, 2, pos);
+        if (c.relayC != PinNA)                               // unifrog switches at the middle of the sweep
+            setFrog(output, 2, pos >= (c.servoMin() + c.servoMax()) / 2);
         QTimer::singleShot(qMax(1, int(c.servoSpeed())), this, *step);
     };
     Q_UNUSED(target);

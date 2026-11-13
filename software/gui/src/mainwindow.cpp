@@ -112,7 +112,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         if (m_view->liveMode() && o >= 0 && o < NumOutputs)
         {
             const QString name = m_edit.outputs[o].name.isEmpty() ? tr("Output %1").arg(o) : m_edit.outputs[o].name;
-            const QString what = state == 2 ? tr("value %1").arg(value)
+            const QString what = state == 3 ? tr("frog relays A %1, B %2, unifrog %3")
+                                                  .arg(value & 1 ? tr("on") : tr("off"), value & 2 ? tr("on") : tr("off"),
+                                                       value & 4 ? tr("on") : tr("off"))
+                               : state == 2 ? tr("value %1").arg(value)
                                             : (state ? tr("straight / on") : tr("curved / off"));
             statusBar()->showMessage(tr("%1 → %2").arg(name, what), 4000);
         }

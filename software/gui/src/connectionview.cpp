@@ -41,6 +41,7 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
     m_liveState.fill(-1, NumOutputs);
     m_liveValue.fill(0, NumOutputs);
     m_liveRaw.fill(false, NumOutputs);
+    m_liveFrog.fill(-1, NumOutputs);
     m_liveFlashOut.fill(-100000, NumOutputs);
     m_liveFlashIn.fill(-100000, NumInputs);
     m_liveClock.start();
@@ -76,6 +77,7 @@ void ConnectionView::setLiveMode(bool on)
 void ConnectionView::clearLive()
 {
     m_liveState.fill(-1, NumOutputs);
+    m_liveFrog.fill(-1, NumOutputs);
     update();
 }
 
@@ -83,6 +85,14 @@ void ConnectionView::setOutputLive(int o, int state, int value)
 {
     if (o < 0 || o >= NumOutputs)
         return;
+    if (state == 3)                      // frog relays switched
+    {
+        m_liveFrog[o] = value;
+        m_liveFlashOut[o] = m_liveClock.elapsed();
+        m_liveAnim->start();
+        update();
+        return;
+    }
     const OutputConfig &c = m_board.outputs[o];
     if (c.type == ServoType && state != 2 && m_liveState[o] >= 0 && state != m_liveState[o])
     {
@@ -254,6 +264,54 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
     {
         drawLiveDot(p, centre, 8, state, flash);
     }
+    p.restore();
+
+    // frog relays: electrofrog = A and B, unifrog = C. Green = relay energised.
+    const bool electro = c.relayA != PinNA && c.relayB != PinNA;
+    const bool uni     = c.relayC != PinNA;
+    if (!electro && !uni)
+        return;
+    // Drawn as a changeover relay: red contact (curved) on the left, blue contact (straight) on the
+    // right, the frog in the middle below with the arm. Electrofrog: relay A = blue side, relay B =
+    // red side, neither = arm in the middle and the frog grey (dead). Unifrog: relay C on = blue,
+    // off = red, it never goes dead.
+    const QRectF fb(box.left() - 46, box.top(), 44, box.height());
+    QPainterPath fbg;
+    fbg.addRoundedRect(fb, 6, 6);
+    p.fillPath(fbg, Ui::themed(QColor(Qt::white)));
+    const int frog = m_liveFrog[o];
+    const QColor red(0xDC, 0x26, 0x26), blue(0x25, 0x63, 0xEB), dead(0x94, 0xA3, 0xB8);
+    int side = 0;                        // -1 red, +1 blue, 0 dead / unknown
+    if (frog >= 0)
+    {
+        if (electro) side = (frog & 1) ? 1 : (frog & 2) ? -1 : 0;
+        else         side = (frog & 4) ? 1 : -1;
+    }
+    const QPointF cRed(fb.left() + 9, fb.top() + 9), cBlue(fb.right() - 9, fb.top() + 9);
+    const QPointF pivot(fb.center().x(), fb.bottom() - 8);
+    const QPointF armEnd = side > 0 ? cBlue : side < 0 ? cRed : QPointF(fb.center().x(), fb.top() + 12);
+    const QColor frogCol = side > 0 ? blue : side < 0 ? red : dead;
+    const qreal fl = flash;
+    p.save();
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(Qt::NoPen);
+    p.setBrush(red);
+    p.drawEllipse(cRed, 4, 4);
+    p.setBrush(blue);
+    p.drawEllipse(cBlue, 4, 4);
+    p.setPen(QPen(frog < 0 ? dead : kText, 2.2, Qt::SolidLine, Qt::RoundCap));
+    p.drawLine(pivot, armEnd);
+    if (fl > 0)
+    {
+        QColor halo = frogCol;
+        halo.setAlphaF(0.35 * fl);
+        p.setPen(Qt::NoPen);
+        p.setBrush(halo);
+        p.drawEllipse(pivot, 5 + 5 * fl, 5 + 5 * fl);
+    }
+    p.setPen(QPen(Ui::themed(QColor(Qt::white)), 1.5));
+    p.setBrush(frogCol);
+    p.drawEllipse(pivot, 5, 5);
     p.restore();
 }
 

@@ -109,6 +109,18 @@ void Output::loadEEPROM()
     if( eedata.type == servoType ) pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
 }
 
+// all frog relay writes go through here, so a change can be reported
+void Output::relayWrite( uint8_t which, uint8_t level )
+{
+    uint8_t pin = which == 0 ? eedata.relayPinA : which == 1 ? eedata.relayPinB : eedata.relayPinC ;
+    if( pin == NA ) return ;
+    digitalWrite( pin, level ) ;
+    uint8_t bits = level ? ( relays | ( 1 << which ) ) : ( relays & ~( 1 << which ) ) ;
+    if( bits == relays ) return ;
+    relays = bits ;
+    if( callbackFrog ) callbackFrog( this, relays ) ;
+}
+
 uint8_t Output::sweep()
 {
     // Wait for a free servo slot — implicit queue via round-robin update
@@ -147,7 +159,7 @@ uint8_t Output::sweep()
         callbackSetServo( eedata.pinA, pos ) ;
 
         uint8_t middlePos = ( eedata.servo.servoMin + eedata.servo.servoMax ) / 2 ;
-        if( eedata.relayPinC != NA ) digitalWrite( eedata.relayPinC, pos < middlePos ? LOW : HIGH ) ;
+        relayWrite( 2, pos < middlePos ? LOW : HIGH ) ;
     }
 
     return 0 ;
@@ -194,8 +206,8 @@ StateFunction( turnOnRelays )
         timer.PT    = 100 ;
         timer.update( 0 ) ;         // re-arm TIMER_ON, it only restarts after IN was low
 
-        if( eedata.relayPinA != NA ) digitalWrite( eedata.relayPinA,  eedata.state ) ;
-        if( eedata.relayPinB != NA ) digitalWrite( eedata.relayPinB, !eedata.state ) ;
+        relayWrite( 0,  eedata.state ) ;
+        relayWrite( 1, !eedata.state ) ;
     }
     
     if( timer.update( 1 ) ) { return 1 ; }
@@ -211,8 +223,8 @@ StateFunction( turnOffRelays )
         timer.PT    = 100 ;
         timer.update( 0 ) ;         // re-arm TIMER_ON
 
-        if( eedata.relayPinA != NA ) digitalWrite( eedata.relayPinA, LOW ) ;
-        if( eedata.relayPinB != NA ) digitalWrite( eedata.relayPinB, LOW ) ;
+        relayWrite( 0, LOW ) ;
+        relayWrite( 1, LOW ) ;
     }
     
     if( timer.update( 1 ) ) { return 1 ; }
@@ -267,7 +279,7 @@ StateFunction( moveActuator )
         case doublePulse:
             if( timer.update( 1 ) ) // pulse expired, -> exit
             {
-                if( eedata.relayPinC != NA ) digitalWrite( eedata.relayPinC, eedata.state ) ; // toggle the unifrog relay
+                relayWrite( 2, eedata.state ) ;     // toggle the unifrog relay
                 sm.exit() ;
             } 
             break ;

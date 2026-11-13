@@ -268,6 +268,28 @@ private slots:
         maybeScreenshot(w, "live_servo_signal.png");
     }
 
+    void liveFrogRelays()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        OutputConfig t = view->board().outputs[2];             // double pulse turnout with electrofrog on D8 / D9
+        t.type = DoublePulse; t.pinA = 5; t.pinB = 6; t.relayA = 8; t.relayB = 9; t.relayC = PinNA;
+        t.setSwitchTime(10);
+        emit oed->changed(2, t);
+        QTRY_VERIFY_WITH_TIMEOUT(view->board().outputs[2].type == DoublePulse && !link->isBusy(), 3000);
+        QTest::qWait(800);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text().contains(QLatin1String("Live test"))) a->setChecked(true);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveState(2) >= 0, 3000);
+        const int to = view->liveState(2) ? 0 : 1;
+        click(view, view->liveButtonRect(2, to).center());
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveFrog(2), to ? 1 : 2, 2000);   // A for straight, B for curved
+        maybeScreenshot(w, "live_frog.png");
+    }
+
     void routeByDragging()
     {
         MainWindow w;

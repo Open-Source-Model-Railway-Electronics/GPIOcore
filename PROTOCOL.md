@@ -54,7 +54,7 @@ Een GET krijgt eerst het data-antwoord en daarna die `ACK`.
 | `42` SET_OUTPUT_STATE | → | `index state` — **gereserveerd**, alleen `ACK` | – |
 | `33` DCC_EXT | → | `addrH addrL value` — doet alsof er een DCC-extended-accessorypakket (seinbeeld) voor dat adres binnenkomt. Alleen directe inputs reageren | v2 |
 | `41` GET_OUTPUT_STATE | → | `index` → antwoord `45` met de huidige stand | v2 |
-| **`45` OUTPUT_EVENT** | ← | `output state value ms_lo ms_hi` — ongevraagd, alleen na HELLO: elke keer dat een output schakelt (state 0/1, of 2 = ruwe waarde in `value`), met de onderste 16 bits van `millis()`. Een servo meldt tijdens het draaien **elke graad** (state 2, value = hoek); een tussenstap valt weg als de seriële buffer vol is, de eindstand nooit. Een 4-lampsein meldt zijn seinbeeld als state 2 | **v2** |
+| **`45` OUTPUT_EVENT** | ← | `output state value ms_lo ms_hi` — ongevraagd, alleen na HELLO: elke keer dat een output schakelt (state 0/1, of 2 = ruwe waarde in `value`), met de onderste 16 bits van `millis()`. Een servo meldt tijdens het draaien **elke graad** (state 2, value = hoek); een tussenstap valt weg als de seriële buffer vol is, de eindstand nooit. Een 4-lampsein meldt zijn seinbeeld als state 2. **State 3** = puntstukrelais geschakeld, `value` bit0 relais A, bit1 relais B (electrofrog), bit2 relais C (unifrog); `GET_OUTPUT_STATE` stuurt dit als tweede melding mee als de output relais heeft | **v2** |
 | `B1` CLEAR_OUTPUT | – | staat in `messageParser.h`, maar wordt niet gebruikt | – |
 | `2D` (oud) | ↔ | `SET_OUTPUT_DATA` van firmware vóór 2026-11-09: 13 bytes, `data[3]` gaat verloren. De GUI herkent dit aan het antwoord op `GET_OUTPUT_DATA` en schakelt mee. | oud |
 | **`90` HELLO** | → | – → antwoord `95` | **v2** |

@@ -204,6 +204,12 @@ void callbackServoPos( Output *o, uint8_t pos, uint8_t done )
     reportOutput( o - output, 2, pos ) ;
 }
 
+// ── Frog relays switched: reported as OUTPUT_EVENT state 3, value = bit0 A, bit1 B, bit2 C
+void callbackFrog( Output *o, uint8_t relays )
+{
+    reportOutput( o - output, 3, relays ) ;
+}
+
 // ── Raw route step: signal aspect, PWM value or servo angle ───────────────────
 void callbackRouteValue( uint8_t index, uint8_t value )
 {

@@ -239,6 +239,16 @@ OPCODE( OPCODE_GET_OUTPUT_STATE )
     msg->payload[3] = now & 0xFF ;
     msg->payload[4] = ( now >> 8 ) & 0xFF ;
     transceiver.sendMessage( msg ) ;
+
+    const Settings &s = output[i].eedata ;
+    if( s.relayPinA != NA || s.relayPinB != NA || s.relayPinC != NA )   // frog relays as a second report
+    {
+        msg->command    = OPCODE_OUTPUT_EVENT ;
+        msg->payload[0] = i ;
+        msg->payload[1] = 3 ;
+        msg->payload[2] = output[i].frogRelays() ;
+        transceiver.sendMessage( msg ) ;
+    }
 }
 
 OPCODE( OPCODE_REQ_VERSION )
