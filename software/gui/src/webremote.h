@@ -32,6 +32,8 @@ signals:
     void liveRequested(int output, int angle);
     void storeRequested(int output, int which, int angle);   // which: 0 = curved, 1 = straight
     void moveRequested(int output, int state);
+    // slide a position: move the servo there and store it as curved (0) / straight (1)
+    void adjustRequested(int output, int which, int angle);
 
 private:
     void onConnection();

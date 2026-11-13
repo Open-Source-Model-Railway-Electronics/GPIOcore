@@ -11,6 +11,7 @@
 #include "qrcode.h"
 #include "webremote.h"
 
+#include <QSlider>
 #include <QTcpSocket>
 
 #include <QAction>
@@ -399,6 +400,50 @@ private slots:
         QCOMPARE(int(view->board().inputs[3].type), int(InputNotInUse));
         QVERIFY(!view->outputShown(3));
         QVERIFY(!view->inputShown(3));
+    }
+
+    void phoneLiveReachesTheServo()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);                  // a (simulated) board in Configure mode
+        auto *link = w.findChild<DeviceLink *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        OutputConfig servo = view->board().outputs[3];
+        servo.type = ServoType; servo.data = { { 60, 120, 20, 0 } };
+        emit oed->changed(3, servo);
+        QTest::qWait(800);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
+        auto *web = w.findChild<WebRemote *>();
+        QVERIFY(web);
+        QVERIFY(web->start(18090));
+        int sent = -1;
+        connect(link, &DeviceLink::logMessage, this, [&sent](const QString &k, const QString &t) {
+            if (k == QLatin1String("TX") && t.startsWith(QLatin1String("SERVO_LIVE"))) sent = 1;
+        });
+        QTcpSocket s;
+        s.connectToHost(QHostAddress::LocalHost, web->port());
+        QTest::qWaitFor([&s] { return s.state() == QAbstractSocket::ConnectedState; }, 2000);
+        s.write("POST /api/live?t=" + web->token().toLatin1() + "&o=3&a=77 HTTP/1.1\r\nHost: x\r\nContent-Length: 0\r\n\r\n");
+        QTest::qWaitFor([&s] { return s.state() == QAbstractSocket::UnconnectedState; }, 3000);
+        QTRY_COMPARE_WITH_TIMEOUT(sent, 1, 2000);
+
+        // sliding the straight position on the phone: servo follows, value stored, GUI shows that servo
+        click(view, view->outputRect(0).center());           // the GUI is looking at another output
+        sent = -1;
+        QTcpSocket s2;
+        s2.connectToHost(QHostAddress::LocalHost, web->port());
+        QTest::qWaitFor([&s2] { return s2.state() == QAbstractSocket::ConnectedState; }, 2000);
+        s2.write("POST /api/adjust?t=" + web->token().toLatin1() + "&o=3&w=1&a=140 HTTP/1.1\r\nHost: x\r\n\r\n");
+        QTest::qWaitFor([&s2] { return s2.state() == QAbstractSocket::UnconnectedState; }, 3000);
+        QTRY_COMPARE_WITH_TIMEOUT(sent, 1, 2000);
+        QCOMPARE(int(view->board().outputs[3].data[1]), 140);
+        QCOMPARE(int(view->board().outputs[3].state), 1);
+        QCOMPARE(oed->index(), 3);
+        bool shown = false;
+        for (QSlider *sl : oed->findChildren<QSlider *>())
+            if (sl->isVisibleTo(oed) && sl->value() == 140) shown = true;
+        QVERIFY(shown);
+        web->stop();
     }
 
     void routeByDragging()
