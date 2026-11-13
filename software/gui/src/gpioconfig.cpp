@@ -133,6 +133,7 @@ QJsonObject OutputConfig::toJson() const
 {
     QJsonObject o;
     if (!name.isEmpty()) o["name"] = name;
+    if (!lampColors.isEmpty()) o["lampColors"] = QJsonArray::fromStringList(lampColors);
     o["type"]   = QString::fromUtf8(outputTypeInfo(type).key);
     o["pinA"]   = pinToJson(pinA);   o["pinB"]   = pinToJson(pinB);
     o["pinC"]   = pinToJson(pinC);   o["pinD"]   = pinToJson(pinD);
@@ -149,6 +150,8 @@ OutputConfig OutputConfig::fromJson(const QJsonObject &o)
 {
     OutputConfig c;
     c.name = o["name"].toString();
+    for (const QJsonValue &v : o["lampColors"].toArray())
+        c.lampColors << v.toString();
     const QString key = o["type"].toString();
     for (quint8 t = 0; t < OutputTypeCount; ++t)
         if (key == QLatin1String(kOutputTypes[t].key)) c.type = t;

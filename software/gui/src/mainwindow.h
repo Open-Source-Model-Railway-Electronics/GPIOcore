@@ -20,6 +20,7 @@ class QProgressBar;
 class QStackedWidget;
 class QLineEdit;
 class QTimer;
+class QToolButton;
 class QTabWidget;
 
 class MainWindow : public QMainWindow
@@ -127,6 +128,9 @@ private:
     QTimer         *m_liveTimer = nullptr;
     QLineEdit      *m_inName = nullptr;
     QLineEdit      *m_outName = nullptr;
+    QWidget        *m_lampRow = nullptr;       // signal: lamp colours (board file only)
+    QList<QToolButton *> m_lampButtons;
+    void            refreshLampRow();
     QAction        *m_actExpert = nullptr;
     QAction        *m_actShowUnused = nullptr;
     QAction        *m_actBoardSettings = nullptr;

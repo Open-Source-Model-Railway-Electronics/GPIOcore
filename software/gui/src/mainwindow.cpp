@@ -24,6 +24,7 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QColorDialog>
 #include <QSlider>
 #include <QSpinBox>
 #include <QStandardPaths>
@@ -65,7 +66,6 @@
 
 using namespace Gpio;
 
-static constexpr int PanelWidth = 580;
 
 static bool sameOutput(const OutputConfig &a, const OutputConfig &b, bool ignoreLastByte)
 {
@@ -79,7 +79,7 @@ static bool sameOutput(const OutputConfig &a, const OutputConfig &b, bool ignore
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowTitle(tr("GPIOcore Configurator"));
-    resize(1320, 860);
+    resize(1600, 900);
 
     m_link = new DeviceLink(this);
 
@@ -199,10 +199,14 @@ void MainWindow::buildUi()
         auto *remove = new QToolButton;
         remove->setText(tr("Remove"));
         remove->setToolTip(tr("Set this to 'not in use' and take it off the canvas"));
-        connect(remove, &QToolButton::clicked, this, &MainWindow::removeSelected);
+        const bool isInput = (editor == m_inEd);
+        connect(remove, &QToolButton::clicked, this, [this, isInput] {
+            m_open = isInput ? OpenInput : OpenOutput;
+            removeSelected();
+        });
         head->addWidget(t, 1);
         head->addWidget(remove);
-        head->addWidget(close);
+        close->hide();                      // panels stay; Esc clears the selection
         v->addLayout(head);
         name = new QLineEdit;
         name->setPlaceholderText(tr("Name, e.g. \"Turnout station left\" (kept on this computer)"));
@@ -214,9 +218,7 @@ void MainWindow::buildUi()
         sa->setFrameShape(QFrame::NoFrame);
         sa->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);   // never cut anything off
         v->addWidget(sa, 1);
-        panel->setMinimumWidth(0);
-        panel->setMaximumWidth(0);
-        panel->hide();
+        panel->setMinimumWidth(320);       // always visible; the splitter sets the width
     };
     makePanel(m_inEd,  tr("INPUT SETTINGS"),  m_leftPanel,  m_inName);
     makePanel(m_outEd, tr("OUTPUT SETTINGS"), m_rightPanel, m_outName);
@@ -225,6 +227,36 @@ void MainWindow::buildUi()
         refreshRows();
         saveBoardFile();
     });
+    // lamp colours of a 4-aspect signal: only for the GUI, kept in the board file
+    m_lampRow = new QWidget;
+    auto *lampLay = new QHBoxLayout(m_lampRow);
+    lampLay->setContentsMargins(0, 0, 0, 0);
+    lampLay->addWidget(new QLabel(tr("Lamp colours (only shown in the GUI):")));
+    for (int k = 0; k < 4; ++k)
+    {
+        auto *b = new QToolButton;
+        b->setToolTip(tr("Colour of lamp %1").arg(k + 1));
+        b->setFixedSize(26, 22);
+        m_lampButtons << b;
+        lampLay->addWidget(b);
+        connect(b, &QToolButton::clicked, this, [this, k] {
+            OutputConfig &o = m_edit.outputs[m_outEd->index()];
+            const QColor c = QColorDialog::getColor(Ui::lampColor(o, k), this, tr("Colour of lamp %1").arg(k + 1));
+            if (!c.isValid())
+                return;
+            while (o.lampColors.size() < 4)
+                o.lampColors << Ui::lampColor(o, o.lampColors.size()).name();
+            o.lampColors[k] = c.name();
+            refreshLampRow();
+            refreshRows();
+            saveBoardFile();
+        });
+    }
+    lampLay->addStretch(1);
+    if (auto *v = qobject_cast<QVBoxLayout *>(m_rightPanel->layout()))
+        v->insertWidget(2, m_lampRow);           // below the name field
+    m_lampRow->hide();
+
     connect(m_outName, &QLineEdit::textEdited, this, [this](const QString &t) {
         m_edit.outputs[m_outEd->index()].name = t.trimmed();
         refreshRows();
@@ -258,10 +290,24 @@ void MainWindow::buildUi()
     config->setObjectName(QStringLiteral("configArea"));
     auto *h = new QHBoxLayout(config);
     h->setContentsMargins(6, 6, 6, 6);
-    h->setSpacing(6);
-    h->addWidget(m_leftPanel);
-    h->addWidget(centre, 1);
-    h->addWidget(m_rightPanel);
+    // input settings | canvas | output settings, all three always visible; drag the handles to resize
+    auto *split = new QSplitter(Qt::Horizontal);
+    split->setObjectName(QStringLiteral("configSplitter"));
+    split->setChildrenCollapsible(false);
+    split->setHandleWidth(6);
+    split->addWidget(m_leftPanel);
+    split->addWidget(centre);
+    split->addWidget(m_rightPanel);
+    split->setStretchFactor(0, 0);
+    split->setStretchFactor(1, 1);
+    split->setStretchFactor(2, 0);
+    const QByteArray state = QSettings().value(QStringLiteral("ui/configSplitter")).toByteArray();
+    if (state.isEmpty() || !split->restoreState(state))
+        split->setSizes({ 460, 640, 460 });
+    connect(split, &QSplitter::splitterMoved, this, [split] {
+        QSettings().setValue(QStringLiteral("ui/configSplitter"), split->saveState());
+    });
+    h->addWidget(split);
     m_tabs->addTab(config, tr("Configuration"));
 
     auto *esc = new QShortcut(QKeySequence(Qt::Key_Escape), config);
@@ -355,8 +401,11 @@ void MainWindow::buildUi()
     });
     connect(m_outEd, &OutputEditor::changed, this, [this](int i, const OutputConfig &c) {
         const QString name = m_edit.outputs[i].name;
+        const QStringList lamps = m_edit.outputs[i].lampColors;
         m_edit.outputs[i] = c;
         m_edit.outputs[i].name = name;
+        m_edit.outputs[i].lampColors = lamps;
+        refreshLampRow();
         m_inEd->setOutputs(outputNames(), outputTypes());
         userEdited();
     });
@@ -400,42 +449,17 @@ void MainWindow::sendLive()
 void MainWindow::boardEdited()
 {
     refreshRows();
-    if (m_open == OpenInput)
-        m_inEd->setInput(m_inEd->index(), m_edit.inputs[m_inEd->index()]);
+    m_inEd->setInput(m_inEd->index(), m_edit.inputs[m_inEd->index()]);   // the panel is always visible
     updateInputEditorLimits();
     refreshWarnings();
     m_pinMap->setBoard(m_edit);
     updateActions();
 }
 
-// ── Sliding panels ──────────────────────────────────────────────────────────
-static void slide(QWidget *panel, bool open)
-{
-    auto *anim = new QPropertyAnimation(panel, "maximumWidth", panel);
-    anim->setDuration(180);
-    anim->setEasingCurve(QEasingCurve::OutCubic);
-    anim->setStartValue(panel->isVisible() ? panel->width() : 0);
-    anim->setEndValue(open ? PanelWidth : 0);
-    // Minimum follows maximum: the panel gets exactly this width, so the layout
-    // can never squeeze it (on wide windows the canvas would take the space).
-    QObject::connect(anim, &QVariantAnimation::valueChanged, panel,
-                     [panel](const QVariant &v) { panel->setMinimumWidth(v.toInt()); });
-    if (open)
-        panel->show();
-    else
-        QObject::connect(anim, &QPropertyAnimation::finished, panel, &QWidget::hide);
-    anim->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
+// ── Panels ───────────────────────────────────────────────────────────────────
 void MainWindow::openPanel(OpenPanel which)
 {
-    if (which == m_open)
-        return;
-    if (m_open == OpenInput)  slide(m_leftPanel,  false);
-    if (m_open == OpenOutput) slide(m_rightPanel, false);
-    if (which == OpenInput)   slide(m_leftPanel,  true);
-    if (which == OpenOutput)  slide(m_rightPanel, true);
-    m_open = which;
+    m_open = which;                      // both panels are always visible; this is the one in focus
 }
 
 void MainWindow::closePanels()
@@ -776,6 +800,7 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
     const bool keep = m_keepEdits || (m_outKnown[i] && outputDirty(i));
     m_dev.outputs[i] = c;
     m_dev.outputs[i].name = m_edit.outputs[i].name;
+    m_dev.outputs[i].lampColors = m_edit.outputs[i].lampColors;
     m_outKnown[i] = true;
     if (!keep)
         m_edit.outputs[i] = m_dev.outputs[i];
@@ -1078,6 +1103,7 @@ void MainWindow::selectOutput(int i)
     m_outEd->setOutput(i, m_edit.outputs[i]);
     m_outEd->setWarnings(outputWarnings(i));
     m_outName->setText(m_edit.outputs[i].name);
+    refreshLampRow();
     openPanel(OpenOutput);
 }
 
@@ -1337,6 +1363,15 @@ void MainWindow::openLiveValue(int input)
     connect(close, &QPushButton::clicked, d, &QDialog::close);
     form->addRow(close);
     d->show();
+}
+
+void MainWindow::refreshLampRow()
+{
+    const OutputConfig &o = m_edit.outputs[m_outEd->index()];
+    m_lampRow->setVisible(o.type == FourToneSignal);
+    for (int k = 0; k < m_lampButtons.size(); ++k)
+        m_lampButtons[k]->setStyleSheet(QStringLiteral("QToolButton { background: %1; border: 1px solid #64748B; border-radius: 4px; }")
+                                            .arg(Ui::lampColor(o, k).name()));
 }
 
 // ── Simple / expert mode ────────────────────────────────────────────────────

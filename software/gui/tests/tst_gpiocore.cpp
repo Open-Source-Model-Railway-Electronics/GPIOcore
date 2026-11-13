@@ -467,11 +467,13 @@ private slots:
         BoardConfig b;
         b.outputs[2].name = QStringLiteral("Turnout left");
         b.inputs[5].name  = QStringLiteral("Button A");
+        b.outputs[3].lampColors = { QStringLiteral("#ff0000"), QStringLiteral("#00ff00") };
         b.board.name = QStringLiteral("Test");
         BoardConfig c;
         QVERIFY(BoardConfig::fromJson(b.toJson(), c, nullptr));
         QCOMPARE(c.outputs[2].name, b.outputs[2].name);
         QCOMPARE(c.inputs[5].name, b.inputs[5].name);
+        QCOMPARE(c.outputs[3].lampColors, b.outputs[3].lampColors);
         QCOMPARE(c.board.name, b.board.name);
         // names are not part of the board data: a named output equals the board's copy
         OutputConfig plain = b.outputs[2]; plain.name.clear();

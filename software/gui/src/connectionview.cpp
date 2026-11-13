@@ -254,9 +254,14 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
             const bool lit   = (aspect >> k) & 1;
             const bool blink = (aspect >> (k + 4)) & 1;
             const bool on    = state >= 0 && (blink ? (lit ? phase : !phase) : lit);
-            p.setPen(QPen(kBorder, 1));
-            p.setBrush(on ? (blink ? QColor(0xFB, 0xBF, 0x24) : QColor(0xFA, 0xCC, 0x15)) : Ui::themed(QColor(0xE2, 0xE8, 0xF0)));
-            p.drawEllipse(QPointF(box.left() + 8 + k * 8, centre.y()), 3.2, 3.2);
+            QColor lamp = Ui::lampColor(c, k);
+            if (!on)
+            {
+                lamp.setAlphaF(0.18);       // a dark lamp still shows its colour faintly
+            }
+            p.setPen(QPen(on ? lamp.darker(150) : kBorder, 1));
+            p.setBrush(lamp);
+            p.drawEllipse(QPointF(box.left() + 8 + k * 8, centre.y()), 3.4, 3.4);
         }
     }
     else if (c.type == Pwm)

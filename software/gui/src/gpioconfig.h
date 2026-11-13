@@ -58,6 +58,7 @@ struct OutputConfig
     quint8 state  = 0;
     std::array<quint8, 4> data { { 0, 0, 0, 0 } };   // union, AVR little endian
     QString name;                          // GUI only (board file), not stored on the board
+    QStringList lampColors;                // GUI only: colours of signal lamps 1-4 ("#RRGGBB"), empty = default
 
     // union views
     quint32 switchTime() const;

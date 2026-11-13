@@ -17,6 +17,14 @@ using namespace Gpio;
 
 namespace Ui {
 
+QColor lampColor(const OutputConfig &o, int lamp)
+{
+    static const QColor defaults[4] = { QColor(0xEF, 0x44, 0x44), QColor(0x22, 0xC5, 0x5E),
+                                        QColor(0xFA, 0xCC, 0x15), QColor(0xF8, 0xFA, 0xFC) };
+    const QColor c(o.lampColors.value(lamp));
+    return c.isValid() ? c : defaults[qBound(0, lamp, 3)];
+}
+
 // ── Theme ───────────────────────────────────────────────────────────────────
 static bool g_dark = false;
 

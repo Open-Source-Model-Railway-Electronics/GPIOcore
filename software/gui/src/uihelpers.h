@@ -14,6 +14,8 @@ namespace Ui {
 void   applyAppStyle(QApplication &app);
 // Theme: "auto" (follows Windows), "light" or "dark"; stored in QSettings "ui/theme".
 QString themeSetting();
+// Colour of signal lamp 0-3: the board file's choice, or red / green / yellow / white.
+QColor  lampColor(const Gpio::OutputConfig &o, int lamp);
 void    setThemeOverride(const QString &theme);  // this run only, not saved (--theme)
 void    setThemeSetting(const QString &theme);   // and applies it
 bool    isDark();
