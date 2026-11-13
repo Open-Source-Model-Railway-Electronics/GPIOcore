@@ -84,6 +84,7 @@ void InputEditor::buildUi()
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(FeedbackInput)), tr("Feedback"),       int(FnFeedback));
     head->addWidget(m_title);
     head->addStretch();
+    head->addWidget(new QLabel(tr("Function")));
     head->addWidget(m_function);
     head->addWidget(Info::button(QStringLiteral("input.function")));
     root->addLayout(head);

@@ -8,6 +8,7 @@
 
 class ConnectionView;
 class DeviceLink;
+class WebRemote;
 class InputEditor;
 class OutputEditor;
 class PinMapView;
@@ -90,6 +91,8 @@ private:
     void addBlock(bool output);
     void removeSelected();
     void flashFirmware();
+    void openPhoneRemote();                  // web page for phones (QR code)
+    void setupWebRemote();
     void setLiveTest(bool on);
     // A pin newly given to output 'output' / input 'input' is taken from every other user, which
     // becomes 'not in use'. Returns a description for the status bar.
@@ -113,6 +116,7 @@ private:
     QStringList inputWarnings(int index) const;
 
     DeviceLink       *m_link = nullptr;
+    WebRemote        *m_web = nullptr;
     Gpio::BoardConfig m_dev;              // last state read from the board
     Gpio::BoardConfig m_edit;             // working copy
     std::array<bool, Gpio::NumOutputs> m_outKnown {};

@@ -155,6 +155,14 @@ void applyAppStyle(QApplication &app)
         QComboBox:disabled, QSpinBox:disabled { background: #F1F5F9; }
         QScrollArea { border: none; background: transparent; }
         QStatusBar { background: #FFFFFF; border-top: 1px solid #E2E8F0; }
+        QCheckBox::indicator, QRadioButton::indicator { width: 15px; height: 15px; border: 2px solid #8B9AB0; background: #FFFFFF; }
+        QCheckBox::indicator { border-radius: 4px; }
+        QRadioButton::indicator { border-radius: 9px; }
+        QCheckBox::indicator:hover, QRadioButton::indicator:hover { border-color: #2563EB; }
+        QCheckBox::indicator:checked { background: #2563EB; border-color: #2563EB; image: url(:/ui/check.svg); }
+        QRadioButton::indicator:checked { width: 9px; height: 9px; border: 5px solid #2563EB; border-radius: 9px; background: #FFFFFF; }
+        QCheckBox::indicator:disabled, QRadioButton::indicator:disabled { border-color: #CBD5E1; background: #F1F5F9; }
+        QCheckBox::indicator:checked:disabled { background: #93C5FD; border-color: #93C5FD; }
         QToolButton#modeConfigure, QToolButton#modeSimulate, QToolButton#modeLive {
             border: 2px solid; border-radius: 7px; padding: 4px 12px; font-weight: 700; margin: 0 2px; }
         QToolButton#modeConfigure { border-color: #DC2626; color: #DC2626; }

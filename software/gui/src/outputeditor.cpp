@@ -73,6 +73,7 @@ void OutputEditor::buildUi()
         m_type->addItem(Ui::swatchIcon(Ui::outputTypeColor(t)), outputTypeName(t), int(t));
     head->addWidget(m_title);
     head->addStretch();
+    head->addWidget(new QLabel(tr("Type")));
     head->addWidget(m_type);
     head->addWidget(Info::button(QStringLiteral("output.type")));
     root->addLayout(head);

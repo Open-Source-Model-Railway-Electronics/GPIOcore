@@ -13,8 +13,8 @@ if(MSVC)
 endif()
 
 # Works with Qt 6 (preferred) and Qt 5.12+
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets SerialPort Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets SerialPort Network Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort Network Test)
 
 # Core logic without UI: protocol, config model, device link, simulator.
 # Shared by the application and the unit tests.
@@ -38,10 +38,12 @@ add_library(gpiocore_ui STATIC
     src/connectionview.h  src/connectionview.cpp
     src/uihelpers.h       src/uihelpers.cpp
     src/flasher.h         src/flasher.cpp
+    src/qrcode.h          src/qrcode.cpp
+    src/webremote.h       src/webremote.cpp
     src/infotexts.h       src/infotexts.cpp
     src/i18n.h            src/i18n.cpp
 )
-target_link_libraries(gpiocore_ui PUBLIC gpiocore_core Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(gpiocore_ui PUBLIC gpiocore_core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 
 # Help texts: i18n/info/<lang>/<topic>.html, compiled in as :/info/<lang>/<topic>.html
 file(GLOB_RECURSE GPIOCORE_HELP_FILES CONFIGURE_DEPENDS
@@ -50,6 +52,9 @@ qt_add_resources(gpiocore_ui "help_texts" PREFIX "/info" BASE "i18n/info" FILES 
 
 add_executable(GPIOcoreGUI src/main.cpp)
 target_link_libraries(GPIOcoreGUI PRIVATE gpiocore_ui)
+
+# small UI images (check mark for check boxes)
+qt_add_resources(gpiocore_ui "ui_images" PREFIX "/ui" BASE "ui" FILES ui/check.svg)
 
 # Firmware flashing: avrdude next to the exe, dev builds also find tools/ and release/ in the source tree
 target_compile_definitions(gpiocore_ui PRIVATE GPIOCORE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")

@@ -786,12 +786,12 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
     m_drag = Drag::None;
 
     // trash on a hovered block: set it to 'not in use'
-    if (m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse && trashRect(false, m_hoverIn).contains(pos))
+    if (m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse && trashRect(false, m_hoverIn).adjusted(-4, -4, 4, 4).contains(pos))
     {
         emit removeRequested(false, m_hoverIn);
         return;
     }
-    if (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse && trashRect(true, m_hoverOut).contains(pos))
+    if (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse && trashRect(true, m_hoverOut).adjusted(-4, -4, 4, 4).contains(pos))
     {
         emit removeRequested(true, m_hoverOut);
         return;
@@ -854,7 +854,15 @@ void ConnectionView::mouseMoveEvent(QMouseEvent *e)
         m_hoverWire = hover;
         update();
     }
-    setCursor(inputAt(pos) >= 0 || outputAt(pos) >= 0 ? Qt::OpenHandCursor : Qt::ArrowCursor);
+    // a pointing finger over things that are clicked (trash, live buttons), an open hand over blocks (drag)
+    bool clickable = (m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse
+                      && trashRect(false, m_hoverIn).adjusted(-4, -4, 4, 4).contains(pos))
+                  || (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse
+                      && trashRect(true, m_hoverOut).adjusted(-4, -4, 4, 4).contains(pos));
+    for (int i = 0; m_live && i < NumInputs && !clickable; ++i)
+        clickable = liveButtonRect(i, 0).contains(pos) || liveButtonRect(i, 1).contains(pos);
+    setCursor(clickable ? Qt::PointingHandCursor
+                        : (inputAt(pos) >= 0 || outputAt(pos) >= 0) ? Qt::OpenHandCursor : Qt::ArrowCursor);
 }
 
 void ConnectionView::mouseReleaseEvent(QMouseEvent *e)

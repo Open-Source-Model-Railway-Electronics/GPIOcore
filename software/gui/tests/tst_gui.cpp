@@ -8,6 +8,10 @@
 #include "mainwindow.h"
 #include "outputeditor.h"
 #include "uihelpers.h"
+#include "qrcode.h"
+#include "webremote.h"
+
+#include <QTcpSocket>
 
 #include <QAction>
 #include <QComboBox>
@@ -336,6 +340,55 @@ private slots:
         QCOMPARE(int(view->board().outputs[2].type), int(SingleSteady));   // others untouched
         for (int i = 0; i < NumOutputs; ++i)                 // D13 / A7 are never handed out by default
             QVERIFY(view->board().outputs[i].pinA != 13 && view->board().outputs[i].pinA != 21);
+    }
+
+    void qrStructure()
+    {
+        const auto m = Qr::encode("http://192.168.178.23:8080/?t=ab12cd");
+        QCOMPARE(m.size(), 29);                              // 37 bytes -> version 3 (29 x 29)
+        for (int i = 0; i < 7; ++i)                          // finder pattern: dark outer ring
+            QVERIFY(m[0][i] && m[i][0] && m[6][i] && m[0][28 - i]);
+        QVERIFY(!m[1][1] && m[2][2] && !m[7][7]);            // light ring, dark core, separator
+        for (int i = 8; i < 21; ++i)                         // timing pattern
+            QCOMPARE(bool(m[6][i]), i % 2 == 0);
+        QVERIFY(m[29 - 8][8]);                               // the dark module
+        QVERIFY(Qr::encode(QByteArray(200, 'x')).isEmpty()); // too long
+    }
+
+    void phoneRemoteServer()
+    {
+        WebRemote web;
+        web.stateProvider = [] { QJsonObject o; o["board"] = QStringLiteral("T"); return o; };
+        int live = -1;
+        connect(&web, &WebRemote::liveRequested, this, [&live](int, int a) { live = a; });
+        QVERIFY(web.start(18080));
+        auto get = [&web](const QByteArray &line) {
+            QTcpSocket s;                                    // the server runs in this thread: never block
+            s.connectToHost(QHostAddress::LocalHost, web.port());
+            QTest::qWaitFor([&s] { return s.state() == QAbstractSocket::ConnectedState; }, 2000);
+            s.write(line + " HTTP/1.1\r\nHost: x\r\n\r\n");
+            QByteArray all;
+            QTest::qWaitFor([&s, &all] { all += s.readAll(); return s.state() == QAbstractSocket::UnconnectedState; }, 3000);
+            return all + s.readAll();
+        };
+        QVERIFY(get("GET /?t=wrong").startsWith("HTTP/1.1 403"));
+        QVERIFY(get("GET /?t=" + web.token().toLatin1()).contains("GPIOcore remote"));
+        QVERIFY(get("GET /api/state?t=" + web.token().toLatin1()).contains("\"board\":\"T\""));
+        QVERIFY(get("POST /api/live?t=" + web.token().toLatin1() + "&o=2&a=123").startsWith("HTTP/1.1 200"));
+        QTRY_COMPARE(live, 123);
+        web.stop();
+    }
+
+    void removeOutputHidesIt()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        QVERIFY(view->outputShown(3));
+        emit view->removeRequested(true, 3);                 // trash on output 3 (input 3 drives it)
+        QCOMPARE(int(view->board().outputs[3].type), int(OutputNotInUse));
+        QCOMPARE(int(view->board().inputs[3].type), int(InputNotInUse));
+        QVERIFY(!view->outputShown(3));
+        QVERIFY(!view->inputShown(3));
     }
 
     void routeByDragging()

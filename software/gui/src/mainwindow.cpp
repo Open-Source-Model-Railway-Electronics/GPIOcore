@@ -4,6 +4,8 @@
 #include "connectionview.h"
 #include "devicelink.h"
 #include "flasher.h"
+#include "qrcode.h"
+#include "webremote.h"
 #include "i18n.h"
 #include "infotexts.h"
 #include "inputeditor.h"
@@ -44,7 +46,10 @@
 #include <QFileDialog>
 #include <QHash>
 #include <QHeaderView>
+#include <QJsonArray>
 #include <QJsonDocument>
+#include <QImage>
+#include <QPainter>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
@@ -100,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     buildUi();
     buildToolbar();
+    setupWebRemote();
     refreshPorts();
 
     connect(m_link, &DeviceLink::opened,  this, &MainWindow::onConnectionChanged);
@@ -718,6 +724,7 @@ void MainWindow::buildToolbar()
     board->addAction(tr("Apply a preset…"), this, [this] { setExpertMode(true); m_preset->setFocus(); });
     board->addSeparator();
     board->addAction(tr("&Flash firmware…"), this, &MainWindow::flashFirmware);
+    board->addAction(tr("&Phone remote…"), this, &MainWindow::openPhoneRemote);
     m_actWrite->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
     m_actRead->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
 
@@ -1535,6 +1542,117 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
                            : tr("The pin was in use: %1 is now not in use.").arg(freed.join(QStringLiteral(", ")));
 }
 
+// ── Phone remote ────────────────────────────────────────────────────────────
+void MainWindow::setupWebRemote()
+{
+    m_web = new WebRemote(this);
+    m_web->stateProvider = [this] {
+        QJsonArray servos;
+        for (int i = 0; i < NumOutputs; ++i)
+        {
+            const OutputConfig &c = m_edit.outputs[i];
+            if (c.type != ServoType) continue;
+            QJsonObject o;
+            o["index"] = i;
+            o["name"]  = c.name;
+            o["min"]   = c.servoMin();
+            o["max"]   = c.servoMax();
+            o["speed"] = c.servoSpeed();
+            o["state"] = c.state;
+            servos.append(o);
+        }
+        QJsonObject root;
+        root["board"]     = m_edit.board.name;
+        root["connected"] = m_link->isReady();
+        root["servos"]    = servos;
+        return root;
+    };
+    connect(m_web, &WebRemote::liveRequested, this, [this](int o, int angle) {
+        if (o >= 0 && o < NumOutputs && m_link->isReady()) m_link->servoLive(o, angle);
+    });
+    connect(m_web, &WebRemote::storeRequested, this, [this](int o, int which, int angle) {
+        if (o < 0 || o >= NumOutputs || m_edit.outputs[o].type != ServoType) return;
+        OutputConfig &c = m_edit.outputs[o];
+        c.data[which ? 1 : 0] = quint8(angle);   // data[0] = curved, data[1] = straight
+        c.state = quint8(which);                 // the board then holds the servo at this angle
+        if (m_outEd->index() == o) showOutput(o);
+        userEdited();
+        statusBar()->showMessage(tr("Phone: output %1 %2 = %3°").arg(o)
+                                     .arg(which ? tr("straight") : tr("curved")).arg(angle), 5000);
+    });
+    connect(m_web, &WebRemote::moveRequested, this, [this](int o, int state) {
+        if (o < 0 || o >= NumOutputs) return;
+        if (m_link->isReady()) testOutput(o, state);
+        else { m_edit.outputs[o].state = quint8(state); userEdited(); }
+    });
+}
+
+void MainWindow::openPhoneRemote()
+{
+    QDialog d(this);
+    d.setWindowTitle(tr("Phone remote"));
+    auto *v = new QVBoxLayout(&d);
+    auto *intro = new QLabel(tr("Adjust servos from your phone: it must be on the same Wi-Fi as this computer. "
+                                "Scan the code with the phone's camera, or type the address in its browser. "
+                                "Keep this program open; the code changes every time the remote is switched on."));
+    intro->setWordWrap(true);
+    v->addWidget(intro);
+    auto *on = new QCheckBox(tr("Allow phones on my network"));
+    v->addWidget(on);
+    auto *qr = new QLabel;
+    qr->setAlignment(Qt::AlignCenter);
+    qr->setMinimumSize(260, 260);
+    v->addWidget(qr, 1);
+    auto *addr = new QLabel;
+    addr->setAlignment(Qt::AlignCenter);
+    addr->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    QFont big = addr->font();
+    big.setPointSizeF(big.pointSizeF() + 3);
+    big.setBold(true);
+    addr->setFont(big);
+    v->addWidget(addr);
+    auto *note = new QLabel(tr("The first time, Windows may ask whether the program may use the network: allow it "
+                               "for private networks."));
+    note->setWordWrap(true);
+    note->setObjectName(QStringLiteral("help"));
+    v->addWidget(note);
+    auto *bb = new QDialogButtonBox(QDialogButtonBox::Close);
+    connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    v->addWidget(bb);
+
+    auto refresh = [this, qr, addr, on] {
+        on->setChecked(m_web->isRunning());
+        if (!m_web->isRunning())
+        {
+            qr->setPixmap(QPixmap());
+            qr->setText(tr("Off"));
+            addr->clear();
+            return;
+        }
+        const QString url = m_web->url();
+        const auto m = Qr::encode(url.toUtf8());
+        const int scale = 6, quiet = 4, n = m.size();
+        QImage img((n + 2 * quiet) * scale, (n + 2 * quiet) * scale, QImage::Format_RGB32);
+        img.fill(Qt::white);
+        QPainter p(&img);
+        for (int y = 0; y < n; ++y)
+            for (int x = 0; x < n; ++x)
+                if (m[y][x]) p.fillRect((x + quiet) * scale, (y + quiet) * scale, scale, scale, Qt::black);
+        p.end();
+        qr->setPixmap(QPixmap::fromImage(img));
+        addr->setText(url);
+    };
+    connect(on, &QCheckBox::toggled, &d, [this, refresh](bool enable) {
+        if (enable && !m_web->isRunning() && !m_web->start(8080))
+            QMessageBox::warning(this, windowTitle(), tr("Could not open a network port (8080-8089)."));
+        if (!enable) m_web->stop();
+        refresh();
+    });
+    refresh();
+    d.resize(420, 560);
+    d.exec();
+}
+
 // ── Live test ───────────────────────────────────────────────────────────────
 void MainWindow::setLiveTest(bool on)
 {
@@ -1991,8 +2109,20 @@ void MainWindow::removeSelected()
             for (int s = m_edit.inputs[i].route.size() - 1; s >= 0; --s)
                 if (m_edit.inputs[i].route[s].output == o)
                     Gpio::disconnect(m_edit, i, s);
+        QStringList freed;                           // a direct input that only drove this output goes too
+        for (int i = 0; i < NumInputs; ++i)
+            if (isDirectType(m_edit.inputs[i].type) && m_edit.inputs[i].outputId == o)
+            {
+                InputConfig off;
+                off.name = m_edit.inputs[i].name;
+                m_edit.inputs[i] = off;
+                freed << tr("input %1").arg(i);
+            }
         OutputConfig c;
         m_edit.outputs[o] = c;
+        if (!freed.isEmpty())
+            statusBar()->showMessage(tr("Output %1 removed; %2 drove it and is now not in use as well.")
+                                         .arg(o).arg(freed.join(QStringLiteral(", "))), 8000);
     }
     closePanels();
     userEdited();
