@@ -145,6 +145,8 @@ QRectF ConnectionView::liveButtonRect(int i, int direction) const
         return direction ? QRectF(r.right() - 88, y, 80, h) : QRectF();
     if (c.type == Latching)
         return direction ? QRectF(r.right() - 46, y, 38, h) : QRectF(r.right() - 88, y, 38, h);
+    if (c.type == RouteCurved)            // started by a 'curved' (0) command
+        return direction ? QRectF() : QRectF(r.right() - 88, y, 80, h);
     if (c.type == Momentary || isRouteType(c.type))
         return direction ? QRectF(r.right() - 88, y, 80, h) : QRectF();
     return QRectF();
@@ -519,7 +521,9 @@ static QString inputSubtitle(const InputConfig &c)
 {
     QStringList parts;
     if (c.address != AddrNone && inputTypeInfo(c.type).usesAddress)
-        parts << QStringLiteral("DCC %1").arg(c.address);
+        parts << (c.type == RouteStraight ? QObject::tr("DCC %1 straight").arg(c.address)
+                  : c.type == RouteCurved ? QObject::tr("DCC %1 curved").arg(c.address)
+                                          : QStringLiteral("DCC %1").arg(c.address));
     if (c.pin < NumPins)
         parts << pinName(c.pin);
     return parts.isEmpty() ? QObject::tr("no trigger") : parts.join(QStringLiteral(" · "));

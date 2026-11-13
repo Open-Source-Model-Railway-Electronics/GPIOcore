@@ -216,7 +216,9 @@ QColor inputTypeColor(quint8 type)
     {
     case Momentary:     return QColor(0x3B, 0x82, 0xF6);
     case Latching:      return QColor(0x10, 0xB9, 0x81);
-    case Route:         return QColor(0x8B, 0x5C, 0xF6);
+    case Route:
+    case RouteStraight:
+    case RouteCurved:   return QColor(0x8B, 0x5C, 0xF6);
     case InputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
     case Recorder:      return QColor(0xEF, 0x44, 0x44);
     case FeedbackInput: return QColor(0xF5, 0x9E, 0x0B);

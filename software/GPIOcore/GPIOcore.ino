@@ -112,7 +112,7 @@ void setup()
     delay(100) ;
     Serial.begin(115200) ;
     delay(100) ;
-    sendMyVersion() ;
+    // nothing is sent until the GUI asks (REQ_VERSION / HELLO): without a GUI the board stays silent
 
     dcc.pin(2, 0) ;
     dcc.init( MAN_ID_DIY, 11, FLAGS_OUTPUT_ADDRESS_MODE | FLAGS_DCC_ACCESSORY_DECODER, 0 ) ;

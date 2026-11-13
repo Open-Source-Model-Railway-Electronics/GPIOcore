@@ -27,6 +27,22 @@ uint8_t Output::setVal( uint8_t _val )
 
 void Output::set( Settings *data )
 {
+    // pins this output no longer uses stop being driven
+    const uint8_t oldPins[7] = { eedata.pinA, eedata.pinB, eedata.pinC, eedata.pinD,
+                                 eedata.relayPinA, eedata.relayPinB, eedata.relayPinC } ;
+    const uint8_t newPins[7] = { data->pinA, data->pinB, data->pinC, data->pinD,
+                                 data->relayPinA, data->relayPinB, data->relayPinC } ;
+    if( eedata.type == servoType && attached ) { callbackDetach( eedata.pinA ) ; attached = 0 ; live = 0 ; }
+    for( uint8_t i = 0 ; i < 7 ; i ++ )
+    {
+        uint8_t p = oldPins[i] ;
+        if( p == NA || p == 2 || p >= 20 || ( p < 2 && !serialIsIO ) ) continue ;
+        uint8_t kept = 0 ;
+        for( uint8_t j = 0 ; j < 7 ; j ++ ) kept |= ( newPins[j] == p ) ;
+        if( !kept ) { digitalWrite( p, LOW ) ; pinMode( p, INPUT ) ; }
+    }
+    relays = 0 ;
+
     eedata = *data ;
     oldPos = !eedata.state ;    // new settings: apply the state once, also when unchanged
 
@@ -34,6 +50,7 @@ void Output::set( Settings *data )
     uint8_t hi = max( eedata.servo.servoMin, eedata.servo.servoMax ) ;
     if( eedata.type == servoType && ( pos < lo || pos > hi ) )      // position unknown (new servo): start at the end position
         pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
+    setPinModes() ;     // new pins are outputs right away (not only after a reset)
     saveEEPROM() ; // Opslaan indien gewenst
 }
 

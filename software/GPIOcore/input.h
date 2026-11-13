@@ -45,6 +45,8 @@ private:
     uint8_t         settingOutputs : 1 ;
     uint8_t         index          : 6 ;
     uint8_t         state          : 1 ;
+    uint8_t         dccSeen        : 1 ;   // lastDcc is valid
+    uint16_t        lastDcc ;              // millis() of the last accepted DCC command (lockout)
     Timer           outputTimer ;
 } ;
 

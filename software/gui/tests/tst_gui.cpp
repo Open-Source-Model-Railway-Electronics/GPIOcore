@@ -290,6 +290,36 @@ private slots:
         maybeScreenshot(w, "live_frog.png");
     }
 
+    void routeOnDirection()
+    {
+        // level crossing: address 30 curved closes (output 1 on), address 30 straight opens (output 1 off)
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *ied = w.findChild<InputEditor *>();
+        InputConfig close = view->board().inputs[4], open = view->board().inputs[5];
+        close.type = RouteCurved;   close.address = 30; close.route = { RouteStep{ 1, 1, false, 0 } };
+        open.type  = RouteStraight; open.address  = 30; open.route  = { RouteStep{ 1, 0, false, 0 } };
+        emit ied->changed(4, close);
+        emit ied->changed(5, open);
+        QTest::qWait(900);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
+        InputConfig back;
+        BoardConfig b; QVERIFY(BoardConfig::fromJson(view->board().toJson(), b, nullptr));
+        QCOMPARE(int(b.inputs[4].type), int(RouteCurved));     // board file round trip
+
+        int last = -1;
+        connect(link, &DeviceLink::outputEvent, this, [&last](int o, int st, int) { if (o == 1 && st < 2) last = st; });
+        link->triggerInput(4, 0);                              // curved -> close
+        QTRY_COMPARE_WITH_TIMEOUT(last, 1, 2000);
+        last = -1;
+        link->triggerInput(4, 1);                              // straight is not for this route
+        QTest::qWait(400);
+        QCOMPARE(last, -1);
+        link->triggerInput(5, 1);                              // straight -> open
+        QTRY_COMPARE_WITH_TIMEOUT(last, 0, 2000);
+    }
+
     void routeByDragging()
     {
         MainWindow w;

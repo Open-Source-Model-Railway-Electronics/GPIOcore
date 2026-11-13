@@ -11,6 +11,14 @@ const int  ROUTE            = 2 ;   // set the route on the falling edge (press)
 const int  NOT_IN_USE       = 3 ;
 const int  RECORDER         = 4 ;   // long press = record toggle, short press = play toggle
 const int  FEEDBACK_INPUT   = 5 ;   // feeds back into EventHandler (pause / step)
+const int  ROUTE_STRAIGHT   = 6 ;   // route on a button press, or on a DCC 'straight' (1) command only
+const int  ROUTE_CURVED     = 7 ;   // route on a button press, or on a DCC 'curved' (0) command only
+
+inline bool isRoute( uint8_t type ) { return type == ROUTE || type == ROUTE_STRAIGHT || type == ROUTE_CURVED ; }
+
+// A command station repeats an accessory command a few times: a toggle input or a route
+// takes the first one and ignores the same address for this long.
+const uint16_t DCC_LOCKOUT_MS = 500 ;
 
 // ── Recorder callback actions ─────────────────────────────────────────────────
 const int  RECORD_TOGGLE    = 0 ;

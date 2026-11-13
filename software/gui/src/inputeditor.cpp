@@ -167,6 +167,16 @@ void InputEditor::buildUi()
     routeHead->addWidget(m_routeCount, 1);
     routeHead->addWidget(Info::button(QStringLiteral("route.steps")));
     routeLay->addLayout(routeHead);
+    auto *trigRow = new QHBoxLayout;
+    trigRow->addWidget(new QLabel(tr("Starts on DCC")));
+    m_routeTrigger = new QComboBox;
+    m_routeTrigger->addItem(tr("any command (straight and curved)"), int(Route));
+    m_routeTrigger->addItem(tr("straight only"), int(RouteStraight));
+    m_routeTrigger->addItem(tr("curved only"), int(RouteCurved));
+    m_routeTrigger->setToolTip(tr("With 'straight only' and 'curved only' two routes can share one DCC address, "
+                                  "e.g. a level crossing: curved = close, straight = open. A button always starts the route."));
+    trigRow->addWidget(m_routeTrigger, 1);
+    routeLay->addLayout(trigRow);
     m_routeV1 = new QLabel(tr("This board speaks protocol v1: max. 8 steps, curved / straight only, "
                               "fixed 0.5 s per step."));
     m_routeV1->setObjectName(QStringLiteral("warn"));
@@ -195,6 +205,7 @@ void InputEditor::buildUi()
 
     auto onEdit = [this] { if (!m_loading) collect(); };
     connect(m_function, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
+    connect(m_routeTrigger, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     connect(m_optA, &QRadioButton::toggled, this, [onEdit](bool on) { if (on) onEdit(); });
     connect(m_optB, &QRadioButton::toggled, this, [onEdit](bool on) { if (on) onEdit(); });
     connect(m_pin,    QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
@@ -466,6 +477,7 @@ void InputEditor::refresh()
     m_title->setText(tr("Input %1").arg(m_index));
     const Function fn = functionOf(m_cfg.type);
     Ui::selectData(m_function, int(fn));
+    Ui::selectData(m_routeTrigger, isRouteType(m_cfg.type) ? int(m_cfg.type) : int(Route));
     m_help->setText(inputTypeHelp(m_cfg.type));
 
     m_modeBox->setVisible(fn == FnDirect);
@@ -511,7 +523,7 @@ void InputEditor::collect()
     switch (fn)
     {
     case FnDirect:   m_cfg.type = a ? Momentary : Latching;  break;
-    case FnRoute:    m_cfg.type = Route;                     break;
+    case FnRoute:    m_cfg.type = quint8(Ui::currentData(m_routeTrigger));   break;
     case FnUnused:   m_cfg.type = InputNotInUse;             break;
     case FnRecorder: m_cfg.type = Recorder;                  break;
     case FnFeedback: m_cfg.type = FeedbackInput;             break;

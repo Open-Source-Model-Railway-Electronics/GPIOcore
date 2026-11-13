@@ -98,15 +98,13 @@ enum InputType : quint8
     InputNotInUse,
     Recorder,
     FeedbackInput,
+    RouteStraight,  // route on a button press / a DCC 'straight' (1) command only
+    RouteCurved,    // route on a button press / a DCC 'curved' (0) command only
     InputTypeCount
 };
 
-// Type 6 was "route on the falling edge" in the GUI of 2026-11-10. The firmware
-// no longer has it; it is read as a plain route and written back as Route.
-constexpr quint8 OldRouteFalling = 6;
-
 inline bool isDirectType(quint8 t) { return t == Momentary || t == Latching; }
-inline bool isRouteType(quint8 t)  { return t == Route || t == OldRouteFalling; }
+inline bool isRouteType(quint8 t)  { return t == Route || t == RouteStraight || t == RouteCurved; }
 
 struct InputTypeInfo
 {

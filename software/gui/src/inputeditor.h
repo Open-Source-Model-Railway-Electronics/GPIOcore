@@ -88,6 +88,7 @@ private:
     QToolButton  *m_infoFeedback = nullptr;
     QGroupBox    *m_recorderBox = nullptr;
     QGroupBox    *m_routeBox = nullptr;
+    QComboBox    *m_routeTrigger = nullptr;   // any / straight only / curved only
     QLabel       *m_routeCount = nullptr;
     QLabel       *m_routeV1 = nullptr;
     QGridLayout  *m_stepGrid = nullptr;

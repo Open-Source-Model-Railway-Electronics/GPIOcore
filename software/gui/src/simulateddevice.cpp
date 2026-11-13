@@ -457,6 +457,8 @@ void SimulatedDevice::triggerInput(int index, int direction)
     }
     if (!isRouteType(in.type) || m_routeBusy[index] || in.route.isEmpty())
         return;
+    if ((in.type == RouteStraight && direction != 1) || (in.type == RouteCurved && direction != 0))
+        return;                          // this route reacts to the other direction only
     // interlocking (PROTOCOL.md section 10): a refused route is ignored
     for (int i = 0; i < NumInputs; ++i)
     {

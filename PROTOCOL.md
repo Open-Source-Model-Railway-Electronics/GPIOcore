@@ -32,7 +32,9 @@ Een GET krijgt eerst het data-antwoord en daarna die `ACK`.
 - **Byte-timeout.** Er mag hooguit **5 ms** tussen twee bytes van één frame zitten. Daarna antwoordt de
   firmware met `NACK 3` en begint hij opnieuw. Stuur een frame dus in één keer.
 - **Maximale lengte.** Een payload is hooguit **32 bytes**; langer geeft `NACK 2`.
-- **Opstarten.** Na een reset stuurt de firmware zelf het versiebericht. Openen van de poort reset een
+- **Opstarten.** Na een reset stuurt de firmware **niets**: zonder GUI is het board stil. De GUI vraagt
+  na ongeveer 2,5 s `REQ_VERSION` en meldt zich daarna met `HELLO` (binnen het bootvenster van 5 s).
+  Komt er geen `HELLO`, dan stopt de firmware Serial en worden D0/D1 gewone pinnen. Openen van de poort reset een
   Uno of Nano via DTR. De bootloader en `setup()` samen duren ongeveer 1–2 s.
 - **Index ≥ 16.** Een `index` van 16 of hoger wordt genegeerd, maar het frame krijgt wel een `ACK`. Een GET
   geeft dan geen data-antwoord.
@@ -118,8 +120,16 @@ Input-types:
 - 4 recorder — lang drukken (1,5 s) = opnemen aan/uit, kort drukken = afspelen aan/uit;
 - 5 feedback — sensor waar een opname tijdens het afspelen op wacht.
 
-Waarde 6 werd op 2026-11-10 kort gebruikt voor "route op de falling edge" en is vervallen. De GUI leest
-een 6 als route en schrijft er 2 voor terug.
+- 6 route **alleen straight** — start bij het indrukken van de knop, of alleen bij een DCC-commando
+  'straight' (richting 1) voor het adres;
+- 7 route **alleen curved** — idem, alleen bij 'curved' (richting 0).
+
+Met 6 en 7 delen twee routes één DCC-adres, bijvoorbeeld een AHOB: curved = dicht, straight = open.
+
+**Herhaalde DCC-pakketten.** Een centrale stuurt een wisselcommando een paar keer. Een toggle-input en
+een route nemen het eerste en negeren hetzelfde adres daarna 500 ms (`DCC_LOCKOUT_MS`). Een absolute
+input heeft dat niet nodig (zelfde richting = zelfde stand). `SET_INPUT_STATE` (0x32) gaat door dezelfde
+code, dus ook daar geldt de blokkeertijd.
 
 ### 2.3 Presets
 

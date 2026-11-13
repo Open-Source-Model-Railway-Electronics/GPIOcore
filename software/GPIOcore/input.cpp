@@ -57,11 +57,21 @@ InputSettings* Input::get()
 
 void Input::setDccAddress( uint16_t address, uint8_t direction )
 {
-    if( settingOutputs  ==                1 ) return ;
     if( address         != eedata.myAddress ) return ;
     if( direction       >                 1 ) direction = 1 ;
 
-    if( eedata.type ==     ROUTE ) startRoute() ;         // any DCC command, direction 0 and 1
+    if( eedata.type == ROUTE_STRAIGHT && direction != 1 ) return ;   // this route only reacts to 'straight'
+    if( eedata.type == ROUTE_CURVED   && direction != 0 ) return ;   // this route only reacts to 'curved'
+
+    if( eedata.type == MOMENTARY || isRoute( eedata.type ) )         // repeated packets: take the first one
+    {
+        uint16_t now = millis() ;
+        if( dccSeen && (uint16_t)( now - lastDcc ) < DCC_LOCKOUT_MS ) return ;
+        lastDcc = now ;
+        dccSeen = 1 ;
+    }
+
+    if( isRoute( eedata.type ) ) { startRoute() ; return ; }
     if( eedata.type == MOMENTARY ) state  ^= 1 ;
     if( eedata.type == LATCHING  ) state   = direction ;
 
@@ -112,7 +122,7 @@ void Input::update()
 
         if( trigger.toggled() )         // trigger.state is the new level: 1 = rising, 0 = falling edge
         {
-            if( eedata.type ==     ROUTE && !trigger.state ) startRoute() ;         // on press only
+            if( isRoute( eedata.type ) && !trigger.state ) startRoute() ;           // on press only (any route kind)
             if( eedata.type == MOMENTARY && !trigger.state ) state ^= 1 ;           // toggle on press only
             if( eedata.type == LATCHING  ) state   = trigger.state ;
 
@@ -172,7 +182,7 @@ void Input::startRoute()
 
 void Input::triggerOutputs()
 {
-    if( eedata.type != ROUTE ) return ;
+    if( !isRoute( eedata.type ) ) return ;
 
     if( outputTimer.update( settingOutputs ) )
     {

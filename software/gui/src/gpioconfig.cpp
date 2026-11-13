@@ -56,6 +56,8 @@ static const InputTypeInfo kInputTypes[InputTypeCount + 1] =
     { "notInUse",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
     { "recorder",   QT_TRANSLATE_NOOP("Gpio", "Recorder"),     false, false, false, QT_TRANSLATE_NOOP("Gpio", "Long press = record on/off, short press = play on/off.") },
     { "feedback",   QT_TRANSLATE_NOOP("Gpio", "Feedback"),     false, true,  false, QT_TRANSLATE_NOOP("Gpio", "Sensor for the recorder; 'output' is used as feedback id.") },
+    { "routeStraight", QT_TRANSLATE_NOOP("Gpio", "Route"),     true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Route that starts on a button press, or only on a DCC 'straight' command for its address.") },
+    { "routeCurved",   QT_TRANSLATE_NOOP("Gpio", "Route"),     true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Route that starts on a button press, or only on a DCC 'curved' command for its address.") },
     { "unknown",    QT_TRANSLATE_NOOP("Gpio", "Unknown"),      true,  true,  true,  QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
 };
 
@@ -68,7 +70,7 @@ QString trGpio(const char *text) { return QCoreApplication::translate("Gpio", te
 QString outputTypeName(quint8 type) { return trGpio(outputTypeInfo(type).name); }
 QString outputTypeHelp(quint8 type) { return trGpio(outputTypeInfo(type).help); }
 QString inputTypeName(quint8 type)  { return trGpio(inputTypeInfo(isRouteType(type) ? quint8(Route) : type).name); }
-QString inputTypeHelp(quint8 type)  { return trGpio(inputTypeInfo(isRouteType(type) ? quint8(Route) : type).help); }
+QString inputTypeHelp(quint8 type)  { return trGpio(inputTypeInfo(type).help); }
 
 // ── OutputConfig ────────────────────────────────────────────────────────────
 quint32 OutputConfig::switchTime() const
