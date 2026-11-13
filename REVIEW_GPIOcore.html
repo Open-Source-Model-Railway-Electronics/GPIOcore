@@ -14,26 +14,35 @@ hr{border:none;border-top:1px solid var(--line);margin:28px 0}
 <h1>Review GPIOcore: firmware, Python GUI en nieuwe Qt GUI</h1>
 <p>Datum: 2026-11-04 · Scope: de hele map <code>GPIOcore/</code> (firmware, <code>GUI_Python/</code>, <code>GUI/untitled/</code>)</p>
 <h2>Samenvatting</h2>
-<ul>
-<li><strong>Firmware</strong>: de basis is goed (state machines, EEPROM-model, compact protocol), maar er zitten een paar bugs in die op echte hardware direct pijn doen:
-<ul>
-<li>pulse-uitgangen schakelen nooit uit (spoel blijft bekrachtigd, <strong>F9</strong>);
-<li>de defaults en presets zetten uitgangen op D0/D1 (Serial) en D2 (DCC-ingang, <strong>F7</strong>);
-<li>elk DCC-commando zet <code>servoMin</code> op 0 (<strong>F8</strong>);
-<li>de output-opcode kondigt 13 bytes aan, maar de payload is 14 bytes (<strong>F1</strong>).
-</ul>
-<li><strong>Python GUI</strong>: werkt niet met de huidige firmware. Hij crasht bij het eerste bericht, ontvangt niets (de receive-loop wordt maar één keer aangeroepen) en gebruikt een oude payload-layout. Zie <strong>P1–P9</strong>.
-<li><strong>Qt GUI</strong>: nieuw project <code>GUI/GPIOcoreGUI/</code>. Het werkt met de huidige firmware (inclusief de protocol-eigenaardigheden hieronder) en ook met een gefixte firmware (0x2E). Er zijn 19 automatische tests, die draaien tegen een firmware-simulator. Nog <strong>niet getest op echte hardware</strong>.
-</ul>
-<p>Ernst: <strong>H</strong> = kapot/gevaarlijk op hardware, <strong>M</strong> = fout gedrag of datacorruptie, <strong>L</strong> = netheid/robustheid.</p>
+<ul><li>
+<b>Firmware</b>: de basis is goed (state machines, EEPROM-model, compact protocol), maar er zitten een paar
+ bugs in die op echte hardware direct pijn doen:
+<ul><li>
+pulse-uitgangen schakelen nooit uit (spoel blijft bekrachtigd, <b>F9</b>);
+</li><li>
+de defaults en presets zetten uitgangen op D0/D1 (Serial) en D2 (DCC-ingang, <b>F7</b>);
+</li><li>
+elk DCC-commando zet <code>servoMin</code> op 0 (<b>F8</b>);
+</li><li>
+de output-opcode kondigt 13 bytes aan, maar de payload is 14 bytes (<b>F1</b>).
+</li></ul>
+</li><li>
+<b>Python GUI</b>: werkt niet met de huidige firmware. Hij crasht bij het eerste bericht, ontvangt niets
+ (de receive-loop wordt maar één keer aangeroepen) en gebruikt een oude payload-layout. Zie <b>P1–P9</b>.
+</li><li>
+<b>Qt GUI</b>: nieuw project <code>software/gui/</code>. Het werkt met de huidige firmware (inclusief de
+ protocol-eigenaardigheden hieronder) en ook met een gefixte firmware (0x2E). Er zijn 19 automatische
+ tests, die draaien tegen een firmware-simulator. Nog <b>niet getest op echte hardware</b>.
+</li></ul>
+<p>Ernst: <b>H</b> = kapot/gevaarlijk op hardware, <b>M</b> = fout gedrag of datacorruptie, <b>L</b> = netheid/robustheid.</p>
 <h2>Status 2026-11-09: fixes toegepast</h2>
-<p>De firmware compileert voor <code>arduino:avr:nano</code> en <code>arduino:avr:uno</code> (20066 bytes flash, 1438 bytes RAM). Vóór de fixes was dat 19554 / 1430. Er is nog <strong>niet op hardware getest</strong>. Een backup van de oude bronbestanden staat buiten het project.</p>
+<p>De firmware compileert voor <code>arduino:avr:nano</code> en <code>arduino:avr:uno</code> (20066 bytes flash, 1438 bytes RAM). Vóór de fixes was dat 19554 / 1430. Er is nog <b>niet op hardware getest</b>. Een backup van de oude bronbestanden staat buiten het project.</p>
 <table><thead><tr><th>ID</th><th>Status</th><th>Wat er gedaan is</th></tr></thead><tbody>
 <tr><td>F1</td><td>✅</td><td><code>OPCODE_SET_OUTPUT_DATA</code> = 0x2E (14 bytes)</td></tr>
 <tr><td>F2</td><td>✅</td><td><code>sendAck()</code> uit beide SET-handlers gehaald</td></tr>
 <tr><td>F3</td><td>✅</td><td><code>if( index &gt;= 16 ) return ;</code> in alle 4 data-handlers</td></tr>
 <tr><td>F4</td><td>✅</td><td>preset 4: <code>for( i=0; ...)</code> en <code>setupInputs(8)</code> toegevoegd</td></tr>
-<tr><td>F5</td><td>✅ (anders dan voorgesteld)</td><td>broadcasts <strong>niet</strong> weggehaald, maar gelijkgetrokken met de GET-layout: pinC/pinD (= NA) erbij, switchTime little-endian. Presets resetten nu ook pinC/pinD.</td></tr>
+<tr><td>F5</td><td>✅ (anders dan voorgesteld)</td><td>broadcasts <b>niet</b> weggehaald, maar gelijkgetrokken met de GET-layout: pinC/pinD (= NA) erbij, switchTime little-endian. Presets resetten nu ook pinC/pinD.</td></tr>
 <tr><td>F6</td><td>✅</td><td><code>sendMyVersion()</code> stuurt <code>version</code> uit <code>src/version.h</code> ("v0.0.0")</td></tr>
 <tr><td>F7</td><td>✅</td><td>defaults en presets beginnen bij D3 (16 outputs = D3..A4)</td></tr>
 <tr><td>F8</td><td>✅</td><td><code>setVal()</code> alleen voor PWM en 4-lampsein</td></tr>
@@ -49,138 +58,188 @@ hr{border:none;border-top:1px solid var(--line);margin:28px 0}
 <tr><td>F18</td><td>—</td><td>ongewijzigd (DCC-lockout blijft TODO)</td></tr>
 <tr><td>F19–F21</td><td>✅</td><td>include-hoofdletters, <code>uin8t</code>-typfout, <code>#pragma once</code></td></tr>
 <tr><td>F22</td><td>—</td><td><code>SET/GET_*_STATE</code> nog leeg</td></tr>
-<tr><td><strong>F23</strong></td><td>✅ nieuw</td><td>zie hieronder</td></tr>
+<tr><td><b>F23</b></td><td>✅ nieuw</td><td>zie hieronder</td></tr>
 </tbody></table>
-<p><strong>F23 (H, nieuw gevonden tijdens het fixen): <code>TIMER_ON</code> werkt maar één keer.</strong> <code>Timer::update()</code> (<code>src/ST.cpp</code>) start pas opnieuw als <code>IN</code> een keer 0 is geweest. <code>turnOnRelays</code>, <code>turnOffRelays</code> en de pulse-tak roepen alleen <code>update( 1 )</code> aan, dus vanaf de tweede keer komt <code>Q</code> nooit meer en blijft de state machine hangen. Fix: <code>timer.update( 0 ) ;</code> in de entry van die drie states.</p>
-<p><strong>Gedrag na F10, goed om te weten:</strong></p>
-<ul>
-<li>Een output (servo, steady, pulse, relais) doet alleen iets bij een <strong>statewissel</strong>.
-<li>Schrijven via <code>SET_OUTPUT_DATA</code> (GUI "Write" of "Test state") voert de state altijd één keer uit, ook als hij niet veranderd is.
-<li>Na het opstarten gaat elke output één keer naar de opgeslagen state. <strong>Pulse-spoelen niet</strong>, zodat er bij power-up geen 16 spoelen tegelijk vuren.
-</ul>
-<p><strong>Bestaande boards:</strong> de nieuwe pin-defaults (F7) gelden alleen na een factory reset (DEADBEEF ontbreekt in EEPROM) of na een preset. Een board dat al geconfigureerd is, houdt zijn oude pinnen. Kijk na het flashen in de GUI-pinmap of er nog iets op D0/D1/D2 staat.</p>
-<p><strong>Qt GUI:</strong> Demo bootst nu de gefixte firmware na. Oude firmware wordt nog steeds herkend (legacy-melding, plus een pulse-waarschuwing alleen bij oude firmware). Er zijn 19 tests (17 core + 2 GUI), allemaal groen. Daaronder vallen nieuwe tests voor de gefixte firmware (pinnen vanaf D3, route-default, preset-broadcast-layout, preset 4).</p>
+<p>**F23 (H, nieuw gevonden tijdens het fixen): <code>TIMER_ON</code> werkt maar één keer.** <code>Timer::update()</code> (<code>src/ST.cpp</code>) start pas opnieuw als <code>IN</code> een keer 0 is geweest. <code>turnOnRelays</code>, <code>turnOffRelays</code> en de pulse-tak roepen alleen <code>update( 1 )</code> aan, dus vanaf de tweede keer komt <code>Q</code> nooit meer en blijft de state machine hangen. Fix: <code>timer.update( 0 ) ;</code> in de entry van die drie states.</p>
+<p><b>Gedrag na F10, goed om te weten:</b></p>
+<ul><li>
+Een output (servo, steady, pulse, relais) doet alleen iets bij een <b>statewissel</b>.
+</li><li>
+Schrijven via <code>SET_OUTPUT_DATA</code> (GUI "Write" of "Test state") voert de state altijd één keer uit,
+ ook als hij niet veranderd is.
+</li><li>
+Na het opstarten gaat elke output één keer naar de opgeslagen state. <b>Pulse-spoelen niet</b>, zodat
+ er bij power-up geen 16 spoelen tegelijk vuren.
+</li></ul>
+<p><b>Bestaande boards:</b> de nieuwe pin-defaults (F7) gelden alleen na een factory reset (DEADBEEF ontbreekt in EEPROM) of na een preset. Een board dat al geconfigureerd is, houdt zijn oude pinnen. Kijk na het flashen in de GUI-pinmap of er nog iets op D0/D1/D2 staat.</p>
+<p><b>Qt GUI:</b> Demo bootst nu de gefixte firmware na. Oude firmware wordt nog steeds herkend (legacy-melding, plus een pulse-waarschuwing alleen bij oude firmware). Er zijn 19 tests (17 core + 2 GUI), allemaal groen. Daaronder vallen nieuwe tests voor de gefixte firmware (pinnen vanaf D3, route-default, preset-broadcast-layout, preset 4).</p>
 <h2>Update 2026-11-11 (2): route-activatie vereenvoudigd, help en vertalingen</h2>
-<ul>
-<li><strong>Route-activatie heeft geen keuze meer.</strong> Een knop start de route bij het indrukken (falling edge), een DCC-adres bij elk commando (richting 0 en 1). <code>ROUTE_FALLING</code> (6) is uit <code>config.h</code> en <code>input.cpp</code> gehaald. De firmware compileert (20162 bytes).
-<li><strong>GUI-stappenlijst:</strong>
-<ul>
-<li>er staat altijd minstens één regel open; bij een lege route kies je daar de eerste output;
-<li>verwijderen gaat met een prullenbak-knop per regel;
-<li>bugfix: rij-knoppen werden verwijderd terwijl hun eigen klik nog liep (<code>delete</code> → <code>deleteLater</code>).
-</ul>
-<li><strong>Help:</strong> 17 uitgebreide uitlegteksten voor beginners in <code>GUI/GPIOcoreGUI/i18n/info/en/*.html</code>, plus *Help → Getting started*.
-<li><strong>Vertalingen:</strong>
-<ul>
-<li>schermteksten via Qt Linguist (<code>i18n/gpiocore_&lt;taal&gt;.ts</code>; <code>gpiocore_nl.ts</code> aangemaakt, 269 teksten, nog onvertaald);
-<li>uitlegteksten als HTML per taal, met terugval op Engels;
-<li>een *View → Language*-menu.
-</ul>
-</ul>
-<p>Uitleg voor vertalers: <code>GUI/GPIOcoreGUI/i18n/README.md</code>.</p>
-<ul>
-<li>Er zijn 39 tests (31 core + 8 GUI), allemaal groen.
-</ul>
+<ul><li>
+<b>Route-activatie heeft geen keuze meer.</b> Een knop start de route bij het indrukken (falling edge), een
+ DCC-adres bij elk commando (richting 0 en 1). <code>ROUTE_FALLING</code> (6) is uit <code>config.h</code> en <code>input.cpp</code>
+ gehaald. De firmware compileert (20162 bytes).
+</li><li>
+<b>GUI-stappenlijst:</b>
+<ul><li>
+er staat altijd minstens één regel open; bij een lege route kies je daar de eerste output;
+</li><li>
+verwijderen gaat met een prullenbak-knop per regel;
+</li><li>
+bugfix: rij-knoppen werden verwijderd terwijl hun eigen klik nog liep (<code>delete</code> → <code>deleteLater</code>).
+</li></ul>
+</li><li>
+<b>Help:</b> 17 uitgebreide uitlegteksten voor beginners in <code>software/gui/i18n/info/en/*.html</code>, plus
+ <i>Help → Getting started</i>.
+</li><li>
+<b>Vertalingen:</b>
+<ul><li>
+schermteksten via Qt Linguist (<code>i18n/gpiocore_&lt;taal&gt;.ts</code>; <code>gpiocore_nl.ts</code> aangemaakt, 269 teksten,
+ nog onvertaald);
+</li><li>
+uitlegteksten als HTML per taal, met terugval op Engels;
+</li><li>
+een <i>View → Language</i>-menu.
+</li></ul>
+</li></ul>
+<p>Uitleg voor vertalers: <code>software/gui/i18n/README.md</code>.</p>
+<ul><li>
+Er zijn 39 tests (31 core + 8 GUI), allemaal groen.
+</li></ul>
 <h2>Update 2026-11-11: protocol v2 (GUI klaar, decoder nog te doen)</h2>
-<p>Zie <strong>[PROTOCOL.md](PROTOCOL.md)</strong> voor:</p>
-<ul>
-<li><strong><code>HELLO</code></strong>: aanmelden met capabilities, plus een 5 s-bootvenster waarna D0/D1 vrij komen;
-<li><strong>routes</strong>: 16 stappen van 4 bytes (output, waarde, raw-vlag, 14-bit wachttijd in 0,1 s);
-<li><strong><code>SERVO_LIVE</code></strong>;
-<li>het <strong>EEPROM-budget</strong>: 16 × 16 stappen past niet in de interne 1 KB, dus de decoder meldt zijn grenzen in <code>HELLO</code>;
-<li>de DCCnext-pinnen.
-</ul>
-<p>De GUI en de simulator implementeren v2. Met de huidige firmware valt de GUI terug op v1: routes van 8 stappen, alleen de stand, 0,5 s per stap. De firmware zelf is nog <strong>niet</strong> aangepast; dat staat als takenlijst in §9 van PROTOCOL.md.</p>
+<p>Zie <b><a href="PROTOCOL.md">PROTOCOL.md</a></b> voor:</p>
+<ul><li>
+**<code>HELLO</code>**: aanmelden met capabilities, plus een 5 s-bootvenster waarna D0/D1 vrij komen;
+</li><li>
+<b>routes</b>: 16 stappen van 4 bytes (output, waarde, raw-vlag, 14-bit wachttijd in 0,1 s);
+</li><li>
+**<code>SERVO_LIVE</code>**;
+</li><li>
+het <b>EEPROM-budget</b>: 16 × 16 stappen past niet in de interne 1 KB, dus de decoder meldt zijn
+ grenzen in <code>HELLO</code>;
+</li><li>
+de DCCnext-pinnen.
+</li></ul>
+<p>De GUI en de simulator implementeren v2. Met de huidige firmware valt de GUI terug op v1: routes van 8 stappen, alleen de stand, 0,5 s per stap. De firmware zelf is nog <b>niet</b> aangepast; dat staat als takenlijst in §9 van PROTOCOL.md.</p>
 <p>GUI-wijzigingen:</p>
-<ul>
-<li>input-instellingen schuiven links in, output-instellingen rechts;
-<li>(i)-uitleg overal;
-<li>frog-interlocking: electrofrog <strong>of</strong> unifrog;
-<li>het servo-"pattern" (ongebruikt) en het start-aspect van het sein zijn weg;
-<li>Live-servo;
-<li>maximaal één recorder;
-<li>DCCnext-profiel.
-</ul>
+<ul><li>
+input-instellingen schuiven links in, output-instellingen rechts;
+</li><li>
+(i)-uitleg overal;
+</li><li>
+frog-interlocking: electrofrog <b>of</b> unifrog;
+</li><li>
+het servo-"pattern" (ongebruikt) en het start-aspect van het sein zijn weg;
+</li><li>
+Live-servo;
+</li><li>
+maximaal één recorder;
+</li><li>
+DCCnext-profiel.
+</li></ul>
 <p>Er zijn 38 tests (31 core + 7 GUI), allemaal groen.</p>
 <h2>Update 2026-11-10: input-gedrag en nieuwe configuratieweergave</h2>
-<p><strong>F24 (H, input-gedrag), toegepast in <code>input.cpp</code> en <code>config.h</code>:</strong></p>
-<ul>
-<li><strong>Pull-up.</strong> Input-pinnen kregen nergens een <code>pinMode</code> en zweefden dus. Ze staan nu op <code>INPUT_PULLUP</code>, in <code>loadEEPROM()</code> en <code>set()</code>. Een knop of contact gaat naar GND; indrukken = falling edge.
-<li><strong>Toggle.</strong> <code>MOMENTARY</code> reageerde op <code>toggled()</code>, dus op <strong>beide</strong> flanken: per druk twee keer wisselen, wat netto hetzelfde is als absoluut. Toggle wisselt nu alleen op de falling edge (= indrukken).
-<li><strong>Toggle via DCC.</strong> <code>setDccAddress()</code> deed eerst <code>state = direction</code> en daarna <code>^= 1</code>. Dat is geen toggle maar "omgekeerde richting". De regel <code>state = direction</code> is weg; <code>LATCHING</code> zet zelf de richting.
-<li><strong>Wisselstraat-flank.</strong> Een route startte op elke flank. Nu kies je per input:
-<ul>
-<li><code>ROUTE</code> (2) = rising edge, of DCC-richting 1;
-<li>nieuw <code>ROUTE_FALLING</code> (6) = falling edge, of DCC-richting 0.
-</ul>
-</ul>
+<p>**F24 (H, input-gedrag), toegepast in <code>input.cpp</code> en <code>config.h</code>:**</p>
+<ul><li>
+<b>Pull-up.</b> Input-pinnen kregen nergens een <code>pinMode</code> en zweefden dus. Ze staan nu op <code>INPUT_PULLUP</code>,
+ in <code>loadEEPROM()</code> en <code>set()</code>. Een knop of contact gaat naar GND; indrukken = falling edge.
+</li><li>
+<b>Toggle.</b> <code>MOMENTARY</code> reageerde op <code>toggled()</code>, dus op <b>beide</b> flanken: per druk twee keer
+ wisselen, wat netto hetzelfde is als absoluut. Toggle wisselt nu alleen op de falling edge
+ (= indrukken).
+</li><li>
+<b>Toggle via DCC.</b> <code>setDccAddress()</code> deed eerst <code>state = direction</code> en daarna <code>^= 1</code>. Dat is geen
+ toggle maar "omgekeerde richting". De regel <code>state = direction</code> is weg; <code>LATCHING</code> zet zelf de
+ richting.
+</li><li>
+<b>Wisselstraat-flank.</b> Een route startte op elke flank. Nu kies je per input:
+<ul><li>
+<code>ROUTE</code> (2) = rising edge, of DCC-richting 1;
+</li><li>
+nieuw <code>ROUTE_FALLING</code> (6) = falling edge, of DCC-richting 0.
+</li></ul>
+</li></ul>
 <p>Het 3-bit typeveld heeft daar ruimte voor.</p>
-<ul>
-<li><strong>Callback alleen voor directe inputs.</strong> <code>callbackInput()</code> wordt alleen nog aangeroepen voor <code>MOMENTARY</code>/<code>LATCHING</code>, ook bij DCC. Voorheen kon een recorder- of feedback-input met een overeenkomend DCC-adres per ongeluk een output schakelen.
-<li>De firmware compileert (20200 bytes flash). Op hardware is het nog niet getest.
-</ul>
-<p>**Let op bij *absoluut*:** het niveau wordt rauw gelezen, dus ingedrukt/gesloten contact = state 0. Moet dat 1 worden, dan is <code>trigger.update( !digitalRead( eedata.pin ) )</code> de minimale wijziging. Daarmee draaien de flanken van toggle en route wel mee om.</p>
-<p><strong>Qt GUI:</strong> de tabs *Outputs* en *Inputs* zijn vervangen door één <strong>Configuration</strong>-weergave. Links staan de inputs, rechts de outputs, ertussen de draden, en de instellingen staan in een zijbalk rechts.</p>
-<ul>
-<li>Koppelen doe je door een output op een input te slepen.
-<li>Elke gekoppelde input heeft een unieke kleur, en een output neemt die kleur over.
-<li>Directe controle (toggle/absoluut) en route (rising/falling, maximaal 8 stappen met state) sluiten elkaar uit.
-</ul>
+<ul><li>
+<b>Callback alleen voor directe inputs.</b> <code>callbackInput()</code> wordt alleen nog aangeroepen voor
+ <code>MOMENTARY</code>/<code>LATCHING</code>, ook bij DCC. Voorheen kon een recorder- of feedback-input met een
+ overeenkomend DCC-adres per ongeluk een output schakelen.
+</li><li>
+De firmware compileert (20200 bytes flash). Op hardware is het nog niet getest.
+</li></ul>
+<p><b>Let op bij <i>absoluut</i>:</b> het niveau wordt rauw gelezen, dus ingedrukt/gesloten contact = state 0. Moet dat 1 worden, dan is <code>trigger.update( !digitalRead( eedata.pin ) )</code> de minimale wijziging. Daarmee draaien de flanken van toggle en route wel mee om.</p>
+<p><b>Qt GUI:</b> de tabs <i>Outputs</i> en <i>Inputs</i> zijn vervangen door één <b>Configuration</b>-weergave. Links staan de inputs, rechts de outputs, ertussen de draden, en de instellingen staan in een zijbalk rechts.</p>
+<ul><li>
+Koppelen doe je door een output op een input te slepen.
+</li><li>
+Elke gekoppelde input heeft een unieke kleur, en een output neemt die kleur over.
+</li><li>
+Directe controle (toggle/absoluut) en route (rising/falling, maximaal 8 stappen met state) sluiten
+ elkaar uit.
+</li></ul>
 <p>Er zijn 25 tests (21 core + 4 GUI, waaronder echte sleep-tests), allemaal groen.</p>
-<hr>
+<p>---</p>
 <h2>1. Firmware: protocol (<code>messageParser.*</code>, <code>src/Transceiver.*</code>)</h2>
 <h3>F1 (H): <code>OPCODE_SET_OUTPUT_DATA</code> kondigt 13 bytes aan, de payload is er 14</h3>
-<p><code>messageParser.h:10</code>. De lage nibble van de opcode is de lengte. De payload is <code>index + pinA..pinD + relayA..C + type + state + data[4]</code> = <strong>14</strong> bytes, maar 0x2D zegt 13.</p>
+<p><code>messageParser.h:10</code>. De lage nibble van de opcode is de lengte. De payload is <code>index + pinA..pinD + relayA..C + type + state + data[4]</code> = <b>14</b> bytes, maar 0x2D zegt 13.</p>
 <p>Gevolgen:</p>
-<ul>
-<li>bij GET komt <code>data[3]</code> niet mee (servoPattern, hoge byte van pauseTime/switchTime);
-<li>bij SET leest de firmware <code>payload[13]</code> toch, en die byte komt dan uit de buffer van het <strong>vorige</strong> bericht. Een swing-light kan daardoor een pauze van tientallen seconden krijgen.
-</ul>
-<pre><code class="cpp">// was
+<ul><li>
+bij GET komt <code>data[3]</code> niet mee (servoPattern, hoge byte van pauseTime/switchTime);
+</li><li>
+bij SET leest de firmware <code>payload[13]</code> toch, en die byte komt dan uit de buffer van het <b>vorige</b>
+ bericht. Een swing-light kan daardoor een pauze van tientallen seconden krijgen.
+</li></ul>
+<pre><code>// was
 const int OPCODE_SET_OUTPUT_DATA   = 0x2D ;
 // wordt
 const int OPCODE_SET_OUTPUT_DATA   = 0x2E ;   // 14 payload bytes</code></pre>
 <p>De Qt GUI herkent automatisch welke variant de firmware gebruikt: het antwoord op <code>GET_OUTPUT_DATA</code> is 0x2D of 0x2E. In legacy-modus toont de GUI een waarschuwing.</p>
 <h3>F2 (M): dubbele ACK na elke SET</h3>
 <p><code>messageParser.cpp:102</code> en <code>:153</code> sturen <code>transceiver.sendAck()</code>. Daarna stuurt <code>Transceiver::receive()</code> (<code>src/Transceiver.cpp:116</code>) nóg een ACK. Een host die "één ACK per request" verwacht, raakt daardoor uit sync. De Qt GUI vangt dit op met een korte drain-periode na elke transactie.</p>
-<pre><code class="cpp">// was (both SET handlers)
+<pre><code>// was (both SET handlers)
     transceiver.sendAck() ;
 // wordt
     // ACK is sent by Transceiver::receive()</code></pre>
 <h3>F3 (H): geen bounds-check op <code>index</code></h3>
 <p><code>messageParser.cpp:82, 107, 131, 160</code>: <code>input[index]</code> en <code>output[index]</code> worden gebruikt zonder te checken of <code>index &lt; 16</code>. Eén verkeerd byte op de seriële lijn levert dan een schrijfactie buiten de array op (RAM-corruptie).</p>
-<pre><code class="cpp">// add after each &#x27;uint8_t index = msg-&gt;payload[0] ;&#x27;
+<pre><code>// add after each &#x27;uint8_t index = msg-&gt;payload[0] ;&#x27;
     if( index &gt;= 16 ) return ;</code></pre>
 <h3>F4 (H): preset 4 gebruikt een niet-geïnitialiseerde <code>i</code></h3>
 <p><code>messageParser.cpp:325</code>: <code>for( int i=0; ...)</code> declareert een nieuwe <code>i</code> die de buitenste <code>uint8_t i</code> verbergt. Daardoor krijgt <code>clearUnusedOutputs( i )</code> (<code>:436</code>) een willekeurige waarde mee. Ook ontbreekt <code>setupInputs(8)</code> in dit geval.</p>
-<pre><code class="cpp">// was
+<pre><code>// was
         for( int i=0; i&lt;8; i++ )
 // wordt
         for( i=0; i&lt;8; i++ )</code></pre>
 <p>En na de loop, vóór <code>break ;</code>: <code>setupInputs(8) ;</code></p>
 <h3>F5 (M): preset-broadcasts gebruiken de oude layout, en pinC/pinD worden niet gereset</h3>
-<p>De presets (<code>messageParser.cpp:218–433</code>) en <code>clearUnusedOutputs()</code> sturen 12 bytes in de <strong>oude</strong> volgorde: <code>pinA pinB relayA relayB relayC type ...</code>, dus zonder pinC/pinD. Dat past niet op de layout die <code>GET_OUTPUT_DATA</code> gebruikt. Daarnaast laten ze <code>pinC</code>/<code>pinD</code> staan op wat er eerder stond.</p>
+<p>De presets (<code>messageParser.cpp:218–433</code>) en <code>clearUnusedOutputs()</code> sturen 12 bytes in de <b>oude</b> volgorde: <code>pinA pinB relayA relayB relayC type ...</code>, dus zonder pinC/pinD. Dat past niet op de layout die <code>GET_OUTPUT_DATA</code> gebruikt. Daarnaast laten ze <code>pinC</code>/<code>pinD</code> staan op wat er eerder stond.</p>
 <p>Voorstel: in de presets ook <code>pinC</code>/<code>pinD</code> op <code>0xFF</code> zetten, en de broadcasts weghalen. Een host leest na de ACK alles opnieuw in; de Qt GUI doet dat al en negeert de broadcasts.</p>
 <h3>F6 (L): versie is een placeholder</h3>
-<p><code>messageParser.cpp:448</code>: er wordt <code>"12345678"</code> gestuurd, terwijl <code>src/version.h</code> <code>"v0.0.0"</code> bevat (en ongebruikt is). Voorstel: <code>version</code> versturen.</p>
+<p><code>messageParser.cpp:448</code>: er wordt <code>&quot;12345678&quot;</code> gestuurd, terwijl <code>src/version.h</code> <code>&quot;v0.0.0&quot;</code> bevat (en ongebruikt is). Voorstel: <code>version</code> versturen.</p>
 <h3>Protocol-notities voor host-implementaties</h3>
 <p>Deze punten zijn geen bugs, maar wel valkuilen voor elke host-implementatie. De Python GUI liep er allemaal in.</p>
-<ul>
-<li><code>ACK</code> (0x70) is 1 byte en <code>NACK</code> (0x71 + reden) is 2 bytes, allebei <strong>zonder</strong> checksum.
-<li>Een host→device-bericht met lengte 0 (bijv. <code>REQ_VERSION</code> 0x50) wordt meteen uitgevoerd. De host mag er <strong>geen</strong> checksum achter sturen, anders telt dat byte als een nieuw commando.
-<li><code>REQ_VERSION</code> krijgt geen ACK, alleen het versiebericht (0x5n).
-<li>Elke GET krijgt eerst het data-antwoord en daarna nog een ACK.
-</ul>
-<hr>
+<ul><li>
+<code>ACK</code> (0x70) is 1 byte en <code>NACK</code> (0x71 + reden) is 2 bytes, allebei <b>zonder</b> checksum.
+</li><li>
+Een host→device-bericht met lengte 0 (bijv. <code>REQ_VERSION</code> 0x50) wordt meteen uitgevoerd. De host mag
+ er <b>geen</b> checksum achter sturen, anders telt dat byte als een nieuw commando.
+</li><li>
+<code>REQ_VERSION</code> krijgt geen ACK, alleen het versiebericht (0x5n).
+</li><li>
+Elke GET krijgt eerst het data-antwoord en daarna nog een ACK.
+</li></ul>
+<p>---</p>
 <h2>2. Firmware: outputs (<code>output.*</code>, <code>GPIOcore.ino</code>)</h2>
 <h3>F7 (H): defaults en presets beginnen bij pin 0 (D0/D1 = Serial, D2 = DCC-ingang)</h3>
-<ul>
-<li><code>output.cpp:49</code> zet <code>eedata.pinA = index ++</code> → output 0..15 = D0..A1.
-<li><code>messageParser.cpp:213</code> zet <code>uint8_t pinIndex = 0;</code>.
-<li>Na een factory reset doet <code>loadEEPROM()</code> daardoor <code>pinMode( 2, OUTPUT )</code> op de <strong>DCC-ingang</strong>, en dan komt er geen DCC meer binnen. Output 0/1 doen niets (UART heeft voorrang).
-</ul>
+<ul><li>
+<code>output.cpp:49</code> zet <code>eedata.pinA = index ++</code> → output 0..15 = D0..A1.
+</li><li>
+<code>messageParser.cpp:213</code> zet <code>uint8_t pinIndex = 0;</code>.
+</li><li>
+Na een factory reset doet <code>loadEEPROM()</code> daardoor <code>pinMode( 2, OUTPUT )</code> op de <b>DCC-ingang</b>, en dan
+ komt er geen DCC meer binnen. Output 0/1 doen niets (UART heeft voorrang).
+</li></ul>
 <p>D3..A4 zijn precies 16 vrije pinnen (preset 2 en 6 gebruiken er 15/16):</p>
-<pre><code class="cpp">// output.cpp:49  was
+<pre><code>// output.cpp:49  was
     eedata.pinA = index ++  ;
 // wordt
     eedata.pinA = 3 + index ++  ;   // skip D0/D1 (Serial) and D2 (DCC)
@@ -192,25 +251,27 @@ const int OPCODE_SET_OUTPUT_DATA   = 0x2E ;   // 14 payload bytes</code></pre>
 <p>De Qt GUI markeert D0/D1/D2 als gereserveerd, kleurt conflicten rood (tabel + pinmap) en geeft een waarschuwing in de editor.</p>
 <h3>F8 (H): elk DCC/knop-commando overschrijft <code>data[0]</code></h3>
 <p><code>GPIOcore.ino:121</code>: <code>callbackInput()</code> roept altijd <code>output[index].setVal( val )</code> aan. Voor gewone wisselcommando's is <code>val</code> 0. <code>pwmVal</code> deelt een union met <code>servoMin</code>, de lage byte van <code>switchTime</code> en <code>swing.pulseTime</code>. Elke bediening zet die dus op 0 en schrijft dat naar EEPROM.</p>
-<pre><code class="cpp">// was
+<pre><code>// was
     output[index].setVal(   val   ) ;
 // wordt
     if( output[index].eedata.type == PWM || output[index].eedata.type == fourToneSignal ) output[index].setVal( val ) ;</code></pre>
 <h3>F9 (H): pulse-uitgangen schakelen nooit uit</h3>
 <p><code>output.cpp:217</code>: in <code>moveActuator</code> wordt bij <code>singlePulse</code>/<code>doublePulse</code> alleen <code>timer.Q</code> gelezen. <code>timer.update()</code> wordt nooit aangeroepen, dus <code>Q</code> blijft 0. Het pulse-einde komt er niet, en een wisselspoel blijft bekrachtigd (risico op een verbrande spoel).</p>
-<pre><code class="cpp">// was
+<pre><code>// was
             if( timer.Q ) // pulse expired, -&gt; exit
 // wordt
             if( timer.update( 1 ) ) // pulse expired, -&gt; exit</code></pre>
 <h3>F10 (H): de output-state machine draait continu, ook zonder statewissel</h3>
 <p><code>output.cpp:476–478</code>: <code>idle</code> gaat bij elke <code>update()</code> meteen door naar <code>turnOffRelays</code>/<code>moveActuator</code>. Gevolgen:</p>
-<ul>
-<li>de frog-relais gaan elke cyclus 100 ms uit en weer aan (klapperen);
-<li>pulse-uitgangen pulsen eindeloos opnieuw (na fix F9);
-<li>servo's worden steeds opnieuw ge-attached.
-</ul>
+<ul><li>
+de frog-relais gaan elke cyclus 100 ms uit en weer aan (klapperen);
+</li><li>
+pulse-uitgangen pulsen eindeloos opnieuw (na fix F9);
+</li><li>
+servo's worden steeds opnieuw ge-attached.
+</li></ul>
 <p>Er is een flank-detectie nodig. Het bestaande, ongebruikte lid <code>oldPos</code> (<code>output.h:127</code>) kan daarvoor dienen:</p>
-<pre><code class="cpp">// output.cpp:476  was
+<pre><code>// output.cpp:476  was
             else if( eedata.relayPinA != NA
                  &amp;&amp;  eedata.relayPinB != NA )       { sm.nextState( turnOffRelays      ) ; }
             else {                                    sm.nextState( moveActuator        ) ; } }
@@ -222,34 +283,36 @@ const int OPCODE_SET_OUTPUT_DATA   = 0x2E ;   // 14 payload bytes</code></pre>
 <p>Let op: <code>oldPos</code> start op 0. Een output die in EEPROM state 1 heeft, beweegt dus bij het opstarten; een output met state 0 niet. Kies bewust wat je bij boot wilt.</p>
 <h3>F11 (M): single steady volgt de state niet</h3>
 <p><code>output.cpp:193</code> schrijft altijd <code>HIGH</code>. Daarna zet de <code>exitState</code> (<code>:232–236</code>) pinA/pinB weer <code>LOW</code>, dus een steady-uitgang flitst alleen kort.</p>
-<pre><code class="cpp">// output.cpp:193  was
+<pre><code>// output.cpp:193  was
             digitalWrite( eedata.pinA, HIGH ) ;
 // wordt
             digitalWrite( eedata.pinA, eedata.state ) ;</code></pre>
 <p>En de <code>exitState</code> alleen gebruiken voor de pulse-types (<code>singlePulse</code>, <code>doublePulse</code>).</p>
 <h3>F12 (M): <code>digitalWrite()</code> op niet-toegewezen pinnen (NA = 63)</h3>
 <p><code>output.cpp:219</code> (relayPinC), <code>:235</code> (pinB bij single-types) en <code>:299/:304</code> (pinB bij singleFlashing) schrijven zonder <code>!= NA</code>-check. Op AVR leest <code>digitalWrite(63)</code> buiten de PROGMEM-pintabellen en zet het willekeurige poortbits. Guard ze zoals op <code>:333</code>:</p>
-<pre><code class="cpp">// was
+<pre><code>// was
         digitalWrite( eedata.pinB, LOW ) ;
 // wordt
         if( eedata.pinB != NA ) digitalWrite( eedata.pinB, LOW ) ;</code></pre>
 <h3>F13 (M): unifrog-relais krijgt geen <code>pinMode</code></h3>
 <p><code>output.cpp:73</code>: <code>loadEEPROM()</code> zet relayPinA/B als OUTPUT, maar relayPinC niet. Daardoor schakelt <code>digitalWrite</code> alleen de pull-up.</p>
-<pre><code class="cpp">// add after output.cpp:73
+<pre><code>// add after output.cpp:73
     if( eedata.relayPinC != NA ) pinMode( eedata.relayPinC, OUTPUT ) ;</code></pre>
 <h3>F14 (M): <code>setVal()</code>/<code>setState()</code> hebben geen return</h3>
 <p><code>output.cpp:21</code> en <code>:38</code> zijn <code>uint8_t</code>-functies zonder <code>return</code>; dat is undefined behaviour. Minimale fix: <code>return 0 ;</code>. Kanttekening: elke statewissel schrijft EEPROM (één byte per toggle). Met ~100k cycli is dat voor drukbereden wissels iets om in de gaten te houden.</p>
 <h3>F15 (L): servo-details</h3>
-<ul>
-<li><code>output.cpp:95</code>: <code>500 / timer.PT</code> deelt door 0 bij <code>servoSpeed = 0</code>. De GUI dwingt ≥ 1 af.
-<li><code>pos</code> start op 0, dus de eerste beweging na boot zwaait vanaf 0°.
-<li><code>servoPattern</code> wordt opgeslagen, maar nergens gebruikt.
-</ul>
-<hr>
+<ul><li>
+<code>output.cpp:95</code>: <code>500 / timer.PT</code> deelt door 0 bij <code>servoSpeed = 0</code>. De GUI dwingt ≥ 1 af.
+</li><li>
+<code>pos</code> start op 0, dus de eerste beweging na boot zwaait vanaf 0°.
+</li><li>
+<code>servoPattern</code> wordt opgeslagen, maar nergens gebruikt.
+</li></ul>
+<p>---</p>
 <h2>3. Firmware: inputs (<code>input.*</code>)</h2>
 <h3>F16 (M): standaard route-stappen wijzen naar output 63</h3>
 <p><code>input.cpp:43</code> vult <code>linkedOutput[]</code> met <code>NA</code> (0x3F), maar het einde-teken in <code>triggerOutputs()</code> is 0x7F (<code>:139</code>). Wordt een input op ROUTE gezet zonder de stappen in te vullen, dan volgt <code>callbackInput( 63, ...)</code>, oftewel <code>output[63]</code> buiten de array.</p>
-<pre><code class="cpp">// input.cpp:43  was
+<pre><code>// input.cpp:43  was
         eedata.linkedOutput[i] = NA ;
 // wordt
         eedata.linkedOutput[i] = 0xFF ;   // 0x7F in bits 6-0 = end of route
@@ -263,16 +326,16 @@ const int OPCODE_SET_OUTPUT_DATA   = 0x2E ;   // 14 payload bytes</code></pre>
 <p><code>input.h:11</code>: "geen output" (0xFF in <code>setupInputs</code>) wordt 15. Dat is onschuldig zolang adres en pin ook leeg zijn, maar het is goed om te weten.</p>
 <h3>F18 (L): bekende TODO: herhaalde DCC-pakketten</h3>
 <p>Een DCC-centrale herhaalt accessory-pakketten. Bij MOMENTARY toggelt de output daardoor meerdere keren (staat al als TODO in <code>GPIOcore.ino:161</code>).</p>
-<hr>
+<p>---</p>
 <h2>4. Firmware: overig</h2>
 <table><thead><tr><th>ID</th><th>Ernst</th><th>Plek</th><th>Bevinding</th></tr></thead><tbody>
-<tr><td>F19</td><td>M</td><td><code>servoManager.cpp:1</code></td><td><code>#include "ServoManager.h"</code>, maar het bestand heet <code>servoManager.h</code>. Op Linux/macOS faalt de build (hoofdlettergevoelig).</td></tr>
+<tr><td>F19</td><td>M</td><td><code>servoManager.cpp:1</code></td><td><code>#include &quot;ServoManager.h&quot;</code>, maar het bestand heet <code>servoManager.h</code>. Op Linux/macOS faalt de build (hoofdlettergevoelig).</td></tr>
 <tr><td>F20</td><td>L</td><td><code>src/macros.h:36</code></td><td>Typfout <code>uin8t</code> in <code>toggleState</code> (macro ongebruikt).</td></tr>
 <tr><td>F21</td><td>L</td><td><code>messageParser.h</code></td><td>Geen <code>#pragma once</code>.</td></tr>
 <tr><td>F22</td><td>L</td><td><code>messageParser.cpp:187</code></td><td><code>SET/GET_*_STATE</code> zijn leeg. De GUI test outputs daarom via <code>SET_OUTPUT_DATA</code>.</td></tr>
 <tr><td>—</td><td>OK</td><td>EEPROM</td><td>Outputs (~12 B) + inputs (~13 B) × 16 ≈ 400 B &lt; 420 (recorder-start); DEADBEEF op 1000. Past, maar krap.</td></tr>
 </tbody></table>
-<hr>
+<p>---</p>
 <h2>5. Python GUI (<code>GUI_Python/</code>)</h2>
 <table><thead><tr><th>ID</th><th>Plek</th><th>Bevinding</th></tr></thead><tbody>
 <tr><td>P1</td><td><code>main.py:39</code></td><td><code>Transceiver.OPCODE_SET_INPUT_DATA</code> e.a. bestaan niet in <code>Transceiver.py</code> → <code>AttributeError</code> bij het eerste bericht.</td></tr>
@@ -286,21 +349,48 @@ const int OPCODE_SET_OUTPUT_DATA   = 0x2E ;   // 14 payload bytes</code></pre>
 <tr><td>P9</td><td><code>parser.py:85–116</code></td><td>Dynamische servo/PWM-velden worden opnieuw aangemaakt maar nergens bewaard → deze waarden kunnen nooit verstuurd worden.</td></tr>
 </tbody></table>
 <p>Conclusie: de Python GUI is niet bruikbaar met de huidige firmware. De Qt GUI vervangt hem functioneel.</p>
-<hr>
-<h2>6. Nieuwe Qt GUI (<code>GUI/GPIOcoreGUI/</code>)</h2>
-<p><strong>Functies</strong></p>
-<ul>
-<li>Seriële verbinding (115200 8N1). Herkent Arduino/CH340/FTDI/CP210x-poorten automatisch en wacht op het boot-bericht, met <code>REQ_VERSION</code> als fallback.
-<li><strong>Outputs</strong>: alle 14 types. De editor past zich aan per type: de juiste pinnen, frog-relais, parameters met eenheden (bijv. "× 10 ms = 500 ms"), servo-sliders, een 4-lampsein per LED en een PWM-slider. Knoppen "Test state 0/1".
-<li><strong>Inputs</strong>: alle 6 types, DCC-adres en/of pin, doel-output en een route-editor (8 stappen + state).
-<li><strong>Pin map</strong>: D0..A5 met wie welke pin gebruikt. Conflicten en gereserveerde pinnen zijn rood, PWM-pinnen zijn gemarkeerd. Klik op een kaart om die output/input te openen.
-<li><strong>Wijzigingen bijhouden</strong>: gewijzigde rijen zijn vet met een "●". "Write N change(s)" schrijft alleen wat gewijzigd is en leest het daarna terug ter verificatie. Revert, en Open/Save als JSON (offline configureren).
-<li><strong>Presets</strong> 0–7 met bevestiging; daarna wordt het hele board netjes teruggelezen.
-<li><strong>Serial log</strong> met TX/RX-hex en ruwe payload per editor (handig bij firmware-debugging).
-<li><strong>Demo-modus</strong>: een ingebouwde firmware-simulator die het gedrag van de huidige firmware nabootst (inclusief F1, F2, F5 en de bitfield-truncatie).
-</ul>
-<p><strong>Bouwen</strong>: open <code>GUI/GPIOcoreGUI/CMakeLists.txt</code> in Qt Creator (kit Qt 6.10.1 MinGW). Getest met Qt 6.10.1 / MinGW 13.1. De code gebruikt geen Qt6-only API's en <code>find_package</code> valt terug op Qt5, maar een Qt5-build heb ik <strong>niet</strong> kunnen testen (alleen Qt 6 staat op deze machine).</p>
-<p><strong>Tests</strong> (<code>ctest</code>): 17 unit tests (framing, model, link ↔ simulator: legacy/fixed, dubbele ACK, NACK-retry, preset) en 2 GUI-tests (bewerken → schrijven → teruglezen → schoon; preset + conflict-markering). Alles groen.</p>
-<p><strong>Niet getest</strong>: echte hardware. Eerste test-advies: Demo proberen, dan verbinden met een board, "Read board" en de serial log bekijken. Gebruik de pulse-types (F9) en relais (F10) pas na de firmware-fixes.</p>
+<p>---</p>
+<h2>6. Nieuwe Qt GUI (<code>software/gui/</code>)</h2>
+<p><b>Functies</b></p>
+<ul><li>
+Seriële verbinding (115200 8N1). Herkent Arduino/CH340/FTDI/CP210x-poorten automatisch en wacht op het
+ boot-bericht, met <code>REQ_VERSION</code> als fallback.
+</li><li>
+<b>Outputs</b>: alle 14 types. De editor past zich aan per type: de juiste pinnen, frog-relais,
+ parameters met eenheden (bijv. "× 10 ms = 500 ms"), servo-sliders, een 4-lampsein per LED en een
+ PWM-slider. Knoppen "Test state 0/1".
+</li><li>
+<b>Inputs</b>: alle 6 types, DCC-adres en/of pin, doel-output en een route-editor (8 stappen + state).
+</li><li>
+<b>Pin map</b>: D0..A5 met wie welke pin gebruikt. Conflicten en gereserveerde pinnen zijn rood, PWM-pinnen
+ zijn gemarkeerd. Klik op een kaart om die output/input te openen.
+</li><li>
+<b>Wijzigingen bijhouden</b>: gewijzigde rijen zijn vet met een "●". "Write N change(s)" schrijft alleen
+ wat gewijzigd is en leest het daarna terug ter verificatie. Revert, en Open/Save als JSON (offline
+ configureren).
+</li><li>
+<b>Presets</b> 0–7 met bevestiging; daarna wordt het hele board netjes teruggelezen.
+</li><li>
+<b>Serial log</b> met TX/RX-hex en ruwe payload per editor (handig bij firmware-debugging).
+</li><li>
+<b>Demo-modus</b>: een ingebouwde firmware-simulator die het gedrag van de huidige firmware nabootst
+ (inclusief F1, F2, F5 en de bitfield-truncatie).
+</li></ul>
+<p><b>Bouwen</b>: open <code>software/gui/CMakeLists.txt</code> in Qt Creator (kit Qt 6.10.1 MinGW). Getest met Qt 6.10.1 / MinGW 13.1. De code gebruikt geen Qt6-only API's en <code>find_package</code> valt terug op Qt5, maar een Qt5-build heb ik <b>niet</b> kunnen testen (alleen Qt 6 staat op deze machine).</p>
+<p><b>Tests</b> (<code>ctest</code>): 17 unit tests (framing, model, link ↔ simulator: legacy/fixed, dubbele ACK, NACK-retry, preset) en 2 GUI-tests (bewerken → schrijven → teruglezen → schoon; preset + conflict-markering). Alles groen.</p>
+<p><b>Niet getest</b>: echte hardware. Eerste test-advies: Demo proberen, dan verbinden met een board, "Read board" en de serial log bekijken. Gebruik de pulse-types (F9) en relais (F10) pas na de firmware-fixes.</p>
 <p><code>GUI/untitled/</code> is de lege Qt Creator-template; die heb ik laten staan en kan weg.</p>
+<h2>Update 2026-11-12 / 13: firmware v2 op het board getest</h2>
+<p>Op een echte Nano ("Test decoder") getest met een script over USB en met de GUI. Gevonden en opgelost:</p>
+<table><thead><tr><th>Probleem</th><th>Ernst</th><th>Oplossing</th></tr></thead><tbody>
+<tr><td>**Outputs kwamen nooit uit <code>idle</code>**: <code>idleF()</code> gaf 0 terug en de <code>State()</code>-macro voert de state alleen uit bij ≠ 0. Er schakelde nooit een pin (al zo in de originele firmware)</td><td>H</td><td><code>idleF()</code> geeft 1</td></tr>
+<tr><td>Sein: knipperen gebruikte <code>timer.Q</code> (één call hoog per 500 ms), lamp brandde µs</td><td>M</td><td>eigen fase-bit</td></tr>
+<tr><td>Spoelwissels: puntstukrelais niet gezet na opstarten (electrofrog dood, unifrog mogelijk verkeerde polariteit)</td><td>H</td><td>relais bij <code>loadEEPROM()</code></td></tr>
+<tr><td>F15 servo startte op 0°</td><td>M</td><td>start op opgeslagen eindstand; servo's één voor één (500 ms)</td></tr>
+<tr><td>F18 herhaalde DCC-pakketten flippen een toggle</td><td>M</td><td>500 ms blokkeertijd per input (toggle en route)</td></tr>
+<tr><td>Nieuwe output-pin pas na reset een output</td><td>M</td><td><code>pinMode</code> in <code>Output::set()</code>, oude pinnen losgelaten</td></tr>
+<tr><td>GUI stuurde een route eindeloos opnieuw (timing uit → wachttijd 0 teruggelezen)</td><td>M</td><td>vergelijk zonder wachttijd + nooit twee keer hetzelfde</td></tr>
+<tr><td>GUI time-out bij route-schrijven (EEPROM-schuiven duurt seconden)</td><td>L</td><td>4 s time-out</td></tr>
+</tbody></table>
+<p>Nieuw: OUTPUT_EVENT (0x45) met servo-graden en puntstukrelais, SET_INPUT_STATE (0x32), DCC_EXT (0x33), routes op <i>straight only</i> / <i>curved only</i>, configknop A7 + LED D13 + inleren via loc 9999, presets naar de GUI, board stil zonder GUI. Flash 89 %, RAM 80 %.</p>
 </body></html>
