@@ -61,6 +61,7 @@ signals:
     void toggleStepRequested(int input, int step);
     void moveStepRequested(int input, int step, int delta);
     void liveTriggerRequested(int input, int direction);
+    void removeRequested(bool output, int index);   // trash on a hovered block
     void liveValueRequested(int input);             // signal aspect / PWM value (DCC extended)
 
 protected:
@@ -101,6 +102,8 @@ private:
 
     int     m_selInput  = -1;
     bool    m_hideUnused = false;
+    int     m_hoverIn = -1, m_hoverOut = -1;
+    QRectF  trashRect(bool output, int index) const;
     bool    m_live = false;
     Frame   m_frame = Frame::None;
     QVector<int>    m_liveState, m_liveValue;

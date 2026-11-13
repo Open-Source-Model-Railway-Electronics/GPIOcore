@@ -26,7 +26,7 @@ class TestGui : public QObject
     QAction *writeAction(MainWindow &w)
     {
         for (QAction *a : w.findChildren<QAction *>())
-            if (a->text().startsWith(QLatin1String("Write")))
+            if (a->text().startsWith(QLatin1String("Write")) && !a->text().startsWith(QLatin1String("Write all")))
                 return a;
         return nullptr;
     }

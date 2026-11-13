@@ -4,6 +4,7 @@
 #include <QWidget>
 
 class QCheckBox;
+class QTimer;
 class QComboBox;
 class QFormLayout;
 class QGroupBox;
@@ -83,6 +84,8 @@ private:
     QSpinBox       *m_servoSpeed = nullptr;
     QLabel         *m_servoTime = nullptr;
     QCheckBox      *m_live = nullptr;
+    QTimer         *m_liveTimer = nullptr;   // live servo: at most 4 updates per second
+    int             m_livePending = -1;      // newest angle not sent yet
     QSpinBox       *m_pwm = nullptr;
     QSlider        *m_pwmSlider = nullptr;
 

@@ -758,6 +758,20 @@ void ConnectionView::paintEvent(QPaintEvent *)
 
     for (int i = 0; i < NumInputs; ++i)  if (inputShown(i))  { drawInput(p, i);  if (m_live) drawInputLive(p, i); }
     for (int o = 0; o < NumOutputs; ++o) if (outputShown(o)) { drawOutput(p, o); if (m_live) drawOutputLive(p, o); }
+
+    // trash bin on the block under the mouse
+    auto bin = [&p](const QRectF &t) {
+        p.setPen(QPen(QColor(0xDC, 0x26, 0x26), 1.4));
+        p.setBrush(Qt::NoBrush);
+        p.drawLine(QPointF(t.left() + 3, t.top() + 4), QPointF(t.right() - 3, t.top() + 4));          // lid
+        p.drawLine(QPointF(t.center().x() - 2, t.top() + 2), QPointF(t.center().x() + 2, t.top() + 2));
+        p.drawRect(QRectF(t.left() + 4.5, t.top() + 5.5, t.width() - 9, t.height() - 8));            // can
+        p.drawLine(QPointF(t.center().x(), t.top() + 7.5), QPointF(t.center().x(), t.bottom() - 4.5));
+    };
+    if (m_hoverIn >= 0 && inputShown(m_hoverIn) && m_board.inputs[m_hoverIn].type != InputNotInUse)
+        bin(trashRect(false, m_hoverIn));
+    if (m_hoverOut >= 0 && outputShown(m_hoverOut) && m_board.outputs[m_hoverOut].type != OutputNotInUse)
+        bin(trashRect(true, m_hoverOut));
 }
 
 // ── Mouse ───────────────────────────────────────────────────────────────────
@@ -770,6 +784,18 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
     m_pressPos = pos;
     m_dragging = false;
     m_drag = Drag::None;
+
+    // trash on a hovered block: set it to 'not in use'
+    if (m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse && trashRect(false, m_hoverIn).contains(pos))
+    {
+        emit removeRequested(false, m_hoverIn);
+        return;
+    }
+    if (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse && trashRect(true, m_hoverOut).contains(pos))
+    {
+        emit removeRequested(true, m_hoverOut);
+        return;
+    }
 
     if (m_live)          // live test: the input buttons first
     {
@@ -796,9 +822,21 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
     }
 }
 
+QRectF ConnectionView::trashRect(bool output, int index) const
+{
+    const QRectF r = output ? outputRect(index) : inputRect(index);
+    if (r.isEmpty()) return QRectF();
+    return output ? QRectF(r.left() + 58, r.top() + 4, 16, 16)    // right of 'Out n'
+                  : QRectF(r.right() - 112, r.top() + 6, 16, 16); // left of the type badge
+}
+
 void ConnectionView::mouseMoveEvent(QMouseEvent *e)
 {
     const QPointF pos = e->pos();
+    {
+        const int hi = inputAt(pos), ho = outputAt(pos);
+        if (hi != m_hoverIn || ho != m_hoverOut) { m_hoverIn = hi; m_hoverOut = ho; update(); }
+    }
     if (m_drag != Drag::None && (e->buttons() & Qt::LeftButton))
     {
         if (!m_dragging && (pos - m_pressPos).manhattanLength() >= QApplication::startDragDistance())

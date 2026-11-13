@@ -605,6 +605,7 @@ BoardConfig presetBoard(int preset)
     case 5: used = 5;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(), c = next(); out(i, DoublePulse, a, p2, X, X, c); } break;
     case 6: used = 4;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(), ra = next(), rb = next(); out(i, DoublePulse, a, p2, ra, rb, X); } break;
     case 7: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(); out(i, DoubleSteady, a, p2, X, X, X); } break;
+    case 8: used = 1;  out(0, SingleSteady, next(), X, X, X, X); break;    // empty: 1 input, 1 output
     default: break;
     }
     for (int i = 0; i < used; ++i)
@@ -626,6 +627,7 @@ QStringList presetNames()
         trGpio("5 – 5 double pulse + unifrog relay"),
         trGpio("6 – 4 double pulse + electrofrog relays"),
         trGpio("7 – 8 double steady"),
+        trGpio("8 – Empty: 1 input, 1 output"),
     };
 }
 

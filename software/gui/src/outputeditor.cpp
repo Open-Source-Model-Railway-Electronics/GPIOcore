@@ -1,4 +1,6 @@
 #include "outputeditor.h"
+
+#include <QTimer>
 #include "infotexts.h"
 #include "protocol.h"
 #include "uihelpers.h"
@@ -286,13 +288,31 @@ void OutputEditor::buildUi()
     for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm })
         connect(s, QOverload<int>::of(&QSpinBox::valueChanged), this, onEdit);
 
-    // live servo positions while adjusting
+    // live servo positions while adjusting: at most 4 per second, the newest angle always goes out
+    m_liveTimer = new QTimer(this);
+    m_liveTimer->setSingleShot(true);
+    m_liveTimer->setInterval(250);
+    connect(m_liveTimer, &QTimer::timeout, this, [this] {
+        if (m_livePending < 0) return;
+        emit liveServo(m_index, m_livePending);
+        m_livePending = -1;
+        m_liveTimer->start();
+    });
     auto live = [this](int angle) {
-        if (!m_loading && m_live->isChecked() && m_live->isEnabled())
-            emit liveServo(m_index, angle);
+        if (m_loading || !m_live->isChecked() || !m_live->isEnabled())
+            return;
+        if (m_liveTimer->isActive()) { m_livePending = angle; return; }
+        emit liveServo(m_index, angle);
+        m_liveTimer->start();
     };
-    connect(m_servoMin, QOverload<int>::of(&QSpinBox::valueChanged), this, live);
-    connect(m_servoMax, QOverload<int>::of(&QSpinBox::valueChanged), this, live);
+    // Adjusting a position with Live on makes it the stored state as well: the board applies the
+    // stored state after every settings write, so the servo stays at the angle being adjusted.
+    auto follow = [this](int state) {
+        if (m_loading || !m_live->isChecked() || !m_live->isEnabled() || m_cfg.state == state) return;
+        m_state->setCurrentIndex(m_state->findData(state));
+    };
+    connect(m_servoMin, QOverload<int>::of(&QSpinBox::valueChanged), this, [follow, live](int a) { follow(0); live(a); });
+    connect(m_servoMax, QOverload<int>::of(&QSpinBox::valueChanged), this, [follow, live](int a) { follow(1); live(a); });
     connect(m_servoMinSlider, &QSlider::sliderPressed, this, [this, live] { live(m_servoMin->value()); });
     connect(m_servoMaxSlider, &QSlider::sliderPressed, this, [this, live] { live(m_servoMax->value()); });
 

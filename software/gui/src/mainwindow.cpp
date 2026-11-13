@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     for (int i = 0; i < NumOutputs; ++i) m_edit.outputs[i] = defaults.output(i);
     for (int i = 0; i < NumInputs;  ++i) m_edit.inputs[i]  = defaults.input(i);
     m_edit.board.type = quint8(QSettings().value(QStringLiteral("board/type"), int(BoardNano)).toInt());
+    m_shadow = m_edit;
     Gpio::setBoardType(m_edit.board.type);
     m_dev = m_edit;
 
@@ -140,6 +141,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     });
     connect(m_link, &DeviceLink::finished, this, [this](int failures) {
         m_keepEdits = false;
+        if (m_readingBoard)
+        {
+            m_readingBoard = false;
+            m_shadow = m_edit;
+            statusBar()->showMessage(tr("Board read"), 4000);
+        }
         updateActions();
         if (failures)
             statusBar()->showMessage(tr("Done with %1 error(s)").arg(failures), 6000);
@@ -333,6 +340,9 @@ void MainWindow::buildUi()
     dock->setWidget(m_log);
     dock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
     addDockWidget(Qt::BottomDockWidgetArea, dock);
+    connect(dock->toggleViewAction(), &QAction::triggered, this, [](bool on) {
+        QSettings().setValue(QStringLiteral("ui/showLog"), on);
+    });
     resizeDocks({ dock }, { 170 }, Qt::Vertical);
 
     // Status bar
@@ -362,6 +372,11 @@ void MainWindow::buildUi()
         m_link->triggerInput(in, dir);
     });
     connect(m_view, &ConnectionView::liveValueRequested, this, &MainWindow::openLiveValue);
+    connect(m_view, &ConnectionView::removeRequested, this, [this](bool output, int index) {
+        if (output) { selectOutput(index); m_open = OpenOutput; }
+        else        { selectInput(index);  m_open = OpenInput; }
+        removeSelected();
+    });
     connect(m_view, &ConnectionView::outputSelected, this, &MainWindow::selectOutput);
     connect(m_view, &ConnectionView::connectRequested, this, [this](int in, int out) {
         switch (connectOutput(m_edit, in, out, routeLimits()))
@@ -443,6 +458,9 @@ void MainWindow::buildUi()
 
 void MainWindow::userEdited()
 {
+    for (int i = 0; i < NumOutputs; ++i) if (m_edit.outputs[i] != m_shadow.outputs[i]) m_outTouched[i] = true;
+    for (int i = 0; i < NumInputs; ++i)  if (m_edit.inputs[i]  != m_shadow.inputs[i])  m_inTouched[i]  = true;
+    m_shadow = m_edit;
     m_liveTried.clear();                 // a new edit: everything may be sent again
     m_liveWarned = false;
     boardEdited();
@@ -586,6 +604,15 @@ void MainWindow::buildToolbar()
     tb->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     tb->setIconSize(QSize(16, 16));
 
+    // Open / Save at the far left (Ctrl+O / Ctrl+S); the actions are created with the File menu below
+    QAction *tbOpen = tb->addAction(style()->standardIcon(QStyle::SP_DialogOpenButton), tr("Open"));
+    QAction *tbSave = tb->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("Save"));
+    tbOpen->setToolTip(tr("Open a board file (Ctrl+O)"));
+    tbSave->setToolTip(tr("Save to this board's file (Ctrl+S)"));
+    connect(tbOpen, &QAction::triggered, this, [this] { openFile(); });
+    connect(tbSave, &QAction::triggered, this, [this] { quickSave(); });
+    tb->addSeparator();
+
     m_port = new QComboBox;
     m_port->setMinimumWidth(200);
     m_port->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -627,7 +654,9 @@ void MainWindow::buildToolbar()
     tb->addSeparator();
 
     m_actRead   = tb->addAction(style()->standardIcon(QStyle::SP_ArrowDown), tr("Read board"), this, &MainWindow::readFromBoard);
-    m_actRead->setToolTip(tr("Read everything from the board again"));
+    m_actRead->setToolTip(tr("Load the configuration from the board (replaces what is on screen)"));
+    m_actWriteAll = tb->addAction(style()->standardIcon(QStyle::SP_ArrowUp), tr("Write all"), this, &MainWindow::writeAllToBoard);
+    m_actWriteAll->setToolTip(tr("Put the whole configuration on screen on the board"));
     m_actWrite  = new QAction(style()->standardIcon(QStyle::SP_ArrowUp), tr("Write changes"), this);
     connect(m_actWrite, &QAction::triggered, this, &MainWindow::writeChanges);
     m_actRevert = new QAction(tr("Revert"), this);
@@ -664,9 +693,12 @@ void MainWindow::buildToolbar()
     m_actOpen = file->addAction(style()->standardIcon(QStyle::SP_DialogOpenButton), tr("&Open configuration…"),
                                 this, &MainWindow::openFile);
     m_actOpen->setShortcut(QKeySequence::Open);
-    m_actSave = file->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save configuration…"),
-                                this, &MainWindow::saveFile);
+    m_actSave = file->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"),
+                                this, &MainWindow::quickSave);
     m_actSave->setShortcut(QKeySequence::Save);
+    m_actSave->setToolTip(tr("Save to this board's file (Ctrl+S)"));
+    m_actSaveAs = file->addAction(tr("Save &as…"), this, &MainWindow::saveFile);
+    m_actSaveAs->setShortcut(QKeySequence::SaveAs);
     file->addAction(tr("Open the boards folder"), this, [] {
         QDir().mkpath(boardsDir());
         QDesktopServices::openUrl(QUrl::fromLocalFile(boardsDir()));
@@ -696,10 +728,10 @@ void MainWindow::buildToolbar()
     connect(m_actExpert, &QAction::toggled, this, &MainWindow::setExpertMode);
     m_actShowUnused = view->addAction(tr("Show unused inputs and outputs"));
     m_actShowUnused->setCheckable(true);
-    m_actShowUnused->setChecked(QSettings().value(QStringLiteral("ui/showUnused"), false).toBool());
+    m_actShowUnused->setChecked(QSettings().value(QStringLiteral("ui/showUnused2"), false).toBool());
     m_view->setHideUnused(!m_actShowUnused->isChecked());
     connect(m_actShowUnused, &QAction::toggled, this, [this](bool on) {
-        QSettings().setValue(QStringLiteral("ui/showUnused"), on);
+        QSettings().setValue(QStringLiteral("ui/showUnused2"), on);
         m_view->setHideUnused(!on);
     });
     view->addSeparator();
@@ -821,6 +853,9 @@ void MainWindow::connectPort(const QString &port)
     }
     m_outKnown.fill(false);
     m_inKnown.fill(false);
+    m_outTouched.fill(false);
+    m_inTouched.fill(false);
+    m_shadow = m_edit;
     m_nameAsked = false;
     m_simulating = false;
     showWorkspace();
@@ -847,6 +882,10 @@ void MainWindow::connectDemo()
     for (int i = 0; i < NumOutputs; ++i) sim->setOutput(i, m_edit.outputs[i]);
     for (int i = 0; i < NumInputs; ++i)  sim->setInput(i, m_edit.inputs[i]);
     sim->setBoard(m_edit.board);
+    m_dev = m_edit;
+    m_outKnown.fill(true);
+    m_inKnown.fill(true);
+    m_shadow = m_edit;
     m_simulating = true;
     QString err;
     m_link->openDevice(sim, true, &err);
@@ -904,7 +943,10 @@ void MainWindow::onReady(const QString &version)
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
     m_legacyChip->setVisible(m_link->legacyOutputFormat());
-    m_link->readAll();
+    // Connecting changes nothing on screen: 'Read board' loads the board, 'Write all' sends the screen.
+    if (!m_simulating)
+        statusBar()->showMessage(tr("Connected. Read board loads its configuration; Write all puts the one on screen "
+                                    "on the board. Changes you make now go to the board."), 12000);
 }
 
 // ── Data from the board ─────────────────────────────────────────────────────
@@ -917,6 +959,7 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
     m_outKnown[i] = true;
     if (!keep)
         m_edit.outputs[i] = m_dev.outputs[i];
+    m_shadow.outputs[i] = m_edit.outputs[i];
     refreshRows();
     if (m_outEd->index() == i && !keep)
         showOutput(i);
@@ -937,6 +980,7 @@ void MainWindow::onInputReceived(int i, const InputConfig &received)
     m_inKnown[i] = true;
     if (!keep)
         m_edit.inputs[i] = c;
+    m_shadow.inputs[i] = m_edit.inputs[i];
     refreshRows();
     if (m_inEd->index() == i && !keep)
         showInput(i);
@@ -960,15 +1004,39 @@ void MainWindow::onRouteReceived(int i, const QVector<RouteStep> &steps)
 
 void MainWindow::readFromBoard()
 {
-    if (dirtyCount() > 0
-        && QMessageBox::question(this, windowTitle(),
-                                 tr("Discard %1 unsaved change(s) and reload everything from the board?").arg(dirtyCount()))
-               != QMessageBox::Yes)
+    if (QMessageBox::question(this, windowTitle(),
+                              tr("Read everything from the board?\n\nWhat is on screen now is replaced by the board's "
+                                 "configuration. Save it first (Ctrl+S) if you want to keep it."))
+        != QMessageBox::Yes)
         return;
+    saveBoardFile();                     // keep what is on screen (a backup is made as well)
     m_outKnown.fill(false);
     m_inKnown.fill(false);
+    m_outTouched.fill(false);
+    m_inTouched.fill(false);
     m_keepEdits = false;
+    m_readingBoard = true;
+    if (m_link->caps().boardSettings)
+        m_link->readBoard();             // name first: the names come from that board's file
     m_link->readAll();
+}
+
+void MainWindow::writeAllToBoard()
+{
+    if (!m_link->isReady())
+        return;
+    const QString name = m_dev.board.name.isEmpty() ? tr("the board") : QStringLiteral("\"%1\"").arg(m_dev.board.name);
+    if (QMessageBox::question(this, windowTitle(),
+                              tr("Write the whole configuration on screen to %1?\n\nEverything on the board is "
+                                 "replaced.").arg(name))
+        != QMessageBox::Yes)
+        return;
+    m_outTouched.fill(true);
+    m_inTouched.fill(true);
+    if (m_link->caps().boardSettings)
+        m_link->writeBoard(m_edit.board);
+    m_liveTried.clear();
+    writeDirty(false);
 }
 
 void MainWindow::writeChanges()
@@ -1123,6 +1191,8 @@ bool MainWindow::loadFile(const QString &path)
         m_dev  = b;                          // offline: nothing to compare with
     }
     setBoardType(m_edit.board.type);
+    if (!m_link->isReady())
+        m_shadow = m_edit;
     showWorkspace();
     refreshAll();
     showOutput(m_outEd->index());
@@ -1140,6 +1210,7 @@ void MainWindow::saveFile()
                                                       tr("GPIOcore configuration (*.json)"));
     if (path.isEmpty())
         return;
+    backupBoardFile(path);
     QFile f(path);
     if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
@@ -1153,7 +1224,9 @@ void MainWindow::saveFile()
 // ── Dirty tracking ──────────────────────────────────────────────────────────
 bool MainWindow::outputDirty(int i) const
 {
-    return m_outKnown[i] && !sameOutput(m_edit.outputs[i], m_dev.outputs[i], m_link->legacyOutputFormat());
+    if (!m_outKnown[i])
+        return m_link->isReady() && m_outTouched[i];     // board state unknown: send what the user changed
+    return !sameOutput(m_edit.outputs[i], m_dev.outputs[i], m_link->legacyOutputFormat());
 }
 
 InputConfig MainWindow::asStored(const InputConfig &c) const
@@ -1168,7 +1241,7 @@ InputConfig MainWindow::asStored(const InputConfig &c) const
 bool MainWindow::inputDirty(int i) const
 {
     if (!m_inKnown[i])
-        return false;
+        return m_link->isReady() && m_inTouched[i];
     if (m_link->isOpen() && m_link->caps().known && m_link->caps().protocol < 2)
         return m_edit.inputs[i].asV1() != m_dev.inputs[i];   // v1 stores only what fits in linked[]
     return asStored(m_edit.inputs[i]) != asStored(m_dev.inputs[i]);
@@ -1187,7 +1260,8 @@ void MainWindow::updateActions()
     const bool ready = m_link->isReady();
     const bool busy  = m_link->isBusy();
     const int  dirty = dirtyCount();
-    m_actRead->setEnabled(ready && !busy);
+    m_actRead->setEnabled(ready && !busy && !m_simulating);
+    if (m_actWriteAll) m_actWriteAll->setEnabled(ready && !busy && !m_simulating);
     m_actWrite->setEnabled(ready && !busy && dirty > 0);
     m_actWrite->setText(dirty ? tr("Write %1 change(s)").arg(dirty) : tr("Write changes"));
     m_actRevert->setEnabled(dirty > 0);
@@ -1572,7 +1646,8 @@ void MainWindow::setExpertMode(bool on)
         a->setVisible(on);
     if (auto *dock = findChild<QDockWidget *>(QStringLiteral("logDock")))
     {
-        dock->setVisible(on);
+        // the serial log is off by default, also in expert mode (View > Serial log)
+        dock->setVisible(on && QSettings().value(QStringLiteral("ui/showLog"), false).toBool());
         dock->toggleViewAction()->setVisible(on);
     }
     if (m_actRaw) m_actRaw->setVisible(on);
@@ -1642,7 +1717,16 @@ QString MainWindow::boardsDir()
 void MainWindow::onBoardReceived(const BoardSettings &b)
 {
     m_dev.board = b;
-    // Names (and offline edits) live in <name>.json; the board itself wins for all settings,
+    m_connChip->setText(tr("● %1 — %2").arg(m_link->portName(), b.name.isEmpty() ? tr("board without a name") : b.name));
+    if (!m_readingBoard)
+    {
+        // just connected: show which board it is, change nothing on screen
+        if (!m_simulating && !b.name.isEmpty() && !m_edit.board.name.isEmpty() && b.name != m_edit.board.name)
+            statusBar()->showMessage(tr("Connected to \"%1\", the screen shows \"%2\". Read board or Write all.")
+                                         .arg(b.name, m_edit.board.name), 12000);
+        return;
+    }
+    // 'Read board': names (and lamp colours) come from <name>.json, the board wins for all settings,
     // which arrive right after this.
     const QString path = QDir(boardsDir()).filePath(b.name + QStringLiteral(".json"));
     if (!b.name.isEmpty() && QFileInfo::exists(path))
@@ -1652,7 +1736,7 @@ void MainWindow::onBoardReceived(const BoardSettings &b)
         if (f.open(QIODevice::ReadOnly)
             && BoardConfig::fromJson(QJsonDocument::fromJson(f.readAll()).object(), file, nullptr))
         {
-            for (int i = 0; i < NumOutputs; ++i) m_edit.outputs[i].name = file.outputs[i].name;
+            for (int i = 0; i < NumOutputs; ++i) { m_edit.outputs[i].name = file.outputs[i].name; m_edit.outputs[i].lampColors = file.outputs[i].lampColors; }
             for (int i = 0; i < NumInputs; ++i)  m_edit.inputs[i].name  = file.inputs[i].name;
             appendLog(QStringLiteral("INFO"), tr("Names loaded from %1").arg(QDir::toNativeSeparators(path)));
         }
@@ -1660,7 +1744,6 @@ void MainWindow::onBoardReceived(const BoardSettings &b)
     m_edit.board = b;
     setBoardType(b.type);
     setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));
-    m_connChip->setText(tr("● %1 — %2").arg(m_link->portName(), b.name.isEmpty() ? tr("board without a name") : b.name));
     refreshAll();
 }
 
@@ -1670,9 +1753,51 @@ void MainWindow::saveBoardFile()
     if (name.isEmpty() || name == QLatin1String("Demo"))
         return;
     QDir().mkpath(boardsDir());
-    QFile f(QDir(boardsDir()).filePath(name + QStringLiteral(".json")));
+    const QString path = QDir(boardsDir()).filePath(name + QStringLiteral(".json"));
+    const QByteArray data = QJsonDocument(m_edit.toJson()).toJson(QJsonDocument::Indented);
+    QFile old(path);
+    if (old.open(QIODevice::ReadOnly) && old.readAll() == data)
+        return;                          // unchanged
+    old.close();
+    backupBoardFile(path);
+    QFile f(path);
     if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        f.write(QJsonDocument(m_edit.toJson()).toJson(QJsonDocument::Indented));
+        f.write(data);
+}
+
+// A copy in boards/backup/<name>-<date-time>.json before a board file changes; at most one per
+// 5 minutes per board, the newest 30 are kept.
+void MainWindow::backupBoardFile(const QString &path)
+{
+    const QFileInfo fi(path);
+    if (!fi.exists())
+        return;
+    QDir dir(fi.absolutePath());
+    dir.mkpath(QStringLiteral("backup"));
+    dir.cd(QStringLiteral("backup"));
+    const QString base = fi.completeBaseName();
+    const QStringList existing = dir.entryList({ base + QStringLiteral("-*.json") }, QDir::Files, QDir::Time);
+    if (!existing.isEmpty()
+        && QFileInfo(dir.filePath(existing.first())).lastModified().secsTo(QDateTime::currentDateTime()) < 300)
+        return;
+    QFile::copy(path, dir.filePath(base + QStringLiteral("-")
+                                   + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss"))
+                                   + QStringLiteral(".json")));
+    const QStringList all = dir.entryList({ base + QStringLiteral("-*.json") }, QDir::Files, QDir::Time);
+    for (int k = 30; k < all.size(); ++k)
+        dir.remove(all[k]);
+}
+
+void MainWindow::quickSave()
+{
+    if (m_edit.board.name.isEmpty())
+    {
+        saveFile();                      // no name yet: ask where
+        return;
+    }
+    saveBoardFile();
+    statusBar()->showMessage(tr("Saved %1").arg(QDir::toNativeSeparators(
+                                 QDir(boardsDir()).filePath(m_edit.board.name + QStringLiteral(".json")))), 4000);
 }
 
 void MainWindow::askBoardName()
@@ -1784,21 +1909,40 @@ void MainWindow::newOfflineBoard()
 {
     if (m_link->isOpen())
         m_link->close();
-    bool ok = false;
-    const QString name = cleanBoardName(QInputDialog::getText(this, tr("New board"),
-        tr("Name of the new board (max. 16 letters). When you later connect a board and give it this name, "
-           "these settings belong to it."), QLineEdit::Normal, QString(), &ok));
-    if (!ok)
+    QDialog d(this);
+    d.setWindowTitle(tr("New board"));
+    auto *form = new QFormLayout(&d);
+    auto *nameEdit = new QLineEdit;
+    nameEdit->setMaxLength(MaxBoardName);
+    nameEdit->setPlaceholderText(tr("max. 16 letters, e.g. Station-left"));
+    auto *start = new QComboBox;
+    const QStringList presets = presetNames();
+    start->addItem(tr("Empty (1 input, 1 output)"), 8);
+    for (int k = 0; k < 8; ++k)
+        start->addItem(tr("Preset: %1").arg(presets.value(k)), k);
+    form->addRow(tr("Name"), nameEdit);
+    form->addRow(tr("Start with"), start);
+    auto *hint = new QLabel(tr("When you later connect a board and give it this name, these settings belong to it. "
+                               "Use Write all to put them on the board."));
+    hint->setWordWrap(true);
+    hint->setObjectName(QStringLiteral("help"));
+    form->addRow(hint);
+    auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    form->addRow(bb);
+    if (d.exec() != QDialog::Accepted)
         return;
-    SimulatedDevice defaults;
-    BoardConfig b;
-    for (int i = 0; i < NumOutputs; ++i) b.outputs[i] = defaults.output(i);
-    for (int i = 0; i < NumInputs;  ++i) b.inputs[i]  = defaults.input(i);
+    const QString name = cleanBoardName(nameEdit->text());
+    BoardConfig b = presetBoard(start->currentData().toInt());
     b.board.name = name;
     b.board.type = m_edit.board.type;
     m_edit = m_dev = b;
+    m_shadow = b;
     setBoardType(b.board.type);
     showWorkspace();
+    showOutput(m_outEd->index());
+    showInput(m_inEd->index());
     refreshAll();
     saveBoardFile();
 }

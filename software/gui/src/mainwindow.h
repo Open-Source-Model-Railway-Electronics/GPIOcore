@@ -83,6 +83,9 @@ private:
     void editBoardSettings();
     void askBoardName();
     void saveBoardFile();
+    void backupBoardFile(const QString &path);   // copy to boards/backup/ before it is overwritten
+    void quickSave();                            // Ctrl+S: the board file, or 'save as' without a name
+    void writeAllToBoard();                      // send the whole configuration on screen to the board
     void newOfflineBoard();
     void addBlock(bool output);
     void removeSelected();
@@ -114,6 +117,11 @@ private:
     Gpio::BoardConfig m_edit;             // working copy
     std::array<bool, Gpio::NumOutputs> m_outKnown {};
     std::array<bool, Gpio::NumInputs>  m_inKnown {};
+    // Connected without reading: an item the user changed is sent although the board state is unknown.
+    std::array<bool, Gpio::NumOutputs> m_outTouched {};
+    std::array<bool, Gpio::NumInputs>  m_inTouched {};
+    Gpio::BoardConfig m_shadow;           // m_edit before the last user edit (to see what was touched)
+    bool              m_readingBoard = false;   // 'Read board' in progress: names from the file, board wins
     bool              m_keepEdits = false; // after opening a file: keep it over board data
     int               m_startPreset = -1;
 
@@ -142,6 +150,8 @@ private:
     QAction        *m_actBoardSettings = nullptr;
     QAction        *m_actLive = nullptr;
     QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board
+    QAction        *m_actWriteAll = nullptr;
+    QAction        *m_actSaveAs = nullptr;
     QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
     bool            m_expert = false;
     bool            m_nameAsked = false;
