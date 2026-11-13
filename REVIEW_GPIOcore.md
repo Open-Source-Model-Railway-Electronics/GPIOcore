@@ -462,3 +462,22 @@ groen.
 board" en de serial log bekijken. Gebruik de pulse-types (F9) en relais (F10) pas na de firmware-fixes.
 
 `GUI/untitled/` is de lege Qt Creator-template; die heb ik laten staan en kan weg.
+
+## Update 2026-11-12 / 13: firmware v2 op het board getest
+
+Op een echte Nano ("Test decoder") getest met een script over USB en met de GUI. Gevonden en opgelost:
+
+| Probleem | Ernst | Oplossing |
+|---|---|---|
+| **Outputs kwamen nooit uit `idle`**: `idleF()` gaf 0 terug en de `State()`-macro voert de state alleen uit bij ≠ 0. Er schakelde nooit een pin (al zo in de originele firmware) | H | `idleF()` geeft 1 |
+| Sein: knipperen gebruikte `timer.Q` (één call hoog per 500 ms), lamp brandde µs | M | eigen fase-bit |
+| Spoelwissels: puntstukrelais niet gezet na opstarten (electrofrog dood, unifrog mogelijk verkeerde polariteit) | H | relais bij `loadEEPROM()` |
+| F15 servo startte op 0° | M | start op opgeslagen eindstand; servo's één voor één (500 ms) |
+| F18 herhaalde DCC-pakketten flippen een toggle | M | 500 ms blokkeertijd per input (toggle en route) |
+| Nieuwe output-pin pas na reset een output | M | `pinMode` in `Output::set()`, oude pinnen losgelaten |
+| GUI stuurde een route eindeloos opnieuw (timing uit → wachttijd 0 teruggelezen) | M | vergelijk zonder wachttijd + nooit twee keer hetzelfde |
+| GUI time-out bij route-schrijven (EEPROM-schuiven duurt seconden) | L | 4 s time-out |
+
+Nieuw: OUTPUT_EVENT (0x45) met servo-graden en puntstukrelais, SET_INPUT_STATE (0x32), DCC_EXT (0x33),
+routes op *straight only* / *curved only*, configknop A7 + LED D13 + inleren via loc 9999, presets naar de GUI,
+board stil zonder GUI. Flash 89 %, RAM 80 %.

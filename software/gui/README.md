@@ -109,3 +109,15 @@ Zie `../../REVIEW_GPIOcore.md` voor de firmware-bevindingen. De firmware gebruik
 (2026-11-09) `OPCODE_SET_OUTPUT_DATA` = 0x2E (14 bytes). Oude firmware (0x2D, 13 bytes, `data[3]` gaat
 verloren) wordt automatisch herkend; de GUI toont dan een legacy-melding. Demo bootst de gefixte firmware
 na; `SimulatedDevice::Options::oldFirmware()` bootst de oude na (gebruikt in de tests).
+
+## Bijgewerkt 2026-11-13
+
+- **Modusknoppen** bovenin: ● Configure (rood kader, echt board, live opslaan), ● Simulate (geel, je eigen
+  configuratie op een gesimuleerd board, met input-knoppen), ● Live test (groen, input-knoppen op een echt board).
+- **Panelen** input links en output rechts staan altijd in beeld (splitter, breedte wordt onthouden).
+- **Pinnen**: bezette pinnen staan rood in de lijst met wie ze gebruikt. Kies je er een, dan wordt de vorige
+  gebruiker *not in use*. D2, D13 (config-LED) en A7 (configknop) zijn nooit beschikbaar.
+- **Presets** rekent de GUI zelf uit (*Board → Apply a preset*, Expert mode); ze werken ook offline.
+- **Routes**: *Starts on DCC* = any command / straight only / curved only.
+- **Thema**: *View → Theme* (automatisch, licht, donker). Lampkleuren van een sein in het board-bestand.
+- **Help**: *Help → Getting started*, *Configure, simulate and live test*, *Board settings*, *Config button*.

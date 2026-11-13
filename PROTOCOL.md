@@ -50,7 +50,7 @@ Een GET krijgt eerst het data-antwoord en daarna die `ACK`.
 | `2E` SET_OUTPUT_DATA | ↔ | `index pinA pinB pinC pinD relayA relayB relayC type state data[4]` (14 B), zie §2.1 | v1, v2 |
 | `21` GET_OUTPUT_DATA | → | `index` → antwoord `2E` | v1, v2 |
 | `50` REQ_VERSION | → | – → antwoord `5n` + versietekst (`src/version.h`, nu `v0.0.0`) | v1, v2 |
-| `61` SET_PRESET | → | `preset` (0–7), zie §2.3 | v1, v2 |
+| `61` SET_PRESET | → | `preset` (0–7). **Sinds 2026-11-13 niet meer in de firmware**: alleen een `ACK`. De GUI rekent presets zelf uit, zie §2.3 | v1 |
 | `32` SET_INPUT_STATE | → | `index direction` — doet alsof er een DCC-commando voor het adres van deze input binnenkomt (toggle, absoluut, route). Voor testen en simulatie | v2 |
 | `31` GET_INPUT_STATE | → | `index` — **gereserveerd**, alleen `ACK` | – |
 | `42` SET_OUTPUT_STATE | → | `index state` — **gereserveerd**, alleen `ACK` | – |
@@ -131,17 +131,14 @@ een route nemen het eerste en negeren hetzelfde adres daarna 500 ms (`DCC_LOCKOU
 input heeft dat niet nodig (zelfde richting = zelfde stand). `SET_INPUT_STATE` (0x32) gaat door dezelfde
 code, dus ook daar geldt de blokkeertijd.
 
-### 2.3 Presets
+### 2.3 Presets (in de GUI)
 
-`61 <preset>` vult de outputs (en meestal de inputs) met een standaardopstelling. Pinnen beginnen bij D3.
-Het verloop:
-1. Per output stuurt de firmware een broadcast `2E` (zelfde indeling als het GET-antwoord), met 50–100 ms
-   ertussen.
-2. Daarna komt per input een `1E`, behalve bij preset 4, dat de inputs ongemoeid laat.
-3. Als laatste komt de `ACK`.
+Sinds 2026-11-13 zitten de presets niet meer in de firmware (dat scheelde 2,7 KB flash). De GUI rekent een
+preset uit (`presetBoard()` in `gpioconfig.cpp`) en stuurt het resultaat als gewone `SET_OUTPUT_DATA` /
+`SET_INPUT_DATA` (live opslaan). Dat werkt dus ook offline en in de simulatie.
 
-Dit kan ruim 3 s duren. De GUI wacht op de `ACK` (timeout 10 s), negeert de broadcasts en leest daarna
-alles opnieuw in. Ongebruikte inputs worden "niet in gebruik".
+Pinnen beginnen bij D3 en slaan **D13** over (config-LED): D3–D12, A0–A5. De gebruikte inputs worden
+absoluut, DCC-adres 1, 2, …, input *n* → output *n*; de rest wordt *not in use*.
 
 | Preset | Opstelling |
 |---|---|
@@ -275,7 +272,7 @@ De taken staan in `EEPROM.md` §4 en in de commits van `software/GPIOcore`. Same
 bootvenster, board-instellingen (§10), route-pool met dynamische toewijzing, per-stap timing,
 interlocking, SERVO_LIVE en `setPosition()`, A6/A7 als analoge input, en pin 2 beschermen.
 
-**Pin 2 (DCC-ingang)** mag nooit als input of output. Een `SET_INPUT_DATA` of `SET_OUTPUT_DATA` met
+**Pin 2 (DCC-ingang), D13 (config-LED) en A7 (configknop)** mogen nooit als input of output. Een `SET_INPUT_DATA` of `SET_OUTPUT_DATA` met
 pin 2 krijgt `NACK 5` (ongeldige pin) en wordt niet opgeslagen. Hetzelfde geldt voor D0/D1 zolang de
 decoder geen bit0 in HELLO meldt, en voor A6/A7 als output of op een ander board dan de Nano.
 
@@ -328,3 +325,27 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 - **Nog open:** `setPosition()`/`SERVO_LIVE` zetten het unifrog-relais niet om; `SET_OUTPUT_DATA` zet geen
   `pinMode` voor nieuw ingestelde pinnen (was in v1 ook zo); een output op D0/D1 wordt tijdens het
   bootvenster niet tegengehouden.
+
+## 11. Configknop (A7), config-LED (D13) en servo's inleren (firmware, 2026-11-13)
+
+- **A7** = configknop: drukknop naar GND, met een **externe** pull-up van 10 kΩ naar 5 V (A7 heeft geen interne
+  pull-up). De firmware leest hem met `analogRead()` met hysterese: ingedrukt onder 200, los boven 800.
+- **D13** = LED: aan = normaal, knippert = configmodus.
+- Een output of input die D13 of A7 gebruikt, wordt bij het opstarten *not in use* gezet; `SET_*_DATA` met
+  D13/A7 krijgt `NACK 5`.
+
+| Actie | Gevolg |
+|---|---|
+| A7 2 s ingedrukt | configmodus aan / uit |
+| A7 kort (in configmodus) | volgende servo selecteren; die zet om, zodat je ziet welke het is |
+| Loc **9999**, rijknop + richting | geselecteerde servo beweegt (1–10° per 100 ms) |
+| Loc 9999 **F1** | huidige hoek opslaan als *curved* (`servoMin`) |
+| Loc 9999 **F2** | huidige hoek opslaan als *straight* (`servoMax`) |
+| Loc 9999 **F3** | geselecteerde servo omzetten |
+| Loc 9999 **F4** | volgende servo |
+
+Zelfde bediening als de OS-Servo-Decoder. De hoeken staan meteen in de EEPROM; de GUI leest ze bij het
+verbinden terug.
+
+**Servo's bij opstarten:** één voor één, elke 500 ms de volgende. Elke servo krijgt ~500 ms zijn opgeslagen stand
+(curved of straight) en wordt daarna losgekoppeld. Een eigen hoek (route-stap, live) wordt niet onthouden.
