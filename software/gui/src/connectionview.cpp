@@ -684,16 +684,15 @@ void ConnectionView::paintEvent(QPaintEvent *)
     // Frame and banner: green = live test, yellow = simulation, red = changes go to a real board
     QColor frameCol;
     QString bannerText;
-    if (m_live)
-    {
-        frameCol   = QColor(0x16, 0xA3, 0x4A);
-        bannerText = m_frame == Frame::Simulate ? tr("● LIVE TEST · SIMULATION")
-                                                : tr("● LIVE TEST");
-    }
-    else if (m_frame == Frame::Simulate)
+    if (m_frame == Frame::Simulate)
     {
         frameCol   = QColor(0xEA, 0xB3, 0x08);
-        bannerText = tr("SIMULATION");
+        bannerText = m_live ? tr("● SIMULATION — click the input buttons") : tr("SIMULATION");
+    }
+    else if (m_live)
+    {
+        frameCol   = QColor(0x16, 0xA3, 0x4A);
+        bannerText = tr("● LIVE TEST");
     }
     else if (m_frame == Frame::Configure)
     {
@@ -712,7 +711,7 @@ void ConnectionView::paintEvent(QPaintEvent *)
         QFont bf = font();
         bf.setBold(true);
         p.setFont(bf);
-        p.setPen(m_frame == Frame::Simulate && !m_live ? QColor(0x1F, 0x29, 0x37) : QColor(Qt::white));
+        p.setPen(m_frame == Frame::Simulate ? QColor(0x1F, 0x29, 0x37) : QColor(Qt::white));
         p.drawText(banner.boundingRect(), Qt::AlignCenter,
                    p.fontMetrics().elidedText(bannerText, Qt::ElideRight, int(bw - 12)));
         p.setFont(small);
@@ -772,7 +771,7 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
     m_dragging = false;
     m_drag = Drag::None;
 
-    if (m_live)          // live test: only the input buttons do something
+    if (m_live)          // live test: the input buttons first
     {
         for (int i = 0; i < NumInputs; ++i)
             for (int dir = 0; dir < 2; ++dir)
@@ -784,11 +783,7 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                     else                   emit liveTriggerRequested(i, dir);
                     return;
                 }
-        // anywhere else on a block: select it, so its settings show in the panel (no dragging)
-        const int in = inputAt(pos), out = outputAt(pos);
-        if (in >= 0)       emit inputSelected(in);
-        else if (out >= 0) emit outputSelected(out);
-        return;
+        // anywhere else: select and drag as usual
     }
 
     const int in = inputAt(pos), out = outputAt(pos);

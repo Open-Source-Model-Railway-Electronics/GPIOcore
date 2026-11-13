@@ -267,6 +267,7 @@ void fillPinCombo(QComboBox *combo, bool output)
         else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
         else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio("analog input only"));
         combo->addItem(text, int(pin));
+        combo->setItemData(combo->count() - 1, text, Qt::UserRole + 1);       // text without 'in use'
         if (!reserved.isEmpty())
             combo->setItemData(combo->count() - 1, QColor(0xB4, 0x53, 0x09), Qt::ForegroundRole);
         if (!note.isEmpty())
@@ -289,6 +290,49 @@ void selectData(QComboBox *combo, int value, const QString &unknownText)
 int currentData(const QComboBox *combo)
 {
     return combo->currentData().toInt();
+}
+
+static BoardConfig g_pinBoard;
+static bool        g_pinBoardSet = false;
+
+void setPinBoard(const BoardConfig &board)
+{
+    g_pinBoard = board;
+    g_pinBoardSet = true;
+}
+
+void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex)
+{
+    if (!g_pinBoardSet)
+        return;
+    const auto usage = pinUsage(g_pinBoard);
+    const QColor red(0xDC, 0x26, 0x26);
+    for (int i = 0; i < combo->count(); ++i)
+    {
+        const int pin = combo->itemData(i).toInt();
+        const QString base = combo->itemData(i, Qt::UserRole + 1).toString();
+        if (pin < 0 || pin >= NumPins || base.isEmpty())
+            continue;
+        QStringList users;
+        for (const PinUse &u : usage[pin])
+        {
+            if (u.output == forOutput && u.index == selfIndex)
+                continue;                                    // this input / output itself
+            users << (u.output ? QObject::tr("Out %1").arg(u.index) : QObject::tr("In %1").arg(u.index));
+        }
+        users.removeDuplicates();
+        if (users.isEmpty())
+        {
+            combo->setItemText(i, base);
+            if (pinReservedReason(quint8(pin)).isEmpty())
+                combo->setItemData(i, QVariant(), Qt::ForegroundRole);
+        }
+        else
+        {
+            combo->setItemText(i, base + QStringLiteral("  — ") + QObject::tr("in use: %1").arg(users.join(QStringLiteral(", "))));
+            combo->setItemData(i, red, Qt::ForegroundRole);
+        }
+    }
 }
 
 QVector<QVector<PinUse>> pinUsage(const BoardConfig &board)

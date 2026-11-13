@@ -240,5 +240,8 @@ bool    isServoTimerPin(quint8 pin);    // D9/D10: no PWM while a servo exists (
 
 // ── Presets (OPCODE_SET_PRESET in messageParser.cpp) ───────────────────────
 QStringList presetNames();
+// A preset as a complete set of outputs and inputs (computed by the GUI, written as normal data).
+// Pins from D3 upwards, skipping D13 (config LED); used inputs: absolute, DCC 1.., input n -> output n.
+BoardConfig presetBoard(int preset);
 
 } // namespace Gpio

@@ -548,11 +548,11 @@ QString pinReservedReason(quint8 pin)
     case 0:  return b.serialPinsUsable ? QString() : trGpio("Serial RX (GUI link)");
     case 1:  return b.serialPinsUsable ? QString() : trGpio("Serial TX (GUI link)");
     case 2:  return trGpio("DCC input");
-    case 13: return b.dccNext ? trGpio("not available on a DCCnext") : QString();
+    case 13: return trGpio("config LED");
     case 18: return b.recorder ? trGpio("I2C SDA for the recorder EEPROM") : QString();
     case 19: return b.recorder ? trGpio("I2C SCL for the recorder EEPROM") : QString();
-    case 20:
-    case 21: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
+    case 20: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
+    case 21: return trGpio("config button");
     }
     return QString();
 }
@@ -580,6 +580,39 @@ QString pinNote(quint8 pin)
     if (pin == 20 || pin == 21)
         return trGpio("analog input without pull-up: add a 10 kOhm resistor to 5 V");
     return QString();
+}
+
+BoardConfig presetBoard(int preset)
+{
+    BoardConfig b;                                 // everything 'not in use' to start with
+    quint8 pin = 3;
+    auto next = [&pin]() -> quint8 { if (pin == 13) ++pin; return pin++; };
+    auto out = [&b](int i, quint8 type, quint8 a, quint8 pb, quint8 ra, quint8 rb, quint8 rc) {
+        OutputConfig &c = b.outputs[i];
+        c.type = type; c.pinA = a; c.pinB = pb; c.relayA = ra; c.relayB = rb; c.relayC = rc; c.state = 0;
+        if (type == ServoType)                         c.data = { { 80, 100, 20, 0 } };
+        if (type == SinglePulse || type == DoublePulse) c.setSwitchTime(50);
+    };
+    const quint8 X = PinNA;
+    int used = 0;
+    switch (preset)
+    {
+    case 0: used = 16; for (int i = 0; i < used; ++i) { quint8 a = next(); out(i, ServoType, a, X, X, X, X); } break;
+    case 1: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), c = next(); out(i, ServoType, a, X, X, X, c); } break;
+    case 2: used = 5;  for (int i = 0; i < used; ++i) { quint8 a = next(), ra = next(), rb = next(); out(i, ServoType, a, X, ra, rb, X); } break;
+    case 3: used = 16; for (int i = 0; i < used; ++i) { quint8 a = next(); out(i, SingleSteady, a, X, X, X, X); } break;
+    case 4: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(); out(i, DoublePulse, a, p2, X, X, X); } break;
+    case 5: used = 5;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(), c = next(); out(i, DoublePulse, a, p2, X, X, c); } break;
+    case 6: used = 4;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(), ra = next(), rb = next(); out(i, DoublePulse, a, p2, ra, rb, X); } break;
+    case 7: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(); out(i, DoubleSteady, a, p2, X, X, X); } break;
+    default: break;
+    }
+    for (int i = 0; i < used; ++i)
+    {
+        InputConfig &c = b.inputs[i];
+        c.type = Latching; c.address = quint16(1 + i); c.outputId = quint8(i);
+    }
+    return b;
 }
 
 QStringList presetNames()

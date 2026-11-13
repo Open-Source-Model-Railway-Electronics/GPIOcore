@@ -138,7 +138,106 @@ void setup()
         input[i].syncState( output[ input[i].eedata.outputID ].eedata.state ) ;
     }
 
+    // D13 and A7 belong to the config button / LED: an output or input that uses them is switched off
+    for( uint8_t i = 0 ; i < 16 ; i++ )
+    {
+        Settings &o = output[i].eedata ;
+        const uint8_t pins[7] = { o.pinA, o.pinB, o.pinC, o.pinD, o.relayPinA, o.relayPinB, o.relayPinC } ;
+        uint8_t bad = 0 ;
+        for( uint8_t j = 0 ; j < 7 ; j ++ ) bad |= ( pins[j] == CONFIG_LED_PIN || pins[j] == CONFIG_BUTTON_PIN ) ;
+        if( bad ) { o.type = notInUse ; o.pinA = o.pinB = o.pinC = o.pinD = o.relayPinA = o.relayPinB = o.relayPinC = NA ; output[i].saveEEPROM() ; }
+        if( input[i].eedata.pin == CONFIG_LED_PIN || input[i].eedata.pin == CONFIG_BUTTON_PIN )
+        {
+            input[i].eedata.pin = NA ; input[i].eedata.type = NOT_IN_USE ; input[i].saveEEPROM() ;
+        }
+    }
+    pinMode( CONFIG_LED_PIN, OUTPUT ) ;
+    digitalWrite( CONFIG_LED_PIN, HIGH ) ;
+
     debounce.set( TIMER_BLEEP, 50 ) ;
+}
+
+// ── Config mode ───────────────────────────────────────────────────────────────
+// Hold A7 for 2 s: config mode on (D13 blinks). A short press selects the next servo and toggles it,
+// so you can see which one it is. With loco address 9999 on the throttle the selected servo is taught:
+// speed knob + direction = move it, F1 = store as curved, F2 = store as straight, F3 = toggle, F4 = next.
+// Hold A7 for 2 s again: back to normal (D13 on).
+uint8_t  configMode ;
+int8_t   selServo = -1 ;
+uint8_t  learnAngle = 90 ;
+int8_t   learnStep ;            // degrees per 100 ms from the throttle, signed
+uint8_t  fnPrev ;               // F1-F4 of loco 9999, for edge detection
+
+void selectNextServo()
+{
+    for( uint8_t n = 0 ; n < 16 ; n ++ )
+    {
+        selServo = ( selServo + 1 ) % 16 ;
+        Output &o = output[selServo] ;
+        if( o.eedata.type != servoType ) continue ;
+        callbackInput( selServo, !o.eedata.state, 0 ) ;        // toggle: shows which servo is selected
+        learnAngle = !o.eedata.state ? o.eedata.servo.servoMax : o.eedata.servo.servoMin ;
+        return ;
+    }
+    selServo = -1 ;                                             // no servo at all
+}
+
+void configUpdate()                                             // every 50 ms
+{
+    static uint8_t held, longDone, blink, down ;
+    int level = analogRead( A7 ) ;                             // external pull-up, button to GND
+    if( level < 200 ) down = 1 ;                               // hysteresis: a floating pin between
+    if( level > 800 ) down = 0 ;                               // 200 and 800 does not count as a press
+    if( down )
+    {
+        if( held < 255 ) held ++ ;
+        if( held == 40 && !longDone )                           // 40 x 50 ms = 2 s
+        {
+            longDone   = 1 ;
+            configMode = !configMode ;
+            selServo   = -1 ;
+            learnStep  = 0 ;
+        }
+    }
+    else
+    {
+        if( held && held < 40 && configMode ) selectNextServo() ;   // short press
+        held = 0 ;
+        longDone = 0 ;
+    }
+
+    if( configMode ) { if( ++ blink >= 5 ) { blink = 0 ; digitalWrite( CONFIG_LED_PIN, !digitalRead( CONFIG_LED_PIN ) ) ; } }
+    else             digitalWrite( CONFIG_LED_PIN, HIGH ) ;
+
+    static uint8_t tick ;
+    if( ++ tick >= 2 && configMode && selServo >= 0 && learnStep )  // every 100 ms: follow the throttle
+    {
+        tick = 0 ;
+        int16_t a = (int16_t)learnAngle + learnStep ;
+        learnAngle = constrain( a, 10, 170 ) ;
+        output[selServo].setPosition( learnAngle ) ;
+        reportOutput( selServo, 2, learnAngle ) ;
+    }
+}
+
+void notifyDccSpeed( uint16_t Addr, DCC_ADDR_TYPE AddrType, uint8_t Speed, DCC_DIRECTION Dir, DCC_SPEED_STEPS SpeedSteps )
+{
+    if( Addr != 9999 || !configMode ) return ;
+    int8_t step = Speed <= 1 ? 0 : (int8_t)map( Speed, 2, 127, 1, 10 ) ;   // 0 = stop, 1 = emergency stop
+    learnStep = Dir ? step : -step ;
+}
+
+void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uint8_t FuncState )
+{
+    if( Addr != 9999 || FuncGrp != FN_0_4 || !configMode ) return ;
+    uint8_t rose = FuncState & ~fnPrev ;
+    fnPrev = FuncState ;
+    if( rose & FN_BIT_04 ) { selectNextServo() ; return ; }
+    if( selServo < 0 ) return ;
+    Output &o = output[selServo] ;
+    if( rose & FN_BIT_01 ) { o.eedata.servo.servoMin = learnAngle ; o.saveEEPROM() ; }   // curved
+    if( rose & FN_BIT_02 ) { o.eedata.servo.servoMax = learnAngle ; o.saveEEPROM() ; }   // straight
+    if( rose & FN_BIT_03 ) callbackInput( selServo, !o.eedata.state, 0 ) ;               // toggle
 }
 
 void loop()
@@ -170,6 +269,17 @@ void loop()
         {
             input[i].update() ;
         }
+        configUpdate() ;
+    }
+
+    // servos start one by one: each gets its stored position for ~500 ms, the next one 500 ms later
+    static uint8_t  bootServo ;
+    static uint16_t bootTime ;
+    if( bootServo < 16 && (uint16_t)( millis() - bootTime ) >= 500 )
+    {
+        bootTime = millis() ;
+        while( bootServo < 16 && output[bootServo].eedata.type != servoType ) bootServo ++ ;
+        if( bootServo < 16 ) output[bootServo ++].engage() ;
     }
 }
 

@@ -28,6 +28,7 @@ public:
     void setConnected(bool connected);
     void setLiveAvailable(bool available);   // board supports SERVO_LIVE
     void refreshPinCombos();                  // board profile changed (DCCnext, D0/D1)
+    void refreshPinMarks();                   // pins used elsewhere in red
 
     enum Frog { FrogNone, FrogElectro, FrogUni };
 

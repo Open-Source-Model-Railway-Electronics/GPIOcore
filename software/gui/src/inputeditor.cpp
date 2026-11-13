@@ -229,6 +229,12 @@ void InputEditor::refreshPinCombos()
     Ui::fillPinCombo(m_pin);
     m_loading = false;
     refresh();
+    refreshPinMarks();
+}
+
+void InputEditor::refreshPinMarks()
+{
+    Ui::markUsedPins(m_pin, false, m_index);
 }
 
 void InputEditor::setOutputs(const QStringList &names, const QVector<quint8> &types)

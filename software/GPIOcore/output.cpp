@@ -82,7 +82,8 @@ void Output::defaults( )
 {
     static byte index = 0 ;
     eedata = defaultSettings ;
-    eedata.pinA = 3 + index ++  ;   // skip D0/D1 (Serial) and D2 (DCC)
+    eedata.pinA = index < 10 ? 3 + index : 4 + index ;   // D3-D12, A0-A5: skip D0/D1 (Serial), D2 (DCC), D13 (LED)
+    index ++ ;
 }
 
 void Output::assignEEPROM()
@@ -120,7 +121,8 @@ void Output::loadEEPROM()
     setPinModes() ;
 
     // apply the stored state once after boot, except for coils (no burst of pulses at power up)
-    oldPos = ( eedata.type == singlePulse || eedata.type == doublePulse ) ? eedata.state : !eedata.state ;
+    // servos start one by one from loop() (engage()), coils are not pulsed at all
+    oldPos = ( eedata.type == singlePulse || eedata.type == doublePulse || eedata.type == servoType ) ? eedata.state : !eedata.state ;
 
     // a servo starts where it was left (its stored end position), not at 0 degrees: no sweep at power up (F15)
     if( eedata.type == servoType ) pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;

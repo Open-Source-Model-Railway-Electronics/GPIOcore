@@ -194,7 +194,7 @@ private slots:
         QCOMPARE(r.outputsSeen, 16);
         QVERIFY(!r.link->legacyOutputFormat());
         QCOMPARE(r.outputs[0].pinA, quint8(3));     // F7: D0..D2 are skipped
-        QCOMPARE(r.outputs[15].pinA, quint8(18));
+        QCOMPARE(r.outputs[15].pinA, quint8(19));          // D3-D12, A0-A5: D13 is the config LED
         QCOMPARE(r.outputs[7].switchTime(), quint32(50));
         QCOMPARE(r.inputs[4].linked[0], LinkNone);  // F16: end of route, not NA
     }
@@ -317,9 +317,9 @@ private slots:
         QCOMPARE(r.outputsSeen, 16);
         QCOMPARE(int(r.outputs[4].type), int(ServoType));
         QCOMPARE(r.outputs[0].pinA,   quint8(3));   // F7: presets start at D3
-        QCOMPARE(r.outputs[4].pinA,   quint8(15));
-        QCOMPARE(r.outputs[4].relayA, quint8(16));
-        QCOMPARE(r.outputs[4].relayB, quint8(17));
+        QCOMPARE(r.outputs[4].pinA,   quint8(16));          // D13 (config LED) is skipped
+        QCOMPARE(r.outputs[4].relayA, quint8(17));
+        QCOMPARE(r.outputs[4].relayB, quint8(18));
         QCOMPARE(int(r.outputs[5].type), int(OutputNotInUse));
         QCOMPARE(r.inputs[4].outputId, quint8(4));
         QCOMPARE(r.inputs[5].address, AddrNone);
@@ -416,7 +416,8 @@ private slots:
         QCOMPARE(dccNextPort(19), 16);
         QVERIFY(!pinReservedReason(13).isEmpty());          // D13 is not on a DCCnext
         boardOptions().dccNext = false;
-        QVERIFY(pinReservedReason(13).isEmpty());
+        QVERIFY(!pinReservedReason(13).isEmpty());          // config LED on every board
+        QVERIFY(!pinReservedReason(21).isEmpty());          // A7 = config button
         boardOptions().serialPinsUsable = false;
         QVERIFY(!pinReservedReason(0).isEmpty());
         boardOptions().serialPinsUsable = true;
@@ -478,6 +479,23 @@ private slots:
         // names are not part of the board data: a named output equals the board's copy
         OutputConfig plain = b.outputs[2]; plain.name.clear();
         QVERIFY(plain == b.outputs[2]);
+    }
+
+    void presetsInTheGui()
+    {
+        const BoardConfig s16 = presetBoard(0);              // 16 servos: D3-D12, A0-A5, never D13
+        QCOMPARE(int(s16.outputs[0].pinA), 3);
+        QCOMPARE(int(s16.outputs[9].pinA), 12);
+        QCOMPARE(int(s16.outputs[10].pinA), 14);
+        QCOMPARE(int(s16.outputs[15].pinA), 19);
+        QCOMPARE(int(s16.outputs[15].type), int(ServoType));
+        QCOMPARE(int(s16.inputs[15].type), int(Latching));
+        QCOMPARE(int(s16.inputs[15].address), 16);
+        const BoardConfig e = presetBoard(6);                // 4 double pulse + electrofrog
+        QCOMPARE(int(e.outputs[3].relayB), 19);
+        QCOMPARE(int(e.outputs[4].type), int(OutputNotInUse));
+        QCOMPARE(int(e.inputs[4].type), int(InputNotInUse));
+        QCOMPARE(int(e.outputs[0].switchTime()), 50);
     }
 
     void helloTimeoutIsV1()

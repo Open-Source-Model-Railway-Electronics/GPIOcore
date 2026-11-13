@@ -307,6 +307,13 @@ void OutputEditor::refreshPinCombos()
     for (auto *c : m_relays) Ui::fillPinCombo(c, true);
     m_loading = false;
     refresh();
+    refreshPinMarks();
+}
+
+void OutputEditor::refreshPinMarks()
+{
+    for (auto *c : m_pins)   Ui::markUsedPins(c, true, m_index);
+    for (auto *c : m_relays) Ui::markUsedPins(c, true, m_index);
 }
 
 void OutputEditor::setOutput(int index, const OutputConfig &c)

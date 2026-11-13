@@ -401,6 +401,18 @@ void MainWindow::buildUi()
         userEdited();
     });
     connect(m_outEd, &OutputEditor::changed, this, [this](int i, const OutputConfig &c) {
+        QVector<quint8> fresh;                                      // pins this edit newly gives to output i
+        const OutputTypeInfo &info = outputTypeInfo(c.type);
+        for (int k = 0; k < 7; ++k)
+        {
+            const bool active = (k < 4) ? (k < info.pinCount) : info.relays;
+            const quint8 p = c.pin(k);
+            bool had = false;
+            for (int j = 0; j < 7; ++j) had |= (m_edit.outputs[i].pin(j) == p);
+            if (active && p < NumPins && !had) fresh << p;
+        }
+        const QString taken = takeOverPins(fresh, i, -1);
+        if (!taken.isEmpty()) statusBar()->showMessage(taken, 8000);
         const QString name = m_edit.outputs[i].name;
         const QStringList lamps = m_edit.outputs[i].lampColors;
         m_edit.outputs[i] = c;
@@ -414,6 +426,11 @@ void MainWindow::buildUi()
         m_link->servoLive(i, angle);    // queued sends are merged, only the newest angle goes out
     });
     connect(m_inEd, &InputEditor::changed, this, [this](int i, const InputConfig &c) {
+        if (c.type != InputNotInUse && c.pin < NumPins && c.pin != m_edit.inputs[i].pin)
+        {
+            const QString taken = takeOverPins({ c.pin }, -1, i);
+            if (!taken.isEmpty()) statusBar()->showMessage(taken, 8000);
+        }
         const QString name = m_edit.inputs[i].name;
         m_edit.inputs[i] = c;
         m_edit.inputs[i].name = name;
@@ -823,6 +840,13 @@ void MainWindow::connectDemo()
     QString err;
     m_link->openDevice(sim, true, &err);
     updateFrame();
+    // a simulation is for trying things: the input buttons are on right away
+    auto *once = new QObject(this);
+    connect(m_link, &DeviceLink::finished, once, [this, once] {
+        once->deleteLater();
+        if (m_simulating && m_link->isReady() && !m_actLive->isChecked())
+            m_actLive->setChecked(true);
+    });
 }
 
 void MainWindow::updateFrame()
@@ -992,11 +1016,36 @@ void MainWindow::applyPreset()
 {
     const QString name = m_preset->currentText();
     if (QMessageBox::question(this, windowTitle(),
-                              tr("Apply preset \"%1\"?\n\nThis overwrites the outputs (and for most presets the "
-                                 "inputs) on the board. It takes a few seconds.").arg(name))
+                              tr("Apply preset \"%1\"?\n\nThis replaces all outputs and inputs (and their routes). "
+                                 "Names stay.").arg(name))
         != QMessageBox::Yes)
         return;
-    m_link->applyPreset(m_preset->currentIndex());
+    applyPresetNow(m_preset->currentIndex());
+}
+
+void MainWindow::applyPresetNow(int preset)
+{
+    // The GUI computes the preset; it reaches the board as normal output / input data (live write),
+    // so it also works offline and in a simulation.
+    const BoardConfig p = presetBoard(preset);
+    for (int i = 0; i < NumOutputs; ++i)
+    {
+        OutputConfig c = p.outputs[i];
+        c.name = m_edit.outputs[i].name;
+        c.lampColors = m_edit.outputs[i].lampColors;
+        m_edit.outputs[i] = c;
+    }
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        InputConfig c = p.inputs[i];
+        c.name = m_edit.inputs[i].name;
+        m_edit.inputs[i] = c;
+    }
+    showOutput(m_outEd->index());
+    showInput(m_inEd->index());
+    m_inEd->setOutputs(outputNames(), outputTypes());
+    userEdited();
+    statusBar()->showMessage(tr("Preset applied"), 4000);
 }
 
 void MainWindow::testOutput(int index, int state)
@@ -1156,6 +1205,9 @@ bool MainWindow::inputHasConflict(int i) const
 
 void MainWindow::refreshRows()
 {
+    Ui::setPinBoard(m_edit);                 // pin lists: used pins in red
+    m_outEd->refreshPinMarks();
+    m_inEd->refreshPinMarks();
     // all nodes: pin conflicts and colours depend on the other inputs and outputs
     QVector<bool> inDirty(NumInputs), outDirty(NumOutputs), inConflict(NumInputs), outConflict(NumOutputs);
     for (int i = 0; i < NumInputs; ++i)  { inDirty[i]  = inputDirty(i);  inConflict[i]  = inputHasConflict(i);  }
@@ -1177,6 +1229,7 @@ void MainWindow::selectOutput(int i)
 {
     m_view->selectOutput(i);
     showOutput(i);
+    m_outEd->refreshPinMarks();
     m_outEd->setWarnings(outputWarnings(i));
     m_outName->setText(m_edit.outputs[i].name);
     refreshLampRow();
@@ -1187,6 +1240,7 @@ void MainWindow::selectInput(int i)
 {
     m_view->selectInput(i);
     showInput(i);
+    m_inEd->refreshPinMarks();
     m_inEd->setWarnings(inputWarnings(i));
     m_inName->setText(m_edit.inputs[i].name);
     updateInputEditorLimits();
@@ -1346,6 +1400,43 @@ void MainWindow::closeEvent(QCloseEvent *e)
         return;
     }
     e->accept();
+}
+
+// ── Pins taken over ─────────────────────────────────────────────────────────
+QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int input)
+{
+    QStringList freed;
+    for (quint8 p : pins)
+    {
+        for (int o = 0; o < NumOutputs; ++o)
+        {
+            if (o == output) continue;
+            const OutputConfig &c = m_edit.outputs[o];
+            const OutputTypeInfo &info = outputTypeInfo(c.type);
+            bool uses = false;
+            for (int k = 0; k < 7; ++k)
+                uses |= ((k < 4) ? (k < info.pinCount) : info.relays) && c.pin(k) == p;
+            if (!uses || c.type == OutputNotInUse) continue;
+            OutputConfig off;
+            off.name = c.name;
+            off.lampColors = c.lampColors;
+            m_edit.outputs[o] = off;
+            freed << tr("output %1").arg(o);
+        }
+        for (int j = 0; j < NumInputs; ++j)
+        {
+            if (j == input) continue;
+            const InputConfig &c = m_edit.inputs[j];
+            if (c.type == InputNotInUse || c.pin != p) continue;
+            InputConfig off;
+            off.name = c.name;
+            m_edit.inputs[j] = off;
+            freed << tr("input %1").arg(j);
+        }
+    }
+    freed.removeDuplicates();
+    return freed.isEmpty() ? QString()
+                           : tr("The pin was in use: %1 is now not in use.").arg(freed.join(QStringLiteral(", ")));
 }
 
 // ── Live test ───────────────────────────────────────────────────────────────
@@ -1764,7 +1855,7 @@ void MainWindow::applyPresetOnStart(int preset)
     auto *once = new QObject(this);
     connect(m_link, &DeviceLink::finished, once, [this, preset, once] {
         once->deleteLater();
-        m_link->applyPreset(preset);
+        applyPresetNow(preset);
     });
 }
 

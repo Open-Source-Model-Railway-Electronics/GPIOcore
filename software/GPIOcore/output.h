@@ -106,6 +106,7 @@ public:
     uint8_t     setState( uint8_t _state ) ;
     void        setPosition( uint8_t angle ) ;  // servo: move now, nothing stored, detach after ~1 s
     void        defaults() ;
+    void        engage() { oldPos = !eedata.state ; }   // apply the stored state now (servo start-up)
     void        saveEEPROM() ;
     void        loadEEPROM() ;
     void        assignEEPROM() ;

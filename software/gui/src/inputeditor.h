@@ -35,6 +35,7 @@ public:
     void setRecorderTaken(bool taken);        // another input already is the recorder
     void setWarnings(const QStringList &warnings);
     void refreshPinCombos();
+    void refreshPinMarks();                   // pins used elsewhere in red
 
 signals:
     void changed(int index, const Gpio::InputConfig &c);

@@ -46,6 +46,9 @@ class TestGui : public QObject
         w.show();
         w.connectDemo();
         waitIdle(link);
+        QTest::qWaitFor([link] { return !link->isBusy(); }, 5000);   // the simulation reads the live states too
+        QTest::qWait(50);
+        QTest::qWaitFor([link] { return !link->isBusy(); }, 5000);
         QCoreApplication::processEvents();
         return w.findChild<ConnectionView *>();
     }
@@ -111,8 +114,7 @@ private slots:
 
         OutputConfig c = ed->config();
         QCOMPARE(ed->index(), 0);
-        c.type = ServoType;
-        c.pinA = 9;
+        c.type = ServoType;                       // same pin (D3): nothing is taken over
         c.data = { { 70, 110, 15, 0 } };
         emit ed->changed(0, c);
         QVERIFY(write->isEnabled());
@@ -133,21 +135,21 @@ private slots:
         link->drainMs = 3;
         w.applyPresetOnStart(2);                  // 5 servos + electrofrog relays
         ConnectionView *view = startDemo(w);      // read all
-        waitIdle(link);                           // preset + read back
+        QTest::qWaitFor([link] { return !link->isBusy(); }, 8000);
         QCOMPARE(int(view->board().outputs[2].type), int(ServoType));
         QCOMPARE(view->board().outputs[2].pinA, quint8(9));
         // Before the preset output 6 used D9; now only output 2 does
         QVERIFY(!view->outputConflictShown(2));
         QVERIFY(!view->outputConflictShown(0));
 
-        // A real conflict: output 3 also on D9 -> both flagged
+        // Giving D9 to output 3 takes it from output 2: no conflict, output 2 is not in use
         auto *ed = w.findChild<OutputEditor *>();
         OutputConfig c = ed->config();
         c.type = SingleSteady;
         c.pinA = 9;
         emit ed->changed(3, c);
-        QVERIFY(view->outputConflictShown(3));
-        QVERIFY(view->outputConflictShown(2));
+        QVERIFY(!view->outputConflictShown(3));
+        QCOMPARE(int(view->board().outputs[2].type), int(OutputNotInUse));
     }
 
     void dragOutputOntoInput()
@@ -320,6 +322,22 @@ private slots:
         QTRY_COMPARE_WITH_TIMEOUT(last, 0, 2000);
     }
 
+    void pinTakeOver()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *oed = w.findChild<OutputEditor *>();
+        const quint8 pinOf1 = view->board().outputs[1].pinA;
+        OutputConfig c = view->board().outputs[0];
+        c.pinA = pinOf1;                                     // output 0 takes the pin of output 1
+        emit oed->changed(0, c);
+        QCOMPARE(int(view->board().outputs[0].pinA), int(pinOf1));
+        QCOMPARE(int(view->board().outputs[1].type), int(OutputNotInUse));
+        QCOMPARE(int(view->board().outputs[2].type), int(SingleSteady));   // others untouched
+        for (int i = 0; i < NumOutputs; ++i)                 // D13 / A7 are never handed out by default
+            QVERIFY(view->board().outputs[i].pinA != 13 && view->board().outputs[i].pinA != 21);
+    }
+
     void routeByDragging()
     {
         MainWindow w;
@@ -365,7 +383,7 @@ private slots:
         link->drainMs = 3;
         w.applyPresetOnStart(2);                  // servos with electrofrog relays
         ConnectionView *view = startDemo(w);
-        waitIdle(link);
+        QTest::qWaitFor([link] { return !link->isBusy(); }, 8000);
         QVERIFY(view->board().outputs[1].relayA != PinNA);
 
         click(view, view->outputRect(1).center());

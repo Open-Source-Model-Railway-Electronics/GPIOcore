@@ -40,6 +40,10 @@ struct PinUse
     QString role;          // "A", "B", "relay A", "input"
 };
 QVector<QVector<PinUse>> pinUsage(const Gpio::BoardConfig &board);
+// Pins in use elsewhere are shown red with who uses them. setPinBoard() is called by the main
+// window after every change; markUsedPins() updates a combo's texts without refilling it.
+void setPinBoard(const Gpio::BoardConfig &board);
+void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex);
 
 QString outputSummaryPins(const Gpio::OutputConfig &c);
 QString outputSummaryRelays(const Gpio::OutputConfig &c);

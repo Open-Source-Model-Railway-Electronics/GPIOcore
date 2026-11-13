@@ -20,6 +20,11 @@ inline bool isRoute( uint8_t type ) { return type == ROUTE || type == ROUTE_STRA
 // takes the first one and ignores the same address for this long.
 const uint16_t DCC_LOCKOUT_MS = 500 ;
 
+// ── Board pins with a fixed job: never an input or output ──────────────────────
+const uint8_t  CONFIG_LED_PIN    = 13 ;  // D13: on = normal, blinking = config mode
+const uint8_t  CONFIG_BUTTON_PIN = 21 ;  // A7: config button, analog input with an external pull-up
+inline bool isReservedPin( uint8_t pin ) { return pin == 2 || pin == CONFIG_LED_PIN || pin == CONFIG_BUTTON_PIN ; }
+
 // ── Recorder callback actions ─────────────────────────────────────────────────
 const int  RECORD_TOGGLE    = 0 ;
 const int  PLAY_TOGGLE      = 1 ;

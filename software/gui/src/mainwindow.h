@@ -57,6 +57,7 @@ private:
     void writeChanges();
     void revertChanges();
     void applyPreset();
+    void applyPresetNow(int preset);          // replace the configuration (names stay), then live write
     void openFile();
     void saveFile();
     void testOutput(int index, int state);
@@ -87,6 +88,9 @@ private:
     void removeSelected();
     void flashFirmware();
     void setLiveTest(bool on);
+    // A pin newly given to output 'output' / input 'input' is taken from every other user, which
+    // becomes 'not in use'. Returns a description for the status bar.
+    QString takeOverPins(const QVector<quint8> &pins, int output, int input);
     void openLiveValue(int input);           // live test: aspect / PWM value via DCC extended
     QWidget *buildStartPage();
     void refreshRows();

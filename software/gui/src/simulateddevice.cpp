@@ -41,6 +41,7 @@ void SimulatedDevice::factoryDefaults()
     {
         OutputConfig c;
         c.pinA = quint8(firstPin() + i);
+        if (!m_opt.oldDefaults && c.pinA >= 13) ++c.pinA;   // D13 = config LED
         c.type = SingleSteady;
         c.setSwitchTime(50);
         m_out[i] = c.normalized();
@@ -407,17 +408,18 @@ void SimulatedDevice::applyPreset(quint8 preset)
     const quint8 X = 0xFF;
     quint8 pin = firstPin();
     int count = 0;
+    auto next = [&pin, this]() -> quint8 { if (!m_opt.oldDefaults && pin == 13) ++pin; return pin++; };   // D13 = config LED
 
     switch (preset)
     {
-    case 0: count = 16; for (int i = 0; i < count; ++i) { quint8 a = pin++; presetOutput(i, a, X, X, X, X, ServoType, servo, 0, false); } setupInputs(16); break;
-    case 1: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = pin++, c = pin++; presetOutput(i, a, X, X, X, c, ServoType, servo, 0, false); } setupInputs(8); break;
-    case 2: count = 5;  for (int i = 0; i < count; ++i) { quint8 a = pin++, ra = pin++, rb = pin++; presetOutput(i, a, X, ra, rb, X, ServoType, servo, 0, false); } setupInputs(5); break;
-    case 3: count = 16; for (int i = 0; i < count; ++i) { quint8 a = pin++; presetOutput(i, a, X, X, X, X, SingleSteady, {}, 0, true); } setupInputs(16); break;
-    case 4: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = pin++, b = pin++; presetOutput(i, a, b, X, X, X, DoublePulse, {}, 50, true); } if (!m_opt.oldDefaults) setupInputs(8); break;   // old firmware: no setupInputs, clearUnusedOutputs(uninitialised i)
-    case 5: count = 5;  for (int i = 0; i < count; ++i) { quint8 a = pin++, b = pin++, c = pin++; presetOutput(i, a, b, X, X, c, DoublePulse, {}, 50, true); } setupInputs(5); break;
-    case 6: count = 4;  for (int i = 0; i < count; ++i) { quint8 a = pin++, b = pin++, ra = pin++, rb = pin++; presetOutput(i, a, b, ra, rb, X, DoublePulse, {}, 50, true); } setupInputs(4); break;
-    case 7: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = pin++, b = pin++; presetOutput(i, a, b, X, X, X, DoubleSteady, {}, 0, true); } setupInputs(8); break;
+    case 0: count = 16; for (int i = 0; i < count; ++i) { quint8 a = next(); presetOutput(i, a, X, X, X, X, ServoType, servo, 0, false); } setupInputs(16); break;
+    case 1: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = next(), c = next(); presetOutput(i, a, X, X, X, c, ServoType, servo, 0, false); } setupInputs(8); break;
+    case 2: count = 5;  for (int i = 0; i < count; ++i) { quint8 a = next(), ra = next(), rb = next(); presetOutput(i, a, X, ra, rb, X, ServoType, servo, 0, false); } setupInputs(5); break;
+    case 3: count = 16; for (int i = 0; i < count; ++i) { quint8 a = next(); presetOutput(i, a, X, X, X, X, SingleSteady, {}, 0, true); } setupInputs(16); break;
+    case 4: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(); presetOutput(i, a, b, X, X, X, DoublePulse, {}, 50, true); } if (!m_opt.oldDefaults) setupInputs(8); break;   // old firmware: no setupInputs, clearUnusedOutputs(uninitialised i)
+    case 5: count = 5;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(), c = next(); presetOutput(i, a, b, X, X, c, DoublePulse, {}, 50, true); } setupInputs(5); break;
+    case 6: count = 4;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(), ra = next(), rb = next(); presetOutput(i, a, b, ra, rb, X, DoublePulse, {}, 50, true); } setupInputs(4); break;
+    case 7: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(); presetOutput(i, a, b, X, X, X, DoubleSteady, {}, 0, true); } setupInputs(8); break;
     default: return;
     }
     clearUnusedOutputs(count);
