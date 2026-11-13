@@ -1235,7 +1235,7 @@ QStringList MainWindow::outputWarnings(int i) const
     if (c.type == ServoType && c.servoMin() > c.servoMax())
         w << tr("Min is larger than max: positions are swapped.");
     for (int s = 0; s < info.pinCount; ++s)
-        if (!pinNote(c.pin(s)).isEmpty())
+        if (c.pin(s) < 2 && !pinNote(c.pin(s)).isEmpty())
             w << tr("%1 (%2) is a serial pin: it only works when no GUI is connected.")
                      .arg(trGpio(roles[s]), pinName(c.pin(s)));
     if (info.needsPwm || c.type == Pwm)

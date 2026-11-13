@@ -252,7 +252,8 @@ void fillPinCombo(QComboBox *combo, bool output)
         if ((pin == 20 || pin == 21) && !reserved.isEmpty())
             continue;                    // A6/A7 only appear where they can be used
         if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
-        else if (!note.isEmpty()) text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
+        else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
+        else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio("analog input only"));
         combo->addItem(text, int(pin));
         if (!reserved.isEmpty())
             combo->setItemData(combo->count() - 1, QColor(0xB4, 0x53, 0x09), Qt::ForegroundRole);
