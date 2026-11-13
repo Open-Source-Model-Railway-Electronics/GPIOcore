@@ -52,6 +52,7 @@
 #include <QPlainTextEdit>
 #include <QProgressBar>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSerialPortInfo>
 #include <QSplitter>
 #include <QStackedWidget>
@@ -449,7 +450,7 @@ void MainWindow::sendLive()
 void MainWindow::boardEdited()
 {
     refreshRows();
-    m_inEd->setInput(m_inEd->index(), m_edit.inputs[m_inEd->index()]);   // the panel is always visible
+    showInput(m_inEd->index());   // the panel is always visible
     updateInputEditorLimits();
     refreshWarnings();
     m_pinMap->setBoard(m_edit);
@@ -457,6 +458,40 @@ void MainWindow::boardEdited()
 }
 
 // ── Panels ───────────────────────────────────────────────────────────────────
+// Refresh an editor only when what it shows differs from the configuration, and keep the
+// scroll position: a read-back after every live write must not make the panel jump.
+static QScrollArea *scrollOf(QWidget *w)
+{
+    for (QWidget *p = w ? w->parentWidget() : nullptr; p; p = p->parentWidget())
+        if (auto *sa = qobject_cast<QScrollArea *>(p))
+            return sa;
+    return nullptr;
+}
+
+void MainWindow::showInput(int i)
+{
+    if (m_inEd->index() == i && m_inEd->config().normalized() == m_edit.inputs[i].normalized())
+        return;
+    const bool same = m_inEd->index() == i;
+    QScrollArea *sa = scrollOf(m_inEd);
+    const int y = sa ? sa->verticalScrollBar()->value() : 0;
+    m_inEd->setInput(i, m_edit.inputs[i]);
+    if (same && sa)
+        QTimer::singleShot(0, sa, [sa, y] { sa->verticalScrollBar()->setValue(y); });
+}
+
+void MainWindow::showOutput(int i)
+{
+    if (m_outEd->index() == i && m_outEd->config().normalized() == m_edit.outputs[i].normalized())
+        return;
+    const bool same = m_outEd->index() == i;
+    QScrollArea *sa = scrollOf(m_outEd);
+    const int y = sa ? sa->verticalScrollBar()->value() : 0;
+    m_outEd->setOutput(i, m_edit.outputs[i]);
+    if (same && sa)
+        QTimer::singleShot(0, sa, [sa, y] { sa->verticalScrollBar()->setValue(y); });
+}
+
 void MainWindow::openPanel(OpenPanel which)
 {
     m_open = which;                      // both panels are always visible; this is the one in focus
@@ -542,8 +577,9 @@ void MainWindow::buildToolbar()
     m_actRefresh = tb->addAction(style()->standardIcon(QStyle::SP_BrowserReload), QString(), this, &MainWindow::refreshPorts);
     m_actRefresh->setToolTip(tr("Refresh port list"));
     m_actConnect = tb->addAction(tr("Connect"), this, &MainWindow::toggleConnection);
-    m_actDemo    = tb->addAction(tr("Demo"), this, &MainWindow::connectDemo);
-    m_actDemo->setToolTip(tr("Connect to a built-in simulation of the GPIOcore firmware"));
+    m_actDemo    = tb->addAction(tr("Simulate"), this, &MainWindow::connectDemo);
+    m_actDemo->setToolTip(tr("Try your own configuration without a board: a simulated GPIOcore runs it. "
+                             "Use Live test to press inputs and watch the outputs."));
     tb->addSeparator();
 
     m_actRead   = tb->addAction(style()->standardIcon(QStyle::SP_ArrowDown), tr("Read board"), this, &MainWindow::readFromBoard);
@@ -738,6 +774,7 @@ void MainWindow::connectPort(const QString &port)
     m_outKnown.fill(false);
     m_inKnown.fill(false);
     m_nameAsked = false;
+    m_simulating = false;
     showWorkspace();
     QString err;
     if (!m_link->openSerial(port, &err))
@@ -746,19 +783,33 @@ void MainWindow::connectPort(const QString &port)
 
 void MainWindow::connectDemo()
 {
+    if (m_simulating && m_link->isOpen())
+    {
+        m_link->close();                 // second click: stop the simulation
+        return;
+    }
     if (m_link->isOpen())
         m_link->close();
     m_outKnown.fill(false);
     m_inKnown.fill(false);
-    m_nameAsked = true;                  // the demo board does not need a name
+    m_nameAsked = true;                  // a simulation does not ask for a name
     showWorkspace();
-    QString err;
+    // the simulated board starts with exactly what is on screen: your own configuration
     auto *sim = new SimulatedDevice;
-    BoardSettings demo;
-    demo.name = QStringLiteral("Demo");
-    demo.type = m_edit.board.type;
-    sim->setBoard(demo);
+    for (int i = 0; i < NumOutputs; ++i) sim->setOutput(i, m_edit.outputs[i]);
+    for (int i = 0; i < NumInputs; ++i)  sim->setInput(i, m_edit.inputs[i]);
+    sim->setBoard(m_edit.board);
+    m_simulating = true;
+    QString err;
     m_link->openDevice(sim, true, &err);
+    updateFrame();
+}
+
+void MainWindow::updateFrame()
+{
+    using F = ConnectionView::Frame;
+    m_view->setFrame(!m_link->isOpen() ? F::None : m_simulating ? F::Simulate : F::Configure);
+    m_actDemo->setText(m_simulating && m_link->isOpen() ? tr("Stop simulation") : tr("Simulate"));
 }
 
 void MainWindow::onConnectionChanged()
@@ -781,6 +832,9 @@ void MainWindow::onConnectionChanged()
     m_outEd->setConnected(open);
     if (!open && m_actLive && m_actLive->isChecked())
         m_actLive->setChecked(false);
+    if (!open)
+        m_simulating = false;
+    updateFrame();
     updateActions();
 }
 
@@ -806,7 +860,7 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
         m_edit.outputs[i] = m_dev.outputs[i];
     refreshRows();
     if (m_outEd->index() == i && !keep)
-        m_outEd->setOutput(i, m_edit.outputs[i]);
+        showOutput(i);
     m_inEd->setOutputs(outputNames(), outputTypes());
     m_pinMap->setBoard(m_edit);
     refreshWarnings();
@@ -826,7 +880,7 @@ void MainWindow::onInputReceived(int i, const InputConfig &received)
         m_edit.inputs[i] = c;
     refreshRows();
     if (m_inEd->index() == i && !keep)
-        m_inEd->setInput(i, m_edit.inputs[i]);
+        showInput(i);
     m_pinMap->setBoard(m_edit);
     refreshWarnings();
     updateActions();
@@ -841,7 +895,7 @@ void MainWindow::onRouteReceived(int i, const QVector<RouteStep> &steps)
     if (!keep)
         setRouteSteps(m_edit.inputs[i], steps);
     if (m_inEd->index() == i && !keep)
-        m_inEd->setInput(i, m_edit.inputs[i]);
+        showInput(i);
     boardEdited();
 }
 
@@ -906,8 +960,8 @@ void MainWindow::revertChanges()
     for (int i = 0; i < NumOutputs; ++i) if (m_outKnown[i]) m_edit.outputs[i] = m_dev.outputs[i];
     for (int i = 0; i < NumInputs;  ++i) if (m_inKnown[i])  m_edit.inputs[i]  = m_dev.inputs[i];
     refreshAll();
-    m_outEd->setOutput(m_outEd->index(), m_edit.outputs[m_outEd->index()]);
-    m_inEd->setInput(m_inEd->index(), m_edit.inputs[m_inEd->index()]);
+    showOutput(m_outEd->index());
+    showInput(m_inEd->index());
 }
 
 void MainWindow::applyPreset()
@@ -924,7 +978,7 @@ void MainWindow::applyPreset()
 void MainWindow::testOutput(int index, int state)
 {
     m_edit.outputs[index].state = quint8(state);
-    m_outEd->setOutput(index, m_edit.outputs[index]);
+    showOutput(index);
     m_link->writeOutput(index, m_edit.outputs[index]);
     m_link->readOutput(index);
     refreshRows();
@@ -976,8 +1030,8 @@ bool MainWindow::loadFile(const QString &path)
     setBoardType(m_edit.board.type);
     showWorkspace();
     refreshAll();
-    m_outEd->setOutput(m_outEd->index(), m_edit.outputs[m_outEd->index()]);
-    m_inEd->setInput(m_inEd->index(), m_edit.inputs[m_inEd->index()]);
+    showOutput(m_outEd->index());
+    showInput(m_inEd->index());
     statusBar()->showMessage(tr("Loaded %1").arg(path), 6000);
     return true;
 }
@@ -1100,7 +1154,7 @@ void MainWindow::selectOutput(int i)
     if (m_view->liveMode())
         return;
     m_view->selectOutput(i);
-    m_outEd->setOutput(i, m_edit.outputs[i]);
+    showOutput(i);
     m_outEd->setWarnings(outputWarnings(i));
     m_outName->setText(m_edit.outputs[i].name);
     refreshLampRow();
@@ -1112,7 +1166,7 @@ void MainWindow::selectInput(int i)
     if (m_view->liveMode())
         return;
     m_view->selectInput(i);
-    m_inEd->setInput(i, m_edit.inputs[i]);
+    showInput(i);
     m_inEd->setWarnings(inputWarnings(i));
     m_inName->setText(m_edit.inputs[i].name);
     updateInputEditorLimits();
@@ -1429,7 +1483,8 @@ QWidget *MainWindow::buildStartPage()
         v->addWidget(l);
     };
     add(tr("Connect to the board"), tr("Uses the port selected at the top."), [this] { toggleConnection(); });
-    add(tr("Try the demo"), tr("A simulated board, nothing can break."), [this] { connectDemo(); });
+    add(tr("Simulate"), tr("Try a configuration without a board: open a board file or start a new one, then "
+                           "simulate it. Nothing can break."), [this] { connectDemo(); });
     add(tr("Open a board file…"), tr("Look at or prepare the settings of a board without connecting it."), [this] { openFile(); });
     add(tr("New board (offline)…"), tr("Prepare a new board on this computer and send it later."), [this] { newOfflineBoard(); });
     add(tr("Flash firmware…"), tr("Put the GPIOcore firmware on an Arduino."), [this] { flashFirmware(); });

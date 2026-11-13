@@ -29,7 +29,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    void connectDemo();
+    void connectDemo();                     // simulation with the current configuration (toggles)
     void connectPort(const QString &port);
     bool loadFile(const QString &path);       // configuration JSON
     void setExpertMode(bool on);              // simple mode hides bytes, log and protocol details
@@ -68,6 +68,8 @@ private:
     enum OpenPanel { OpenNone, OpenInput, OpenOutput };
     void openPanel(OpenPanel which);
     void closePanels();
+    void showInput(int index);              // refresh the input panel only when needed
+    void showOutput(int index);
     Gpio::RouteLimits routeLimits() const;
     void applyCapabilities();
     void updateInputEditorLimits();
@@ -138,6 +140,8 @@ private:
     QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
     bool            m_expert = false;
     bool            m_nameAsked = false;
+    bool            m_simulating = false;
+    void            updateFrame();
     QSet<int>       m_liveTried;                // live write: items sent since the last user edit
                                                 // (inputs 0-15, outputs 100-115)
     bool            m_liveWarned = false;

@@ -48,6 +48,7 @@ public:
     Gpio::OutputConfig output(int i) const { return m_out[i]; }
     Gpio::InputConfig  input(int i)  const { return m_in[i]; }
     void setOutput(int i, const Gpio::OutputConfig &c) { m_out[i] = c.normalized(); }
+    void setInput(int i, const Gpio::InputConfig &c)   { m_in[i] = c.normalized(); m_in[i].syncLinkedFromRoute(); }
     int  liveAngle(int output) const { return m_live[output]; }   // last SERVO_LIVE, -1 = none
     bool configSession() const { return m_session; }                // HELLO received
     Gpio::BoardSettings board() const { return m_board; }

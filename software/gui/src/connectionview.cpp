@@ -677,25 +677,43 @@ void ConnectionView::paintEvent(QPaintEvent *)
     p.setFont(small);
     p.setPen(kMuted);
     const QRectF hintRect(Margin + nodeWidth() + 8, 8, width() - 2 * (Margin + nodeWidth() + 8), 26);
+    // Frame and banner: green = live test, yellow = simulation, red = changes go to a real board
+    QColor frameCol;
+    QString bannerText;
     if (m_live)
     {
-        // unmistakable: blue frame and a banner while live test is on
-        const QColor blue(0x25, 0x63, 0xEB);
-        p.setPen(QPen(blue, 5));
+        frameCol   = QColor(0x16, 0xA3, 0x4A);
+        bannerText = m_frame == Frame::Simulate ? tr("● LIVE TEST · SIMULATION")
+                                                : tr("● LIVE TEST");
+    }
+    else if (m_frame == Frame::Simulate)
+    {
+        frameCol   = QColor(0xEA, 0xB3, 0x08);
+        bannerText = tr("SIMULATION");
+    }
+    else if (m_frame == Frame::Configure)
+    {
+        frameCol   = QColor(0xDC, 0x26, 0x26);
+        bannerText = tr("CONFIGURING THE BOARD");
+    }
+    if (frameCol.isValid())
+    {
+        p.setPen(QPen(frameCol, 5));
         p.setBrush(Qt::NoBrush);
         p.drawRoundedRect(QRectF(rect()).adjusted(2.5, 2.5, -2.5, -2.5), 8, 8);
         QPainterPath banner;
-        const qreal bw = qMin<qreal>(300, qMax<qreal>(120, hintRect.width()));
+        const qreal bw = qMin<qreal>(360, qMax<qreal>(120, hintRect.width()));
         banner.addRoundedRect(QRectF(hintRect.center().x() - bw / 2, hintRect.top() + 2, bw, hintRect.height() - 4), 10, 10);
-        p.fillPath(banner, blue);
+        p.fillPath(banner, frameCol);
         QFont bf = font();
         bf.setBold(true);
         p.setFont(bf);
-        p.setPen(Qt::white);
-        p.drawText(banner.boundingRect(), Qt::AlignCenter, tr("● LIVE TEST — click the input buttons"));
+        p.setPen(m_frame == Frame::Simulate && !m_live ? QColor(0x1F, 0x29, 0x37) : QColor(Qt::white));
+        p.drawText(banner.boundingRect(), Qt::AlignCenter,
+                   p.fontMetrics().elidedText(bannerText, Qt::ElideRight, int(bw - 12)));
         p.setFont(small);
     }
-    else
+    if (!frameCol.isValid())
         p.drawText(hintRect, Qt::AlignCenter,
                    p.fontMetrics().elidedText(tr("drag an output onto an input"), Qt::ElideRight, int(hintRect.width())));
 

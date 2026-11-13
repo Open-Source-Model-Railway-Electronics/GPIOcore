@@ -23,6 +23,9 @@ public:
     void setHideUnused(bool hide);
     // Live test: inputs get buttons, outputs show what the board reports.
     void setLiveMode(bool on);
+    enum class Frame { None, Configure, Simulate };   // red: a real board is changed, yellow: simulation
+    void setFrame(Frame f) { m_frame = f; update(); }
+    Frame frame() const { return m_frame; }
     bool liveMode() const { return m_live; }
     void setOutputLive(int output, int state, int value);   // state 0/1, 2 = raw value
     void clearLive();
@@ -99,6 +102,7 @@ private:
     int     m_selInput  = -1;
     bool    m_hideUnused = false;
     bool    m_live = false;
+    Frame   m_frame = Frame::None;
     QVector<int>    m_liveState, m_liveValue;
     QVector<bool>   m_liveRaw;
     QVector<int>    m_liveFrog;           // frog relays reported by the board, -1 = unknown            // last report was a raw value (angle / aspect / PWM)
