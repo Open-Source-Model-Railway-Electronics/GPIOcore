@@ -85,7 +85,8 @@ void Input::setDccAddressExt( uint16_t address, uint8_t val )
 {
     if( address != eedata.myAddress ) return ;
     if( eedata.type != MOMENTARY && eedata.type != LATCHING ) return ;   // routes have no single output
-    if( callbackInput ) callbackInput( eedata.outputID, 0, val ) ;
+    if( callbackInputExt ) callbackInputExt( eedata.outputID, val ) ;
+    else if( callbackInput ) callbackInput( eedata.outputID, 0, val ) ;
 }
 
 void Input::update()

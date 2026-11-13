@@ -15,6 +15,7 @@ SimulatedDevice::SimulatedDevice(const Options &options, QObject *parent)
 {
     m_live.fill(-1);
     m_servoPos.fill(-1);
+    m_servoTarget.fill(-1);
     factoryDefaults();
 }
 
@@ -245,6 +246,7 @@ void SimulatedDevice::messageReceived()
             if (m_in[i].address == address && isDirectType(m_in[i].type))
             {
                 OutputConfig &o = m_out[m_in[i].outputId];
+                if (o.type == ServoType) { if (p[2] <= 180) servoTo(m_in[i].outputId, p[2]); continue; }
                 if (o.type == FourToneSignal || o.type == Pwm) o.data[0] = p[2];
                 if (o.type == FourToneSignal) reportOutput(m_in[i].outputId, 2, p[2]);
                 else                          setOutputState(m_in[i].outputId, 0);
@@ -481,7 +483,11 @@ void SimulatedDevice::runRouteStep(int input, int step)
         return;
     }
     const RouteStep &s = r[step];
-    if (s.raw)
+    if (s.raw && m_out[s.output].type == ServoType)
+    {
+        if (s.value <= 180) servoTo(s.output, s.value);
+    }
+    else if (s.raw)
     {
         reportOutput(s.output, 2, s.value);
     }
@@ -496,7 +502,8 @@ void SimulatedDevice::runRouteStep(int input, int step)
 void SimulatedDevice::setOutputState(int output, quint8 state)
 {
     OutputConfig &o = m_out[output];
-    const bool changed = o.state != state;
+    const bool changed = o.state != state || m_servoTarget[output] >= 0;
+    m_servoTarget[output] = -1;
     o.state = state;
     reportOutput(output, state, o.data[0]);
     if (!changed)
@@ -553,7 +560,7 @@ void SimulatedDevice::sweepServo(int output)
     auto step = std::make_shared<std::function<void()>>();
     *step = [this, output, step] {
         const OutputConfig &c = m_out[output];
-        const int to = c.state ? c.servoMax() : c.servoMin();
+        const int to = m_servoTarget[output] >= 0 ? m_servoTarget[output] : (c.state ? c.servoMax() : c.servoMin());
         int &pos = m_servoPos[output];
         if (pos == to)
         {
@@ -569,10 +576,16 @@ void SimulatedDevice::sweepServo(int output)
         }
         pos += pos < to ? 1 : -1;
         reportOutput(output, 2, pos);
-        if (c.relayC != PinNA)                               // unifrog switches at the middle of the sweep
+        if (c.relayC != PinNA && m_servoTarget[output] < 0)  // unifrog switches at the middle of the sweep
             setFrog(output, 2, pos >= (c.servoMin() + c.servoMax()) / 2);
         QTimer::singleShot(qMax(1, int(c.servoSpeed())), this, *step);
     };
     Q_UNUSED(target);
     QTimer::singleShot(qMax(1, int(o.servoSpeed())), this, *step);
+}
+
+void SimulatedDevice::servoTo(int output, int angle)
+{
+    m_servoTarget[output] = angle;
+    sweepServo(output);
 }

@@ -150,6 +150,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         if (m_readingBoard)
         {
             m_readingBoard = false;
+            markFileDirty();             // the screen now shows the board, not the file
             m_shadow = m_edit;
             statusBar()->showMessage(tr("Board read"), 4000);
         }
@@ -158,7 +159,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
             statusBar()->showMessage(tr("Done with %1 error(s)").arg(failures), 6000);
         if (dirtyCount() > 0 && m_liveTimer->isActive() == false && failures == 0)
             m_liveTimer->start();        // edits made while the board was busy (sendLive skips refused items)
-        saveBoardFile();
         if (!m_nameAsked && m_link->caps().boardSettings && m_dev.board.name.isEmpty())
             QTimer::singleShot(0, this, &MainWindow::askBoardName);
     });
@@ -170,6 +170,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     applyCapabilities();
     setExpertMode(QSettings().value(QStringLiteral("ui/expert"), false).toBool());
+    updateConnState();
+    updateEditing();
     refreshAll();
     onConnectionChanged();
 }
@@ -211,6 +213,7 @@ void MainWindow::buildUi()
         close->setToolTip(tr("Close (Esc)"));
         connect(close, &QToolButton::clicked, this, &MainWindow::closePanels);
         auto *remove = new QToolButton;
+        m_editWidgets << remove;
         remove->setText(tr("Remove"));
         remove->setToolTip(tr("Set this to 'not in use' and take it off the canvas"));
         const bool isInput = (editor == m_inEd);
@@ -223,6 +226,7 @@ void MainWindow::buildUi()
         close->hide();                      // panels stay; Esc clears the selection
         v->addLayout(head);
         name = new QLineEdit;
+        m_editWidgets << name;
         name->setPlaceholderText(tr("Name, e.g. \"Turnout station left\" (kept on this computer)"));
         name->setMaxLength(40);
         v->addWidget(name);
@@ -239,7 +243,7 @@ void MainWindow::buildUi()
     connect(m_inName, &QLineEdit::textEdited, this, [this](const QString &t) {
         m_edit.inputs[m_inEd->index()].name = t.trimmed();
         refreshRows();
-        saveBoardFile();
+        markFileDirty();
     });
     // lamp colours of a 4-aspect signal: only for the GUI, kept in the board file
     m_lampRow = new QWidget;
@@ -263,7 +267,7 @@ void MainWindow::buildUi()
             o.lampColors[k] = c.name();
             refreshLampRow();
             refreshRows();
-            saveBoardFile();
+            markFileDirty();
         });
     }
     lampLay->addStretch(1);
@@ -275,7 +279,7 @@ void MainWindow::buildUi()
         m_edit.outputs[m_outEd->index()].name = t.trimmed();
         refreshRows();
         m_inEd->setOutputs(outputNames(), outputTypes());
-        saveBoardFile();
+        markFileDirty();
     });
 
     auto *viewScroll = new QScrollArea;
@@ -292,6 +296,7 @@ void MainWindow::buildUi()
     auto *addOut = new QPushButton(tr("+ Add output"));
     addIn->setToolTip(tr("Take the next free input and open its settings"));
     addOut->setToolTip(tr("Take the next free output and open its settings"));
+    m_editWidgets << addIn << addOut;
     connect(addIn,  &QPushButton::clicked, this, [this] { addBlock(false); });
     connect(addOut, &QPushButton::clicked, this, [this] { addBlock(true); });
     addRow->addWidget(addIn);
@@ -472,8 +477,7 @@ void MainWindow::userEdited()
     boardEdited();
     if (m_link->isReady())
         m_liveTimer->start();           // (re)start: send after a short pause
-    else
-        saveBoardFile();
+    markFileDirty();
 }
 
 void MainWindow::sendLive()
@@ -626,33 +630,33 @@ void MainWindow::buildToolbar()
     tb->addWidget(m_port);
     m_actRefresh = tb->addAction(style()->standardIcon(QStyle::SP_BrowserReload), QString(), this, &MainWindow::refreshPorts);
     m_actRefresh->setToolTip(tr("Refresh port list"));
-    m_actConnect = new QAction(tr("Connect"), this);          // Board menu
-    connect(m_actConnect, &QAction::triggered, this, &MainWindow::toggleConnection);
+    m_actConnect = tb->addAction(tr("Connect"), this, &MainWindow::toggleConnection);   // also in the Board menu
+    m_actConnectTb = m_actConnect;
+    m_connState = new QLabel;
+    m_connState->setObjectName(QStringLiteral("chip"));
+    tb->addWidget(m_connState);
     tb->addSeparator();
 
-    // Mode buttons in the colours of the canvas frame: red = configure a real board,
-    // yellow = simulation, green = live test. The active one is filled.
+    // Always one of three modes, in the colours of the canvas frame:
+    // Configure (red when connected) = change things, offline or live on the board;
+    // Simulate (yellow) = your configuration on a simulated board, look and press buttons only;
+    // Live test (green when connected) = press buttons on the real board, look only. Connects by itself.
+    auto *modes = new QActionGroup(this);
+    modes->setExclusive(true);
     m_actConfigure = tb->addAction(tr("● Configure"));
-    m_actConfigure->setCheckable(true);
-    m_actConfigure->setToolTip(tr("Connect to the board on the selected port. Every change goes to the board at once."));
-    connect(m_actConfigure, &QAction::triggered, this, [this] {
-        if (m_link->isOpen() && !m_simulating) m_link->close();
-        else
-        {
-            if (m_link->isOpen()) m_link->close();
-            connectPort(m_port->currentData().toString());
-        }
-        updateFrame();
-    });
-    m_actDemo = tb->addAction(tr("● Simulate"), this, &MainWindow::connectDemo);
-    m_actDemo->setCheckable(true);
-    m_actDemo->setToolTip(tr("Try your own configuration without a board: a simulated GPIOcore runs it. "
-                             "Use Live test to press inputs and watch the outputs."));
+    m_actConfigure->setToolTip(tr("Change the configuration: offline, or connected (red frame) so every change goes "
+                                  "to the board at once."));
+    m_actDemo = tb->addAction(tr("● Simulate"));
+    m_actDemo->setToolTip(tr("Try your configuration without a board: press the buttons on the inputs and watch "
+                             "the outputs. Nothing can be changed here."));
     m_actLive = tb->addAction(tr("● Live test"));
-    m_actLive->setCheckable(true);
-    m_actLive->setToolTip(tr("Test the board without anything connected: click the buttons on an input and watch "
-                             "the outputs. Blue = straight / on, red = curved / off; servos show their angle."));
-    connect(m_actLive, &QAction::toggled, this, &MainWindow::setLiveTest);
+    m_actLive->setToolTip(tr("Press the buttons on the inputs and watch what the real board does. Connects by itself. "
+                             "Blue = straight / on, red = curved / off; servos show their angle."));
+    for (QAction *a : { m_actConfigure, m_actDemo, m_actLive }) { a->setCheckable(true); modes->addAction(a); }
+    m_actConfigure->setChecked(true);
+    connect(m_actConfigure, &QAction::triggered, this, [this] { setMode(ModeConfigure); });
+    connect(m_actDemo,      &QAction::triggered, this, [this] { setMode(ModeSimulate); });
+    connect(m_actLive,      &QAction::triggered, this, [this] { setMode(ModeLive); });
     if (QWidget *w = tb->widgetForAction(m_actConfigure)) w->setObjectName(QStringLiteral("modeConfigure"));
     if (QWidget *w = tb->widgetForAction(m_actDemo))      w->setObjectName(QStringLiteral("modeSimulate"));
     if (QWidget *w = tb->widgetForAction(m_actLive))      w->setObjectName(QStringLiteral("modeLive"));
@@ -686,7 +690,7 @@ void MainWindow::buildToolbar()
         setBoardType(t);
         if (m_link->isReady() && m_link->caps().boardSettings)
             m_link->writeBoard(m_edit.board);
-        saveBoardFile();
+        markFileDirty();
     });
     tb->addWidget(new QLabel(tr(" Board ")));
     tb->addWidget(m_boardType);
@@ -714,7 +718,6 @@ void MainWindow::buildToolbar()
 
     QMenu *board = menuBar()->addMenu(tr("&Board"));
     board->addAction(m_actConnect);
-    board->addAction(m_actDemo);
     board->addSeparator();
     board->addAction(m_actRead);
     board->addAction(m_actWrite);
@@ -843,11 +846,14 @@ void MainWindow::refreshPorts()
 
 void MainWindow::toggleConnection()
 {
-    if (m_link->isOpen())
+    if (m_link->isOpen() && !m_simulating)
     {
-        m_link->close();
+        m_link->close();                 // disconnect: back to configuring offline
+        setMode(ModeConfigure);
         return;
     }
+    if (m_mode == ModeSimulate)
+        setMode(ModeConfigure);          // stops the simulation
     connectPort(m_port->currentData().toString());
 }
 
@@ -873,11 +879,57 @@ void MainWindow::connectPort(const QString &port)
 
 void MainWindow::connectDemo()
 {
-    if (m_simulating && m_link->isOpen())
+    setMode(ModeSimulate);
+}
+
+void MainWindow::connectSimulatedBoard()
+{
+    // like plugging in a board: Configure mode, nothing read automatically
+    setMode(ModeConfigure);
+    if (m_link->isOpen())
+        m_link->close();
+    m_outKnown.fill(false);
+    m_inKnown.fill(false);
+    m_outTouched.fill(false);
+    m_inTouched.fill(false);
+    m_shadow = m_edit;
+    m_nameAsked = true;
+    m_simulating = false;
+    showWorkspace();
+    QString err;
+    m_link->openDevice(new SimulatedDevice, true, &err);
+    updateFrame();
+}
+
+void MainWindow::setMode(Mode m)
+{
+    m_mode = m;
+    m_actConfigure->setChecked(m == ModeConfigure);
+    m_actDemo->setChecked(m == ModeSimulate);
+    m_actLive->setChecked(m == ModeLive);
+    switch (m)
     {
-        m_link->close();                 // second click: stop the simulation
-        return;
+    case ModeConfigure:
+        if (m_view->liveMode()) setLiveTest(false);
+        if (m_simulating) m_link->close();          // back to the real world (offline or a board)
+        break;
+    case ModeSimulate:
+        if (m_view->liveMode()) setLiveTest(false);
+        startSimulation();                          // the input buttons come on when it is ready
+        break;
+    case ModeLive:
+        if (m_simulating) m_link->close();
+        if (!m_link->isOpen())
+            connectPort(m_port->currentData().toString());   // live test connects by itself
+        else if (m_link->isReady())
+            setLiveTest(true);
+        break;
     }
+    updateFrame();
+}
+
+void MainWindow::startSimulation()
+{
     if (m_link->isOpen())
         m_link->close();
     m_outKnown.fill(false);
@@ -901,20 +953,38 @@ void MainWindow::connectDemo()
     auto *once = new QObject(this);
     connect(m_link, &DeviceLink::finished, once, [this, once] {
         once->deleteLater();
-        if (m_simulating && m_link->isReady() && !m_actLive->isChecked())
-            m_actLive->setChecked(true);
+        if (m_simulating && m_link->isReady() && !m_view->liveMode())
+            setLiveTest(true);
     });
+}
+
+void MainWindow::updateConnState()
+{
+    if (!m_connState) return;
+    QString text, name = QStringLiteral("chip");
+    if (m_simulating)
+        text = tr("● Simulation"), name = QStringLiteral("chipWarn");
+    else if (m_link->isReady())
+        text = tr("● Connected: %1 (%2)").arg(m_dev.board.name.isEmpty() ? tr("board") : m_dev.board.name, m_link->portName()),
+        name = QStringLiteral("chipOk");
+    else if (m_link->isOpen())
+        text = tr("◌ Connecting to %1…").arg(m_link->portName());
+    else
+        text = tr("○ Offline");
+    m_connState->setText(text);
+    m_connState->setObjectName(name);
+    m_connState->style()->unpolish(m_connState);
+    m_connState->style()->polish(m_connState);
+    m_actConnect->setText(m_link->isOpen() && !m_simulating ? tr("Disconnect") : tr("Connect"));
 }
 
 void MainWindow::updateFrame()
 {
     using F = ConnectionView::Frame;
-    m_view->setFrame(!m_link->isOpen() ? F::None : m_simulating ? F::Simulate : F::Configure);
     const bool open = m_link->isOpen();
-    m_actDemo->setText(m_simulating && open ? tr("● Stop simulation") : tr("● Simulate"));
-    m_actDemo->setChecked(m_simulating && open);
-    m_actConfigure->setChecked(open && !m_simulating);
-    m_actConfigure->setText(open && !m_simulating ? tr("● Configuring") : tr("● Configure"));
+    m_view->setFrame(!open ? F::None : m_simulating ? F::Simulate : F::Configure);
+    updateEditing();
+    updateConnState();
 }
 
 void MainWindow::onConnectionChanged()
@@ -935,10 +1005,12 @@ void MainWindow::onConnectionChanged()
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
     m_outEd->setConnected(open);
-    if (!open && m_actLive && m_actLive->isChecked())
-        m_actLive->setChecked(false);
     if (!open)
+    {
+        if (m_view->liveMode()) setLiveTest(false);
         m_simulating = false;
+        if (m_mode == ModeSimulate) { m_mode = ModeConfigure; m_actConfigure->setChecked(true); }
+    }
     updateFrame();
     updateActions();
 }
@@ -950,6 +1022,16 @@ void MainWindow::onReady(const QString &version)
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
     m_legacyChip->setVisible(m_link->legacyOutputFormat());
+    updateConnState();
+    if (m_mode == ModeLive && !m_simulating)
+    {
+        auto *once = new QObject(this);            // after HELLO / board name: live buttons on
+        connect(m_link, &DeviceLink::finished, once, [this, once] {
+            once->deleteLater();
+            if (m_mode == ModeLive && m_link->isReady() && !m_view->liveMode())
+                setLiveTest(true);
+        });
+    }
     // Connecting changes nothing on screen: 'Read board' loads the board, 'Write all' sends the screen.
     if (!m_simulating)
         statusBar()->showMessage(tr("Connected. Read board loads its configuration; Write all puts the one on screen "
@@ -1016,7 +1098,6 @@ void MainWindow::readFromBoard()
                                  "configuration. Save it first (Ctrl+S) if you want to keep it."))
         != QMessageBox::Yes)
         return;
-    saveBoardFile();                     // keep what is on screen (a backup is made as well)
     m_outKnown.fill(false);
     m_inKnown.fill(false);
     m_outTouched.fill(false);
@@ -1141,7 +1222,7 @@ void MainWindow::applyPresetNow(int preset, bool clearNames)
     m_inEd->setOutputs(outputNames(), outputTypes());
     refreshRows();
     userEdited();
-    saveBoardFile();
+    markFileDirty();
     statusBar()->showMessage(tr("Preset applied"), 4000);
 }
 
@@ -1204,6 +1285,8 @@ bool MainWindow::loadFile(const QString &path)
     refreshAll();
     showOutput(m_outEd->index());
     showInput(m_inEd->index());
+    m_filePath = path;
+    m_fileDirty = false;
     statusBar()->showMessage(tr("Loaded %1").arg(path), 6000);
     return true;
 }
@@ -1213,7 +1296,8 @@ void MainWindow::saveFile()
     QDir().mkpath(boardsDir());
     const QString suggested = QDir(boardsDir()).filePath(
         (m_edit.board.name.isEmpty() ? QStringLiteral("gpiocore") : m_edit.board.name) + QStringLiteral(".json"));
-    const QString path = QFileDialog::getSaveFileName(this, tr("Save configuration"), suggested,
+    const QString path = QFileDialog::getSaveFileName(this, tr("Save configuration"),
+                                                      m_filePath.isEmpty() ? suggested : m_filePath,
                                                       tr("GPIOcore configuration (*.json)"));
     if (path.isEmpty())
         return;
@@ -1225,7 +1309,11 @@ void MainWindow::saveFile()
         return;
     }
     f.write(QJsonDocument(m_edit.toJson()).toJson(QJsonDocument::Indented));
-    statusBar()->showMessage(tr("Saved %1").arg(path), 4000);
+    m_filePath = path;
+    m_fileDirty = false;
+    setWindowTitle(m_edit.board.name.isEmpty() ? tr("GPIOcore Configurator")
+                                               : tr("%1 — GPIOcore Configurator").arg(m_edit.board.name));
+    statusBar()->showMessage(tr("Saved %1").arg(QDir::toNativeSeparators(path)), 4000);
 }
 
 // ── Dirty tracking ──────────────────────────────────────────────────────────
@@ -1493,7 +1581,18 @@ void MainWindow::appendLog(const QString &kind, const QString &text)
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
-    saveBoardFile();
+    if (m_fileDirty)
+    {
+        const auto answer = QMessageBox::question(this, windowTitle(),
+                                                  tr("The configuration has changes that are not saved in a file. Save them?"),
+                                                  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        if (answer == QMessageBox::Cancel) { e->ignore(); return; }
+        if (answer == QMessageBox::Save)
+        {
+            saveFile();
+            if (m_fileDirty) { e->ignore(); return; }   // save dialog cancelled
+        }
+    }
     if (m_link->isReady() && dirtyCount() > 0
         && QMessageBox::question(this, windowTitle(),
                                  tr("%1 change(s) have not been written to the board. Quit anyway?").arg(dirtyCount()))
@@ -1658,13 +1757,13 @@ void MainWindow::setLiveTest(bool on)
 {
     if (on && !(m_link->isReady() && m_link->caps().protocol >= 2))
     {
-        QMessageBox::information(this, windowTitle(),
-                                 tr("Live test needs a connected board with firmware v2 (or the Demo)."));
-        m_actLive->setChecked(false);
+        QMessageBox::information(this, windowTitle(), tr("Live test needs a connected board with firmware v2."));
+        setMode(ModeConfigure);
         return;
     }
     closePanels();
     m_view->setLiveMode(on);
+    updateEditing();
     if (on)
     {
         m_view->clearLive();
@@ -1839,9 +1938,21 @@ void MainWindow::onBoardReceived(const BoardSettings &b)
     if (!m_readingBoard)
     {
         // just connected: show which board it is, change nothing on screen
-        if (!m_simulating && !b.name.isEmpty() && !m_edit.board.name.isEmpty() && b.name != m_edit.board.name)
-            statusBar()->showMessage(tr("Connected to \"%1\", the screen shows \"%2\". Read board or Write all.")
-                                         .arg(b.name, m_edit.board.name), 12000);
+        updateConnState();
+        if (!m_simulating && !b.name.isEmpty() && b.name != m_edit.board.name)
+        {
+            if (m_mode == ModeLive)
+            {
+                if (QMessageBox::question(this, windowTitle(),
+                                          tr("The board is \"%1\", the screen shows \"%2\". The live test shows the "
+                                             "screen's wiring, so read the board first?").arg(b.name, m_edit.board.name))
+                    == QMessageBox::Yes)
+                    QTimer::singleShot(0, this, [this] { readFromBoard(); });
+            }
+            else
+                statusBar()->showMessage(tr("Connected to \"%1\", the screen shows \"%2\". Read board or Write all.")
+                                             .arg(b.name, m_edit.board.name), 12000);
+        }
         return;
     }
     // 'Read board': names (and lamp colours) come from <name>.json, the board wins for all settings,
@@ -1908,14 +2019,28 @@ void MainWindow::backupBoardFile(const QString &path)
 
 void MainWindow::quickSave()
 {
-    if (m_edit.board.name.isEmpty())
-    {
-        saveFile();                      // no name yet: ask where
-        return;
-    }
-    saveBoardFile();
-    statusBar()->showMessage(tr("Saved %1").arg(QDir::toNativeSeparators(
-                                 QDir(boardsDir()).filePath(m_edit.board.name + QStringLiteral(".json")))), 4000);
+    saveFile();                          // always 'save as': nothing is overwritten without seeing it
+}
+
+void MainWindow::markFileDirty()
+{
+    m_fileDirty = true;
+    const QString name = m_edit.board.name.isEmpty() ? tr("GPIOcore Configurator")
+                                                     : tr("%1 — GPIOcore Configurator").arg(m_edit.board.name);
+    setWindowTitle(name + QStringLiteral(" *"));
+}
+
+void MainWindow::updateEditing()
+{
+    // configuring (red) or offline: everything can be changed; simulation / live test: look only
+    const bool edit = m_mode == ModeConfigure && !m_simulating;
+    m_view->setEditable(edit);
+    m_inEd->setEnabled(edit);
+    m_outEd->setEnabled(edit);
+    for (QWidget *w : m_editWidgets) if (w) w->setEnabled(edit);
+    if (m_actPreset) m_actPreset->setEnabled(edit && m_actPreset->isEnabled());
+    if (m_actBoardSettings) m_actBoardSettings->setEnabled(edit);
+    if (m_boardType) m_boardType->setEnabled(edit);
 }
 
 void MainWindow::askBoardName()
@@ -1933,7 +2058,7 @@ void MainWindow::askBoardName()
     m_dev.board.name  = name;
     m_link->writeBoard(m_edit.board);
     onBoardReceived(m_edit.board);
-    saveBoardFile();
+    markFileDirty();
 }
 
 void MainWindow::editBoardSettings()
@@ -2019,7 +2144,7 @@ void MainWindow::editBoardSettings()
             m_link->readAll();
         }
     }
-    saveBoardFile();
+    markFileDirty();
     setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));
 }
 
@@ -2062,7 +2187,7 @@ void MainWindow::newOfflineBoard()
     showOutput(m_outEd->index());
     showInput(m_inEd->index());
     refreshAll();
-    saveBoardFile();
+    markFileDirty();
 }
 
 void MainWindow::addBlock(bool output)

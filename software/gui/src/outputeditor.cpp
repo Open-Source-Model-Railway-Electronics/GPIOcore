@@ -1,5 +1,7 @@
 #include "outputeditor.h"
 
+#include <QDoubleSpinBox>
+
 #include <QTimer>
 #include "infotexts.h"
 #include "protocol.h"
@@ -20,7 +22,7 @@
 
 using namespace Gpio;
 
-enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm };
+enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal };
 
 static Page pageFor(ParamKind k)
 {
@@ -30,6 +32,7 @@ static Page pageFor(ParamKind k)
     case ParamKind::Swing:      return PageSwing;
     case ParamKind::Servo:      return PageServo;
     case ParamKind::PwmValue:   return PagePwm;
+    case ParamKind::FourTone:   return PageSignal;
     default:                    break;
     }
     return PageNone;
@@ -213,6 +216,24 @@ void OutputEditor::buildUi()
         row->addWidget(m_pwm);
         f->addRow(tr("Duty cycle"), row);
         m_params->addWidget(w);
+    }
+    { // signal: blink frequency; the aspect itself comes from DCC extended or a route
+        auto *w = new QWidget;
+        auto *f = new QFormLayout(w);
+        m_blinkHz = new QDoubleSpinBox;
+        m_blinkHz->setRange(0.5, 10.0);
+        m_blinkHz->setSingleStep(0.1);
+        m_blinkHz->setDecimals(1);
+        m_blinkHz->setSuffix(tr(" Hz"));
+        m_blinkHz->setKeyboardTracking(false);
+        f->addRow(tr("Flashing"), m_blinkHz);
+        auto *hint = new QLabel(tr("How fast flashing lamps blink (1 Hz = once per second). The aspect itself is "
+                                   "chosen with DCC extended or in a route."));
+        hint->setWordWrap(true);
+        hint->setObjectName(QStringLiteral("help"));
+        f->addRow(hint);
+        m_params->addWidget(w);
+        connect(m_blinkHz, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
     }
     root->addWidget(m_paramBox);
 
@@ -398,6 +419,7 @@ void OutputEditor::refresh()
     m_servoMax->setValue(m_cfg.servoMax());
     m_servoSpeed->setValue(qMax<int>(1, m_cfg.servoSpeed()));
     m_pwm->setValue(m_cfg.pwmValue());
+    m_blinkHz->setValue(m_cfg.data[1] ? m_cfg.data[1] / 10.0 : 1.0);
     m_state->setCurrentIndex(m_cfg.state ? 1 : 0);
 
     const bool liveOk = m_connected && m_liveAvailable;
@@ -493,6 +515,9 @@ void OutputEditor::collect()
         break;
     case ParamKind::PwmValue:
         m_cfg.data[0] = quint8(m_pwm->value());
+        break;
+    case ParamKind::FourTone:
+        m_cfg.data[1] = quint8(qRound(m_blinkHz->value() * 10));   // data[0] (aspect) stays as it is
         break;
     default:
         break;

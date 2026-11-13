@@ -327,9 +327,20 @@ void callbackFrog( Output *o, uint8_t relays )
 // ── Raw route step: signal aspect, PWM value or servo angle ───────────────────
 void callbackRouteValue( uint8_t index, uint8_t value )
 {
-    reportOutput( index, 2, value ) ;   // state 2 = raw value (aspect / angle / PWM)
-    if( output[index].eedata.type == servoType ) output[index].setPosition( value ) ;
-    else                                         output[index].setVal( value ) ;
+    if( output[index].eedata.type == servoType )
+    {
+        if( value <= 180 ) output[index].moveTo( value ) ;   // at its speed; the degrees are reported
+        return ;
+    }
+    reportOutput( index, 2, value ) ;   // state 2 = raw value (aspect / PWM)
+    output[index].setVal( value ) ;
+}
+
+// ── DCC extended: a servo goes to that angle (0-180, more is ignored), others take the value
+void callbackInputExt( uint8_t index, uint8_t value )
+{
+    if( output[index].eedata.type == servoType ) { if( value <= 180 ) output[index].moveTo( value ) ; return ; }
+    callbackInput( index, 0, value ) ;
 }
 
 // ── Interlocking: a turnout is an output of type servo, single pulse or double pulse

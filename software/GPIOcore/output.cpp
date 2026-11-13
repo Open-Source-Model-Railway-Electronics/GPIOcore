@@ -45,6 +45,7 @@ void Output::set( Settings *data )
 
     eedata = *data ;
     oldPos = !eedata.state ;    // new settings: apply the state once, also when unchanged
+    custom = 0 ;
 
     uint8_t lo = min( eedata.servo.servoMin, eedata.servo.servoMax ) ;
     uint8_t hi = max( eedata.servo.servoMin, eedata.servo.servoMax ) ;
@@ -52,6 +53,16 @@ void Output::set( Settings *data )
         pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
     setPinModes() ;     // new pins are outputs right away (not only after a reset)
     saveEEPROM() ; // Opslaan indien gewenst
+}
+
+// Sweep to an angle at the servo's speed, waiting for a free servo slot like a state change.
+// The frog relay is left alone: an angle is for semaphores, barriers and the like, not for a turnout.
+void Output::moveTo( uint8_t angle )
+{
+    if( eedata.type != servoType ) return ;
+    target = angle ;
+    custom = 1 ;
+    if( sm.getState() == idle ) sm.nextState( moveActuator ) ;   // a running sweep just follows the new target
 }
 
 void Output::setPosition( uint8_t angle )
@@ -72,6 +83,7 @@ Settings* Output::get()
 
 uint8_t Output::setState( uint8_t _state)
 {
+    custom = 0 ;                        // a state change ends a custom angle
     eedata.state = _state ;
     saveEEPROM() ;
     return 0 ;
@@ -165,8 +177,9 @@ uint8_t Output::sweep()
     {
         uint8_t setPoint ;
 
-        if( eedata.state ) { setPoint = eedata.servo.servoMax ; }
-        else               { setPoint = eedata.servo.servoMin ; }
+        if(      custom       ) { setPoint = target ; }
+        else if( eedata.state ) { setPoint = eedata.servo.servoMax ; }
+        else                    { setPoint = eedata.servo.servoMin ; }
 
         uint8_t before = pos ;
         if( pos < setPoint ) { pos ++ ; }
@@ -190,7 +203,7 @@ uint8_t Output::sweep()
         callbackSetServo( eedata.pinA, pos ) ;
 
         uint8_t middlePos = ( eedata.servo.servoMin + eedata.servo.servoMax ) / 2 ;
-        relayWrite( 2, pos < middlePos ? LOW : HIGH ) ;
+        if( !custom ) relayWrite( 2, pos < middlePos ? LOW : HIGH ) ;   // unifrog only for curved / straight
     }
 
     return 0 ;
@@ -526,6 +539,8 @@ StateFunction( fourToneSignalState )
 
     const uint8_t pins[4] = { eedata.pinA, eedata.pinB, eedata.pinC, eedata.pinD } ;
 
+    // data[1] = blink frequency in 0.1 Hz (0 = 1 Hz): half a period = 5000 / data[1] ms
+    timer.PT = eedata.data[1] ? 5000 / eedata.data[1] : 500 ;
     if( timer.update(1) ) phase ^= 1 ;     // timer.Q is high for one call only: keep our own phase
 
     for( uint8_t i = 0 ; i < 4 ; i++ )

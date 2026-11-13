@@ -30,7 +30,7 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
       QT_TRANSLATE_NOOP("Gpio", "Fluorescent tube start-up flicker on PWM pin A.") },
     { "welderLight",     QT_TRANSLATE_NOOP("Gpio", "Welder"),            1, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Random welding flashes on pin A.") },
-    { "fourToneSignal",  QT_TRANSLATE_NOOP("Gpio", "4-aspect signal"),   4, false, false, ParamKind::None,       0,
+    { "fourToneSignal",  QT_TRANSLATE_NOOP("Gpio", "4-aspect signal"),   4, false, false, ParamKind::FourTone,   0,
       QT_TRANSLATE_NOOP("Gpio", "Four LEDs A-D. The aspect comes from DCC extended (signal) packets or a route; the board keeps the last aspect in EEPROM.") },
     { "servo",           QT_TRANSLATE_NOOP("Gpio", "Servo"),             1, true,  false, ParamKind::Servo,      0,
       QT_TRANSLATE_NOOP("Gpio", "Servo on pin A, sweeps between min and max.") },

@@ -48,7 +48,7 @@ class TestGui : public QObject
         link->drainMs = 3;
         w.resize(1320, 900);
         w.show();
-        w.connectDemo();
+        w.connectSimulatedBoard();      // Configure mode on a (simulated) board: everything can be edited
         waitIdle(link);
         QTest::qWaitFor([link] { return !link->isBusy(); }, 5000);   // the simulation reads the live states too
         QTest::qWait(50);
@@ -195,8 +195,8 @@ private slots:
         QTest::qWait(600);
         waitIdleOrNot(link);
 
-        live->setChecked(true);
-        QVERIFY(view->liveMode());
+        live->trigger();
+        QTRY_VERIFY(view->liveMode());
         QTRY_VERIFY_WITH_TIMEOUT(view->liveState(0) >= 0, 3000);        // states read from the board
 
         click(view, view->liveButtonRect(0, 1).center());                 // input 0 (absolute) -> straight
@@ -209,7 +209,7 @@ private slots:
         QTRY_COMPARE_WITH_TIMEOUT(view->liveState(2), 0, 2000);
         maybeScreenshot(w, "live.png");
 
-        live->setChecked(false);
+        w.setMode(MainWindow::ModeConfigure);
         QVERIFY(!view->liveMode());
     }
 
@@ -256,7 +256,7 @@ private slots:
             if (o == 5 && st == 2) aspect = v;
         });
         for (QAction *a : w.findChildren<QAction *>())
-            if (a->text().contains(QLatin1String("Live test"))) a->setChecked(true);
+            if (a->text().contains(QLatin1String("Live test"))) a->trigger();
         QTRY_VERIFY_WITH_TIMEOUT(view->liveState(3) >= 0, 3000);
 
         // input 3 (absolute) -> other end: every degree is reported
@@ -271,6 +271,16 @@ private slots:
         QVERIFY(view->liveValueInput(5));
         link->dccExt(view->board().inputs[5].address, 0x21);
         QTRY_COMPARE_WITH_TIMEOUT(aspect, 0x21, 2000);
+        // DCC extended to the servo's input: the value is the angle, it sweeps there degree by degree
+        angles.clear();
+        link->dccExt(view->board().inputs[3].address, 90);
+        QTRY_VERIFY_WITH_TIMEOUT(!angles.isEmpty() && angles.last() == 90, 3000);
+        for (int k = 1; k < angles.size(); ++k)
+            QCOMPARE(qAbs(angles[k] - angles[k - 1]), 1);
+        angles.clear();
+        link->dccExt(view->board().inputs[3].address, 200);  // above 180: ignored
+        QTest::qWait(300);
+        QVERIFY(angles.isEmpty());
         maybeScreenshot(w, "live_servo_signal.png");
     }
 
@@ -288,7 +298,7 @@ private slots:
         QTest::qWait(800);
         QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
         for (QAction *a : w.findChildren<QAction *>())
-            if (a->text().contains(QLatin1String("Live test"))) a->setChecked(true);
+            if (a->text().contains(QLatin1String("Live test"))) a->trigger();
         QTRY_VERIFY_WITH_TIMEOUT(view->liveState(2) >= 0, 3000);
         const int to = view->liveState(2) ? 0 : 1;
         click(view, view->liveButtonRect(2, to).center());

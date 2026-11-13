@@ -112,5 +112,7 @@ private:
     std::array<bool, Gpio::NumInputs> m_routeBusy {};
     std::array<int,  Gpio::NumOutputs> m_servoPos;            // -1 = unknown
     std::array<bool, Gpio::NumOutputs> m_sweeping {};
+    std::array<int,  Gpio::NumOutputs> m_servoTarget;         // -1 = the state's end position
+    void   servoTo(int output, int angle);
     std::array<quint8, Gpio::NumOutputs> m_frog {};
 };

@@ -23,6 +23,7 @@ public:
     void setHideUnused(bool hide);
     // Live test: inputs get buttons, outputs show what the board reports.
     void setLiveMode(bool on);
+    void setEditable(bool on) { m_editable = on; update(); }   // false: select and live buttons only
     enum class Frame { None, Configure, Simulate };   // red: a real board is changed, yellow: simulation
     void setFrame(Frame f) { m_frame = f; update(); }
     Frame frame() const { return m_frame; }
@@ -105,6 +106,7 @@ private:
     int     m_hoverIn = -1, m_hoverOut = -1;
     QRectF  trashRect(bool output, int index) const;
     bool    m_live = false;
+    bool    m_editable = true;
     Frame   m_frame = Frame::None;
     QVector<int>    m_liveState, m_liveValue;
     QVector<bool>   m_liveRaw;

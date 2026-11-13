@@ -250,7 +250,8 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
     {
         const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.data[0];
         // like output.cpp: on + blink = flashes in phase, blink only = in opposite phase, 500 ms
-        const bool phase = (m_liveClock.elapsed() / 500) % 2;
+        const int halfMs = c.data[1] ? 5000 / c.data[1] : 500;   // data[1] = Hz x 10
+        const bool phase = (m_liveClock.elapsed() / halfMs) % 2;
         for (int k = 0; k < 4; ++k)
         {
             const bool lit   = (aspect >> k) & 1;
@@ -768,9 +769,9 @@ void ConnectionView::paintEvent(QPaintEvent *)
         p.drawRect(QRectF(t.left() + 4.5, t.top() + 5.5, t.width() - 9, t.height() - 8));            // can
         p.drawLine(QPointF(t.center().x(), t.top() + 7.5), QPointF(t.center().x(), t.bottom() - 4.5));
     };
-    if (m_hoverIn >= 0 && inputShown(m_hoverIn) && m_board.inputs[m_hoverIn].type != InputNotInUse)
+    if (m_editable && m_hoverIn >= 0 && inputShown(m_hoverIn) && m_board.inputs[m_hoverIn].type != InputNotInUse)
         bin(trashRect(false, m_hoverIn));
-    if (m_hoverOut >= 0 && outputShown(m_hoverOut) && m_board.outputs[m_hoverOut].type != OutputNotInUse)
+    if (m_editable && m_hoverOut >= 0 && outputShown(m_hoverOut) && m_board.outputs[m_hoverOut].type != OutputNotInUse)
         bin(trashRect(true, m_hoverOut));
 }
 
@@ -786,12 +787,12 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
     m_drag = Drag::None;
 
     // trash on a hovered block: set it to 'not in use'
-    if (m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse && trashRect(false, m_hoverIn).adjusted(-4, -4, 4, 4).contains(pos))
+    if (m_editable && m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse && trashRect(false, m_hoverIn).adjusted(-4, -4, 4, 4).contains(pos))
     {
         emit removeRequested(false, m_hoverIn);
         return;
     }
-    if (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse && trashRect(true, m_hoverOut).adjusted(-4, -4, 4, 4).contains(pos))
+    if (m_editable && m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse && trashRect(true, m_hoverOut).adjusted(-4, -4, 4, 4).contains(pos))
     {
         emit removeRequested(true, m_hoverOut);
         return;
@@ -809,7 +810,13 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                     else                   emit liveTriggerRequested(i, dir);
                     return;
                 }
-        // anywhere else: select and drag as usual
+    }
+    if (!m_editable)     // simulation / live test: a block can be selected to look at it, nothing more
+    {
+        const int in = inputAt(pos), out = outputAt(pos);
+        if (in >= 0)       emit inputSelected(in);
+        else if (out >= 0) emit outputSelected(out);
+        return;
     }
 
     const int in = inputAt(pos), out = outputAt(pos);
@@ -855,14 +862,15 @@ void ConnectionView::mouseMoveEvent(QMouseEvent *e)
         update();
     }
     // a pointing finger over things that are clicked (trash, live buttons), an open hand over blocks (drag)
-    bool clickable = (m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse
-                      && trashRect(false, m_hoverIn).adjusted(-4, -4, 4, 4).contains(pos))
-                  || (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse
-                      && trashRect(true, m_hoverOut).adjusted(-4, -4, 4, 4).contains(pos));
+    bool clickable = m_editable
+                  && ((m_hoverIn >= 0 && m_board.inputs[m_hoverIn].type != InputNotInUse
+                       && trashRect(false, m_hoverIn).adjusted(-4, -4, 4, 4).contains(pos))
+                      || (m_hoverOut >= 0 && m_board.outputs[m_hoverOut].type != OutputNotInUse
+                          && trashRect(true, m_hoverOut).adjusted(-4, -4, 4, 4).contains(pos)));
     for (int i = 0; m_live && i < NumInputs && !clickable; ++i)
         clickable = liveButtonRect(i, 0).contains(pos) || liveButtonRect(i, 1).contains(pos);
     setCursor(clickable ? Qt::PointingHandCursor
-                        : (inputAt(pos) >= 0 || outputAt(pos) >= 0) ? Qt::OpenHandCursor : Qt::ArrowCursor);
+                        : (m_editable && (inputAt(pos) >= 0 || outputAt(pos) >= 0)) ? Qt::OpenHandCursor : Qt::ArrowCursor);
 }
 
 void ConnectionView::mouseReleaseEvent(QMouseEvent *e)
@@ -899,6 +907,8 @@ void ConnectionView::mouseReleaseEvent(QMouseEvent *e)
 
 void ConnectionView::keyPressEvent(QKeyEvent *e)
 {
+    if (!m_editable)
+        return QWidget::keyPressEvent(e);
     if ((e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace) && m_selWire >= 0)
     {
         const Wire w = m_wires.value(m_selWire);
@@ -911,6 +921,8 @@ void ConnectionView::keyPressEvent(QKeyEvent *e)
 
 void ConnectionView::contextMenuEvent(QContextMenuEvent *e)
 {
+    if (!m_editable)
+        return;
     const int w = wireAt(e->pos());
     const int in = inputAt(e->pos());
     QMenu menu(this);

@@ -30,7 +30,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    void connectDemo();                     // simulation with the current configuration (toggles)
+    void connectDemo();                     // Simulate mode (your configuration on a simulated board)
+    void connectSimulatedBoard();           // tests: a simulated board that behaves like a real one (Configure)
+    enum Mode { ModeConfigure, ModeSimulate, ModeLive };
+    void setMode(Mode m);
+    Mode mode() const { return m_mode; }
     void connectPort(const QString &port);
     bool loadFile(const QString &path);       // configuration JSON
     void setExpertMode(bool on);              // simple mode hides bytes, log and protocol details
@@ -85,7 +89,9 @@ private:
     void askBoardName();
     void saveBoardFile();
     void backupBoardFile(const QString &path);   // copy to boards/backup/ before it is overwritten
-    void quickSave();                            // Ctrl+S: the board file, or 'save as' without a name
+    void quickSave();                            // Ctrl+S: always 'save as' (nothing is overwritten unseen)
+    void markFileDirty();                        // the configuration differs from the saved file
+    void updateEditing();                        // editing only when configuring or offline
     void writeAllToBoard();                      // send the whole configuration on screen to the board
     void newOfflineBoard();
     void addBlock(bool output);
@@ -160,6 +166,15 @@ private:
     bool            m_expert = false;
     bool            m_nameAsked = false;
     bool            m_simulating = false;
+    Mode            m_mode = ModeConfigure;
+    QLabel         *m_connState = nullptr;      // toolbar: connected / offline
+    QAction        *m_actConnectTb = nullptr;   // toolbar: Connect / Disconnect
+    void            startSimulation();
+    void            updateConnState();
+    bool            m_fileDirty = false;        // unsaved changes (asked about when closing)
+    QString         m_filePath;                 // last opened / saved file
+    QWidget        *m_addIn = nullptr, *m_addOut = nullptr;
+    QList<QWidget *> m_editWidgets;             // disabled during simulation / live test
     void            updateFrame();
     QSet<int>       m_liveTried;                // live write: items sent since the last user edit
                                                 // (inputs 0-15, outputs 100-115)
