@@ -187,8 +187,7 @@ Every setting has an **i** button with an explanation.
 | `python software/GPIOcore/src/upload.py [COM9] [--build]` | Puts `release/GPIOcore.hex` on a Nano with `software/gui/tools/avrdude` (port: the only USB serial port, or a choice) |
 | `python software/gui/release.py [--gui]` | Firmware + GUI (Release build, Qt from `C:/Qt`) with Qt files, avrdude and examples into `release/` |
 
-Only `release/GPIOcore.hex` is tracked in git; the GUI files in `release/` (about 45 MB) are not:
-zip the folder for a GitHub release.
+`release/` is not in git: zip it and publish it as a GitHub release.
 
 Screenshots: `GPIOcoreGUI.exe --lang en --size 1600x900 --open examples/routes-demo.json --demo --tab outputs --select 0 --screenshot out.png`
 (`--tab inputs|outputs|pins`, `--theme light|dark`).

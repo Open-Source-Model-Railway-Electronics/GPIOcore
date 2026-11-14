@@ -20,8 +20,5 @@ io.h
 fp-info-cache
 /releases/
 
-# Release folder: only the firmware hex is tracked; the GUI files (software/gui/release.py) are
-# binaries of tens of MB per version: ship them as a zip / GitHub release instead
-release/*
-!release/GPIOcore.hex
-!release/.gitkeep
+# Release folder: built files for end users, not in git (ship them as a GitHub release)
+release/
