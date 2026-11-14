@@ -16,6 +16,7 @@ SimulatedDevice::SimulatedDevice(const Options &options, QObject *parent)
     m_live.fill(-1);
     m_servoPos.fill(-1);
     m_servoTarget.fill(-1);
+    m_analog.fill(AnalogMaxValue);       // pull-up, no button pressed
     factoryDefaults();
 }
 
@@ -239,6 +240,12 @@ void SimulatedDevice::messageReceived()
     {
         if (index < NumInputs) triggerInput(index, p[1]);
     }
+    else if (m_opt.protocol >= 2 && (m_opt.helloFlags & Proto::HELLO_FLAG_ANALOG_SOUND) && m_command == Proto::GET_ANALOG)
+    {
+        const quint8 ch = p[0] & 7;
+        const quint8 msg[3] = { ch, quint8(m_analog[ch] >> 8), quint8(m_analog[ch] & 0xFF) };
+        sendMessage(Proto::ANALOG_VALUE, msg);
+    }
     else if (m_opt.protocol >= 2 && m_command == Proto::DCC_EXT)
     {
         const int address = p[0] << 8 | p[1];
@@ -247,6 +254,7 @@ void SimulatedDevice::messageReceived()
             {
                 OutputConfig &o = m_out[m_in[i].outputId];
                 if (o.type == ServoType) { if (p[2] <= 180) servoTo(m_in[i].outputId, p[2]); continue; }
+                if (o.type == SoundEffect) { reportOutput(m_in[i].outputId, 2, p[2]); continue; }   // track, 0 = stop
                 if (o.type == FourToneSignal || o.type == Pwm) o.data[0] = p[2];
                 if (o.type == FourToneSignal) reportOutput(m_in[i].outputId, 2, p[2]);
                 else                          setOutputState(m_in[i].outputId, 0);
@@ -459,10 +467,64 @@ void SimulatedDevice::triggerInput(int index, int direction)
         setOutputState(in.outputId, quint8(in.type == Latching ? (direction ? 1 : 0) : (o.state ^ 1)));
         return;
     }
-    if (!isRouteType(in.type) || m_routeBusy[index] || in.route.isEmpty())
+    if (!isRouteType(in.type))
         return;
     if ((in.type == RouteStraight && direction != 1) || (in.type == RouteCurved && direction != 0))
         return;                          // this route reacts to the other direction only
+    startRoute(index);
+}
+
+// A button edge (input.cpp, normal inputs): a press starts any route and toggles, absolute follows
+// the level (pressed = LOW = 0). Recorder and feedback are not simulated.
+void SimulatedDevice::pinLevel(int index, bool pressed)
+{
+    const InputConfig &in = m_in[index];
+    if (isRouteType(in.type))
+    {
+        if (pressed) startRoute(index);
+        return;
+    }
+    if (in.type == Momentary && pressed)
+        setOutputState(in.outputId, quint8(m_out[in.outputId].state ^ 1));
+    else if (in.type == Latching)
+        setOutputState(in.outputId, pressed ? 0 : 1);
+}
+
+void SimulatedDevice::setAnalogValue(int channel, int value)
+{
+    channel &= 7;
+    m_analog[channel] = qBound(0, value, AnalogMaxValue);
+    for (int i = 0; i < NumInputs; ++i)
+        if (m_in[i].isAnalog() && m_in[i].analogChannel() == channel && m_in[i].type != InputNotInUse)
+            evaluateAnalog(i);
+}
+
+// Input::readAnalog(): below / above keep a pressed button pressed for 20 more counts, 'at' is a
+// window of +/- 10. (The firmware also wants two equal samples 50 ms apart; a typed value is stable.)
+void SimulatedDevice::evaluateAnalog(int index)
+{
+    const InputConfig &c = m_in[index];
+    const int  v    = m_analog[c.analogChannel() & 7];
+    const int  t    = c.threshold;
+    const bool held = m_pressed[index];
+    bool hit = false;
+    switch (c.analog)
+    {
+    case AnalogBelow: hit = v < t + (held ? AnalogHysteresis : 0); break;
+    case AnalogAbove: hit = v > t - (held ? AnalogHysteresis : 0); break;
+    case AnalogAt:    hit = qAbs(v - t) <= AnalogWindow;            break;
+    }
+    if (hit == held)
+        return;
+    m_pressed[index] = hit;
+    pinLevel(index, hit);
+}
+
+void SimulatedDevice::startRoute(int index)
+{
+    const InputConfig &in = m_in[index];
+    if (m_routeBusy[index] || in.route.isEmpty())
+        return;
     // interlocking (PROTOCOL.md section 10): a refused route is ignored
     for (int i = 0; i < NumInputs; ++i)
     {
@@ -502,6 +564,12 @@ void SimulatedDevice::runRouteStep(int input, int step)
 void SimulatedDevice::setOutputState(int output, quint8 state)
 {
     OutputConfig &o = m_out[output];
+    if (o.type == SoundEffect)           // GPIOcore.ino playSound(): curved / off plays data[0], straight / on data[1]
+    {
+        o.state = state;
+        reportOutput(output, 2, o.data[state ? 1 : 0]);
+        return;
+    }
     const bool changed = o.state != state || m_servoTarget[output] >= 0;
     m_servoTarget[output] = -1;
     o.state = state;

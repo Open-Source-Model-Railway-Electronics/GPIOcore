@@ -34,6 +34,8 @@ public:
     int  liveFrog(int output) const  { return m_liveFrog.value(output, -1); }   // bit0 A, bit1 B, bit2 C
     QRectF liveButtonRect(int input, int direction) const;   // empty if the input has no such button
     bool   liveValueInput(int input) const;   // direct input on a signal / PWM output: sends a value
+    bool   analogValueInput(int input) const; // simulation: an analog input gets a voltage, not a press
+    void   setAnalogValue(int channel, int value);   // live reading of A0-A7, shown on analog inputs
     bool hideUnused() const { return m_hideUnused; }
     bool inputShown(int index) const  { return m_inRow.value(index, -1) >= 0; }
     bool outputShown(int index) const { return m_outRow.value(index, -1) >= 0; }
@@ -64,6 +66,7 @@ signals:
     void liveTriggerRequested(int input, int direction);
     void removeRequested(bool output, int index);   // trash on a hovered block
     void liveValueRequested(int input);             // signal aspect / PWM value (DCC extended)
+    void analogValueRequested(int input);           // simulation: value on the analog pin of this input
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -109,6 +112,7 @@ private:
     bool    m_editable = true;
     Frame   m_frame = Frame::None;
     QVector<int>    m_liveState, m_liveValue;
+    QVector<int>    m_analogNow;          // live reading per channel A0-A7, -1 = unknown
     QVector<bool>   m_liveRaw;
     QVector<int>    m_liveFrog;           // frog relays reported by the board, -1 = unknown            // last report was a raw value (angle / aspect / PWM)
     QVector<qint64> m_liveFlashOut, m_liveFlashIn;

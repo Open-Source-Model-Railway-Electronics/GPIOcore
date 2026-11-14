@@ -36,6 +36,10 @@ public:
     void setWarnings(const QStringList &warnings);
     void refreshPinCombos();
     void refreshPinMarks();                   // pins used elsewhere in red
+    // Analog inputs: the live reading of a channel (GET_ANALOG), and whether there is one at all.
+    void setAnalogReading(int channel, int value);
+    void setLiveReadingAvailable(bool available);
+    int  analogReading() const { return m_nowValue; }   // -1 = none yet
 
 signals:
     void changed(int index, const Gpio::InputConfig &c);
@@ -84,6 +88,19 @@ private:
     QCheckBox    *m_useAddr = nullptr;
     QSpinBox     *m_addr    = nullptr;
     QComboBox    *m_pin     = nullptr;
+    QWidget      *m_pinRow  = nullptr;
+    QComboBox    *m_readAs  = nullptr;    // digital, or analog below / above / at a value
+    QComboBox    *m_channel = nullptr;    // analog pin A0-A6
+    QWidget      *m_channelRow = nullptr;
+    QSpinBox     *m_threshold = nullptr;
+    QWidget      *m_thresholdRow = nullptr;
+    QLabel       *m_range   = nullptr;    // what the threshold means: pressed / released at ...
+    QLabel       *m_now     = nullptr;    // live reading
+    QPushButton  *m_useValue = nullptr;
+    QWidget      *m_nowRow  = nullptr;
+    int           m_nowValue = -1;
+    bool          m_liveReading = false;
+    void          updateAnalog();
     QGroupBox    *m_targetBox = nullptr;
     QLabel       *m_targetLabel = nullptr;
     QComboBox    *m_output = nullptr;

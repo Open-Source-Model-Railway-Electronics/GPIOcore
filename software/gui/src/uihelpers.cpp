@@ -219,6 +219,7 @@ QColor outputTypeColor(quint8 type)
     case ServoType:      return QColor(0x10, 0xB9, 0x81);
     case Pwm:            return QColor(0xEC, 0x48, 0x99);
     case OutputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
+    case SoundEffect:    return QColor(0x0D, 0x94, 0x88);
     }
     return QColor(0x94, 0xA3, 0xB8);
 }
@@ -387,7 +388,7 @@ int pickAspect(QWidget *parent, int current, int output)
     return d.exec() == QDialog::Accepted ? compute() : -1;
 }
 
-void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex)
+void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share)
 {
     if (!g_pinBoardSet)
         return;
@@ -399,17 +400,21 @@ void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex)
         const QString base = combo->itemData(i, Qt::UserRole + 1).toString();
         if (pin < 0 || pin >= NumPins || base.isEmpty())
             continue;
-        QStringList users;
+        QStringList users, shared;
         for (const PinUse &u : usage[pin])
         {
             if (u.output == forOutput && u.index == selfIndex)
                 continue;                                    // this input / output itself
-            users << (u.output ? QObject::tr("Out %1").arg(u.index) : QObject::tr("In %1").arg(u.index));
+            (share != ShareNone && u.share == share ? shared : users)
+                << (u.output ? QObject::tr("Out %1").arg(u.index) : QObject::tr("In %1").arg(u.index));
         }
         users.removeDuplicates();
+        shared.removeDuplicates();
         if (users.isEmpty())
         {
-            combo->setItemText(i, base);
+            combo->setItemText(i, shared.isEmpty() ? base
+                                                   : base + QStringLiteral("  — ") + QObject::tr("shared with: %1")
+                                                                                         .arg(shared.join(QStringLiteral(", "))));
             if (pinReservedReason(quint8(pin)).isEmpty())
                 combo->setItemData(i, QVariant(), Qt::ForegroundRole);
         }
@@ -419,6 +424,18 @@ void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex)
             combo->setItemData(i, red, Qt::ForegroundRole);
         }
     }
+}
+
+int pinShare(const InputConfig &c)  { return c.isAnalog() ? ShareAnalog : ShareNone; }
+int pinShare(const OutputConfig &c) { return c.type == SoundEffect ? ShareSound : ShareNone; }
+
+bool pinClash(const QVector<PinUse> &users)
+{
+    for (int a = 0; a < users.size(); ++a)
+        for (int b = a + 1; b < users.size(); ++b)
+            if (!sharesPin(users[a], users[b]))
+                return true;
+    return false;
 }
 
 QVector<QVector<PinUse>> pinUsage(const BoardConfig &board)
@@ -437,14 +454,14 @@ QVector<QVector<PinUse>> pinUsage(const BoardConfig &board)
             const bool active = (s < 4) ? (s < info.pinCount) : info.relays;
             const quint8 pin = c.pin(s);
             if (active && pin < NumPins)
-                use[pin].append({ true, i, trGpio(roles[s]) });
+                use[pin].append({ true, i, trGpio(roles[s]), pinShare(c) });
         }
     }
     for (int i = 0; i < NumInputs; ++i)
     {
         const InputConfig &c = board.inputs[i];
         if (c.type != InputNotInUse && c.pin < NumPins)
-            use[c.pin].append({ false, i, QStringLiteral("input") });
+            use[c.pin].append({ false, i, QStringLiteral("input"), pinShare(c) });
     }
     return use;
 }
@@ -483,6 +500,8 @@ QString outputSummaryParams(const OutputConfig &c)
         return QStringLiteral("%1°–%2°, %3 ms/°").arg(c.servoMin()).arg(c.servoMax()).arg(c.servoSpeed());
     case ParamKind::PwmValue:
         return QStringLiteral("value %1").arg(c.pwmValue());
+    case ParamKind::SoundTracks:
+        return QStringLiteral("♪ %1 / %2").arg(c.data[0]).arg(c.data[1]);
     case ParamKind::FourTone:
         return QStringLiteral("on %1  blink %2")
             .arg(c.pwmValue() & 0x0F, 4, 2, QLatin1Char('0'))
@@ -515,6 +534,7 @@ QString stepValueText(const RouteStep &s, quint8 outputType)
     case StepKind::ServoStateOrAngle: return QStringLiteral("%1°").arg(s.value);
     case StepKind::Aspect:            return QStringLiteral("A%1").arg(s.value);
     case StepKind::PwmValue:          return QStringLiteral("P%1").arg(s.value);
+    case StepKind::Track:             return s.value ? QStringLiteral("♪%1").arg(s.value) : QStringLiteral("♪■");
     default:                          return QString::number(s.value);
     }
 }

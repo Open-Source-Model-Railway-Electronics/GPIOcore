@@ -58,7 +58,7 @@ void PinMapView::paintEvent(QPaintEvent *)
         const QRectF r = cardRect(pin);
         const auto &users = usage[pin];
         const QString reserved = pinReservedReason(quint8(pin));
-        const bool conflict = users.size() > 1 || (!reserved.isEmpty() && !users.isEmpty());
+        const bool conflict = Ui::pinClash(users) || (!reserved.isEmpty() && !users.isEmpty());
 
         QColor accent = Ui::themed(QColor(0xE2, 0xE8, 0xF0));
         if (!users.isEmpty())

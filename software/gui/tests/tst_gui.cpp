@@ -7,11 +7,15 @@
 #include "inputeditor.h"
 #include "mainwindow.h"
 #include "outputeditor.h"
+#include "simulateddevice.h"
 #include "uihelpers.h"
 #include "qrcode.h"
 #include "webremote.h"
 
+#include <QDialog>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QSpinBox>
 #include <QTimer>
 #include <QSlider>
 #include <QTcpSocket>
@@ -353,6 +357,141 @@ private slots:
         QCOMPARE(int(view->board().outputs[2].type), int(SingleSteady));   // others untouched
         for (int i = 0; i < NumOutputs; ++i)                 // D13 / A7 are never handed out by default
             QVERIFY(view->board().outputs[i].pinA != 13 && view->board().outputs[i].pinA != 21);
+    }
+
+    void analogInputEditor()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *ied  = w.findChild<InputEditor *>();
+        auto *sim  = w.findChild<SimulatedDevice *>();
+        QVERIFY(view && ied && sim);
+        QCOMPARE(ied->index(), 0);
+        InputConfig used = view->board().inputs[0];
+        used.type = Latching;
+        emit ied->changed(0, used);
+        QComboBox *readAs = comboWith(ied, QStringLiteral("Digital"));
+        QVERIFY(readAs);
+        readAs->setCurrentIndex(readAs->findData(int(AnalogAt)));
+        QVERIFY(view->board().inputs[0].isAnalog());
+        QCOMPARE(int(view->board().inputs[0].analog), int(AnalogAt));
+        QCOMPARE(int(view->board().inputs[0].pin), 14);          // no pin yet: starts on A0
+        QCOMPARE(int(view->board().outputs[10].type), int(OutputNotInUse));   // output 10 had A0
+
+        sim->setAnalogValue(0, 437);                             // the live reading comes from the board
+        QTRY_COMPARE_WITH_TIMEOUT(ied->analogReading(), 437, 3000);
+        QPushButton *use = nullptr;
+        for (QPushButton *b : ied->findChildren<QPushButton *>())
+            if (b->text() == QLatin1String("Use this value")) use = b;
+        QVERIFY(use);
+        QTRY_VERIFY(use->isEnabled());
+        use->click();
+        QCOMPARE(int(view->board().inputs[0].threshold), 440);  // rounded to a step of 8
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim->input(0).threshold), 440, 3000);   // live write
+        QVERIFY(sim->input(0).isAnalog());
+        maybeScreenshot(w, "analog-input.png");
+
+        QSpinBox *threshold = nullptr;
+        for (QSpinBox *s : ied->findChildren<QSpinBox *>())
+            if (s->maximum() == AnalogMaxThreshold) threshold = s;
+        QVERIFY(threshold);
+        threshold->setValue(515);
+        QCOMPARE(int(view->board().inputs[0].threshold), 512);
+        waitIdleOrNot(link);
+    }
+
+    void simulateAnalogValue()
+    {
+        MainWindow w;
+        auto *link = w.findChild<DeviceLink *>();
+        link->drainMs = 3;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        InputConfig c = view->board().inputs[0];
+        c.type = Latching; c.analog = AnalogBelow; c.pin = 15; c.threshold = 512; c.outputId = 0;
+        emit w.findChild<InputEditor *>()->changed(0, c);
+        w.setMode(MainWindow::ModeSimulate);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveState(0) >= 0, 3000);
+        QVERIFY(view->analogValueInput(0));                      // a value instead of a press
+        click(view, view->liveButtonRect(0, 1).center());
+        auto *d = w.findChild<QDialog *>(QStringLiteral("analogValueDialog"));
+        QVERIFY(d);
+        QSpinBox *spin = d->findChild<QSpinBox *>();
+        QVERIFY(spin);
+        spin->setValue(100);                                     // below 512: pressed = curved / off
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveState(0), 0, 2000);
+        maybeScreenshot(w, "analog-simulate.png");
+        spin->setValue(1000);                                    // released
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveState(0), 1, 2000);
+        QTRY_COMPARE_WITH_TIMEOUT(w.findChild<InputEditor *>()->analogReading(), 1000, 3000);   // read back (GET_ANALOG)
+        d->close();
+        w.setMode(MainWindow::ModeConfigure);
+    }
+
+    void analogInputsShareChannel()
+    {
+        MainWindow w;
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *ied = w.findChild<InputEditor *>();
+        auto analog = [&](int i, int threshold) {
+            InputConfig c = view->board().inputs[i];
+            c.type = Latching; c.analog = AnalogAt; c.pin = 14; c.threshold = quint16(threshold);
+            emit ied->changed(i, c);
+        };
+        analog(0, 296);
+        analog(1, 600);                                          // the same channel: a resistor ladder
+        QVERIFY(view->board().inputs[0].isAnalog());
+        QCOMPARE(int(view->board().inputs[0].type), int(Latching));
+        QVERIFY(!view->inputConflictShown(0));
+        QVERIFY(!view->inputConflictShown(1));
+        QVERIFY(!Ui::pinClash(Ui::pinUsage(view->board())[14]));
+
+        InputConfig digital = view->board().inputs[2];           // a button on A0 takes the pin
+        digital.type = Latching; digital.pin = 14;
+        emit ied->changed(2, digital);
+        QCOMPARE(int(view->board().inputs[0].type), int(InputNotInUse));
+        QCOMPARE(int(view->board().inputs[1].type), int(InputNotInUse));
+        QCOMPARE(int(view->board().inputs[2].pin), 14);
+    }
+
+    void soundOutputOnD1()
+    {
+        MainWindow w;
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        QCOMPARE(oed->index(), 0);
+        QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
+        QVERIFY(type);
+        type->setCurrentIndex(type->findData(int(SoundEffect)));
+        QCOMPARE(int(view->board().outputs[0].type), int(SoundEffect));
+        QCOMPARE(int(view->board().outputs[0].pinA), 1);        // always TX (D1)
+        QComboBox *pinA = comboWith(oed, trGpio("—  not used"));
+        QVERIFY(pinA);
+        QCOMPARE(Ui::currentData(pinA), 1);
+        QVERIFY(!pinA->isEnabled());
+        if (!qgetenv("GPIOCORE_SHOT_DIR").isEmpty())
+        {
+            w.resize(1320, 900);
+            w.show();
+            w.showWorkspace();
+            maybeScreenshot(w, "sound-output.png");
+        }
+
+        OutputConfig second = view->board().outputs[1];
+        second.type = SoundEffect; second.pinA = SoundPin; second.data = { { 5, 6, 0, 0 } };
+        emit oed->changed(1, second);                            // two sound outputs share D1
+        QCOMPARE(int(view->board().outputs[0].type), int(SoundEffect));
+        QVERIFY(!view->outputConflictShown(0));
+        QVERIFY(!view->outputConflictShown(1));
+
+        InputConfig in = view->board().inputs[3];                // an input on D1 takes the pin from both
+        in.type = Latching; in.pin = 1;
+        emit w.findChild<InputEditor *>()->changed(3, in);
+        QCOMPARE(int(view->board().outputs[0].type), int(OutputNotInUse));
+        QCOMPARE(int(view->board().outputs[1].type), int(OutputNotInUse));
     }
 
     void qrStructure()

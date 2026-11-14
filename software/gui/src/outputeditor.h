@@ -90,6 +90,7 @@ private:
     QSpinBox       *m_pwm = nullptr;
     QSlider        *m_pwmSlider = nullptr;
     QDoubleSpinBox *m_blinkHz = nullptr;     // signal: blink frequency (data[1] = Hz x 10)
+    QSpinBox       *m_track[2] {};           // sound effect: track for state 0 / 1
 
     QComboBox      *m_state = nullptr;
     QPushButton    *m_test0 = nullptr;

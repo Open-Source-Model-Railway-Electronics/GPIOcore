@@ -28,7 +28,7 @@ public:
         int  protocol       = 2;      // 1 = current firmware (no HELLO / routes / live servo)
         int  maxRouteSteps  = Gpio::MaxRouteSteps;
         int  stepPool       = 256;    // external EEPROM: 16 routes x 16 steps
-        quint8 helloFlags   = 0x0F;   // serial pins, servo live, external EEPROM, board settings
+        quint8 helloFlags   = 0x1F;   // serial pins, servo live, external EEPROM, board settings, analog + sound
         int  bootDelayMs    = 150;
         int  replyDelayMs   = 1;
 
@@ -53,6 +53,10 @@ public:
     bool configSession() const { return m_session; }                // HELLO received
     Gpio::BoardSettings board() const { return m_board; }
     void setBoard(const Gpio::BoardSettings &b) { m_board = b; }
+    // Voltage on A0-A7 as analogRead() sees it (default 1023: nothing pressed). Every analog input
+    // on that channel reacts like the firmware: a press or release of a button to GND.
+    void setAnalogValue(int channel, int value);
+    int  analogValue(int channel) const { return m_analog[channel & 7]; }
 
     // Reply with NACK(checksum) to the next n complete frames.
     void corruptNextFrames(int n) { m_corrupt = n; }
@@ -74,6 +78,9 @@ private:
     void   scheduleFlush();
     void   reportOutput(int output, int state, int value);   // OUTPUT_EVENT after HELLO
     void   triggerInput(int index, int direction);           // like the firmware's setDccAddress()
+    void   startRoute(int index);                            // Input::startRoute(), with interlocking
+    void   pinLevel(int index, bool pressed);                // Input::update(): a button edge
+    void   evaluateAnalog(int index);                        // Input::readAnalog()
     void   runRouteStep(int input, int step);
     bool   routeMovesTurnout(int input) const;
     void   setOutputState(int output, quint8 state);          // state change + report, servos sweep
@@ -115,4 +122,6 @@ private:
     std::array<int,  Gpio::NumOutputs> m_servoTarget;         // -1 = the state's end position
     void   servoTo(int output, int angle);
     std::array<quint8, Gpio::NumOutputs> m_frog {};
+    std::array<int,  8> m_analog;                              // analogRead() per channel
+    std::array<bool, Gpio::NumInputs> m_pressed {};            // analog inputs: condition met
 };

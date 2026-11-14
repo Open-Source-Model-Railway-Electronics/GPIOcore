@@ -17,8 +17,8 @@ Part of [Open-Source-Model-Railway-Electronics](https://github.com/Open-Source-M
 
 | | |
 |---|---|
-| **Outputs** | Servo (with speed, and unifrog / electrofrog relays), single / double steady, single / double pulse (turnout coils), single / double flashing, swing light (level crossing), fireplace, TL tube, welder, PWM, 4-aspect signal |
-| **Inputs** | Toggle, absolute (follows a switch), route, recorder, feedback (occupancy to the command station) |
+| **Outputs** | Servo (with speed, and unifrog / electrofrog relays), single / double steady, single / double pulse (turnout coils), single / double flashing, swing light (level crossing), fireplace, TL tube, welder, PWM, 4-aspect signal, sound effect (DFPlayer Mini MP3 player) |
+| **Inputs** | Toggle, absolute (follows a switch), route, recorder, feedback (occupancy to the command station). A button to GND, or an analog pin: several buttons on one resistor ladder, or a sensor |
 | **Routes** | Up to 16 steps per route, each with its own wait time. A route starts on a button or a DCC command: any command, only "straight" or only "curved" |
 | **DCC** | Accessory addresses for inputs and routes. DCC extended packets set a servo angle directly (0–180°) or a signal aspect |
 | **Configure without a board** | Work offline, try it in the built-in simulation, then write it to the board |
@@ -101,6 +101,26 @@ Four LEDs on pins A–D; lamp 1 = bit 0 = pin A. The aspect comes from a **DCC e
 a route step (use the aspect picker next to the value). Set the **blink frequency** once per signal (in
 Hz); flashing lamps then follow that rhythm.
 
+### Sound effect (DFPlayer Mini)
+
+A **DFPlayer Mini** MP3 module plays a sound: a bell, a whistle, an announcement.
+
+```text
+  Nano D1 (TX) ---[1k]--- DFPlayer RX
+  5 V ------------------- DFPlayer VCC
+  GND ------------------- DFPlayer GND
+  speaker (3 W max.) ---- DFPlayer SPK_1 / SPK_2
+```
+
+- The output always uses **D1** (TX); the 1 kΩ resistor protects the DFPlayer.
+- Put the sounds on the micro SD card as **0001.mp3, 0002.mp3, …** Track 1 is 0001.mp3.
+- **Track when curved / off** and **Track when straight / on** are played when the output switches;
+  *stop* (0) stops playing. A route step or a DCC extended packet plays its own track number (0 = stop).
+- Several sound outputs may share D1, for example one per button with its own tracks.
+- **It only plays without a PC.** D1 is also the USB line: with the Configurator connected, the board
+  only reports the track (♪ on the output in the drawing). Unplug USB and power the board otherwise to
+  hear it.
+
 ---
 
 ## Inputs and routes
@@ -122,6 +142,38 @@ You can also make a route by **dragging**: drag from an output to the route inpu
 
 A DCC command for the same address is ignored for 500 ms after the first one, so a command station
 that repeats commands does not toggle twice.
+
+### Analog inputs (resistor ladder)
+
+Instead of a button to GND, an input can **read a voltage** on A0–A6 (0 = 0 V, 1023 = 5 V). Set
+**Read as** to:
+
+- **Analog — below a value**: pressed below the threshold (released again 20 higher), e.g. a light
+  sensor that gets dark;
+- **Analog — above a value**: pressed above the threshold (released again 20 lower);
+- **Analog — at a value**: pressed within ±10 of the threshold: one button of a **resistor ladder**.
+
+"Pressed" works exactly like a pressed button, so toggle, absolute, routes, recorder and feedback all
+work. Several inputs may share one analog pin, each with its own value.
+
+**Wiring a resistor ladder:** a 10 kΩ resistor from 5 V to the pin, and every button from the pin to GND
+through its own resistor (0, 1 kΩ, 3.3 kΩ, 10 kΩ, …). Each button then gives a different value:
+
+```text
+  5 V ---[10k]---+--- A0
+                 +---------[ button 1 ]--- GND    about 0
+                 +--[1k]---[ button 2 ]--- GND    about 93
+                 +--[3k3]--[ button 3 ]--- GND    about 254
+                 +--[10k]--[ button 4 ]--- GND    about 512
+```
+
+**Read the real values** with the board connected: resistor tolerances and contacts make practice
+differ from theory. Hold each button and look at **Now:** in the input settings; **Use this value**
+makes it the threshold (rounded to a step of 8). Keep about 40 between two buttons. In **Simulate**
+you click *value ▾* on the input and type a value for its pin.
+
+Analog inputs and the sound effect need the firmware from November 2026 or later; the Configurator
+warns when the board's firmware is older.
 
 ---
 

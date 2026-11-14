@@ -27,10 +27,12 @@ enum OutputType : quint8
     DoubleSteady, DoublePulse, DoubleFlashing,
     SwingLight, FirePlaceLight, TubeLight, WelderLight,
     FourToneSignal, ServoType, Pwm, OutputNotInUse,
+    SoundEffect,    // DFPlayer Mini on TX (D1): data[0] = track when curved / off, data[1] = when straight / on
     OutputTypeCount
 };
 
-enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone };
+enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, SoundTracks };
+constexpr quint8 SoundPin = 1;   // a sound effect output always uses TX (D1)
 
 struct OutputTypeInfo
 {
@@ -143,22 +145,38 @@ QByteArray encodeStep(const RouteStep &s);              // 4 bytes
 RouteStep  decodeStep(const char *bytes);
 
 // What a route step can set on an output of this type
-enum class StepKind { State, ServoStateOrAngle, Aspect, PwmValue };
+enum class StepKind { State, ServoStateOrAngle, Aspect, PwmValue, Track };   // Track: sound effect, 0 = stop
 StepKind   stepKind(quint8 outputType);
 RouteStep  defaultStep(int output, quint8 outputType);
 constexpr quint8 ServoAngleMin = 10, ServoAngleMax = 170;
 
+// Analog inputs (firmware config.h ANALOG_*): the pin byte holds 0x20 | mode << 3 | channel
+// instead of a pin number; the threshold is stored as value / 8 and sent as value / 4 in linked[0].
+enum AnalogMode : quint8 { AnalogNone, AnalogBelow, AnalogAbove, AnalogAt };
+constexpr int AnalogMaxThreshold = 1016;   // 7 bits x 8
+constexpr int AnalogHysteresis   = 20;     // below / above: released 20 counts past the threshold
+constexpr int AnalogWindow       = 10;     // at: threshold +/- 10
+constexpr int AnalogMaxValue     = 1023;   // analogRead()
+
 struct InputConfig
 {
     quint16 address  = AddrNone;
-    quint8  pin      = PinNA;
+    quint8  pin      = PinNA;                 // analog: the real pin, A0-A7 = 14-21
     quint8  type     = InputNotInUse;
     quint8  outputId = 0;
+    quint8  analog   = AnalogNone;            // AnalogMode: compare the voltage instead of reading a button
+    quint16 threshold = 512;                  // analog: 0-1016 in steps of 8
     QVector<RouteStep> route;                 // source of truth for routes
     QString name;                             // GUI only (board file), not stored on the board
     std::array<quint8, MaxLinked> linked;     // v1 wire format: bit7 = state, bits 6-0 = output id
 
     InputConfig() { linked.fill(LinkNone); }
+
+    bool   isAnalog() const      { return analog != AnalogNone; }
+    int    analogChannel() const { return pin - 14; }    // 0-7 = A0-A7
+    quint8 pinByte() const;                   // the pin field on the wire / in EEPROM
+    void   setPinByte(quint8 b);
+    static int roundThreshold(int t);         // to a multiple of 8, 0-1016
 
     void syncLinkedFromRoute();               // route -> linked (first 8 steps, state only)
     void routeFromLinked();                   // linked -> route (v1 firmware)

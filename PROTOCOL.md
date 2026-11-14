@@ -65,6 +65,8 @@ Een GET krijgt eerst het data-antwoord en daarna die `ACK`.
 | **`A2` SERVO_LIVE** | → | `output angle` | **v2** |
 | **`C0` GET_BOARD** | → | – → antwoord `CF` | **v2** |
 | **`CF` SET_BOARD** | ↔ | `len type flags delay name[0..16]`, zie §10 | **v2** |
+| **`D1` GET_ANALOG** | → | `channel` (0–7 = A0–A7) → antwoord `D3`, daarna de gewone `ACK`. Live meting voor het instellen van analoge inputs; de GUI vraagt hem ongeveer elke 250 ms zolang een analoge input in beeld is | **v2**, HELLO-bit4 |
+| **`D3` ANALOG_VALUE** | ← | `channel valueH valueL` — `analogRead()` van A0–A7, 0–1023 | **v2**, HELLO-bit4 |
 
 \* In v2 stuurt de GUI de 8 `linked`-bytes nog mee, afgeleid van de route: eerste 8 stappen, alleen de stand.
 Een v2-decoder mag ze negeren; de echte route komt via `SET_ROUTE`.
@@ -97,6 +99,14 @@ Frog-relais: `relayA` + `relayB` = **electrofrog** (A bij straight, B bij curved
 | 11 | servo | A (+ relais) | `data[0]` hoek bij state 0, `data[1]` hoek bij state 1, `data[2]` snelheid in ms/° (≥ 1), `data[3]` ongebruikt |
 | 12 | PWM | A (PWM) | `data[0]` = 0–255 |
 | 13 | not in use | – | – |
+| 14 | sound effect | A = altijd **1 (D1, TX)** | `data[0]` track bij state 0 (curved / uit), `data[1]` track bij state 1 (straight / aan); 0 = stoppen. Een route-stap (ruw) of DCC-ext speelt zijn eigen waarde als tracknummer (0 = stoppen) |
+
+**Sound effect (type 14, HELLO-bit4).** Een DFPlayer Mini hangt met zijn RX aan de TX-pin D1 van de Nano
+(via 1 kΩ). De firmware stuurt het DFPlayer-frame (9600 baud, 10 bytes: `7E FF 06 03 00 00 track csH csL EF`,
+`16` in plaats van `03` = stop) alleen als er **geen pc** verbonden is: in een configuratiesessie is D1 de
+USB-lijn. Elke keer dat er een track gestart (of gestopt) wordt, meldt de output `OUTPUT_EVENT` met **state 2,
+value = track**, ook als hij niets kon afspelen. Meerdere sound-outputs mogen D1 delen (de GUI telt dat niet als
+conflict); D1 samen met een andere input of output wel.
 
 PWM-pinnen zijn D3, D5, D6, D9, D10 en D11. D9/D10 doen geen PWM zolang er een servo-output bestaat
 (Servo-library, timer 1).
@@ -106,10 +116,30 @@ PWM-pinnen zijn D3, D5, D6, D9, D10 en D11. D9/D10 doen geen PWM zolang er een s
 | Veld | Bits | Waarden |
 |---|---|---|
 | `address` | 12 | DCC-accessory-adres 1–4094, **0xFFF = geen** |
-| `pin` | 6 | zoals bij outputs; de firmware zet `INPUT_PULLUP` (knop naar GND) |
+| `pin` | 6 | zoals bij outputs; de firmware zet `INPUT_PULLUP` (knop naar GND). **Of een analoge vergelijking**: `0x20 + 8 × mode + kanaal`, zie hieronder |
 | `type` | 3 | zie hieronder |
 | `outputID` | 4 | 0–15: de output (direct), of het sensornummer (feedback) |
-| `linked[8]` | 8 × 8 | v1-route: bit 7 = stand, bits 0–6 = output-id; 0x7F/0xFF = einde |
+| `linked[8]` | 8 × 8 | v1-route: bit 7 = stand, bits 0–6 = output-id; 0x7F/0xFF = einde. **`linked[0]` bij een analoge input = drempel / 4** |
+
+**Analoge inputs (HELLO-bit4).** In plaats van een pinnummer bevat `pin` dan `0x20 | mode << 3 | kanaal`:
+kanaal 0–7 = A0–A7 (de echte pin is 14 + kanaal), mode 0 = **onder** de drempel, 1 = **boven** de drempel,
+2 = **op** de drempel (één knop van een weerstandsladder). Mode 3 (dus ook `0x3F` = niet gebruikt) is nooit
+analoog. De drempel (0–1016, stappen van 8) staat in `linked[0]` als **drempel / 4**: `SET_INPUT_DATA` neemt
+hem daar, `GET_INPUT_DATA` zet hem daar terug (alleen bij een analoge input; anders blijft `linked[]` de
+v1-route). De firmware bewaart drempel / 8 (7 bits, `EEPROM.md`).
+
+| Mode | Ingedrukt als | Weer los als |
+|---|---|---|
+| 0 onder | waarde < drempel | waarde ≥ drempel + 20 |
+| 1 boven | waarde > drempel | waarde ≤ drempel − 20 |
+| 2 op | waarde − drempel tussen −10 en +10 | daarbuiten |
+
+De firmware leest elke 50 ms en telt een verandering pas na twee gelijke metingen. "Ingedrukt" werkt precies
+als een knop naar GND (LOW): toggle wisselt bij het indrukken, absoluut volgt (ingedrukt = 0), alle drie de
+route-types starten bij het indrukken, recorder en feedback werken hetzelfde. Voor het kanaal gelden de regels
+van de echte pin (A7 = configknop, A6 alleen op de Nano, A4/A5 niet met de recorder) en een analoge code als
+output geeft `NACK 5`. Meerdere analoge inputs mogen één kanaal delen (weerstandsladder); een digitale input of
+een output op die pin is wel een conflict.
 
 Input-types:
 - 0 toggle — wisselt bij het indrukken (falling edge) of bij elk DCC-commando;
@@ -160,6 +190,7 @@ flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit1 = SERVO_LIVE supported
          bit2 = routes / recorder in external EEPROM
          bit3 = BOARD settings (C0 / CF) supported, see section 10
+         bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
 step pool: number of route steps that still fit with the current board settings
            (timing on/off, recorder on/off), all routes together
 ```

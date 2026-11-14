@@ -131,6 +131,16 @@ void DeviceLink::close()
     emit closed();
 }
 
+bool DeviceLink::isBusy() const
+{
+    if (m_current.active && !isBackground(m_current.kind))
+        return true;
+    for (const Txn &t : m_queue)
+        if (!isBackground(t.kind))
+            return true;
+    return false;
+}
+
 // ── Public requests ─────────────────────────────────────────────────────────
 void DeviceLink::requestVersion()
 {
@@ -212,6 +222,16 @@ void DeviceLink::dccExt(int address, int value)
     enqueue(Kind::DccExt, DCC_EXT, p, address, timeoutMs);
 }
 
+void DeviceLink::readAnalog(int channel)
+{
+    if (m_current.active && m_current.kind == Kind::GetAnalog && m_current.index == (channel & 7))
+        return;                          // being read now
+    for (const Txn &t : m_queue)
+        if (t.kind == Kind::GetAnalog && t.index == (channel & 7))
+            return;                      // still waiting: one reading per channel is enough
+    enqueue(Kind::GetAnalog, GET_ANALOG, QByteArray(1, char(channel & 7)), channel & 7, timeoutMs);
+}
+
 void DeviceLink::readOutputState(int output)
 {
     enqueue(Kind::GetOutputState, GET_OUTPUT_STATE, QByteArray(1, char(output)), output, timeoutMs);
@@ -270,14 +290,17 @@ void DeviceLink::enqueue(Kind kind, quint8 command, const QByteArray &payload, i
     t.payload   = payload;
     t.index     = index;
     t.timeout   = timeout;
-    t.triesLeft = (kind == Kind::ServoLive) ? 0 : (kind == Kind::Hello ? 1 : retries);
+    t.triesLeft = (kind == Kind::ServoLive || kind == Kind::GetAnalog) ? 0 : (kind == Kind::Hello ? 1 : retries);
 
     // Version / hello requests and follow-up route chunks go first.
     if (front || kind == Kind::Version) m_queue.prepend(t);
     else                                m_queue.enqueue(t);
 
-    ++m_batchTotal;
-    emit progress(m_batchDone, m_batchTotal);
+    if (!isBackground(kind))
+    {
+        ++m_batchTotal;
+        emit progress(m_batchDone, m_batchTotal);
+    }
     sendNext();
 }
 
@@ -308,8 +331,11 @@ void DeviceLink::sendNext()
                             tr("This firmware speaks protocol v1: routes are stored in the 8 linked bytes "
                                "of SET_INPUT_DATA (state only, fixed 0.5 s per step)."));
         }
-        ++m_batchDone;                   // nothing to send on a v1 board
-        emit progress(m_batchDone, m_batchTotal);
+        if (!isBackground(m_current.kind))
+        {
+            ++m_batchDone;               // nothing to send on a v1 board
+            emit progress(m_batchDone, m_batchTotal);
+        }
         sendNext();
         return;
     }
@@ -332,8 +358,11 @@ void DeviceLink::complete(bool ok)
     if (!ok)
         ++m_failures;
     m_current.active = false;
-    ++m_batchDone;
-    emit progress(m_batchDone, m_batchTotal);
+    if (!isBackground(m_current.kind))
+    {
+        ++m_batchDone;
+        emit progress(m_batchDone, m_batchTotal);
+    }
 
     m_draining = true;
     QTimer::singleShot(drainMs, this, [this] {
@@ -364,9 +393,9 @@ void DeviceLink::onTimeout()
         complete(true);
         return;
     }
-    if (m_current.kind == Kind::ServoLive)
+    if (m_current.kind == Kind::ServoLive || m_current.kind == Kind::GetAnalog)
     {
-        complete(true);                  // live positions are best effort
+        complete(true);                  // live positions and readings are best effort
         return;
     }
     emit errorOccurred(tr("No answer to %1").arg(describe(m_current)));
@@ -421,6 +450,13 @@ void DeviceLink::handleFrame(const Frame &f)
     if (f.command == OUTPUT_EVENT && f.payload.size() >= 3)
     {
         emit outputEvent(f.byte(0), f.byte(1), f.byte(2));    // may arrive at any time
+        return;
+    }
+    if (f.command == ANALOG_VALUE && f.payload.size() >= 3)
+    {
+        emit analogValue(f.byte(0) & 7, f.byte(1) << 8 | f.byte(2));
+        if (m_current.active && m_current.kind == Kind::GetAnalog)
+            complete(true);              // the trailing ACK is swallowed as unsolicited
         return;
     }
 
@@ -509,6 +545,7 @@ void DeviceLink::handleFrame(const Frame &f)
             c.servoLive     = f.byte(4) & HELLO_FLAG_SERVO_LIVE;
             c.extEeprom     = f.byte(4) & HELLO_FLAG_EXT_EEPROM;
             c.boardSettings = f.byte(4) & HELLO_FLAG_BOARD;
+            c.analogSound   = f.byte(4) & HELLO_FLAG_ANALOG_SOUND;
             emit logMessage(QStringLiteral("INFO"),
                             tr("Protocol v%1: %2 steps per route, %3 steps in total%4")
                                 .arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool)
@@ -572,6 +609,9 @@ void DeviceLink::handleFrame(const Frame &f)
     case Kind::ServoLive:
         if (f.isAck()) { complete(true); return; }
         break;
+
+    case Kind::GetAnalog:
+        break;                           // ANALOG_VALUE is handled above
 
     case Kind::Preset:
         if (f.isAck())
@@ -642,6 +682,7 @@ QString DeviceLink::describe(const Txn &t) const
     case Kind::TriggerInput:   return tr("trigger input %1").arg(t.index);
     case Kind::GetOutputState: return tr("read state of output %1").arg(t.index);
     case Kind::DccExt:         return tr("DCC extended to address %1").arg(t.index);
+    case Kind::GetAnalog:      return tr("read analog pin A%1").arg(t.index);
     }
     return QString();
 }

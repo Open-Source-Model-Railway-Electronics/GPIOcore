@@ -55,6 +55,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPlainTextEdit>
+#include <QPointer>
 #include <QProgressBar>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -102,6 +103,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     m_liveTimer->setSingleShot(true);
     m_liveTimer->setInterval(350);       // edits are sent after a short pause (slider drags, typing)
     connect(m_liveTimer, &QTimer::timeout, this, &MainWindow::sendLive);
+    m_analogTimer = new QTimer(this);
+    m_analogTimer->setInterval(250);     // asks only while an analog input is shown (or in a live test)
+    connect(m_analogTimer, &QTimer::timeout, this, &MainWindow::pollAnalog);
+    m_analogTimer->start();
 
     buildUi();
     buildToolbar();
@@ -123,12 +128,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
             const QString what = state == 3 ? tr("frog relays A %1, B %2, unifrog %3")
                                                   .arg(value & 1 ? tr("on") : tr("off"), value & 2 ? tr("on") : tr("off"),
                                                        value & 4 ? tr("on") : tr("off"))
+                               : state == 2 && m_edit.outputs[o].type == SoundEffect
+                                            ? (value ? tr("track %1").arg(value) : tr("sound stopped"))
                                : state == 2 ? tr("value %1").arg(value)
                                             : (state ? tr("straight / on") : tr("curved / off"));
             statusBar()->showMessage(tr("%1 → %2").arg(name, what), 4000);
         }
     });
     connect(m_link, &DeviceLink::capabilitiesChanged, this, [this] { applyCapabilities(); });
+    connect(m_link, &DeviceLink::analogValue, this, [this](int channel, int value) {
+        m_inEd->setAnalogReading(channel, value);
+        m_view->setAnalogValue(channel, value);
+    });
     connect(m_link, &DeviceLink::logMessage,     this, &MainWindow::appendLog);
     connect(m_link, &DeviceLink::errorOccurred,  this, [this](const QString &m) {
         appendLog(QStringLiteral("ERR"), m);
@@ -383,6 +394,7 @@ void MainWindow::buildUi()
         m_link->triggerInput(in, dir);
     });
     connect(m_view, &ConnectionView::liveValueRequested, this, &MainWindow::openLiveValue);
+    connect(m_view, &ConnectionView::analogValueRequested, this, &MainWindow::openAnalogValue);
     connect(m_view, &ConnectionView::removeRequested, this, [this](bool output, int index) {
         if (output) { selectOutput(index); m_open = OpenOutput; }
         else        { selectInput(index);  m_open = OpenInput; }
@@ -437,7 +449,7 @@ void MainWindow::buildUi()
             for (int j = 0; j < 7; ++j) had |= (m_edit.outputs[i].pin(j) == p);
             if (active && p < NumPins && !had) fresh << p;
         }
-        const QString taken = takeOverPins(fresh, i, -1);
+        const QString taken = takeOverPins(fresh, i, -1, Ui::pinShare(c));
         if (!taken.isEmpty()) statusBar()->showMessage(taken, 8000);
         const QString name = m_edit.outputs[i].name;
         const QStringList lamps = m_edit.outputs[i].lampColors;
@@ -452,9 +464,10 @@ void MainWindow::buildUi()
         m_link->servoLive(i, angle);    // queued sends are merged, only the newest angle goes out
     });
     connect(m_inEd, &InputEditor::changed, this, [this](int i, const InputConfig &c) {
-        if (c.type != InputNotInUse && c.pin < NumPins && c.pin != m_edit.inputs[i].pin)
+        if (c.type != InputNotInUse && c.pin < NumPins
+            && (c.pin != m_edit.inputs[i].pin || c.analog != m_edit.inputs[i].analog))
         {
-            const QString taken = takeOverPins({ c.pin }, -1, i);
+            const QString taken = takeOverPins({ c.pin }, -1, i, Ui::pinShare(c));
             if (!taken.isEmpty()) statusBar()->showMessage(taken, 8000);
         }
         const QString name = m_edit.inputs[i].name;
@@ -568,6 +581,7 @@ void MainWindow::applyCapabilities()
     const bool known = m_link->isOpen() && c.known;
     boardOptions().serialPinsUsable = known ? (c.protocol >= 2 && c.serialPins) : true;
     m_outEd->setLiveAvailable(known && c.protocol >= 2 && c.servoLive);
+    m_inEd->setLiveReadingAvailable(m_link->isReady() && c.analogSound);
     m_outEd->refreshPinCombos();
     m_inEd->refreshPinCombos();
     if (known)
@@ -1386,7 +1400,7 @@ bool MainWindow::outputHasConflict(int i) const
     {
         const bool active = (s < 4) ? (s < info.pinCount) : info.relays;
         const quint8 p = c.pin(s);
-        if (active && p < NumPins && (usage[p].size() > 1 || !pinReservedReason(p).isEmpty()))
+        if (active && p < NumPins && (Ui::pinClash(usage[p]) || !pinReservedReason(p).isEmpty()))
             return true;
     }
     return false;
@@ -1397,7 +1411,7 @@ bool MainWindow::inputHasConflict(int i) const
     const InputConfig &c = m_edit.inputs[i];
     if (c.type == InputNotInUse || c.pin >= NumPins)
         return false;
-    return Ui::pinUsage(m_edit)[c.pin].size() > 1 || !pinReservedReason(c.pin).isEmpty();
+    return Ui::pinClash(Ui::pinUsage(m_edit)[c.pin]) || !pinReservedReason(c.pin).isEmpty();
 }
 
 void MainWindow::refreshRows()
@@ -1493,6 +1507,7 @@ QStringList MainWindow::outputWarnings(int i) const
         for (const auto &u : usage[p])
         {
             if (u.output && u.index == i) continue;
+            if (Ui::pinShare(c) != Ui::ShareNone && u.share == Ui::pinShare(c)) continue;   // sound outputs share D1
             w << (u.output ? tr("%1 (%2) is also used by output %3 (%4).").arg(trGpio(roles[s]), pinName(p)).arg(u.index).arg(u.role)
                            : tr("%1 (%2) is also used by input %3.").arg(trGpio(roles[s]), pinName(p)).arg(u.index));
         }
@@ -1505,7 +1520,9 @@ QStringList MainWindow::outputWarnings(int i) const
                 "a coil can stay energised. Update the firmware (review F9).");
     if (c.type == ServoType && c.servoMin() > c.servoMax())
         w << tr("Min is larger than max: positions are swapped.");
-    for (int s = 0; s < info.pinCount; ++s)
+    if (c.type == SoundEffect && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
+        w << tr("The firmware on this board has no sound effect output yet: update the firmware (Board > Flash firmware).");
+    for (int s = 0; s < info.pinCount && c.type != SoundEffect; ++s)   // sound: D1 by design, see the type help
         if (c.pin(s) < 2 && !pinNote(c.pin(s)).isEmpty())
             w << tr("%1 (%2) is a serial pin: it only works when no GUI is connected.")
                      .arg(trGpio(roles[s]), pinName(c.pin(s)));
@@ -1539,10 +1556,12 @@ QStringList MainWindow::inputWarnings(int i) const
             w << tr("Pin %1 is the %2.").arg(pinName(c.pin), reserved);
         const auto usage = Ui::pinUsage(m_edit);
         for (const auto &u : usage[c.pin])
-            if (u.output || u.index != i)
+            if ((u.output || u.index != i) && !(c.isAnalog() && u.share == Ui::ShareAnalog))   // analog inputs share a channel
                 w << (u.output ? tr("Pin %1 is also used by output %2.").arg(pinName(c.pin)).arg(u.index)
                                : tr("Pin %1 is also used by input %2.").arg(pinName(c.pin)).arg(u.index));
     }
+    if (c.isAnalog() && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
+        w << tr("The firmware on this board cannot read analog inputs yet: update the firmware (Board > Flash firmware).");
     if ((c.type == Recorder || c.type == FeedbackInput) && c.pin == PinNA)
         w << tr("This type needs an input pin.");
     if (c.type == Recorder && recorderInput(m_edit, i) >= 0)
@@ -1611,7 +1630,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 }
 
 // ── Pins taken over ─────────────────────────────────────────────────────────
-QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int input)
+QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int input, int share)
 {
     QStringList freed;
     for (quint8 p : pins)
@@ -1625,6 +1644,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
             for (int k = 0; k < 7; ++k)
                 uses |= ((k < 4) ? (k < info.pinCount) : info.relays) && c.pin(k) == p;
             if (!uses || c.type == OutputNotInUse) continue;
+            if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several sound outputs on D1
             OutputConfig off;
             off.name = c.name;
             off.lampColors = c.lampColors;
@@ -1636,6 +1656,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
             if (j == input) continue;
             const InputConfig &c = m_edit.inputs[j];
             if (c.type == InputNotInUse || c.pin != p) continue;
+            if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several analog inputs on one channel
             InputConfig off;
             off.name = c.name;
             m_edit.inputs[j] = off;
@@ -1860,6 +1881,73 @@ void MainWindow::openLiveValue(int input)
     connect(close, &QPushButton::clicked, d, &QDialog::close);
     form->addRow(close);
     d->show();
+}
+
+// Simulation: the voltage on the pin of an analog input. Every analog input on that pin reacts,
+// as on a real board with a resistor ladder.
+void MainWindow::openAnalogValue(int input)
+{
+    QPointer<SimulatedDevice> sim = m_link->findChild<SimulatedDevice *>();
+    const InputConfig &in = m_edit.inputs[input];
+    if (!sim || !in.isAnalog())
+        return;
+    const int ch = in.analogChannel();
+    auto *d = new QDialog(this);
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->setObjectName(QStringLiteral("analogValueDialog"));
+    d->setWindowTitle(tr("Value on A%1 (0–1023)").arg(ch));
+    auto *form = new QFormLayout(d);
+    auto *spin = new QSpinBox;
+    spin->setRange(0, AnalogMaxValue);
+    spin->setValue(sim->analogValue(ch));
+    auto *slider = new QSlider(Qt::Horizontal);
+    slider->setRange(0, AnalogMaxValue);
+    slider->setValue(spin->value());
+    connect(slider, &QSlider::valueChanged, spin, &QSpinBox::setValue);
+    connect(spin, QOverload<int>::of(&QSpinBox::valueChanged), slider, &QSlider::setValue);
+    connect(spin, QOverload<int>::of(&QSpinBox::valueChanged), d, [sim, ch](int v) {
+        if (sim) sim->setAnalogValue(ch, v);
+    });
+    auto *row = new QHBoxLayout;
+    row->addWidget(slider, 1);
+    row->addWidget(spin);
+    form->addRow(tr("A%1").arg(ch), row);
+    QStringList users;
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        const InputConfig &c = m_edit.inputs[i];
+        if (c.isAnalog() && c.analogChannel() == ch && c.type != InputNotInUse)
+            users << tr("In %1: %2 %3").arg(i)
+                         .arg(c.analog == AnalogBelow ? QStringLiteral("<") : c.analog == AnalogAbove ? QStringLiteral(">")
+                                                                                                     : QStringLiteral("≈"))
+                         .arg(c.threshold);
+    }
+    auto *note = new QLabel(tr("1023 = 5 V, nothing pressed. Every input on A%1 reacts: %2").arg(ch).arg(users.join(QStringLiteral(", "))));
+    note->setWordWrap(true);
+    note->setObjectName(QStringLiteral("help"));
+    form->addRow(note);
+    auto *close = new QPushButton(tr("Close"));
+    connect(close, &QPushButton::clicked, d, &QDialog::close);
+    form->addRow(close);
+    d->show();
+}
+
+void MainWindow::pollAnalog()
+{
+    const bool available = m_link->isReady() && m_link->caps().analogSound;
+    m_inEd->setLiveReadingAvailable(available);
+    if (!available)
+        return;
+    QSet<int> channels;
+    const InputConfig shown = m_inEd->config();
+    if (shown.isAnalog())
+        channels << shown.analogChannel();
+    if (m_view->liveMode())                  // live test / simulation: the canvas shows every reading
+        for (const InputConfig &c : m_edit.inputs)
+            if (c.isAnalog() && c.type != InputNotInUse)
+                channels << c.analogChannel();
+    for (int ch : channels)
+        m_link->readAnalog(ch);
 }
 
 void MainWindow::refreshLampRow()

@@ -42,6 +42,7 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
     m_liveValue.fill(0, NumOutputs);
     m_liveRaw.fill(false, NumOutputs);
     m_liveFrog.fill(-1, NumOutputs);
+    m_analogNow.fill(-1, 8);
     m_liveFlashOut.fill(-100000, NumOutputs);
     m_liveFlashIn.fill(-100000, NumInputs);
     m_liveClock.start();
@@ -84,7 +85,22 @@ void ConnectionView::clearLive()
 {
     m_liveState.fill(-1, NumOutputs);
     m_liveFrog.fill(-1, NumOutputs);
+    m_analogNow.fill(-1, 8);
     update();
+}
+
+void ConnectionView::setAnalogValue(int channel, int value)
+{
+    if (channel < 0 || channel >= m_analogNow.size() || m_analogNow[channel] == value)
+        return;
+    m_analogNow[channel] = value;
+    update();
+}
+
+bool ConnectionView::analogValueInput(int i) const
+{
+    const InputConfig &c = m_board.inputs[i];
+    return m_frame == Frame::Simulate && c.isAnalog() && c.type != InputNotInUse;
 }
 
 void ConnectionView::setOutputLive(int o, int state, int value)
@@ -141,7 +157,7 @@ QRectF ConnectionView::liveButtonRect(int i, int direction) const
     const InputConfig &c = m_board.inputs[i];
     const QRectF r = inputRect(i);
     const qreal h = 20, y = r.top() + 22;
-    if (liveValueInput(i))
+    if (analogValueInput(i) || liveValueInput(i))
         return direction ? QRectF(r.right() - 88, y, 80, h) : QRectF();
     if (c.type == Latching)
         return direction ? QRectF(r.right() - 46, y, 38, h) : QRectF(r.right() - 88, y, 38, h);
@@ -186,7 +202,13 @@ void ConnectionView::drawInputLive(QPainter &p, int i)
         p.fillPath(path, flash > 0 ? Ui::themed(QColor(0xFE, 0xF3, 0xC7)) : Ui::themed(QColor(0xF1, 0xF5, 0xF9)));
         p.setPen(QPen(kBorder, 1));
         p.drawPath(path);
-        if (liveValueInput(i))
+        if (analogValueInput(i))
+        {
+            const int now = m_analogNow.value(c.analogChannel(), -1);   // the simulated value, once read back
+            p.setPen(kText);
+            p.drawText(b, Qt::AlignCenter, now >= 0 ? QStringLiteral("%1 ▾").arg(now) : tr("value ▾"));
+        }
+        else if (liveValueInput(i))
         {
             p.setPen(kText);
             p.drawText(b, Qt::AlignCenter, m_board.outputs[c.outputId].type == Pwm ? tr("value ▾") : tr("aspect ▾"));
@@ -276,6 +298,14 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
         p.drawRect(bar);
         p.fillRect(QRectF(bar.left(), bar.bottom() - bar.height() * level, bar.width(), bar.height() * level),
                    QColor(0x25, 0x63, 0xEB));
+    }
+    else if (c.type == SoundEffect)
+    {
+        // the last track the board played (OUTPUT_EVENT state 2), ■ = stop
+        const QString text = !m_liveRaw[o] ? QStringLiteral("♪")
+                           : m_liveValue[o] ? QStringLiteral("♪ %1").arg(m_liveValue[o]) : QStringLiteral("♪ ■");
+        p.setPen(flash > 0 ? QColor(0xF5, 0x9E, 0x0B) : kText);
+        p.drawText(box, Qt::AlignCenter, text);
     }
     else
     {
@@ -525,7 +555,12 @@ static QString inputSubtitle(const InputConfig &c)
         parts << (c.type == RouteStraight ? QObject::tr("DCC %1 straight").arg(c.address)
                   : c.type == RouteCurved ? QObject::tr("DCC %1 curved").arg(c.address)
                                           : QStringLiteral("DCC %1").arg(c.address));
-    if (c.pin < NumPins)
+    if (c.isAnalog() && c.pin < NumPins)       // the condition: "A0 < 512", "A0 > 300", "A0 ≈ 512"
+        parts << QStringLiteral("%1 %2 %3").arg(pinName(c.pin))
+                     .arg(c.analog == AnalogBelow ? QStringLiteral("<") : c.analog == AnalogAbove ? QStringLiteral(">")
+                                                                                                 : QStringLiteral("≈"))
+                     .arg(c.threshold);
+    else if (c.pin < NumPins)
         parts << pinName(c.pin);
     return parts.isEmpty() ? QObject::tr("no trigger") : parts.join(QStringLiteral(" · "));
 }
@@ -580,8 +615,15 @@ void ConnectionView::drawInput(QPainter &p, int i)
               idle ? Ui::themed(QColor(0xF1, 0xF5, 0xF9)) : Ui::inputTypeColor(c.type).lighter(185),
               idle ? kMuted : Ui::inputTypeColor(c.type).darker(170));
     p.setPen(m_inConflict.value(i) ? kRed : kMuted);
-    p.drawText(QRectF(r.left() + 14, r.top() + 24, r.width() - 24, 18), Qt::AlignLeft | Qt::AlignVCenter,
-               inputSubtitle(c));
+    QString sub = inputSubtitle(c);
+    if (m_live && c.isAnalog() && !analogValueInput(i) && m_analogNow.value(c.analogChannel(), -1) >= 0)
+    {
+        // live test: the condition and the reading; the DCC address makes room (the buttons cover the right side)
+        InputConfig pinOnly = c;
+        pinOnly.address = AddrNone;
+        sub = inputSubtitle(pinOnly) + QStringLiteral(" · ") + tr("now %1").arg(m_analogNow[c.analogChannel()]);
+    }
+    p.drawText(QRectF(r.left() + 14, r.top() + 24, r.width() - 24, 18), Qt::AlignLeft | Qt::AlignVCenter, sub);
 
     // port
     const QPointF port = inputPort(i);
@@ -643,6 +685,8 @@ void ConnectionView::drawOutput(QPainter &p, int o)
                outputTypeName(c.type));
 
     QString sub = Ui::outputSummaryPins(c);
+    if (c.type == SoundEffect)
+        sub += QStringLiteral(" · ♪");
     const QString relays = Ui::outputSummaryRelays(c);
     if (!relays.isEmpty()) sub += QStringLiteral("  ·  ") + relays;
     p.setPen(m_outConflict.value(o) ? kRed : kMuted);
@@ -806,8 +850,9 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                 {
                     m_liveFlashIn[i] = m_liveClock.elapsed();
                     m_liveAnim->start();
-                    if (liveValueInput(i)) emit liveValueRequested(i);
-                    else                   emit liveTriggerRequested(i, dir);
+                    if (analogValueInput(i))    emit analogValueRequested(i);
+                    else if (liveValueInput(i)) emit liveValueRequested(i);
+                    else                        emit liveTriggerRequested(i, dir);
                     return;
                 }
     }

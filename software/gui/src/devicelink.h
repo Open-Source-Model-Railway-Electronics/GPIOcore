@@ -30,6 +30,7 @@ struct DeviceCaps
     bool servoLive     = false;
     bool extEeprom     = false;
     bool boardSettings = false;   // GET_BOARD / SET_BOARD (name, type, ...)
+    bool analogSound   = false;   // analog inputs (GET_ANALOG) and the sound effect output
 };
 
 class DeviceLink : public QObject
@@ -47,7 +48,7 @@ public:
 
     bool    isOpen()  const { return m_device != nullptr; }
     bool    isReady() const { return m_ready; }
-    bool    isBusy()  const { return m_current.active || !m_queue.isEmpty(); }
+    bool    isBusy()  const;           // live readings in the background do not count
     QString version() const { return m_version; }
     QString portName() const { return m_portName; }
 
@@ -70,6 +71,7 @@ public:
     void readOutputState(int output);              // v2: answered with an outputEvent
     void dccExt(int address, int value);           // v2: as if a DCC extended accessory packet arrived
     void writeBoard(const Gpio::BoardSettings &b);
+    void readAnalog(int channel);                  // analog boards: answered with analogValue; not in progress / finished
 
     const DeviceCaps &caps() const { return m_caps; }
 
@@ -96,6 +98,7 @@ signals:
     void boardReceived(const Gpio::BoardSettings &board);
     // An output changed on the board (v2). state 0/1, or 2 = raw value (aspect / angle / PWM) in 'value'.
     void outputEvent(int output, int state, int value);
+    void analogValue(int channel, int value);   // ANALOG_VALUE: analogRead() of A0-A7, 0-1023
     void progress(int done, int total);
     void finished(int failures);            // queue became empty
     void errorOccurred(const QString &message);
@@ -104,7 +107,7 @@ signals:
 private:
     enum class Kind { Version, Hello, GetInput, GetOutput, SetInput, SetOutput, Preset,
                       GetRoute, SetRoute, ServoLive, GetBoard, SetBoard,
-                      TriggerInput, GetOutputState, DccExt };
+                      TriggerInput, GetOutputState, DccExt, GetAnalog };
 
     struct Txn
     {
@@ -121,7 +124,10 @@ private:
                  bool front = false);
     static bool needsV2(Kind k) { return k == Kind::GetRoute || k == Kind::SetRoute || k == Kind::ServoLive
                                       || k == Kind::GetBoard || k == Kind::SetBoard
-                                      || k == Kind::TriggerInput || k == Kind::GetOutputState || k == Kind::DccExt; }
+                                      || k == Kind::TriggerInput || k == Kind::GetOutputState || k == Kind::DccExt
+                                      || k == Kind::GetAnalog; }
+    // Background requests (live readings) are not part of a batch: no progress, no finished().
+    static bool isBackground(Kind k) { return k == Kind::GetAnalog; }
     void setCaps(const DeviceCaps &caps);
     void sendNext();
     void transmit();

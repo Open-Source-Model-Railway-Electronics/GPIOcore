@@ -38,6 +38,9 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
       QT_TRANSLATE_NOOP("Gpio", "Fixed PWM value on pin A.") },
     { "notInUse",        QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
+    { "soundEffect",     QT_TRANSLATE_NOOP("Gpio", "Sound effect"),      1, false, false, ParamKind::SoundTracks, 0,
+      QT_TRANSLATE_NOOP("Gpio", "Plays an MP3 track on a DFPlayer Mini wired to TX (D1). It only plays when no PC is connected: "
+                                "with the GUI connected, D1 is the USB line and the board only reports the track.") },
     { "unknown",         QT_TRANSLATE_NOOP("Gpio", "Unknown type"),      4, true,  false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
 };
@@ -230,6 +233,7 @@ StepKind stepKind(quint8 outputType)
     case ServoType:      return StepKind::ServoStateOrAngle;
     case FourToneSignal: return StepKind::Aspect;
     case Pwm:            return StepKind::PwmValue;
+    case SoundEffect:    return StepKind::Track;
     }
     return StepKind::State;
 }
@@ -242,12 +246,40 @@ RouteStep defaultStep(int output, quint8 outputType)
     {
     case StepKind::Aspect:   s.raw = true;  s.value = 0;   break;
     case StepKind::PwmValue: s.raw = true;  s.value = 255; break;
+    case StepKind::Track:    s.raw = true;  s.value = 1;   break;
     default:                 s.raw = false; s.value = 1;   break;
     }
     return s;
 }
 
 // ── InputConfig ─────────────────────────────────────────────────────────────
+quint8 InputConfig::pinByte() const
+{
+    if (!isAnalog() || pin < 14 || pin >= 22)
+        return pin;
+    return quint8(0x20 | (analog - 1) << 3 | (pin - 14));
+}
+
+void InputConfig::setPinByte(quint8 b)
+{
+    const int mode = (b >> 3) & 3;
+    if (b != PinNA && (b & 0x20) && mode <= 2)   // firmware isAnalogInput()
+    {
+        analog = quint8(AnalogBelow + mode);
+        pin    = quint8(14 + (b & 7));
+    }
+    else
+    {
+        analog = AnalogNone;
+        pin    = b;
+    }
+}
+
+int InputConfig::roundThreshold(int t)
+{
+    return qBound(0, (t + 4) / 8 * 8, AnalogMaxThreshold);
+}
+
 void InputConfig::syncLinkedFromRoute()
 {
     linked.fill(LinkNone);
@@ -291,6 +323,9 @@ InputConfig InputConfig::normalized() const
     c.pin      &= 0x3F;     //  6 bits
     c.type     &= 0x07;     //  3 bits
     c.outputId &= 0x0F;     //  4 bits
+    if (c.analog > AnalogAt || c.pin < 14 || c.pin >= 22)
+        c.analog = AnalogNone;
+    c.threshold = quint16(roundThreshold(c.threshold));   // 7 bits x 8
     if (c.route.size() > MaxRouteSteps)
         c.route.resize(MaxRouteSteps);
     for (RouteStep &s : c.route)
@@ -304,7 +339,8 @@ InputConfig InputConfig::normalized() const
 bool InputConfig::operator==(const InputConfig &o) const
 {
     return address == o.address && pin == o.pin && type == o.type
-        && outputId == o.outputId && route == o.route;
+        && outputId == o.outputId && route == o.route && analog == o.analog
+        && (!isAnalog() || threshold == o.threshold);
 }
 
 QJsonObject InputConfig::toJson() const
@@ -313,7 +349,16 @@ QJsonObject InputConfig::toJson() const
     if (!name.isEmpty()) o["name"] = name;
     o["type"]    = QString::fromUtf8(inputTypeInfo(type).key);
     o["address"] = address == AddrNone ? QJsonValue() : QJsonValue(int(address));
-    o["pin"]     = pinToJson(pin);
+    o["pin"]     = isAnalog() ? QJsonValue() : pinToJson(pin);
+    if (isAnalog())
+    {
+        static const char *const modes[3] = { "below", "above", "at" };
+        QJsonObject a;
+        a["mode"]      = QString::fromLatin1(modes[(analog - 1) % 3]);
+        a["channel"]   = analogChannel();
+        a["threshold"] = int(threshold);
+        o["analog"]    = a;
+    }
     o["output"]  = int(outputId);
     QJsonArray steps;
     for (const RouteStep &s : route)
@@ -340,6 +385,14 @@ InputConfig InputConfig::fromJson(const QJsonObject &o)
         c.type = Route;                  // files from before the edge choice was dropped
     c.address  = o["address"].isDouble() ? quint16(o["address"].toInt() & 0x0FFF) : AddrNone;
     c.pin      = pinFromJson(o["pin"]);
+    const QJsonObject a = o["analog"].toObject();
+    const QString mode  = a["mode"].toString();
+    if (mode == QLatin1String("below") || mode == QLatin1String("above") || mode == QLatin1String("at"))
+    {
+        c.analog    = mode == QLatin1String("below") ? AnalogBelow : mode == QLatin1String("above") ? AnalogAbove : AnalogAt;
+        c.pin       = quint8(14 + (a["channel"].toInt() & 7));
+        c.threshold = quint16(roundThreshold(a["threshold"].toInt(512)));
+    }
     c.outputId = quint8(o["output"].toInt() & 0x0F);
     const QJsonArray steps = o["route"].toArray();
     for (int i = 0; i < MaxRouteSteps && i < steps.size(); ++i)
@@ -364,11 +417,13 @@ QByteArray encodeInput(int index, const InputConfig &c)
     p.append(char(index));
     p.append(char(c.address >> 8));
     p.append(char(c.address & 0xFF));
-    p.append(char(c.pin));
+    p.append(char(c.pinByte()));
     p.append(char(c.type));
     p.append(char(c.outputId));
     for (quint8 v : v1.linked)
         p.append(char(v));
+    if (c.isAnalog())
+        p[6] = char(InputConfig::roundThreshold(c.threshold) / 4);   // linked[0] = threshold / 4
     return p;   // 14 bytes
 }
 
@@ -379,11 +434,16 @@ bool decodeInput(const QByteArray &p, int &index, InputConfig &c)
     auto at = [&](int i) { return quint8(p.at(i)); };
     index      = at(0);
     c.address  = quint16(at(1) << 8 | at(2));
-    c.pin      = at(3);
+    c.setPinByte(at(3));
     c.type     = at(4);
     c.outputId = at(5);
     for (int i = 0; i < MaxLinked; ++i)
         c.linked[i] = at(6 + i);
+    if (c.isAnalog())
+    {
+        c.threshold = quint16(InputConfig::roundThreshold(at(6) * 4));   // linked[0] = threshold / 4
+        c.linked[0] = LinkNone;          // not a route step (v2: the route follows with GET_ROUTE)
+    }
     c.routeFromLinked();                 // v2: replaced by GET_ROUTE afterwards
     return index >= 0 && index < NumInputs;
 }
@@ -397,6 +457,7 @@ QJsonObject BoardConfig::toJson() const
     root["about"]   = QStringLiteral(
         "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
         "Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. "
+        "An analog input has 'analog': {mode below / above / at, channel 0-7 = A0-A7, threshold 0-1016} instead of a pin. "
         "Output data[4] depends on the type, see PROTOCOL.md section 2.1. Input address: DCC accessory address or null. "
         "Route steps: output 0-15, value = 0 curved / 1 straight, or with raw = true an aspect / servo angle 10-170 / PWM 0-255, "
         "delay = wait after the step in 0.1 s. 'name' fields are only kept in this file.");

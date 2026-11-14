@@ -46,11 +46,17 @@ constexpr quint8 HELLO_FLAG_SERIAL_PINS = 0x01;  // D0/D1 usable as I/O outside 
 constexpr quint8 HELLO_FLAG_SERVO_LIVE  = 0x02;  // SERVO_LIVE supported
 constexpr quint8 HELLO_FLAG_EXT_EEPROM  = 0x04;  // routes / recorder in external EEPROM
 constexpr quint8 HELLO_FLAG_BOARD       = 0x08;  // GET_BOARD / SET_BOARD supported
+constexpr quint8 HELLO_FLAG_ANALOG_SOUND = 0x10; // analog inputs (GET_ANALOG) and the sound effect output
 
 // Board settings and name (PROTOCOL.md section 10)
 // GET_BOARD (0 bytes) -> reply SET_BOARD <len> <type> <flags> <delay> <name 0..16>
 constexpr quint8 GET_BOARD              = 0xC0;
 constexpr quint8 SET_BOARD              = 0xCF;
+
+// Live reading of an analog pin, for setting up analog inputs:
+// GET_ANALOG <channel 0-7> -> reply ANALOG_VALUE <channel> <value H> <value L> (analogRead, 0-1023)
+constexpr quint8 GET_ANALOG             = 0xD1;
+constexpr quint8 ANALOG_VALUE           = 0xD3;
 
 // Routes: up to 16 steps of 4 bytes, transferred in chunks of up to 7 steps.
 // GET_ROUTE <route> <first step>            -> reply SET_ROUTE

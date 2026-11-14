@@ -24,7 +24,7 @@ Bron: `software/GPIOcore/routes.h` (`EE_*`-constanten).
 
 | Byte | Inhoud |
 |---|---|
-| 0 – 5 | Bitstroom vanaf bit 0 van byte 0: `pinA` bits 0–5, `pinB` 6–11, `pinC` 12–17, `pinD` 18–23, `relayPinA` 24–29, `relayPinB` 30–35, `relayPinC` 36–41, `type` 42–45, `state` 46, bit 47 ongebruikt |
+| 0 – 5 | Bitstroom vanaf bit 0 van byte 0: `pinA` bits 0–5, `pinB` 6–11, `pinC` 12–17, `pinD` 18–23, `relayPinA` 24–29, `relayPinB` 30–35, `relayPinC` 36–41, `type` 42–45 (0–14; 14 = sound effect, `pinA` = 1), `state` 46, bit 47 ongebruikt |
 | 6 – 9 | `data[4]`, de betekenis hangt af van het type (zie `PROTOCOL.md` §2.1) |
 
 Pinnummers: 0–13 = D0–D13, 14–19 = A0–A5, 20–21 = A6–A7, 63 (0x3F) = niet gebruikt.
@@ -32,7 +32,9 @@ Pinnummers: 0–13 = D0–D13, 14–19 = A0–A5, 20–21 = A6–A7, 63 (0x3F) =
 ### Input-record (4 B)
 
 Bitstroom vanaf bit 0 van byte 0: `address` bits 0–11 (0xFFF = geen), `pin` 12–17, `type` 18–20,
-`outputID` 21–24. Bits 25–31 zijn vrij.
+`outputID` 21–24, `level` 25–31. `pin` is een pinnummer of een analoge vergelijking
+`0x20 | mode << 3 | kanaal` (`PROTOCOL.md` §2.2); `level` = de analoge drempel / 8 (0–127 → 0–1016), alleen
+gebruikt bij een analoge input. Een `static_assert` houdt het record op 4 B.
 
 ### Route-pool
 

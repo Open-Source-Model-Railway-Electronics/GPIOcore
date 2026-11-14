@@ -142,10 +142,51 @@ void InputEditor::buildUi()
     m_routeTriggerRow->setLayout(trig);
     m_routeTriggerLabel = new QLabel(tr("Route starts on"));
     srcForm->addRow(m_routeTriggerLabel, m_routeTriggerRow);
+    // digital (button to GND) or analog (a voltage compared with a threshold, e.g. a resistor ladder)
+    m_readAs = new QComboBox;
+    m_readAs->addItem(tr("Digital — button to GND"),                     int(AnalogNone));
+    m_readAs->addItem(tr("Analog — below a value"),                      int(AnalogBelow));
+    m_readAs->addItem(tr("Analog — above a value"),                      int(AnalogAbove));
+    m_readAs->addItem(tr("Analog — at a value (resistor ladder)"),       int(AnalogAt));
+    srcForm->addRow(tr("Read as"), withInfo(m_readAs, QStringLiteral("input.analog")));
+    auto rowWidget = [](QLayout *lay) {
+        auto *w = new QWidget;
+        lay->setContentsMargins(0, 0, 0, 0);
+        w->setLayout(lay);
+        return w;
+    };
     m_pin = new QComboBox;
     m_pin->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_pin->setMinimumContentsLength(10);
-    srcForm->addRow(tr("Input pin"), withInfo(m_pin, QStringLiteral("input.pin")));
+    m_pinRow = rowWidget(withInfo(m_pin, QStringLiteral("input.pin")));
+    srcForm->addRow(tr("Input pin"), m_pinRow);
+    m_channel = new QComboBox;
+    m_channel->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    m_channel->setMinimumContentsLength(10);
+    m_channelRow = rowWidget(withInfo(m_channel, QStringLiteral("input.analog")));
+    srcForm->addRow(tr("Analog pin"), m_channelRow);
+    m_threshold = new QSpinBox;
+    m_threshold->setRange(0, AnalogMaxThreshold);
+    m_threshold->setSingleStep(8);
+    m_threshold->setMinimumWidth(90);
+    m_threshold->setKeyboardTracking(false);
+    m_threshold->setToolTip(tr("0 = 0 V, 1023 = 5 V. Stored in steps of 8."));
+    m_range = new QLabel;
+    m_range->setObjectName(QStringLiteral("help"));
+    m_range->setWordWrap(true);
+    auto *thrLay = new QHBoxLayout;
+    thrLay->addWidget(m_threshold);
+    thrLay->addWidget(m_range, 1);
+    m_thresholdRow = rowWidget(thrLay);
+    srcForm->addRow(tr("Threshold"), m_thresholdRow);
+    m_now = new QLabel;
+    m_useValue = new QPushButton(tr("Use this value"));
+    m_useValue->setToolTip(tr("Take the reading as the threshold (rounded to a step of 8)"));
+    auto *nowLay = new QHBoxLayout;
+    nowLay->addWidget(m_now, 1);
+    nowLay->addWidget(m_useValue);
+    m_nowRow = rowWidget(nowLay);
+    srcForm->addRow(tr("Live reading"), m_nowRow);
     root->addWidget(m_srcBox);
 
     // Direct target / feedback id
@@ -213,6 +254,13 @@ void InputEditor::buildUi()
     connect(m_optA, &QRadioButton::toggled, this, [onEdit](bool on) { if (on) onEdit(); });
     connect(m_optB, &QRadioButton::toggled, this, [onEdit](bool on) { if (on) onEdit(); });
     connect(m_pin,    QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
+    connect(m_readAs, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
+    connect(m_channel, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
+    connect(m_threshold, QOverload<int>::of(&QSpinBox::valueChanged),    this, onEdit);
+    connect(m_useValue, &QPushButton::clicked, this, [this] {
+        if (m_nowValue >= 0)
+            m_threshold->setValue(InputConfig::roundThreshold(m_nowValue));
+    });
     connect(m_output, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     connect(m_addr,   QOverload<int>::of(&QSpinBox::valueChanged),         this, onEdit);
     connect(m_useAddr, &QCheckBox::toggled, this, onEdit);
@@ -231,6 +279,13 @@ void InputEditor::refreshPinCombos()
 {
     m_loading = true;
     Ui::fillPinCombo(m_pin);
+    Ui::fillPinCombo(m_channel);          // the same pins and rules, only A0-A7 that exist here
+    for (int i = m_channel->count() - 1; i >= 0; --i)
+    {
+        const int pin = m_channel->itemData(i).toInt();
+        if (pin < 14 || pin >= NumPins)
+            m_channel->removeItem(i);
+    }
     m_loading = false;
     refresh();
     refreshPinMarks();
@@ -239,6 +294,64 @@ void InputEditor::refreshPinCombos()
 void InputEditor::refreshPinMarks()
 {
     Ui::markUsedPins(m_pin, false, m_index);
+    Ui::markUsedPins(m_channel, false, m_index, Ui::ShareAnalog);   // other analog inputs may share a channel
+}
+
+void InputEditor::setAnalogReading(int channel, int value)
+{
+    if (!m_cfg.isAnalog() || channel != m_cfg.analogChannel())
+        return;
+    m_nowValue = value;
+    updateAnalog();
+}
+
+void InputEditor::setLiveReadingAvailable(bool available)
+{
+    if (available == m_liveReading)
+        return;
+    m_liveReading = available;
+    if (!available)
+        m_nowValue = -1;
+    updateAnalog();
+}
+
+void InputEditor::updateAnalog()
+{
+    const bool analog = m_cfg.isAnalog();
+    for (QWidget *w : { m_pinRow, m_channelRow, m_thresholdRow, m_nowRow })
+    {
+        const bool show = (w == m_pinRow) ? !analog : analog;
+        w->setVisible(show);
+        if (auto *form = qobject_cast<QFormLayout *>(m_srcBox->layout()))
+            if (QWidget *label = form->labelForField(w))
+                label->setVisible(show);
+    }
+    if (!analog)
+        return;
+    const int t = m_cfg.threshold;
+    switch (m_cfg.analog)
+    {
+    case AnalogBelow:
+        m_range->setText(tr("Pressed below %1, released again from %2.").arg(t).arg(t + AnalogHysteresis));
+        break;
+    case AnalogAbove:
+        m_range->setText(tr("Pressed above %1, released again at %2 or lower.").arg(t).arg(qMax(0, t - AnalogHysteresis)));
+        break;
+    default:
+        m_range->setText(tr("Pressed from %1 to %2.").arg(qMax(0, t - AnalogWindow)).arg(qMin(AnalogMaxValue, t + AnalogWindow)));
+        break;
+    }
+    if (!m_liveReading)
+    {
+        m_now->setText(tr("Now: —"));
+        m_now->setToolTip(tr("Needs a board with analog input support (connected or simulated)."));
+    }
+    else
+    {
+        m_now->setText(m_nowValue >= 0 ? tr("Now: %1").arg(m_nowValue) : tr("Now: …"));
+        m_now->setToolTip(QString());
+    }
+    m_useValue->setEnabled(m_liveReading && m_nowValue >= 0);
 }
 
 void InputEditor::setOutputs(const QStringList &names, const QVector<quint8> &types)
@@ -274,6 +387,8 @@ void InputEditor::setRecorderTaken(bool taken)
 void InputEditor::setInput(int index, const InputConfig &c)
 {
     m_index = index;
+    if (index != m_index || c.analog != m_cfg.analog || (c.isAnalog() && c.pin != m_cfg.pin))
+        m_nowValue = -1;                 // another channel: wait for its reading
     m_cfg   = c;
     refresh();
 }
@@ -435,6 +550,7 @@ void InputEditor::updateSteps()
         Ui::selectData(r.output, s.output);
         r.pick->setVisible(kind == StepKind::Aspect);
         r.value->setToolTip(QString());
+        r.value->setSpecialValueText(QString());
         r.mode->clear();
         if (kind == StepKind::State || kind == StepKind::ServoStateOrAngle)
         {
@@ -469,6 +585,15 @@ void InputEditor::updateSteps()
             r.value->setRange(0, 255);
             r.value->setPrefix(tr("PWM "));
             r.value->setSuffix(QString());
+            r.value->setVisible(true);
+            r.value->setValue(s.value);
+            break;
+        case StepKind::Track:
+            r.value->setRange(0, 255);
+            r.value->setPrefix(tr("track "));
+            r.value->setSuffix(QString());
+            r.value->setSpecialValueText(tr("stop"));
+            r.value->setToolTip(tr("MP3 track 1-255 (0001.mp3 …), 0 = stop"));
             r.value->setVisible(true);
             r.value->setValue(s.value);
             break;
@@ -515,7 +640,13 @@ void InputEditor::refresh()
     m_addr->setValue(hasAddr ? m_cfg.address : qMax(1, m_index + 1));
     m_addr->setEnabled(hasAddr);
     m_useAddr->setEnabled(info.usesAddress);
-    Ui::selectData(m_pin, m_cfg.pin);
+    Ui::selectData(m_readAs, m_cfg.analog);
+    if (m_cfg.isAnalog())
+        Ui::selectData(m_channel, m_cfg.pin);
+    else
+        Ui::selectData(m_pin, m_cfg.pin);
+    m_threshold->setValue(m_cfg.threshold);
+    updateAnalog();
     Ui::selectData(m_output, m_cfg.outputId);
 
     m_targetBox->setVisible(info.usesOutput);
@@ -554,7 +685,17 @@ void InputEditor::collect()
     case FnFeedback: m_cfg.type = FeedbackInput;             break;
     }
     m_cfg.address  = m_useAddr->isChecked() ? quint16(m_addr->value()) : AddrNone;
-    m_cfg.pin      = quint8(Ui::currentData(m_pin));
+    const quint8 analog = quint8(Ui::currentData(m_readAs));
+    if (analog != m_cfg.analog)
+    {
+        // digital <-> analog: keep the pin when it can be both, otherwise start on A0
+        if (analog != AnalogNone && (m_cfg.pin < 14 || m_cfg.pin >= NumPins))
+            m_cfg.pin = 14;
+        m_cfg.analog = analog;
+    }
+    else
+        m_cfg.pin = quint8(Ui::currentData(analog != AnalogNone ? m_channel : m_pin));
+    m_cfg.threshold = quint16(InputConfig::roundThreshold(m_threshold->value()));
     m_cfg.outputId = quint8(Ui::currentData(m_output) & 0x0F);
 
     for (int i = 0; i < m_rows.size() && i < m_cfg.route.size(); ++i)
@@ -592,6 +733,7 @@ void InputEditor::collect()
             break;
         case StepKind::Aspect:
         case StepKind::PwmValue:
+        case StepKind::Track:
             s.raw = true;
             s.value = quint8(r.value->value());
             break;

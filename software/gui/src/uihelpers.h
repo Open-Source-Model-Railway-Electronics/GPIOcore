@@ -39,7 +39,13 @@ struct PinUse
     bool    output = true;
     int     index  = 0;
     QString role;          // "A", "B", "relay A", "input"
+    int     share  = 0;    // users with the same non-zero share may use one pin together
 };
+enum PinShare { ShareNone, ShareAnalog, ShareSound };   // analog inputs on one channel, sound outputs on D1
+inline bool sharesPin(const PinUse &a, const PinUse &b) { return a.share != ShareNone && a.share == b.share; }
+int  pinShare(const Gpio::InputConfig &c);
+int  pinShare(const Gpio::OutputConfig &c);
+bool pinClash(const QVector<PinUse> &users);   // two users of this pin that cannot share it
 QVector<QVector<PinUse>> pinUsage(const Gpio::BoardConfig &board);
 // Pins in use elsewhere are shown red with who uses them. setPinBoard() is called by the main
 // window after every change; markUsedPins() updates a combo's texts without refilling it.
@@ -49,7 +55,8 @@ void setPinBoard(const Gpio::BoardConfig &board);
 // (returns -1 on cancel; 'output' gives the lamp colours).
 QString aspectText(int aspect);
 int     pickAspect(QWidget *parent, int current, int output);
-void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex);
+// share: users with the same share (analog inputs, sound outputs) are listed as 'shared', not red.
+void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share = ShareNone);
 
 QString outputSummaryPins(const Gpio::OutputConfig &c);
 QString outputSummaryRelays(const Gpio::OutputConfig &c);

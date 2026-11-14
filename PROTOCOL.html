@@ -71,6 +71,8 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>**<code>A2</code> SERVO_LIVE**</td><td>→</td><td><code>output angle</code></td><td><b>v2</b></td></tr>
 <tr><td>**<code>C0</code> GET_BOARD**</td><td>→</td><td>– → antwoord <code>CF</code></td><td><b>v2</b></td></tr>
 <tr><td>**<code>CF</code> SET_BOARD**</td><td>↔</td><td><code>len type flags delay name[0..16]</code>, zie §10</td><td><b>v2</b></td></tr>
+<tr><td>**<code>D1</code> GET_ANALOG**</td><td>→</td><td><code>channel</code> (0–7 = A0–A7) → antwoord <code>D3</code>, daarna de gewone <code>ACK</code>. Live meting voor het instellen van analoge inputs; de GUI vraagt hem ongeveer elke 250 ms zolang een analoge input in beeld is</td><td><b>v2</b>, HELLO-bit4</td></tr>
+<tr><td>**<code>D3</code> ANALOG_VALUE**</td><td>←</td><td><code>channel valueH valueL</code> — <code>analogRead()</code> van A0–A7, 0–1023</td><td><b>v2</b>, HELLO-bit4</td></tr>
 </tbody></table>
 <p>\* In v2 stuurt de GUI de 8 <code>linked</code>-bytes nog mee, afgeleid van de route: eerste 8 stappen, alleen de stand. Een v2-decoder mag ze negeren; de echte route komt via <code>SET_ROUTE</code>.</p>
 <h3>2.1 Output-velden (<code>Settings</code> in <code>output.h</code>, 10 bytes in EEPROM)</h3>
@@ -96,16 +98,25 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>11</td><td>servo</td><td>A (+ relais)</td><td><code>data[0]</code> hoek bij state 0, <code>data[1]</code> hoek bij state 1, <code>data[2]</code> snelheid in ms/° (≥ 1), <code>data[3]</code> ongebruikt</td></tr>
 <tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = 0–255</td></tr>
 <tr><td>13</td><td>not in use</td><td>–</td><td>–</td></tr>
+<tr><td>14</td><td>sound effect</td><td>A = altijd <b>1 (D1, TX)</b></td><td><code>data[0]</code> track bij state 0 (curved / uit), <code>data[1]</code> track bij state 1 (straight / aan); 0 = stoppen. Een route-stap (ruw) of DCC-ext speelt zijn eigen waarde als tracknummer (0 = stoppen)</td></tr>
 </tbody></table>
+<p><b>Sound effect (type 14, HELLO-bit4).</b> Een DFPlayer Mini hangt met zijn RX aan de TX-pin D1 van de Nano (via 1 kΩ). De firmware stuurt het DFPlayer-frame (9600 baud, 10 bytes: <code>7E FF 06 03 00 00 track csH csL EF</code>, <code>16</code> in plaats van <code>03</code> = stop) alleen als er <b>geen pc</b> verbonden is: in een configuratiesessie is D1 de USB-lijn. Elke keer dat er een track gestart (of gestopt) wordt, meldt de output <code>OUTPUT_EVENT</code> met <b>state 2, value = track</b>, ook als hij niets kon afspelen. Meerdere sound-outputs mogen D1 delen (de GUI telt dat niet als conflict); D1 samen met een andere input of output wel.</p>
 <p>PWM-pinnen zijn D3, D5, D6, D9, D10 en D11. D9/D10 doen geen PWM zolang er een servo-output bestaat (Servo-library, timer 1).</p>
 <h3>2.2 Input-velden (<code>InputSettings</code> in <code>input.h</code>, 12 bytes in EEPROM)</h3>
 <table><thead><tr><th>Veld</th><th>Bits</th><th>Waarden</th></tr></thead><tbody>
 <tr><td><code>address</code></td><td>12</td><td>DCC-accessory-adres 1–4094, <b>0xFFF = geen</b></td></tr>
-<tr><td><code>pin</code></td><td>6</td><td>zoals bij outputs; de firmware zet <code>INPUT_PULLUP</code> (knop naar GND)</td></tr>
+<tr><td><code>pin</code></td><td>6</td><td>zoals bij outputs; de firmware zet <code>INPUT_PULLUP</code> (knop naar GND). <b>Of een analoge vergelijking</b>: <code>0x20 + 8 × mode + kanaal</code>, zie hieronder</td></tr>
 <tr><td><code>type</code></td><td>3</td><td>zie hieronder</td></tr>
 <tr><td><code>outputID</code></td><td>4</td><td>0–15: de output (direct), of het sensornummer (feedback)</td></tr>
-<tr><td><code>linked[8]</code></td><td>8 × 8</td><td>v1-route: bit 7 = stand, bits 0–6 = output-id; 0x7F/0xFF = einde</td></tr>
+<tr><td><code>linked[8]</code></td><td>8 × 8</td><td>v1-route: bit 7 = stand, bits 0–6 = output-id; 0x7F/0xFF = einde. **<code>linked[0]</code> bij een analoge input = drempel / 4**</td></tr>
 </tbody></table>
+<p><b>Analoge inputs (HELLO-bit4).</b> In plaats van een pinnummer bevat <code>pin</code> dan <code>0x20 | mode &lt;&lt; 3 | kanaal</code>: kanaal 0–7 = A0–A7 (de echte pin is 14 + kanaal), mode 0 = <b>onder</b> de drempel, 1 = <b>boven</b> de drempel, 2 = <b>op</b> de drempel (één knop van een weerstandsladder). Mode 3 (dus ook <code>0x3F</code> = niet gebruikt) is nooit analoog. De drempel (0–1016, stappen van 8) staat in <code>linked[0]</code> als <b>drempel / 4</b>: <code>SET_INPUT_DATA</code> neemt hem daar, <code>GET_INPUT_DATA</code> zet hem daar terug (alleen bij een analoge input; anders blijft <code>linked[]</code> de v1-route). De firmware bewaart drempel / 8 (7 bits, <code>EEPROM.md</code>).</p>
+<table><thead><tr><th>Mode</th><th>Ingedrukt als</th><th>Weer los als</th></tr></thead><tbody>
+<tr><td>0 onder</td><td>waarde &lt; drempel</td><td>waarde ≥ drempel + 20</td></tr>
+<tr><td>1 boven</td><td>waarde &gt; drempel</td><td>waarde ≤ drempel − 20</td></tr>
+<tr><td>2 op</td><td>waarde − drempel tussen −10 en +10</td><td>daarbuiten</td></tr>
+</tbody></table>
+<p>De firmware leest elke 50 ms en telt een verandering pas na twee gelijke metingen. "Ingedrukt" werkt precies als een knop naar GND (LOW): toggle wisselt bij het indrukken, absoluut volgt (ingedrukt = 0), alle drie de route-types starten bij het indrukken, recorder en feedback werken hetzelfde. Voor het kanaal gelden de regels van de echte pin (A7 = configknop, A6 alleen op de Nano, A4/A5 niet met de recorder) en een analoge code als output geeft <code>NACK 5</code>. Meerdere analoge inputs mogen één kanaal delen (weerstandsladder); een digitale input of een output op die pin is wel een conflict.</p>
 <p>Input-types:</p>
 <ul><li>
 0 toggle — wisselt bij het indrukken (falling edge) of bij elk DCC-commando;
@@ -148,6 +159,7 @@ flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit1 = SERVO_LIVE supported
          bit2 = routes / recorder in external EEPROM
          bit3 = BOARD settings (C0 / CF) supported, see section 10
+         bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
 step pool: number of route steps that still fit with the current board settings
            (timing on/off, recorder on/off), all routes together</code></pre>
 <p>De GUI stuurt <code>HELLO</code> direct na het boot-bericht (versie). Dat is ongeveer 1,5 s na de reset die het openen van de poort via DTR veroorzaakt. Bij boards zonder auto-reset stuurt hij het na <code>REQ_VERSION</code>.</p>

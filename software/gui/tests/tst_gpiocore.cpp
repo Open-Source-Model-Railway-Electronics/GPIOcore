@@ -582,6 +582,208 @@ private slots:
         b.inputs[5].type = Recorder;
         QCOMPARE(connectOutput(b, 5, 3), ConnectResult::NotConnectable);
     }
+
+    // ── Analog inputs and the sound effect output ──────────────────────────
+    void analogInputEncoding()
+    {
+        InputConfig c;
+        c.type      = Latching;
+        c.analog    = AnalogAt;
+        c.pin       = 14 + 3;                                   // A3
+        c.threshold = 515;
+        QCOMPARE(int(c.pinByte()), 0x20 | 2 << 3 | 3);
+        const QByteArray p = encodeInput(5, c);
+        QCOMPARE(int(quint8(p.at(3))), 0x33);
+        QCOMPARE(int(quint8(p.at(6))), 512 / 4);               // rounded to a step of 8, sent / 4
+        int idx = -1;
+        InputConfig d;
+        QVERIFY(decodeInput(p, idx, d));
+        QCOMPARE(idx, 5);
+        QCOMPARE(int(d.analog), int(AnalogAt));
+        QCOMPARE(int(d.pin), 17);
+        QCOMPARE(int(d.threshold), 512);
+        QVERIFY(d.route.isEmpty());                             // linked[0] is not a route step
+        QVERIFY(d == c.normalized());
+
+        c.analog = AnalogBelow; c.pin = 14;
+        QCOMPARE(int(c.pinByte()), 0x20);
+        c.analog = AnalogAbove; c.pin = 20;
+        QCOMPARE(int(c.pinByte()), 0x20 | 1 << 3 | 6);
+        QCOMPARE(InputConfig::roundThreshold(1023), 1016);
+        QCOMPARE(InputConfig::roundThreshold(3), 0);
+        QCOMPARE(InputConfig::roundThreshold(4), 8);
+        QCOMPARE(InputConfig::roundThreshold(-5), 0);
+        c.threshold = 2000;
+        QCOMPARE(int(c.normalized().threshold), 1016);
+
+        d.setPinByte(PinNA);                                    // NA and mode 3 are never analog
+        QVERIFY(!d.isAnalog());
+        QCOMPARE(int(d.pin), int(PinNA));
+        d.setPinByte(0x3A);
+        QVERIFY(!d.isAnalog());
+        d.setPinByte(7);
+        QVERIFY(!d.isAnalog());
+        QCOMPARE(int(d.pin), 7);
+
+        // a digital input keeps linked[0] for v1 routes; its threshold does not matter
+        InputConfig e;
+        e.type  = Route;
+        e.pin   = 5;
+        e.route = { RouteStep{ 4, 1, false, 3 } };
+        QCOMPARE(int(quint8(encodeInput(0, e).at(6))), int(InputConfig::makeLink(4, 1)));
+        InputConfig f = e;
+        f.threshold = 100;
+        QVERIFY(f == e);
+        f.analog = AnalogBelow;                                 // pin 5 cannot be analog
+        QVERIFY(!f.normalized().isAnalog());
+    }
+
+    void analogAndSoundJson()
+    {
+        BoardConfig b;
+        b.inputs[2].type      = Momentary;
+        b.inputs[2].analog    = AnalogBelow;
+        b.inputs[2].pin       = 15;                             // A1
+        b.inputs[2].threshold = 296;
+        b.inputs[3].type      = Latching;
+        b.inputs[3].pin       = 7;
+        b.outputs[1].type     = SoundEffect;
+        b.outputs[1].pinA     = SoundPin;
+        b.outputs[1].data     = { { 3, 4, 0, 0 } };
+        const QJsonObject j = b.toJson();
+        const QJsonObject in2 = j["inputs"].toArray().at(2).toObject();
+        QVERIFY(in2["pin"].isNull());
+        QCOMPARE(in2["analog"].toObject()["mode"].toString(), QStringLiteral("below"));
+        QCOMPARE(in2["analog"].toObject()["channel"].toInt(), 1);
+        QCOMPARE(in2["analog"].toObject()["threshold"].toInt(), 296);
+        const QJsonObject in3 = j["inputs"].toArray().at(3).toObject();
+        QVERIFY(!in3.contains("analog"));                       // digital: as before
+        QCOMPARE(in3["pin"].toInt(), 7);
+        QCOMPARE(j["outputs"].toArray().at(1).toObject()["type"].toString(), QStringLiteral("soundEffect"));
+
+        BoardConfig back;
+        QString err;
+        QVERIFY(BoardConfig::fromJson(QJsonDocument::fromJson(QJsonDocument(j).toJson()).object(), back, &err));
+        QVERIFY(back.inputs[2] == b.inputs[2]);
+        QCOMPARE(int(back.inputs[2].analog), int(AnalogBelow));
+        QCOMPARE(int(back.inputs[2].pin), 15);
+        QVERIFY(!back.inputs[3].isAnalog());
+        QCOMPARE(int(back.inputs[3].pin), 7);
+        QVERIFY(back.outputs[1] == b.outputs[1]);
+        QCOMPARE(stepKind(SoundEffect), StepKind::Track);
+        const RouteStep s = defaultStep(1, SoundEffect);
+        QVERIFY(s.raw);
+        QCOMPARE(int(s.value), 1);
+    }
+
+    void simulatorAnalogSharedChannel()
+    {
+        Rig r; makeRig(r, SimulatedDevice::Options());
+        QVERIFY(r.link->caps().analogSound);
+        auto analog = [](quint8 type, quint8 mode, int threshold, int output) {
+            InputConfig c;
+            c.type = type; c.analog = mode; c.pin = 14; c.threshold = quint16(threshold);
+            c.outputId = quint8(output); c.address = AddrNone;
+            return c;
+        };
+        // four inputs on A0, like a resistor ladder plus a sensor
+        r.sim->setInput(0, analog(Latching,  AnalogBelow, 512, 0));
+        r.sim->setInput(1, analog(Momentary, AnalogAt,    296, 1));
+        InputConfig route = analog(Route, AnalogAbove, 800, 0);
+        route.route = { RouteStep{ 2, 1, false, 0 } };
+        r.sim->setInput(2, route);
+        r.sim->setInput(3, analog(Latching, AnalogAbove, 800, 3));
+        for (int o : { 0, 3 })
+        {
+            OutputConfig out = r.sim->output(o);
+            out.state = 1;
+            r.sim->setOutput(o, out);
+        }
+        QSignalSpy events(r.link, &DeviceLink::outputEvent);
+
+        r.sim->setAnalogValue(0, 1000);          // above 800: the route and input 3
+        QCOMPARE(int(r.sim->output(2).state), 1);
+        QCOMPARE(int(r.sim->output(3).state), 0);    // pressed = LOW, like a button
+        QCOMPARE(int(r.sim->output(0).state), 1);    // not below 512
+        r.sim->setAnalogValue(0, 790);           // still above 800 - 20
+        QCOMPARE(int(r.sim->output(3).state), 0);
+        r.sim->setAnalogValue(0, 779);           // released
+        QCOMPARE(int(r.sim->output(3).state), 1);
+
+        r.sim->setAnalogValue(0, 300);           // 'at 296' and 'below 512'
+        QCOMPARE(int(r.sim->output(1).state), 1);    // toggled
+        QCOMPARE(int(r.sim->output(0).state), 0);
+        r.sim->setAnalogValue(0, 520);           // below 512 + 20: still pressed
+        QCOMPARE(int(r.sim->output(0).state), 0);
+        r.sim->setAnalogValue(0, 540);           // released
+        QCOMPARE(int(r.sim->output(0).state), 1);
+        r.sim->setAnalogValue(0, 505);           // pressed again (no hysteresis on the way in)
+        QCOMPARE(int(r.sim->output(0).state), 0);
+        r.sim->setAnalogValue(0, 290);           // 'at' window: 286-306
+        QCOMPARE(int(r.sim->output(1).state), 0);    // toggled back
+        r.sim->setAnalogValue(1, 1000);          // another channel: nothing on A0 changes
+        QCOMPARE(int(r.sim->output(0).state), 0);
+        QCOMPARE(int(r.sim->output(1).state), 0);
+        QTRY_VERIFY(events.size() >= 6);         // the board reports every change
+
+        // live reading: a background request, no progress or 'finished'
+        QSignalSpy values(r.link, &DeviceLink::analogValue);
+        QSignalSpy done(r.link, &DeviceLink::finished);
+        r.link->readAnalog(0);
+        r.link->readAnalog(0);                   // merged with the first one
+        QVERIFY(!r.link->isBusy());
+        QVERIFY(values.wait(1000));
+        QCOMPARE(values.first().at(0).toInt(), 0);
+        QCOMPARE(values.first().at(1).toInt(), 290);
+        QTest::qWait(50);
+        QCOMPARE(values.size(), 1);
+        QCOMPARE(done.size(), 0);
+        QCOMPARE(r.errors, 0);
+    }
+
+    void analogNeedsHelloFlag()
+    {
+        SimulatedDevice::Options o;
+        o.helloFlags = 0x0F;                     // firmware before analog inputs
+        Rig r; makeRig(r, o);
+        QVERIFY(!r.link->caps().analogSound);
+    }
+
+    void soundOutputEvents()
+    {
+        Rig r; makeRig(r, SimulatedDevice::Options());
+        OutputConfig snd;
+        snd.type = SoundEffect;
+        snd.pinA = SoundPin;
+        snd.data = { { 3, 7, 0, 0 } };
+        r.sim->setOutput(5, snd);
+        InputConfig toggle;
+        toggle.type = Momentary; toggle.address = 50; toggle.outputId = 5;
+        r.sim->setInput(5, toggle);
+        InputConfig route;
+        route.type = Route; route.address = 51;
+        route.route = { RouteStep{ 5, 9, true, 1 }, RouteStep{ 5, 0, true, 1 } };
+        r.sim->setInput(6, route);
+
+        QSignalSpy events(r.link, &DeviceLink::outputEvent);
+        auto seen = [&events](int o, int state, int value) {
+            for (const QList<QVariant> &e : events)
+                if (e.at(0).toInt() == o && e.at(1).toInt() == state && e.at(2).toInt() == value)
+                    return true;
+            return false;
+        };
+        r.link->triggerInput(5, 1);              // toggle: 0 -> 1 plays data[1]
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 7), 2000);
+        r.link->triggerInput(5, 1);              // 1 -> 0 plays data[0]
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 3), 2000);
+        r.link->triggerInput(6, 1);              // route: track 9, then stop
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 9), 2000);
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 0), 2000);
+        r.link->dccExt(50, 12);                  // DCC extended: the value is the track
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 12), 2000);
+        waitFinished(r);
+        QCOMPARE(r.errors, 0);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestGpioCore)

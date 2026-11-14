@@ -102,8 +102,11 @@ private:
     void setLiveTest(bool on);
     // A pin newly given to output 'output' / input 'input' is taken from every other user, which
     // becomes 'not in use'. Returns a description for the status bar.
-    QString takeOverPins(const QVector<quint8> &pins, int output, int input);
+    // share: Ui::ShareAnalog / ShareSound, users of the same kind keep the pin (they may share it).
+    QString takeOverPins(const QVector<quint8> &pins, int output, int input, int share = 0);
     void openLiveValue(int input);           // live test: aspect / PWM value via DCC extended
+    void openAnalogValue(int input);         // simulation: the voltage on an analog input's pin
+    void pollAnalog();                       // live reading of the analog pins in view (GET_ANALOG)
     QWidget *buildStartPage();
     void refreshRows();
     void refreshAll();
@@ -150,6 +153,7 @@ private:
     QComboBox      *m_boardType = nullptr;
     QStackedWidget *m_stack = nullptr;          // 0 = start page, 1 = workspace
     QTimer         *m_liveTimer = nullptr;
+    QTimer         *m_analogTimer = nullptr;    // live reading of analog pins, every 250 ms
     QLineEdit      *m_inName = nullptr;
     QLineEdit      *m_outName = nullptr;
     QWidget        *m_lampRow = nullptr;       // signal: lamp colours (board file only)

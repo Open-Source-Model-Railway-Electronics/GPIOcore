@@ -1,0 +1,17 @@
+<h3>Geluidseffect: een DFPlayer Mini MP3-speler</h3>
+<p>Deze uitgang speelt MP3-bestanden af van de micro-SD-kaart in een DFPlayer Mini-module: een bel, een fluit,
+een omroepbericht.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  luidspreker (max. 3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>De <b>weerstand van 1 k&Omega;</b> in de TX-lijn beschermt de DFPlayer; er gaat niets terug naar de Arduino.</li>
+<li>Bestanden op de SD-kaart: <b>0001.mp3</b>, <b>0002.mp3</b> … Track 1 is 0001.mp3.</li>
+<li><b>Track bij afbuigend / uit</b> en <b>Track bij rechtdoor / aan</b> worden afgespeeld als de uitgang omschakelt.
+<i>stop</i> (0) stopt het afspelen.</li>
+<li>Een rijwegstap of een DCC extended-commando speelt zijn eigen tracknummer (0 = stop).</li>
+<li>Meerdere geluidsuitgangen mogen samen D1 gebruiken, bijvoorbeeld één per knop, elk met eigen tracks.</li>
+<li><b>Alleen zonder pc:</b> D1 is ook de USB-lijn naar de computer. Met de GUI verbonden meldt het board alleen
+de track (♪ op het canvas). Haal de USB-kabel eruit en voed het board anders om het te horen.</li>
+</ul>
