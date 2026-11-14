@@ -9,7 +9,9 @@ typedef struct eeInputSettings
     uint8_t  pin       : 6  ;   // GPIO pin (of NA)
     uint8_t  type      : 3  ;   // input type (3 bits → 0-7)
     uint8_t  outputID  : 4  ;   // gekoppeld output object (0-15)
+    uint8_t  level     : 7  ;   // analog inputs: threshold / 8 (config.h, ANALOG_*)
 } InputSettings ;               // 4 bytes, the route is stored in the route pool (routes.h)
+static_assert( sizeof( InputSettings ) == 4, "the input record must stay 4 bytes (EEPROM layout)" ) ;
 
 class Input
 {
@@ -39,6 +41,7 @@ private:
     void    triggerOutputs() ;
     uint8_t movesTurnout() ;
     uint8_t readPin() ;
+    uint8_t readAnalog() ;
 
     Trigger         trigger ;
     uint16_t        eeAddress ;
@@ -46,6 +49,7 @@ private:
     uint8_t         index          : 6 ;
     uint8_t         state          : 1 ;
     uint8_t         dccSeen        : 1 ;   // lastDcc is valid
+    uint8_t         analogHit      : 1 ;   // analog condition in the previous sample
     uint16_t        lastDcc ;              // millis() of the last accepted DCC command (lockout)
     Timer           outputTimer ;
 } ;

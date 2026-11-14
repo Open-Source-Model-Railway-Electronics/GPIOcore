@@ -138,7 +138,7 @@ uint8_t pinInUse( uint8_t pin )
         const Settings &o = output[i].eedata ;
         if( o.pinA == pin || o.pinB == pin || o.pinC == pin || o.pinD == pin
         ||  o.relayPinA == pin || o.relayPinB == pin || o.relayPinC == pin ) return 1 ;
-        if( input[i].eedata.pin == pin && input[i].eedata.type != NOT_IN_USE ) return 1 ;
+        if( inputPinNumber( input[i].eedata.pin ) == pin && input[i].eedata.type != NOT_IN_USE ) return 1 ;
     }
     return 0 ;
 }

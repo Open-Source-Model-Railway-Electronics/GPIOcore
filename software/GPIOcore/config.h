@@ -16,6 +16,18 @@ const int  ROUTE_CURVED     = 7 ;   // route on a button press, or on a DCC 'cur
 
 inline bool isRoute( uint8_t type ) { return type == ROUTE || type == ROUTE_STRAIGHT || type == ROUTE_CURVED ; }
 
+// ── Analog inputs (resistor ladder, sensor) ───────────────────────────────────
+// The input pin field holds 0x20 | mode << 3 | channel (A0-A7) instead of a pin number.
+// The threshold is stored in 7 bits as value / 8 (0-1016). The condition counts as a pressed
+// button (LOW), so toggle, absolute, route, recorder and feedback work as with a digital pin.
+const uint8_t ANALOG_INPUT      = 0x20 ;
+const uint8_t ANALOG_BELOW      = 0 ;    // pressed below the threshold, released at threshold + 20
+const uint8_t ANALOG_ABOVE      = 1 ;    // pressed above the threshold, released at threshold - 20
+const uint8_t ANALOG_AT         = 2 ;    // pressed within threshold +/- 10: one button of a resistor ladder
+const uint8_t ANALOG_HYSTERESIS = 20 ;
+inline bool    isAnalogInput( uint8_t pin ) { return pin != NA && ( pin & ANALOG_INPUT ) && ( ( pin >> 3 ) & 3 ) <= ANALOG_AT ; }
+inline uint8_t inputPinNumber( uint8_t pin ) { return isAnalogInput( pin ) ? 14 + ( pin & 7 ) : pin ; }   // the real pin
+
 // A command station repeats an accessory command a few times: a toggle input or a route
 // takes the first one and ignores the same address for this long.
 const uint16_t DCC_LOCKOUT_MS = 500 ;

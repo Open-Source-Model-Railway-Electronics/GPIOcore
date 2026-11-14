@@ -146,7 +146,8 @@ void setup()
         uint8_t bad = 0 ;
         for( uint8_t j = 0 ; j < 7 ; j ++ ) bad |= ( pins[j] == CONFIG_LED_PIN || pins[j] == CONFIG_BUTTON_PIN ) ;
         if( bad ) { o.type = notInUse ; o.pinA = o.pinB = o.pinC = o.pinD = o.relayPinA = o.relayPinB = o.relayPinC = NA ; output[i].saveEEPROM() ; }
-        if( input[i].eedata.pin == CONFIG_LED_PIN || input[i].eedata.pin == CONFIG_BUTTON_PIN )
+        const uint8_t inPin = inputPinNumber( input[i].eedata.pin ) ;
+        if( inPin == CONFIG_LED_PIN || inPin == CONFIG_BUTTON_PIN )
         {
             input[i].eedata.pin = NA ; input[i].eedata.type = NOT_IN_USE ; input[i].saveEEPROM() ;
         }

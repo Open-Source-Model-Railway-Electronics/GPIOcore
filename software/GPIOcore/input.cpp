@@ -139,11 +139,31 @@ void Input::update()
 // Nano A6/A7 (pin 20/21) are analog only, external pull-up: analogRead() < 512 = pressed (LOW)
 void Input::setPinMode()            // button / contact to GND. A6/A7 (20/21) are analog only, D0/D1 only after the boot window
 {
+    if( isAnalogInput( eedata.pin ) ) { if( ( eedata.pin & 7 ) < 6 ) pinMode( inputPinNumber( eedata.pin ), INPUT ) ; return ; }
     if( eedata.pin < 20 && ( eedata.pin > 1 || serialIsIO ) ) pinMode( eedata.pin, INPUT_PULLUP ) ;
+}
+
+// Analog condition as a button level: LOW = pressed. It must be the same in two samples in a row
+// (2 x 50 ms) before it counts: a resistor ladder passes other values while a button moves.
+uint8_t Input::readAnalog()
+{
+    int16_t v    = analogRead( inputPinNumber( eedata.pin ) ) ;
+    int16_t t    = eedata.level << 3 ;
+    uint8_t mode = ( eedata.pin >> 3 ) & 3 ;
+    uint8_t held = !trigger.state ;                  // pressed now: the hysteresis keeps it pressed
+    uint8_t hit ;
+
+    if(      mode == ANALOG_BELOW ) hit = v < t + ( held ? ANALOG_HYSTERESIS : 0 ) ;
+    else if( mode == ANALOG_ABOVE ) hit = v > t - ( held ? ANALOG_HYSTERESIS : 0 ) ;
+    else                            hit = abs( v - t ) <= ANALOG_HYSTERESIS / 2 ;
+
+    if( hit != analogHit ) { analogHit = hit ; return trigger.state ; }   // not stable yet: keep the old level
+    return !hit ;
 }
 
 uint8_t Input::readPin()
 {
+    if( isAnalogInput( eedata.pin ) ) return readAnalog() ;
     if( eedata.pin < 2 && !serialIsIO ) return HIGH ;              // D0/D1 still Serial: not pressed
     if( eedata.pin >= 20 ) return analogRead( eedata.pin ) >= 512 ? HIGH : LOW ;
     return digitalRead( eedata.pin ) ;

@@ -20,6 +20,11 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
 {
     pin &= 0x3F ;
     if( pin == NA ) return true ;
+    if( isAnalogInput( pin ) )                      // analog compare: inputs on A0-A7 only, the same rules as that pin
+    {
+        if( isOutput ) return false ;
+        pin = inputPinNumber( pin ) ;
+    }
     if( isReservedPin( pin ) ) return false ;       // D2 = DCC, D13 = config LED, A7 = config button
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type == BOARD_NANO ;   // A6/A7: analog inputs, Nano only
     if( ( pin == 18 || pin == 19 ) && ( board.flags & BOARD_RECORDER ) ) return false ;  // A4/A5 = I2C for the recorder
@@ -50,7 +55,8 @@ OPCODE( OPCODE_SET_INPUT_DATA )
     data.pin        = msg->payload[ p++ ] ;
     data.type       = msg->payload[ p++ ] ;
     data.outputID   = msg->payload[ p++ ] ;
-    // linked[8] (payload 6-13) is ignored, the route comes with SET_ROUTE
+    data.level      = msg->payload[ p   ] >> 1 ;   // linked[0]: analog threshold (0-1016) / 4, see PROTOCOL.md
+    // linked[1-7] (payload 7-13) are ignored, the route comes with SET_ROUTE
 
     input[index].set( &data ) ;
 
@@ -79,6 +85,7 @@ OPCODE( OPCODE_GET_INPUT_DATA )
         if( i < routeCount[ index ] ) readStep( index, i, step ) ;
         msg->payload[p++] = step[0] == 0xFF ? 0xFF : ( step[0] & STEP_ID ) | ( step[1] ? 0x80 : 0 ) ;
     }
+    if( isAnalogInput( data->pin ) ) msg->payload[6] = data->level << 1 ;   // linked[0] = analog threshold / 4
     msg->command = OPCODE_SET_INPUT_DATA ;
     transceiver.sendMessage( msg ) ;
 }
