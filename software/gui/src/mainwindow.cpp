@@ -661,7 +661,14 @@ void MainWindow::buildToolbar()
     if (QWidget *w = tb->widgetForAction(m_actDemo))      w->setObjectName(QStringLiteral("modeSimulate"));
     if (QWidget *w = tb->widgetForAction(m_actLive))      w->setObjectName(QStringLiteral("modeLive"));
     tb->addWidget(Info::button(QStringLiteral("modes")));
-    tb->addSeparator();
+
+    // second row, always visible: board contents, presets and board type
+    addToolBarBreak();
+    tb = addToolBar(tr("Board"));
+    tb->setObjectName(QStringLiteral("boardToolbar"));
+    tb->setMovable(false);
+    tb->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    tb->setIconSize(QSize(16, 16));
 
     m_actRead   = tb->addAction(style()->standardIcon(QStyle::SP_ArrowDown), tr("Read board"), this, &MainWindow::readFromBoard);
     m_actRead->setToolTip(tr("Load the configuration from the board (replaces what is on screen)"));
@@ -671,14 +678,13 @@ void MainWindow::buildToolbar()
     connect(m_actWrite, &QAction::triggered, this, &MainWindow::writeChanges);
     m_actRevert = new QAction(tr("Revert"), this);
     connect(m_actRevert, &QAction::triggered, this, &MainWindow::revertChanges);
-    m_expertOnly << tb->addSeparator();
+    tb->addSeparator();
 
     m_preset = new QComboBox;
     m_preset->addItems(presetNames());
-    m_expertOnly << tb->addWidget(new QLabel(tr(" Preset ")));
-    m_expertOnly << tb->addWidget(m_preset);
+    tb->addWidget(new QLabel(tr(" Preset ")));
+    tb->addWidget(m_preset);
     m_actPreset = tb->addAction(tr("Apply"), this, &MainWindow::applyPreset);
-    m_expertOnly << m_actPreset;
     tb->addSeparator();
 
     m_boardType = new QComboBox;
@@ -734,7 +740,7 @@ void MainWindow::buildToolbar()
     QMenu *view = menuBar()->addMenu(tr("&View"));
     m_actExpert = view->addAction(tr("&Expert mode"));
     m_actExpert->setCheckable(true);
-    m_actExpert->setToolTip(tr("Show bytes, the serial log, protocol details and presets"));
+    m_actExpert->setToolTip(tr("Show bytes, the serial log and protocol details"));
     connect(m_actExpert, &QAction::toggled, this, &MainWindow::setExpertMode);
     m_actShowUnused = view->addAction(tr("Show unused inputs and outputs"));
     m_actShowUnused->setCheckable(true);

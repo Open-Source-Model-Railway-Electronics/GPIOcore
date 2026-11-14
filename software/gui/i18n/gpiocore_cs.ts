@@ -1324,6 +1324,10 @@ krok %1: %2, pak čekat %3</translation>
         <translation> Deska </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Deska</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Nastavení desky…</translation>
@@ -1856,8 +1860,8 @@ Název se uloží v desce; vaše názvy vstupů a výstupů se uchovávají v so
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Zobrazit bajty, sériový log, podrobnosti protokolu a předvolby</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Zobrazit bajty, sériový log a podrobnosti protokolu</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

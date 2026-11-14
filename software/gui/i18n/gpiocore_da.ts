@@ -1324,6 +1324,10 @@ trin %1: %2, vent derefter %3</translation>
         <translation> Print </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Print</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Printindstillinger…</translation>
@@ -1856,8 +1860,8 @@ Navnet gemmes på printet; dine navne til indgange og udgange gemmes i en fil me
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Vis bytes, den serielle log, protokoldetaljer og presets</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Vis bytes, den serielle log og protokoldetaljer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

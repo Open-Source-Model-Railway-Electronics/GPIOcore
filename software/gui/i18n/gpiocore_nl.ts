@@ -1324,6 +1324,10 @@ stap %1: %2, daarna %3 wachten</translation>
         <translation> Board </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Board</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Boardinstellingen…</translation>
@@ -1856,8 +1860,8 @@ De naam wordt op het board bewaard; jouw namen voor ingangen en uitgangen staan 
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Bytes, de seriële log, protocoldetails en presets tonen</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Bytes, de seriële log en protocoldetails tonen</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

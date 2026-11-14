@@ -1324,6 +1324,10 @@ step %1: %2, then wait %3</source>
         <translation> Panel </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Panel</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Panelbeállítások…</translation>
@@ -1856,8 +1860,8 @@ A név a panelen tárolódik; a bemenetek és kimenetek Ön által adott nevei e
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Bájtok, soros napló, protokollrészletek és presetek megjelenítése</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Bájtok, soros napló és protokollrészletek megjelenítése</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

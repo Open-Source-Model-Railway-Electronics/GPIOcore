@@ -1324,6 +1324,10 @@ steg %1: %2, vänta sedan %3</translation>
         <translation> Kort </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Kort</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Kortinställningar…</translation>
@@ -1856,8 +1860,8 @@ Namnet sparas på kortet; dina namn på ingångar och utgångar sparas i en fil 
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Visa byte, den seriella loggen, protokolldetaljer och presets</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Visa byte, den seriella loggen och protokolldetaljer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

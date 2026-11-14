@@ -1324,6 +1324,10 @@ passo %1: %2, poi attendi %3</translation>
         <translation> Scheda </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Scheda</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Impostazioni scheda…</translation>
@@ -1856,8 +1860,8 @@ Il nome viene salvato sulla scheda; i tuoi nomi per ingressi e uscite sono conse
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Mostra byte, log seriale, dettagli del protocollo e preset</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Mostra byte, log seriale e dettagli del protocollo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

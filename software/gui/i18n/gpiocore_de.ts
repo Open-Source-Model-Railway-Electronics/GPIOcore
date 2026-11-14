@@ -1324,6 +1324,10 @@ Schritt %1: %2, danach %3 warten</translation>
         <translation> Platine </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Platine</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Platineneinstellungen…</translation>
@@ -1856,8 +1860,8 @@ Der Name wird auf der Platine gespeichert; Ihre Namen für Eingänge und Ausgän
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Bytes, serielles Protokoll, Protokolldetails und Presets anzeigen</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Bytes, serielles Protokoll und Protokolldetails anzeigen</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

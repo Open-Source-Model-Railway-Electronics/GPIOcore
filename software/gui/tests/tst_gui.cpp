@@ -409,8 +409,6 @@ private slots:
         MainWindow w;
         ConnectionView *view = startDemo(w);
         auto *link = w.findChild<DeviceLink *>();
-        for (QAction *a : w.findChildren<QAction *>())      // presets live in expert mode
-            if (a->text() == QLatin1String("&Expert mode") && !a->isChecked()) a->trigger();
         QAction *apply = nullptr;
         for (QAction *a : w.findChildren<QAction *>())
             if (a->text() == QLatin1String("Apply")) apply = a;

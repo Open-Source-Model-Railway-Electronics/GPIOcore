@@ -1324,6 +1324,10 @@ trinn %1: %2, vent deretter %3</translation>
         <translation> Kort </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Kort</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Kortinnstillinger…</translation>
@@ -1856,8 +1860,8 @@ Navnet lagres på kortet; navnene dine på innganger og utganger lagres i en fil
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Vis byte, den serielle loggen, protokolldetaljer og presets</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Vis byte, den serielle loggen og protokolldetaljer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

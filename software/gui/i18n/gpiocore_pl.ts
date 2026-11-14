@@ -1324,6 +1324,10 @@ krok %1: %2, potem czekaj %3</translation>
         <translation> Płytka </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Płytka</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Ustawienia płytki…</translation>
@@ -1856,8 +1860,8 @@ Nazwa jest zapisywana na płytce; twoje nazwy wejść i wyjść są przechowywan
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Pokaż bajty, dziennik portu szeregowego, szczegóły protokołu i presety</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Pokaż bajty, dziennik portu szeregowego i szczegóły protokołu</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

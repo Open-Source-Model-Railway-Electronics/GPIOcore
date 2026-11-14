@@ -1324,6 +1324,10 @@ step %1: %2, then wait %3</source>
         <translation> Carte </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Carte</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Paramètres de la carte…</translation>
@@ -1856,8 +1860,8 @@ Le nom est enregistré sur la carte ; vos noms d&apos;entrées et de sorties son
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Afficher les octets, le journal série, les détails du protocole et les préréglages</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Afficher les octets, le journal série et les détails du protocole</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>

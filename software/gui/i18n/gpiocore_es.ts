@@ -1324,6 +1324,10 @@ paso %1: %2, luego esperar %3</translation>
         <translation> Placa </translation>
     </message>
     <message>
+        <source>Board</source>
+        <translation>Placa</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Board settings…</source>
         <translation>Ajustes de la placa…</translation>
@@ -1856,8 +1860,8 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="737"/>
-        <source>Show bytes, the serial log, protocol details and presets</source>
-        <translation>Mostrar bytes, el registro serie, detalles del protocolo y preajustes</translation>
+        <source>Show bytes, the serial log and protocol details</source>
+        <translation>Mostrar bytes, el registro serie y detalles del protocolo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="739"/>
