@@ -12,3 +12,15 @@ __pycache__/
 release/*
 !release/GPIOcore.hex
 !release/.gitkeep
+date.h
+io.cpp
+io.h
+*.hex
+*.bin
+*.elf
+*.eep
+*cache
+*.zip
+*.kicad_prl
+fp-info-cache
+/releases/
