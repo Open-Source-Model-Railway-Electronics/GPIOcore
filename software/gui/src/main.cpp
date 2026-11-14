@@ -47,7 +47,8 @@ int main(int argc, char *argv[])
         if (wh.size() == 2)
             w.resize(wh[0].toInt(), wh[1].toInt());
     }
-    w.show();
+    if (cli.isSet(size)) w.show();       // screenshots: exactly this size
+    else                 w.showMaximized();
     if (cli.isSet(open))
         w.loadFile(cli.value(open));
 
