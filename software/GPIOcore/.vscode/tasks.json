@@ -16,6 +16,12 @@
             "problemMatcher": []
         },
         {
+            "label": "build all (firmware + GUI into release/)",
+            "type": "shell",
+            "command": "python ../../build.py",
+            "problemMatcher": []
+        },
+        {
             "label": "upload",
             "type": "shell",
             "command": "python ./src/upload.py",
@@ -30,7 +36,7 @@
         {
             "label": "release new version",
             "type": "shell",
-            "command": "python ../gui/release.py",
+            "command": "python ../../release.py",
             "problemMatcher": []
         },
         {

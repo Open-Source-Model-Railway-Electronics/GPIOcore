@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
-Make <repo>/release/ complete for an end user:
+Build the GUI for end users into <repo>/release/:
 
-    GPIOcore.hex          the firmware (built with software/GPIOcore/src/build.py)
     GPIOcoreGUI.exe       the configuration program (Release build) + the Qt files it needs
     tools/avrdude/        the upload program the GUI uses to put the firmware on a Nano
     examples/             example board files
 
-    python software/gui/release.py            firmware + GUI
-    python software/gui/release.py --gui      GUI only
+    python software/gui/build.py         (the root build.py also builds the firmware)
 
 The GUI is built in a temporary folder that is removed afterwards.
 Qt is found in C:/Qt (newest 6.x with MinGW) or via QT_DIR=<...>/mingw_64.
@@ -25,7 +23,6 @@ from pathlib import Path
 GUI_DIR = Path(__file__).resolve().parent                    # software/gui
 REPO_ROOT = GUI_DIR.parent.parent
 RELEASE_DIR = REPO_ROOT / "release"
-FIRMWARE_SRC = REPO_ROOT / "software" / "GPIOcore" / "src"
 EXE = "GPIOcoreGUI.exe"
 
 
@@ -94,10 +91,4 @@ def build_gui():
 
 
 if __name__ == "__main__":
-    if "--gui" not in sys.argv:
-        sys.dont_write_bytecode = True       # no __pycache__ in the sketch folder
-        sys.path.insert(0, str(FIRMWARE_SRC))
-        import build
-        build.build()
     build_gui()
-    print(f"[OK] RELEASE READY in {RELEASE_DIR}")

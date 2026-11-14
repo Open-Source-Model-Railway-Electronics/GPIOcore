@@ -181,13 +181,19 @@ Every setting has an **i** button with an explanation.
 | `release/` | Built firmware (`GPIOcore.hex`) and, after `release.py`, the GUI for end users |
 | `docs/images/` | Screenshots for this manual |
 
+From the repository root:
+
 | Command | What it does |
 |---|---|
-| `python software/GPIOcore/src/build.py` | Compiles the firmware (arduino-cli) straight to `release/GPIOcore.hex`; no `build/` folder is left |
+| `python build.py` | Empties `release/` and builds everything into it: firmware (`GPIOcore.hex`) and the GUI with Qt files, avrdude and examples |
+| `python release.py` | Asks the version and notes, writes the version into the firmware and the GUI, builds, then commits, tags, pushes and makes a GitHub release with `release/` as a zip (`--dry-run` to try, `--no-build` to publish `release/` as it is) |
+| `python software/GPIOcore/src/build.py` | Firmware only, straight to `release/GPIOcore.hex` |
 | `python software/GPIOcore/src/upload.py [COM9] [--build]` | Puts `release/GPIOcore.hex` on a Nano with `software/gui/tools/avrdude` (port: the only USB serial port, or a choice) |
-| `python software/gui/release.py [--gui]` | Firmware + GUI (Release build, Qt from `C:/Qt`) with Qt files, avrdude and examples into `release/` |
+| `python software/gui/build.py` | GUI only (Release build, Qt from `C:/Qt`) into `release/` |
 
-`release/` is not in git: zip it and publish it as a GitHub release.
+`release/` is build output and not in git; `release.py` publishes it as a GitHub release.
+`build.py` and `release.py` only assume the `software/*/src/build.py`, `software/*/build.py` layout, so they
+can be copied to other repositories.
 
 Screenshots: `GPIOcoreGUI.exe --lang en --size 1600x900 --open examples/routes-demo.json --demo --tab outputs --select 0 --screenshot out.png`
 (`--tab inputs|outputs|pins`, `--theme light|dark`).
