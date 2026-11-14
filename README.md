@@ -1,258 +1,329 @@
 # GPIOcore
 
-**A DCC accessory decoder on an Arduino Nano, with a configuration program for Windows.**
+**Turn a cheap Arduino Nano into a decoder for your model railway.**
 
-GPIOcore turns an Arduino Nano (or Uno) into a decoder for your model railway with **16 inputs and
-16 outputs**. Every output can be a servo, a turnout coil, a light, a signal or a light effect.
-Inputs are push buttons, toggle switches or track contacts, and they can start **routes**. You set
-everything up with the **GPIOcore Configurator** over USB, without writing code.
+GPIOcore drives up to **16 things** on your layout (servos, turnouts, lights, signals, sounds) and listens to
+up to **16 things** (push buttons, switches, track sensors, your DCC command station). You set it all up with
+a program on your Windows PC. You don't have to write any code.
 
 Part of [Open-Source-Model-Railway-Electronics](https://github.com/Open-Source-Model-Railway-Electronics).
 
-![The GPIOcore Configurator: inputs on the left, outputs on the right, wires show what drives what](docs/images/servo-output.png)
+![The GPIOcore program: what listens on the left, what is switched on the right, lines show what drives what](docs/images/servo-output.png)
+
+**➜ Ideas and step-by-step recipes: [examples.md](examples.md)** (servo decoder, coil decoder, level crossing
+with a bell, lights that come on at dusk, a water crane, and more).
 
 ---
 
-## What it can do
+## Contents
 
-| | |
+1. [What can it do?](#1-what-can-it-do)
+2. [What you need](#2-what-you-need)
+3. [Getting started](#3-getting-started)
+4. [The screen](#4-the-screen)
+5. [Outputs: what the decoder switches](#5-outputs-what-the-decoder-switches)
+6. [Inputs: what tells the decoder to act](#6-inputs-what-tells-the-decoder-to-act)
+7. [Routes: a list of steps](#7-routes-a-list-of-steps)
+8. [Custom values](#8-custom-values)
+9. [Analog inputs: sensors and many buttons on one pin](#9-analog-inputs-sensors-and-many-buttons-on-one-pin)
+10. [Sound (DFPlayer Mini)](#10-sound-dfplayer-mini)
+11. [Setting servos at the layout](#11-setting-servos-at-the-layout)
+12. [Saving your work](#12-saving-your-work)
+13. [When something doesn't work](#13-when-something-doesnt-work)
+14. [For developers](#14-for-developers)
+
+---
+
+## 1. What can it do?
+
+- **Turnouts:** servos (with adjustable speed), coil turnouts (two coils, short pulse), stall motors.
+  It can also switch the **frog** power with a relay, so locos never stall on the turnout.
+- **Lights:** on/off, blinking, level crossing lights, a flickering fireplace, a fluorescent tube that
+  starts up, welding flashes, a lamp at a set brightness.
+- **Signals:** up to four lamps per signal.
+- **Sound:** plays MP3 files (bell, announcement, whistle) with a DFPlayer Mini module.
+- **Routes:** one button press or one DCC command does several things one after another, with wait times
+  in between. For a station entry, a crane, shed doors, a level crossing.
+- **Sensors:** a light sensor, a reed switch, an IR sensor, or **many buttons on one pin** (to save pins).
+- **With or without DCC:** works with a DCC command station, but just as well with only buttons and sensors.
+
+---
+
+## 2. What you need
+
+| Part | Why |
 |---|---|
-| **Outputs** | Servo (with speed, and unifrog / electrofrog relays), single / double steady, single / double pulse (turnout coils), single / double flashing, swing light (level crossing), fireplace, TL tube, welder, PWM, 4-aspect signal, sound effect (DFPlayer Mini MP3 player) |
-| **Inputs** | Toggle, absolute (follows a switch), route, recorder, feedback (occupancy to the command station). A button to GND, or an analog pin: several buttons on one resistor ladder, or a sensor |
-| **Routes** | Up to 16 steps per route, each with its own wait time. A route starts on a button or a DCC command: any command, only "straight" or only "curved" |
-| **DCC** | Accessory addresses for inputs and routes. DCC extended packets set a servo angle directly (0–180°) or a signal aspect |
-| **Configure without a board** | Work offline, try it in the built-in simulation, then write it to the board |
-| **Phone remote** | Adjust servo positions from your phone while you look at the turnout |
-| **Config button** | Set servo end positions on the layout with a button and your DCC throttle |
+| **Arduino Nano** (the cheap clones with a "CH340" USB chip are fine) or an Arduino Uno | the decoder itself |
+| A USB cable and a **Windows PC** | to set it up (not needed while the layout runs) |
+| A **5 V power supply** for servos | one Nano can't power more than one or two servos |
+| Optional: a DCC input circuit (optocoupler) on pin **D2** | only if you use a DCC command station |
+| Optional: a push button on pin **A7** (with a 10 kΩ resistor to 5 V) | to set servos at the layout with your throttle |
+| Optional: relay modules, a coil driver (ULN2803), a DFPlayer Mini … | depending on what you build, see [examples.md](examples.md) |
+
+**Pins with a fixed job:** D2 = DCC, D13 = the little LED on the Nano (shows the config mode), A7 = config
+button. All other pins are yours.
+
+**Good to know about pins:**
+
+- D0 and D1 are also the USB connection. They only work as normal pins when no PC is connected.
+- Some effects need a **PWM pin** (marked "PWM" in the program): D3, D5, D6, D9, D10, D11.
+- A6 can only be used as an input, and only on a Nano.
 
 ---
 
-## What you need
+## 3. Getting started
 
-- An **Arduino Nano** (ATmega328P; also the clones with a CH340 USB chip) or an Arduino Uno.
-- A DCC signal on **D2** (through an optocoupler circuit), if you use DCC.
-- Optional: a push button on **A7** (with a 10 kΩ pull-up to 5 V) for the config button.
-  **D13** is the config LED (the Nano's own LED).
-- A Windows PC with a USB cable.
-
-**Reserved pins:** D2 = DCC, D13 = config LED, A7 = config button. All other pins (D0–D12 except D2,
-A0–A6) are free for inputs and outputs. D0/D1 are the USB serial pins: they are only used as inputs
-when no PC is connected. A6 is an input only (Nano).
-
----
-
-## Getting started
-
-1. **Download** the release (`GPIOcore` zip) and unpack it anywhere. It contains
-   `GPIOcoreGUI.exe`, the firmware `GPIOcore.hex` and the upload tool. Nothing needs to be installed.
+1. **Download** the newest release (the `GPIOcore-…zip` file) and unpack it anywhere, e.g. on your desktop.
+   Nothing needs to be installed.
 2. **Start** `GPIOcoreGUI.exe`.
-3. **Put the firmware on the Nano:** plug in the Nano, choose *Board → Flash firmware…*, pick the
-   port and click **Flash**. The program uses the `GPIOcore.hex` that came with it.
-4. **Connect:** choose the port in the toolbar and click **Connect**.
-5. **Read the board** with **Read board**, or start from a **preset** (second toolbar row) or a
-   board file (*File → Open*, see `examples/`).
+3. **Put the GPIOcore software on the Nano** (once, and again after an update): plug in the Nano, choose
+   *Board → Flash firmware…*, pick the port and click **Flash**.
+4. **Connect:** choose the port at the top (e.g. "COM5 — USB Serial") and click **Connect**. The frame
+   around the drawing turns red: you are connected.
+5. **Start configuring:**
+   - click **Read board** to see what is on the board now, or
+   - pick a **Preset** (a ready-made setup, e.g. "16 servos") and click **Apply**, or
+   - open an example file (*File → Open*, folder `examples`).
 
-### The three modes
+> **No board yet?** You can do everything without one: *File → New board (offline)…*. Try it in the
+> **Simulate** mode and write it to the board later with **Write all**.
 
-The toolbar always shows one of three modes. The colour of the frame around the drawing tells you
-where you are:
+---
 
-| Mode | Frame | What you can do |
+## 4. The screen
+
+- **Left column:** the inputs (what listens). **Right column:** the outputs (what is switched).
+- **Lines** show which input drives which output. Each input has its own colour.
+- **Click a block** to change it. Its settings open in the panel on the left (inputs) or right (outputs).
+- **+ Add input / + Add output** adds a block. Hover over a block and click the trash can to remove it.
+- Every setting has an **i** button that explains it.
+
+### Three modes
+
+At the top you always choose one of three modes. The colour of the frame tells you which one you're in:
+
+| Mode | Frame | What it is for |
 |---|---|---|
-| **Configure** | red when connected | Change everything. When connected, every change goes to the board straight away (after a short pause) |
-| **Simulate** | yellow | Your configuration on a simulated board. Click inputs and watch the outputs. Nothing can be changed |
-| **Live test** | green | Click inputs and watch the **real** board. Connects by itself. Nothing can be changed |
+| **Configure** | red when connected | Change things. When connected, every change is saved on the board straight away. |
+| **Simulate** | yellow | Try your setup without a board: click the buttons on the inputs and watch the outputs. You can't change anything here. |
+| **Live test** | green | Click the buttons on the inputs and watch the real layout react. You can't change anything here. |
 
-You can also work **without a board** (offline): *File → New board (offline)…*, start empty or from a
-preset, and save it as a file. Later you connect and click **Write all**.
-
-### Saving your work
-
-- **Save** (Ctrl+S) always asks where to save. **Open** is Ctrl+O.
-- Names of inputs and outputs are kept on this computer, in the board file
-  (`Documents/GPIOcore/boards/`). The board itself keeps the configuration in its EEPROM.
-- When you close the program with unsaved changes, it asks what to do.
+The **Pin map** tab shows every pin of the Nano and what uses it. Red = two things on one pin.
 
 ---
 
-## Outputs
+## 5. Outputs: what the decoder switches
 
-Click an output on the right side of the drawing to edit it. Choose the **Type**, the **pins** and the
-**parameters**. Pins that are already in use are shown in **red** in the lists. Choosing a pin that
-is in use takes it over: the other input or output becomes "not in use".
+Click an output and choose its **Type**:
 
-Use **+ Add output** to add one, and the trash can (hover over a block) or **Remove** to take it away.
+| Type | What it does | Pins |
+|---|---|---|
+| **Servo** | turns a servo between two positions you choose, at the speed you choose | 1 |
+| **Double pulse** | coil turnout: a short pulse on coil A or coil B | 2 |
+| **Single pulse** | a short pulse on one pin (e.g. an uncoupler) | 1 |
+| **Single steady** | one pin on or off (a lamp, a relay) | 1 |
+| **Double steady** | two pins, always opposite (stall motor via a motor driver, two-colour LED) | 2 |
+| **Single flashing / Double flashing** | blinking light(s) | 1 / 2 |
+| **Swing light** | level crossing lights, two lamps blinking in turn | 2 |
+| **Fireplace / TL tube / Welder** | light effects | 1–2 |
+| **PWM** | a lamp at a set brightness | 1 |
+| **4-aspect signal** | a light signal with up to four lamps | 4 |
+| **Sound effect** | plays MP3 tracks on a DFPlayer Mini (see chapter 10) | D1 |
 
-### Servo
+Every output has two states: **curved / off** and **straight / on**. **Test: curved / off** and
+**Test: straight / on** let you try it.
 
-- **Position 0 (curved)** and **Position 1 (straight)**: the two end positions, 10–170°.
-- **Speed**: milliseconds per degree.
-- **Live** (when connected): the servo follows the slider while you adjust it.
-- **Frog**: none, *unifrog* (one relay) or *electrofrog* (two relays, switched halfway).
-- At power-up the servos start one by one, 500 ms apart, each in its last position.
-- A DCC extended packet or a route step with a value of 0–180 sends the servo straight to that angle
-  (at its own speed). Values above 180 are ignored.
+**Choosing pins:** pins that are already used are shown in **red** in the list. If you choose one anyway,
+it moves to this output and the other block becomes "not in use".
 
-### 4-aspect signal
+**Servo settings:**
 
-![A 4-aspect signal: four lamps on A–D](docs/images/signal-output.png)
-
-Four LEDs on pins A–D; lamp 1 = bit 0 = pin A. The aspect comes from a **DCC extended** packet or from
-a route step (use the aspect picker next to the value). Set the **blink frequency** once per signal (in
-Hz); flashing lamps then follow that rhythm.
-
-### Sound effect (DFPlayer Mini)
-
-A **DFPlayer Mini** MP3 module plays a sound: a bell, a whistle, an announcement.
-
-```text
-  Nano D1 (TX) ---[1k]--- DFPlayer RX
-  5 V ------------------- DFPlayer VCC
-  GND ------------------- DFPlayer GND
-  speaker (3 W max.) ---- DFPlayer SPK_1 / SPK_2
-```
-
-- The output always uses **D1** (TX); the 1 kΩ resistor protects the DFPlayer.
-- Put the sounds on the micro SD card as **0001.mp3, 0002.mp3, …** Track 1 is 0001.mp3.
-- **Track when curved / off** and **Track when straight / on** are played when the output switches;
-  *stop* (0) stops playing. A route step or a DCC extended packet plays its own track number (0 = stop).
-- Several sound outputs may share D1, for example one per button with its own tracks.
-- **It only plays without a PC.** D1 is also the USB line: with the Configurator connected, the board
-  only reports the track (♪ on the output in the drawing). Unplug USB and power the board otherwise to
-  hear it.
+- **Position 0 (curved)** and **Position 1 (straight)**: the two end positions (10–170°).
+- **Live**: when ticked, the servo moves along while you slide. Handy to find the right position.
+- **Speed**: higher = slower and smoother.
+- **Frog**: switch the frog power with one relay (unifrog) or two relays (electrofrog).
+  With two relays, both are off while the points move, so there is never a short circuit.
 
 ---
 
-## Inputs and routes
+## 6. Inputs: what tells the decoder to act
 
-![A route: the steps on the left, the wires in the drawing](docs/images/route-input.png)
+Click an input. Under **Triggered by** you choose what starts it:
 
-Click an input on the left side to edit it. The **Function** decides what it does:
+- **DCC accessory address:** a turnout number on your command station or throttle.
+- **Input pin:** a button, switch or sensor between that pin and GND. (The decoder switches on the pin's
+  internal resistor, so you don't need one.)
+- Both at once is fine.
 
-- **Toggle**: every press (or DCC command) switches the output over.
-- **Absolute**: the output follows the switch, or the DCC direction.
-- **Route**: sets up to 16 outputs one after another. Per step you choose the output, the value
-  (straight / curved, an angle, or a signal aspect) and the wait time after it.
-  **Route starts on** chooses: any DCC command, only *straight*, or only *curved*. Example: a level
-  crossing that closes on "straight" and opens with a second route on "curved".
-- **Recorder**: long press = record on/off, short press = play on/off.
-- **Feedback**: reports an occupied track to the command station.
+The **Function** decides what happens:
 
-You can also make a route by **dragging**: drag from an output to the route input to add a step.
+| Function | What it does |
+|---|---|
+| **Direct control**, behaviour **Toggle** | every press switches the output over (straight ↔ curved, on ↔ off) |
+| **Direct control**, behaviour **Absolute** | the output follows: button pressed = curved / off, released = straight / on. With DCC: "straight" = straight, "curved" = curved |
+| **Route** | does a list of steps, see chapter 7 |
+| **Recorder** | long press = start/stop recording, short press = play back (needs an extra memory chip) |
+| **Feedback** | tells the command station that a track is occupied |
 
-A DCC command for the same address is ignored for 500 ms after the first one, so a command station
-that repeats commands does not toggle twice.
-
-### Analog inputs (resistor ladder)
-
-Instead of a button to GND, an input can **read a voltage** on A0–A6 (0 = 0 V, 1023 = 5 V). Set
-**Read as** to:
-
-- **Analog — below a value**: pressed below the threshold (released again 20 higher), e.g. a light
-  sensor that gets dark;
-- **Analog — above a value**: pressed above the threshold (released again 20 lower);
-- **Analog — at a value**: pressed within ±10 of the threshold: one button of a **resistor ladder**.
-
-"Pressed" works exactly like a pressed button, so toggle, absolute, routes, recorder and feedback all
-work. Several inputs may share one analog pin, each with its own value.
-
-**Wiring a resistor ladder:** a 10 kΩ resistor from 5 V to the pin, and every button from the pin to GND
-through its own resistor (0, 1 kΩ, 3.3 kΩ, 10 kΩ, …). Each button then gives a different value:
-
-```text
-  5 V ---[10k]---+--- A0
-                 +---------[ button 1 ]--- GND    about 0
-                 +--[1k]---[ button 2 ]--- GND    about 93
-                 +--[3k3]--[ button 3 ]--- GND    about 254
-                 +--[10k]--[ button 4 ]--- GND    about 512
-```
-
-**Read the real values** with the board connected: resistor tolerances and contacts make practice
-differ from theory. Hold each button and look at **Now:** in the input settings; **Use this value**
-makes it the threshold (rounded to a step of 8). Keep about 40 between two buttons. In **Simulate**
-you click *value ▾* on the input and type a value for its pin.
-
-Analog inputs and the sound effect need the firmware from November 2026 or later; the Configurator
-warns when the board's firmware is older.
+If your command station sends the same command a few times in a row, the decoder only reacts to the
+first one, so a toggle doesn't switch back and forth.
 
 ---
 
-## Pin map
+## 7. Routes: a list of steps
 
-![The pin map: every pin with what uses it](docs/images/pin-map.png)
+![A route with six steps](docs/images/route-input.png)
 
-The **Pin map** tab shows every pin of the board and what uses it. A red card is a conflict. Click a
-card to edit that input or output.
+A route is a little script: **up to 16 steps**, done one after another. Each step says:
+
+- which **output**;
+- what **value**: straight / curved, or a number (a servo angle, a signal picture, a brightness, a sound
+  track);
+- how long to **wait** before the next step.
+
+**Route starts on** decides which DCC command starts it: any command, only *straight* or only *curved*.
+That way one DCC address can start two different routes (e.g. barriers down with "curved", up with
+"straight"). A button always starts the route when you press it.
+
+Tips:
+
+- You can also make a route by **dragging**: drag from an output to the route's input to add a step.
+- For different wait times per step, tick **Own wait time per route step** under *Board settings…*.
+  Otherwise every step waits the same time.
+- Under *Board settings…* you can also choose that only **one route at a time** may run.
 
 ---
 
-## Phone remote
+## 8. Custom values
 
-*Board → Phone remote…* shows a QR code. Scan it with a phone on the **same Wi-Fi network**. You get
-a page with all servos:
+Normally a **Direct control** input (Toggle or Absolute) only says "straight" or "curved" to its output. With **Custom values**
+you decide exactly what it sends for each of the two states, just like a route step. Tick **Custom values**
+under *Controls* and fill in the two rows:
 
-- two sliders per servo, **curved** and **straight**: the servo moves along while you slide, and the
-  position is stored at once. The slider in the program moves along too;
-- −1° / +1° buttons for fine tuning;
-- buttons to throw the turnout.
+- **Off / curved:** e.g. servo to 45°, signal red, sound off.
+- **On / straight:** e.g. servo to 135°, signal green, sound track 7.
 
-The page only works with the code in the QR address, and only while the window is open.
+Handy for a servo that should go to other angles than its normal end positions, for a signal, and for
+sound (chapter 10).
 
 ---
 
-## Config button (on the layout, without a PC)
+## 9. Analog inputs: sensors and many buttons on one pin
 
-With a push button on A7:
+The pins A0–A6 can measure a **voltage** (0–1023) instead of only "pressed / not pressed". Set
+**Read as** to one of:
 
-1. **Hold the button 2 seconds:** config mode, the LED on D13 blinks.
-2. **Short press:** the next servo is selected and moves over, so you can see which one it is.
-3. Select **loco address 9999** on your DCC throttle:
+| Read as | Counts as "pressed" when … | Good for |
+|---|---|---|
+| **Analog – below a value** | the value is below your number | a light sensor that gets covered by a train |
+| **Analog – above a value** | the value is above your number | a light sensor in daylight, a current sensor |
+| **Analog – at a value** | the value is within ±10 of your number | **many buttons on one pin** (resistor ladder) |
+
+After "pressed" the decoder does exactly what it would do for a normal button: toggle, absolute, start a
+route …
+
+- **Live reading** shows what the pin measures right now. Press your button or cover your sensor, read the
+  number, and click **Use this value**. Always do this: real resistors and sensors never match the
+  calculation exactly.
+- To stop it from switching on and off on the edge, "below" and "above" switch back only 20 points later.
+- **Several inputs may use the same analog pin.** That is how a resistor ladder works: each button has
+  its own value. See [examples.md](examples.md#7-many-buttons-on-one-pin-resistor-ladder).
+- The number is rounded to steps of 8.
+- In **Simulate** you can type a value for an analog pin to test your setup without hardware.
+
+---
+
+## 10. Sound (DFPlayer Mini)
+
+**Wiring:** DFPlayer RX ← **Nano TX (D1)** through a 1 kΩ resistor, VCC → 5 V, GND → GND, a small speaker
+on SPK1/SPK2.
+
+**SD card:** name the files `0001.mp3`, `0002.mp3`, … The number is the track number.
+
+**In the program:** add one output of type **Sound effect**. It has no settings: the thing that starts the
+sound chooses the track:
+
+- a **route step** with the track number;
+- a **Direct control** input (Toggle or Absolute) with **Custom values** (e.g. off = stop, on = 3). These are
+  ticked by themselves when you link an input to a sound output;
+- a **DCC extended** command with the track number.
+
+Track **0 = stop**. Without custom values: on = track 1, off = stop.
+
+> **Important:** D1 is also the USB connection. **Sound only plays when no PC is connected.** With the
+> program connected, the output shows "♪ 3" instead, so you can still check that the right track would play.
+
+---
+
+## 11. Setting servos at the layout
+
+### With your phone
+
+*Board → Phone remote…* shows a QR code. Scan it with a phone on the **same Wi-Fi** as the PC. You get a
+page with all servos: slide **curved** or **straight** and the servo moves along. The position is saved at
+once, and the slider in the program moves along too.
+
+### With the config button and your throttle (no PC needed)
+
+1. **Hold the button on A7 for 2 seconds.** The LED on the Nano blinks: config mode.
+2. **Short press:** the next servo is selected and moves, so you see which one it is.
+3. On your throttle, select **loco address 9999**:
    - the **speed knob** moves the servo;
-   - **F1** stores the curved position, **F2** the straight position;
-   - **F3** throws the servo, **F4** selects the next servo.
-4. **Hold the button 2 seconds** again to leave config mode.
+   - **F1** saves the curved position, **F2** the straight position;
+   - **F3** moves the servo over, **F4** selects the next servo.
+4. **Hold the button 2 seconds** again to stop.
 
 ---
 
-## Dark mode and languages
+## 12. Saving your work
 
-![Dark mode](docs/images/dark-mode.png)
-
-The program follows the Windows light/dark setting. It speaks English, Dutch, German, French, Spanish,
-Italian, Polish, Czech, Danish, Norwegian, Swedish, Hungarian and Portuguese (*View → Language*).
-Every setting has an **i** button with an explanation.
+- The decoder remembers everything itself, also after switching off.
+- **Save** (Ctrl+S) stores your setup in a file on your PC, including the **names** you gave the inputs and
+  outputs (the names are not stored on the board). **Open** is Ctrl+O.
+- When you close the program with unsaved changes, it asks what to do.
+- **Write all** puts everything that is on screen on the board, e.g. after working offline.
 
 ---
 
-## For developers
+## 13. When something doesn't work
+
+| Problem | Try this |
+|---|---|
+| The port is not in the list | Use a data USB cable (some cables only charge). Click the refresh button. A CH340 clone may need the CH340 driver. |
+| "Port busy" / can't connect | Close other programs that use the port (Arduino IDE, serial monitor). |
+| Servos twitch or the Nano restarts | Give the servos their own 5 V supply and connect its GND to the Nano's GND. |
+| A coil turnout doesn't throw | Make the pulse longer (start at 200 ms); check the coil supply and the driver. |
+| No sound | Sound only plays without the PC connected. Check the file names (`0001.mp3`) and the 1 kΩ resistor. |
+| A button on a resistor ladder triggers the wrong input | Use **Live reading** and **Use this value** for every button; keep at least ~40 between the values. |
+| The program warns that the firmware is too old | *Board → Flash firmware…* puts the newest version on the board. |
+
+---
+
+## 14. For developers
 
 | Folder | Contents |
 |---|---|
 | `software/GPIOcore/` | Arduino firmware (`GPIOcore.ino`) |
-| `software/gui/` | Qt 6 configuration tool (`CMakeLists.txt`, open in Qt Creator) |
-| `release/` | Built firmware (`GPIOcore.hex`) and, after `release.py`, the GUI for end users |
-| `docs/images/` | Screenshots for this manual |
+| `software/gui/` | Qt 6 configuration program (`CMakeLists.txt`, open in Qt Creator) |
+| `release/` | build output for end users (not in git) |
+| `docs/` | screenshots, presentation |
 
 From the repository root:
 
 | Command | What it does |
 |---|---|
-| `python build.py` | Empties `release/` and builds everything into it: firmware (`GPIOcore.hex`) and the GUI with Qt files, avrdude and examples |
-| `python release.py` | Asks the version and notes, writes the version into the firmware and the GUI, builds, then commits, tags, pushes and makes a GitHub release with `release/` as a zip (`--dry-run` to try, `--no-build` to publish `release/` as it is) |
-| `python software/GPIOcore/src/build.py` | Firmware only, straight to `release/GPIOcore.hex` |
-| `python software/GPIOcore/src/upload.py [COM9] [--build]` | Puts `release/GPIOcore.hex` on a Nano with `software/gui/tools/avrdude` (port: the only USB serial port, or a choice) |
-| `python software/gui/build.py` | GUI only (Release build, Qt from `C:/Qt`) into `release/` |
-
-`release/` is build output and not in git; `release.py` publishes it as a GitHub release.
-`build.py` and `release.py` only assume the `software/*/src/build.py`, `software/*/build.py` layout, so they
-can be copied to other repositories.
+| `python build.py` | empties `release/` and builds everything into it: firmware (`GPIOcore.hex`) and the program with everything it needs |
+| `python release.py` | asks the version and release notes, puts the version in the firmware and the program, builds, then commits, tags, pushes and publishes a GitHub release with `release/` as a zip (`--dry-run` to try, `--no-build` to publish `release/` as it is) |
+| `python software/GPIOcore/src/build.py` | firmware only, straight to `release/GPIOcore.hex` |
+| `python software/GPIOcore/src/upload.py [COM9] [--build]` | puts `release/GPIOcore.hex` on a Nano |
+| `python software/gui/build.py` | the program only, into `release/` |
 
 Screenshots: `GPIOcoreGUI.exe --lang en --size 1600x900 --open examples/routes-demo.json --demo --tab outputs --select 0 --screenshot out.png`
 (`--tab inputs|outputs|pins`, `--theme light|dark`).
 
-Documentation: [PROTOCOL.md](PROTOCOL.md) (serial protocol), [EEPROM.md](EEPROM.md) (memory use),
+Technical documents: [PROTOCOL.md](PROTOCOL.md) (serial protocol), [EEPROM.md](EEPROM.md) (memory map),
 [REVIEW_GPIOcore.md](REVIEW_GPIOcore.md) (review and change log).
 
 ## License
 
-CC0 1.0: you can copy, modify and use it, also commercially, without asking permission.
+CC0 1.0: you may copy, change and use it, also commercially, without asking.
