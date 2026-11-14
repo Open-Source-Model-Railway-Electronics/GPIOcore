@@ -39,9 +39,9 @@ QStringList Lang::available()
     return langs;
 }
 
-void Lang::install(QApplication &app)
+void Lang::install(QApplication &app, const QString &force)
 {
-    QString code = configured();
+    QString code = force.isEmpty() ? configured() : force;
     if (code.isEmpty())
         code = QLocale::system().name().section(QLatin1Char('_'), 0, 0);   // "nl_NL" -> "nl"
     if (!available().contains(code))

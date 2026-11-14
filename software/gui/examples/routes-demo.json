@@ -363,7 +363,7 @@
     {
       "type": "recorder",
       "address": null,
-      "pin": 13,
+      "pin": 20,
       "output": 0,
       "route": []
     },

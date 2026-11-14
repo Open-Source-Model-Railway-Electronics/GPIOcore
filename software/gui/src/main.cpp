@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(QStringLiteral("Train-Science"));
     QApplication::setApplicationVersion(QStringLiteral(PROJECT_VERSION_STRING));
     Ui::applyAppStyle(app);
-    Lang::install(app);                  // before any window is created
 
     QCommandLineParser cli;
     cli.setApplicationDescription(QStringLiteral("Configure GPIOcore boards over the serial port."));
@@ -27,13 +26,15 @@ int main(int argc, char *argv[])
     QCommandLineOption open(QStringLiteral("open"), QStringLiteral("Load this configuration file at start."), QStringLiteral("file"));
     QCommandLineOption size(QStringLiteral("size"), QStringLiteral("Window size, e.g. 1680x900 (for screenshots)."), QStringLiteral("WxH"));
     QCommandLineOption theme(QStringLiteral("theme"), QStringLiteral("auto, light or dark for this run (not saved)."), QStringLiteral("theme"));
-    cli.addOptions({ demo, port, shot, tab, select, preset, open, size, theme });
+    QCommandLineOption lang(QStringLiteral("lang"), QStringLiteral("Language for this run, e.g. en or nl (not saved)."), QStringLiteral("code"));
+    cli.addOptions({ demo, port, shot, tab, select, preset, open, size, theme, lang });
     cli.process(app);
     if (cli.isSet(theme))
     {
         Ui::setThemeOverride(cli.value(theme));
         Ui::applyAppStyle(app);
     }
+    Lang::install(app, cli.value(lang)); // before any window is created
 
     MainWindow w;
     if (cli.isSet(preset))

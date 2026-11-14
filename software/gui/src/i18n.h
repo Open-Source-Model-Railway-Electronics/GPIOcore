@@ -13,7 +13,7 @@ class QApplication;
 
 namespace Lang {
 
-void        install(QApplication &app);   // call before creating windows
+void        install(QApplication &app, const QString &force = QString());   // before creating windows; force: this run only
 QString     current();                    // "en", "nl", ...
 QString     configured();                 // "" = follow the system language
 void        setConfigured(const QString &code);   // takes effect after a restart
