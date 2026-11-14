@@ -36,7 +36,7 @@ typedef struct eeOutputSettings
 
         uint8_t data[4] ;
 
-        uint8_t pwmVal ;    // PWM mode (bijv. RGBW)
+        uint8_t pwmVal ;    // PWM: brightness; data[1] = fade time in s for 0-255 (0 = at once)
     };
 
 } Settings ;

@@ -222,18 +222,23 @@ StateFunction( idle )
     return 1 ;      // the idle state body in update() must run every time: it starts the actions
 }
 
+// PWM: data[0] = brightness, data[1] = fade time in s for a full 0-255 change (0 = at once).
+// 'pos' (the servo angle) holds the brightness of the moment; it moves one step per tick.
 StateFunction( pwm )
 {
     if( sm.entryState() )
     {
         timer.type  = TIMER_BLEEP ;
-        timer.PT    =         100 ;
     }
 
+    timer.PT = eedata.data[1] ? eedata.data[1] * 1000UL / 255 : 100 ;
     timer.update() ;
-    if( timer.Q )                                      
+    if( timer.Q )
     {
-        if( isPwmPin( eedata.pinA ) ) { analogWrite( eedata.pinA, eedata.pwmVal ) ; }
+        if(      !eedata.data[1]          ) pos = eedata.pwmVal ;
+        else if( pos < eedata.pwmVal      ) pos ++ ;
+        else if( pos > eedata.pwmVal      ) pos -- ;
+        if( isPwmPin( eedata.pinA ) ) { analogWrite( eedata.pinA, pos ) ; }
     }
 
     if( eedata.type != PWM ) return 1 ;
