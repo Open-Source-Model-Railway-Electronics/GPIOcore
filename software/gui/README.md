@@ -64,8 +64,8 @@ nog niet getest.
    Bij verbinden: naam lezen → bestand laden (namen) → alles van het board lezen (het board wint).
    Offline: *File → New board* of *Open*; dat bestand is leesbaar JSON met uitleg in het veld `about`, zodat
    je het ook met de hand of door een AI kunt laten invullen.
-7. **Eenvoudig / expert.** Standaard eenvoudig: geen bytes, geen serial log, geen protocol-details, geen
-   presets in de toolbar. *View → Expert mode* zet ze terug. *View → Show unused inputs and outputs*
+7. **Eenvoudig / expert.** Standaard eenvoudig: geen bytes, geen serial log, geen protocol-details.
+   *View → Expert mode* zet ze terug. De presets staan altijd op de tweede werkbalkregel. *View → Show unused inputs and outputs*
    toont ook de ongebruikte blokken; anders voeg je ze toe met **+ Add input / + Add output** en haal je ze
    weg met **Remove** in het paneel.
 8. **Firmware flashen:** *Board → Flash firmware…* (avrdude zit in `tools/avrdude`). Standaardbestand:

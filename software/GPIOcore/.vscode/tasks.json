@@ -12,7 +12,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "build.py",
+            "command": "python ./src/build.py",
             "problemMatcher": []
         },
         {
@@ -22,9 +22,15 @@
             "problemMatcher": []
         },
         {
+            "label": "build + upload",
+            "type": "shell",
+            "command": "python ./src/upload.py --build",
+            "problemMatcher": []
+        },
+        {
             "label": "release new version",
             "type": "shell",
-            "command": "python release.py",
+            "command": "python ../gui/release.py",
             "problemMatcher": []
         },
         {

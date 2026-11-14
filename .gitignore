@@ -6,3 +6,9 @@ build/
 .qtcreator/
 __pycache__/
 *.qm
+
+# Release folder: only the firmware hex is tracked; the GUI files (software/gui/release.py) are
+# binaries of tens of MB per version: ship them as a zip / GitHub release instead
+release/*
+!release/GPIOcore.hex
+!release/.gitkeep
