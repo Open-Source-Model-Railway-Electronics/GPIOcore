@@ -11,6 +11,8 @@
 #include "qrcode.h"
 #include "webremote.h"
 
+#include <QMessageBox>
+#include <QTimer>
 #include <QSlider>
 #include <QTcpSocket>
 
@@ -400,6 +402,38 @@ private slots:
         QCOMPARE(int(view->board().inputs[3].type), int(InputNotInUse));
         QVERIFY(!view->outputShown(3));
         QVERIFY(!view->inputShown(3));
+    }
+
+    void presetButtonApplies()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        for (QAction *a : w.findChildren<QAction *>())      // presets live in expert mode
+            if (a->text() == QLatin1String("&Expert mode") && !a->isChecked()) a->trigger();
+        QAction *apply = nullptr;
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QLatin1String("Apply")) apply = a;
+        QVERIFY(apply);
+        QVERIFY(apply->isEnabled());
+        QComboBox *combo = nullptr;
+        for (QComboBox *c : w.findChildren<QComboBox *>())
+            if (c->count() == 9 && c->itemText(3).contains(QLatin1String("single"))) combo = c;
+        QVERIFY(combo);
+        combo->setCurrentIndex(3);                          // 16 single steady
+        QTimer::singleShot(200, [] {
+            if (auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()))
+                box->button(QMessageBox::Yes)->click();
+        });
+        apply->trigger();
+        for (int o = 0; o < NumOutputs; ++o)
+            QCOMPARE(int(view->board().outputs[o].type), int(presetBoard(3).outputs[o].type));
+        QTest::qWait(800);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 10000);
+        bool clean = false;                                  // live written: nothing left to write
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QLatin1String("Write changes")) clean = true;
+        QVERIFY(clean);
     }
 
     void phoneLiveReachesTheServo()
