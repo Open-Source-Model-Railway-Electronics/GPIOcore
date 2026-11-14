@@ -1,5 +1,5 @@
-<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GPIOcore seriële protocol — v1 en v2</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPIOcore serial protocol — v1 and v2</title><style>
 :root{--bg:#fff;--fg:#1f2937;--muted:#64748b;--line:#e2e8f0;--code:#f1f5f9;--accent:#2563eb}
 @media (prefers-color-scheme: dark){:root{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--line:#334155;--code:#1e293b;--accent:#60a5fa}}
 body{background:var(--bg);color:var(--fg);font:15px/1.6 'Segoe UI',system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px 16px}
@@ -11,148 +11,148 @@ table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
 th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--code)}
 hr{border:none;border-top:1px solid var(--line);margin:28px 0}
 </style></head><body>
-<h1>GPIOcore seriële protocol — v1 en v2</h1>
-<p>Datum: 2026-11-11 (bijgewerkt) · Status: <b>v1</b> is de huidige firmware. <b>v2</b> is de specificatie voor de nieuwe decoder; de Qt GUI en de simulator (<code>software/gui/src/simulateddevice.cpp</code>) implementeren v2 al.</p>
-<p>De GUI werkt met beide versies. Na het openen van de poort stuurt hij <code>HELLO</code>:</p>
+<h1>GPIOcore serial protocol — v1 and v2</h1>
+<p>Date: 2026-11-11 (updated) · Status: <b>v1</b> is the current firmware. <b>v2</b> is the specification for the new decoder; the Qt GUI and the simulator (<code>software/gui/src/simulateddevice.cpp</code>) already implement v2.</p>
+<p>The GUI works with both versions. After opening the port it sends <code>HELLO</code>:</p>
 <ul><li>
-Een v2-decoder antwoordt met zijn mogelijkheden.
+A v2 decoder answers with its capabilities.
 </li><li>
-De huidige firmware antwoordt niet; de GUI schakelt dan terug naar v1.
+The current firmware does not answer; the GUI then falls back to v1.
 </li></ul>
-<h2>1. Framing (v1 en v2)</h2>
+<h2>1. Framing (v1 and v2)</h2>
 <pre><code>&lt;command&gt; &lt;payload ...&gt; &lt;checksum&gt;
 command  : high nibble = message group, low nibble = payload length (0..14)
            low nibble 0xF = extended length: payload[0] = length incl. itself (max 32)
 checksum : XOR of command and all payload bytes</code></pre>
-<table><thead><tr><th>Uitzondering</th><th>Bytes</th><th>Opmerking</th></tr></thead><tbody>
-<tr><td><code>ACK</code></td><td><code>70</code></td><td>1 byte, geen checksum</td></tr>
-<tr><td><code>NACK</code></td><td><code>71 &lt;reden&gt;</code></td><td>2 bytes, geen checksum (1 = checksum, 2 = lengte, 3 = timeout)</td></tr>
-<tr><td>Host → device met lengte 0</td><td><code>&lt;cmd&gt;</code></td><td>Wordt direct uitgevoerd en krijgt <b>geen</b> checksum en geen ACK (<code>REQ_VERSION</code>, <code>HELLO</code>)</td></tr>
+<table><thead><tr><th>Exception</th><th>Bytes</th><th>Remark</th></tr></thead><tbody>
+<tr><td><code>ACK</code></td><td><code>70</code></td><td>1 byte, no checksum</td></tr>
+<tr><td><code>NACK</code></td><td><code>71 &lt;reason&gt;</code></td><td>2 bytes, no checksum (1 = checksum, 2 = length, 3 = timeout)</td></tr>
+<tr><td>Host → device with length 0</td><td><code>&lt;cmd&gt;</code></td><td>Executed immediately and gets <b>no</b> checksum and no ACK (<code>REQ_VERSION</code>, <code>HELLO</code>)</td></tr>
 </tbody></table>
-<p>Het protocol is binair met volle 8-bit bytes. Er is dus geen 7-bit beperking zoals bij LocoNet. De "bit 7 = stand, bits 0–6 = id"-indeling hoort alleen bij de oude <code>linkedOutput[]</code>-bytes (v1).</p>
-<p>Elk compleet frame met een geldige checksum krijgt na verwerking één <code>ACK</code> van <code>Transceiver::receive()</code>. Een GET krijgt eerst het data-antwoord en daarna die <code>ACK</code>.</p>
-<p><b>Timing en grenzen</b> (<code>src/Transceiver.cpp</code>):</p>
+<p>The protocol is binary with full 8-bit bytes. So there is no 7-bit limit as in LocoNet. The "bit 7 = state, bits 0–6 = id" layout only belongs to the old <code>linkedOutput[]</code> bytes (v1).</p>
+<p>Every complete frame with a valid checksum gets one <code>ACK</code> from <code>Transceiver::receive()</code> after it has been processed. A GET first gets the data reply and then that <code>ACK</code>.</p>
+<p><b>Timing and limits</b> (<code>src/Transceiver.cpp</code>):</p>
 <ul><li>
-<b>Byte-timeout.</b> Er mag hooguit <b>5 ms</b> tussen twee bytes van één frame zitten. Daarna antwoordt de
- firmware met <code>NACK 3</code> en begint hij opnieuw. Stuur een frame dus in één keer.
+<b>Byte timeout.</b> At most <b>5 ms</b> may pass between two bytes of one frame. After that the
+ firmware answers with <code>NACK 3</code> and starts over. So send a frame in one go.
 </li><li>
-<b>Maximale lengte.</b> Een payload is hooguit <b>32 bytes</b>; langer geeft <code>NACK 2</code>.
+<b>Maximum length.</b> A payload is at most <b>32 bytes</b>; longer gives <code>NACK 2</code>.
 </li><li>
-<b>Opstarten.</b> Na een reset stuurt de firmware <b>niets</b>: zonder GUI is het board stil. De GUI vraagt
- na ongeveer 2,5 s <code>REQ_VERSION</code> en meldt zich daarna met <code>HELLO</code> (binnen het bootvenster van 5 s).
- Komt er geen <code>HELLO</code>, dan stopt de firmware Serial en worden D0/D1 gewone pinnen. Openen van de poort reset een
- Uno of Nano via DTR. De bootloader en <code>setup()</code> samen duren ongeveer 1–2 s.
+<b>Start-up.</b> After a reset the firmware sends <b>nothing</b>: without the GUI the board is silent. After about
+ 2.5 s the GUI asks for <code>REQ_VERSION</code> and then reports in with <code>HELLO</code> (within the boot window of 5 s).
+ If no <code>HELLO</code> arrives, the firmware stops Serial and D0/D1 become normal pins. Opening the port resets an
+ Uno or Nano through DTR. The bootloader and <code>setup()</code> together take about 1–2 s.
 </li><li>
-<b>Index ≥ 16.</b> Een <code>index</code> van 16 of hoger wordt genegeerd, maar het frame krijgt wel een <code>ACK</code>. Een GET
- geeft dan geen data-antwoord.
+<b>Index ≥ 16.</b> An <code>index</code> of 16 or higher is ignored, but the frame still gets an <code>ACK</code>. A GET
+ then gives no data reply.
 </li><li>
-<b>Opslaan.</b> <code>SET_INPUT_DATA</code> en <code>SET_OUTPUT_DATA</code> gaan direct naar EEPROM. Een <code>SET_OUTPUT_DATA</code> voert de
- state één keer uit, ook als die niet veranderd is (zo werkt "Test state").
+<b>Saving.</b> <code>SET_INPUT_DATA</code> and <code>SET_OUTPUT_DATA</code> go straight to EEPROM. A <code>SET_OUTPUT_DATA</code> executes the
+ state once, even if it has not changed (this is how "Test state" works).
 </li></ul>
 <h2>2. Opcodes</h2>
-<table><thead><tr><th>Opcode</th><th>Richting</th><th>Payload</th><th>Versie</th></tr></thead><tbody>
-<tr><td><code>1E</code> SET_INPUT_DATA</td><td>↔</td><td><code>index addrH addrL pin type outputID linked[8]</code> (14 B), zie §2.2</td><td>v1, v2*</td></tr>
-<tr><td><code>11</code> GET_INPUT_DATA</td><td>→</td><td><code>index</code> → antwoord <code>1E</code></td><td>v1, v2</td></tr>
-<tr><td><code>2E</code> SET_OUTPUT_DATA</td><td>↔</td><td><code>index pinA pinB pinC pinD relayA relayB relayC type state data[4]</code> (14 B), zie §2.1</td><td>v1, v2</td></tr>
-<tr><td><code>21</code> GET_OUTPUT_DATA</td><td>→</td><td><code>index</code> → antwoord <code>2E</code></td><td>v1, v2</td></tr>
-<tr><td><code>50</code> REQ_VERSION</td><td>→</td><td>– → antwoord <code>5n</code> + versietekst (<code>src/version.h</code>, nu <code>v0.0.0</code>)</td><td>v1, v2</td></tr>
-<tr><td><code>61</code> SET_PRESET</td><td>→</td><td><code>preset</code> (0–7). <b>Sinds 2026-11-13 niet meer in de firmware</b>: alleen een <code>ACK</code>. De GUI rekent presets zelf uit, zie §2.3</td><td>v1</td></tr>
-<tr><td><code>32</code> SET_INPUT_STATE</td><td>→</td><td><code>index direction</code> — doet alsof er een DCC-commando voor het adres van deze input binnenkomt (toggle, absoluut, route). Voor testen en simulatie</td><td>v2</td></tr>
-<tr><td><code>31</code> GET_INPUT_STATE</td><td>→</td><td><code>index</code> — <b>gereserveerd</b>, alleen <code>ACK</code></td><td>–</td></tr>
-<tr><td><code>42</code> SET_OUTPUT_STATE</td><td>→</td><td><code>index state</code> — <b>gereserveerd</b>, alleen <code>ACK</code></td><td>–</td></tr>
-<tr><td><code>33</code> DCC_EXT</td><td>→</td><td><code>addrH addrL value</code> — doet alsof er een DCC-extended-accessorypakket (seinbeeld) voor dat adres binnenkomt. Alleen directe inputs reageren</td><td>v2</td></tr>
-<tr><td><code>41</code> GET_OUTPUT_STATE</td><td>→</td><td><code>index</code> → antwoord <code>45</code> met de huidige stand</td><td>v2</td></tr>
-<tr><td>**<code>45</code> OUTPUT_EVENT**</td><td>←</td><td><code>output state value ms_lo ms_hi</code> — ongevraagd, alleen na HELLO: elke keer dat een output schakelt (state 0/1, of 2 = ruwe waarde in <code>value</code>), met de onderste 16 bits van <code>millis()</code>. Een servo meldt tijdens het draaien <b>elke graad</b> (state 2, value = hoek); een tussenstap valt weg als de seriële buffer vol is, de eindstand nooit. Een 4-lampsein meldt zijn seinbeeld als state 2. <b>State 3</b> = puntstukrelais geschakeld, <code>value</code> bit0 relais A, bit1 relais B (electrofrog), bit2 relais C (unifrog); <code>GET_OUTPUT_STATE</code> stuurt dit als tweede melding mee als de output relais heeft</td><td><b>v2</b></td></tr>
-<tr><td><code>B1</code> CLEAR_OUTPUT</td><td>–</td><td>staat in <code>messageParser.h</code>, maar wordt niet gebruikt</td><td>–</td></tr>
-<tr><td><code>2D</code> (oud)</td><td>↔</td><td><code>SET_OUTPUT_DATA</code> van firmware vóór 2026-11-09: 13 bytes, <code>data[3]</code> gaat verloren. De GUI herkent dit aan het antwoord op <code>GET_OUTPUT_DATA</code> en schakelt mee.</td><td>oud</td></tr>
-<tr><td>**<code>90</code> HELLO**</td><td>→</td><td>– → antwoord <code>95</code></td><td><b>v2</b></td></tr>
-<tr><td>**<code>82</code> GET_ROUTE**</td><td>→</td><td><code>route first</code> → antwoord <code>8F</code></td><td><b>v2</b></td></tr>
+<table><thead><tr><th>Opcode</th><th>Direction</th><th>Payload</th><th>Version</th></tr></thead><tbody>
+<tr><td><code>1E</code> SET_INPUT_DATA</td><td>↔</td><td><code>index addrH addrL pin type outputID linked[8]</code> (14 B), see §2.2</td><td>v1, v2*</td></tr>
+<tr><td><code>11</code> GET_INPUT_DATA</td><td>→</td><td><code>index</code> → reply <code>1E</code></td><td>v1, v2</td></tr>
+<tr><td><code>2E</code> SET_OUTPUT_DATA</td><td>↔</td><td><code>index pinA pinB pinC pinD relayA relayB relayC type state data[4]</code> (14 B), see §2.1</td><td>v1, v2</td></tr>
+<tr><td><code>21</code> GET_OUTPUT_DATA</td><td>→</td><td><code>index</code> → reply <code>2E</code></td><td>v1, v2</td></tr>
+<tr><td><code>50</code> REQ_VERSION</td><td>→</td><td>– → reply <code>5n</code> + version text (<code>src/version.h</code>, now <code>v0.0.0</code>)</td><td>v1, v2</td></tr>
+<tr><td><code>61</code> SET_PRESET</td><td>→</td><td><code>preset</code> (0–7). <b>No longer in the firmware since 2026-11-13</b>: only an <code>ACK</code>. The GUI calculates presets itself, see §2.3</td><td>v1</td></tr>
+<tr><td><code>32</code> SET_INPUT_STATE</td><td>→</td><td><code>index direction</code> — acts as if a DCC command for the address of this input arrives (toggle, absolute, route). For testing and simulation</td><td>v2</td></tr>
+<tr><td><code>31</code> GET_INPUT_STATE</td><td>→</td><td><code>index</code> — <b>reserved</b>, only <code>ACK</code></td><td>–</td></tr>
+<tr><td><code>42</code> SET_OUTPUT_STATE</td><td>→</td><td><code>index state</code> — <b>reserved</b>, only <code>ACK</code></td><td>–</td></tr>
+<tr><td><code>33</code> DCC_EXT</td><td>→</td><td><code>addrH addrL value</code> — acts as if a DCC extended accessory packet (signal aspect) for that address arrives. Only direct inputs respond</td><td>v2</td></tr>
+<tr><td><code>41</code> GET_OUTPUT_STATE</td><td>→</td><td><code>index</code> → reply <code>45</code> with the current state</td><td>v2</td></tr>
+<tr><td>**<code>45</code> OUTPUT_EVENT**</td><td>←</td><td><code>output state value ms_lo ms_hi</code> — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in <code>value</code>), with the lower 16 bits of <code>millis()</code>. While turning, a servo reports <b>every degree</b> (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal reports its aspect as state 2. <b>State 3</b> = frog relay switched, <code>value</code> bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); <code>GET_OUTPUT_STATE</code> sends this as a second message if the output has relays</td><td><b>v2</b></td></tr>
+<tr><td><code>B1</code> CLEAR_OUTPUT</td><td>–</td><td>is in <code>messageParser.h</code>, but is not used</td><td>–</td></tr>
+<tr><td><code>2D</code> (old)</td><td>↔</td><td><code>SET_OUTPUT_DATA</code> of firmware before 2026-11-09: 13 bytes, <code>data[3]</code> is lost. The GUI recognises this from the reply to <code>GET_OUTPUT_DATA</code> and adapts.</td><td>old</td></tr>
+<tr><td>**<code>90</code> HELLO**</td><td>→</td><td>– → reply <code>95</code></td><td><b>v2</b></td></tr>
+<tr><td>**<code>82</code> GET_ROUTE**</td><td>→</td><td><code>route first</code> → reply <code>8F</code></td><td><b>v2</b></td></tr>
 <tr><td>**<code>8F</code> SET_ROUTE**</td><td>↔</td><td><code>len route total first step[n]</code> (n ≤ 7)</td><td><b>v2</b></td></tr>
 <tr><td>**<code>A2</code> SERVO_LIVE**</td><td>→</td><td><code>output angle</code></td><td><b>v2</b></td></tr>
-<tr><td>**<code>C0</code> GET_BOARD**</td><td>→</td><td>– → antwoord <code>CF</code></td><td><b>v2</b></td></tr>
-<tr><td>**<code>CF</code> SET_BOARD**</td><td>↔</td><td><code>len type flags delay name[0..16]</code>, zie §10</td><td><b>v2</b></td></tr>
-<tr><td>**<code>D1</code> GET_ANALOG**</td><td>→</td><td><code>channel</code> (0–7 = A0–A7) → antwoord <code>D3</code>, daarna de gewone <code>ACK</code>. Live meting voor het instellen van analoge inputs; de GUI vraagt hem ongeveer elke 250 ms zolang een analoge input in beeld is</td><td><b>v2</b>, HELLO-bit4</td></tr>
-<tr><td>**<code>D3</code> ANALOG_VALUE**</td><td>←</td><td><code>channel valueH valueL</code> — <code>analogRead()</code> van A0–A7, 0–1023</td><td><b>v2</b>, HELLO-bit4</td></tr>
+<tr><td>**<code>C0</code> GET_BOARD**</td><td>→</td><td>– → reply <code>CF</code></td><td><b>v2</b></td></tr>
+<tr><td>**<code>CF</code> SET_BOARD**</td><td>↔</td><td><code>len type flags delay name[0..16]</code>, see §10</td><td><b>v2</b></td></tr>
+<tr><td>**<code>D1</code> GET_ANALOG**</td><td>→</td><td><code>channel</code> (0–7 = A0–A7) → reply <code>D3</code>, then the normal <code>ACK</code>. Live measurement for setting up analog inputs; the GUI asks for it about every 250 ms while an analog input is on screen</td><td><b>v2</b>, HELLO bit4</td></tr>
+<tr><td>**<code>D3</code> ANALOG_VALUE**</td><td>←</td><td><code>channel valueH valueL</code> — <code>analogRead()</code> of A0–A7, 0–1023</td><td><b>v2</b>, HELLO bit4</td></tr>
 </tbody></table>
-<p>\* In v2 stuurt de GUI de 8 <code>linked</code>-bytes nog mee, afgeleid van de route: eerste 8 stappen, alleen de stand. Een v2-decoder mag ze negeren; de echte route komt via <code>SET_ROUTE</code>.</p>
-<h3>2.1 Output-velden (<code>Settings</code> in <code>output.h</code>, 10 bytes in EEPROM)</h3>
-<table><thead><tr><th>Veld</th><th>Bits</th><th>Waarden</th></tr></thead><tbody>
-<tr><td><code>pinA</code>–<code>pinD</code>, <code>relayA</code>–<code>relayC</code></td><td>6</td><td>0–13 = D0–D13, 14–19 = A0–A5, <b>0x3F = niet gebruikt</b> (0xFF wordt 0x3F)</td></tr>
-<tr><td><code>type</code></td><td>4</td><td>zie de tabel hieronder</td></tr>
-<tr><td><code>state</code></td><td>1</td><td>0 = curved / uit, 1 = straight / aan</td></tr>
-<tr><td><code>data[4]</code></td><td>32</td><td>union; de betekenis hangt af van het type</td></tr>
+<p>\* In v2 the GUI still sends the 8 <code>linked</code> bytes, derived from the route: first 8 steps, state only. A v2 decoder may ignore them; the real route arrives through <code>SET_ROUTE</code>.</p>
+<h3>2.1 Output fields (<code>Settings</code> in <code>output.h</code>, 10 bytes in EEPROM)</h3>
+<table><thead><tr><th>Field</th><th>Bits</th><th>Values</th></tr></thead><tbody>
+<tr><td><code>pinA</code>–<code>pinD</code>, <code>relayA</code>–<code>relayC</code></td><td>6</td><td>0–13 = D0–D13, 14–19 = A0–A5, <b>0x3F = not used</b> (0xFF becomes 0x3F)</td></tr>
+<tr><td><code>type</code></td><td>4</td><td>see the table below</td></tr>
+<tr><td><code>state</code></td><td>1</td><td>0 = curved / off, 1 = straight / on</td></tr>
+<tr><td><code>data[4]</code></td><td>32</td><td>union; the meaning depends on the type</td></tr>
 </tbody></table>
-<p>Frog-relais: <code>relayA</code> + <code>relayB</code> = <b>electrofrog</b> (A bij straight, B bij curved, eerst allebei uit); <code>relayC</code> = <b>unifrog</b>. De GUI staat maar één van de twee toe.</p>
-<table><thead><tr><th><code>type</code></th><th>Naam</th><th>Pinnen</th><th><code>data[4]</code></th></tr></thead><tbody>
+<p>Frog relays: <code>relayA</code> + <code>relayB</code> = <b>electrofrog</b> (A at straight, B at curved, both off first); <code>relayC</code> = <b>unifrog</b>. The GUI allows only one of the two.</p>
+<table><thead><tr><th><code>type</code></th><th>Name</th><th>Pins</th><th><code>data[4]</code></th></tr></thead><tbody>
 <tr><td>0</td><td>single steady</td><td>A</td><td>–</td></tr>
-<tr><td>1</td><td>single pulse</td><td>A (+ unifrog C)</td><td><code>uint32</code> LE schakeltijd × 100 ms</td></tr>
-<tr><td>2</td><td>single flashing</td><td>A</td><td><code>uint32</code> LE halve periode × 10 ms</td></tr>
+<tr><td>1</td><td>single pulse</td><td>A (+ unifrog C)</td><td><code>uint32</code> LE switching time × 100 ms</td></tr>
+<tr><td>2</td><td>single flashing</td><td>A</td><td><code>uint32</code> LE half period × 10 ms</td></tr>
 <tr><td>3</td><td>double steady</td><td>A, B</td><td>–</td></tr>
-<tr><td>4</td><td>double pulse</td><td>A, B</td><td><code>uint32</code> LE pulstijd × 10 ms</td></tr>
-<tr><td>5</td><td>double flashing</td><td>A, B</td><td><code>uint32</code> LE halve periode × 10 ms</td></tr>
-<tr><td>6</td><td>swing light</td><td>A, B</td><td><code>data[0..1]</code> aan-tijd, <code>data[2..3]</code> pauze; <code>uint16</code> LE × 10 ms</td></tr>
+<tr><td>4</td><td>double pulse</td><td>A, B</td><td><code>uint32</code> LE pulse time × 10 ms</td></tr>
+<tr><td>5</td><td>double flashing</td><td>A, B</td><td><code>uint32</code> LE half period × 10 ms</td></tr>
+<tr><td>6</td><td>swing light</td><td>A, B</td><td><code>data[0..1]</code> on time, <code>data[2..3]</code> pause; <code>uint16</code> LE × 10 ms</td></tr>
 <tr><td>7</td><td>fireplace</td><td>A, B (PWM)</td><td>–</td></tr>
 <tr><td>8</td><td>TL tube</td><td>A (PWM)</td><td>–</td></tr>
 <tr><td>9</td><td>welder</td><td>A</td><td>–</td></tr>
-<tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 aan, bits 4–7 knipperen (gezet door DCC-ext of een route; de GUI laat hem staan)</td></tr>
-<tr><td>11</td><td>servo</td><td>A (+ relais)</td><td><code>data[0]</code> hoek bij state 0, <code>data[1]</code> hoek bij state 1, <code>data[2]</code> snelheid in ms/° (≥ 1), <code>data[3]</code> ongebruikt</td></tr>
-<tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = helderheid 0–255, <code>data[1]</code> = overvloeitijd in s voor een volledige verandering 0→255 (0 = direct, max. 255 s). De output loopt elke <code>data[1] × 1000 / 255</code> ms één stap naar de nieuwe helderheid (eigen waarden, route-stap, DCC-ext); bij het opstarten komt hij op vanuit 0. <code>OUTPUT_EVENT</code> meldt meteen de doelwaarde</td></tr>
+<tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is)</td></tr>
+<tr><td>11</td><td>servo</td><td>A (+ relays)</td><td><code>data[0]</code> angle at state 0, <code>data[1]</code> angle at state 1, <code>data[2]</code> speed in ms/° (≥ 1), <code>data[3]</code> unused</td></tr>
+<tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = brightness 0–255, <code>data[1]</code> = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every <code>data[1] × 1000 / 255</code> ms (own values, route step, DCC-ext); at start-up it fades up from 0. <code>OUTPUT_EVENT</code> reports the target value immediately</td></tr>
 <tr><td>13</td><td>not in use</td><td>–</td><td>–</td></tr>
-<tr><td>14</td><td>sound effect</td><td>A = altijd <b>1 (D1, TX)</b></td><td>– (geen eigen tracks). De input kiest de track: eigen waarden (§4), een route-stap (ruw) of DCC-ext speelt zijn waarde als tracknummer (0 = stoppen). Zonder eigen waarden: state 1 = track 1, state 0 = stoppen</td></tr>
+<tr><td>14</td><td>sound effect</td><td>A = always <b>1 (D1, TX)</b></td><td>– (no tracks of its own). The input chooses the track: own values (§4), a route step (raw) or DCC-ext plays its value as the track number (0 = stop). Without own values: state 1 = track 1, state 0 = stop</td></tr>
 </tbody></table>
-<p><b>Sound effect (type 14, HELLO-bit4).</b> Een DFPlayer Mini hangt met zijn RX aan de TX-pin D1 van de Nano (via 1 kΩ). De firmware stuurt het DFPlayer-frame (9600 baud, 10 bytes: <code>7E FF 06 03 00 00 track csH csL EF</code>, <code>16</code> in plaats van <code>03</code> = stop) alleen als er <b>geen pc</b> verbonden is: in een configuratiesessie is D1 de USB-lijn. Elke keer dat er een track gestart (of gestopt) wordt, meldt de output <code>OUTPUT_EVENT</code> met <b>state 2, value = track</b>, ook als hij niets kon afspelen. Meerdere sound-outputs mogen D1 delen (de GUI telt dat niet als conflict); D1 samen met een andere input of output wel.</p>
-<p>PWM-pinnen zijn D3, D5, D6, D9, D10 en D11. D9/D10 doen geen PWM zolang er een servo-output bestaat (Servo-library, timer 1).</p>
-<h3>2.2 Input-velden (<code>InputSettings</code> in <code>input.h</code>, 12 bytes in EEPROM)</h3>
-<table><thead><tr><th>Veld</th><th>Bits</th><th>Waarden</th></tr></thead><tbody>
-<tr><td><code>address</code></td><td>12</td><td>DCC-accessory-adres 1–4094, <b>0xFFF = geen</b></td></tr>
-<tr><td><code>pin</code></td><td>6</td><td>zoals bij outputs; de firmware zet <code>INPUT_PULLUP</code> (knop naar GND). <b>Of een analoge vergelijking</b>: <code>0x20 + 8 × mode + kanaal</code>, zie hieronder</td></tr>
-<tr><td><code>type</code></td><td>3</td><td>zie hieronder</td></tr>
-<tr><td><code>outputID</code></td><td>4</td><td>0–15: de output (direct), of het sensornummer (feedback)</td></tr>
-<tr><td><code>linked[8]</code></td><td>8 × 8</td><td>v1-route: bit 7 = stand, bits 0–6 = output-id; 0x7F/0xFF = einde. **<code>linked[0]</code> bij een analoge input = drempel / 4**</td></tr>
+<p><b>Sound effect (type 14, HELLO bit4).</b> A DFPlayer Mini has its RX connected to the TX pin D1 of the Nano (through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: <code>7E FF 06 03 00 00 track csH csL EF</code>, <code>16</code> instead of <code>03</code> = stop) only if <b>no PC</b> is connected: in a configuration session D1 is the USB line. Every time a track is started (or stopped), the output reports <code>OUTPUT_EVENT</code> with <b>state 2, value = track</b>, even if it could not play anything. Several sound outputs may share D1 (the GUI does not count that as a conflict); D1 together with another input or output is a conflict.</p>
+<p>PWM pins are D3, D5, D6, D9, D10 and D11. D9/D10 do no PWM as long as a servo output exists (Servo library, timer 1).</p>
+<h3>2.2 Input fields (<code>InputSettings</code> in <code>input.h</code>, 12 bytes in EEPROM)</h3>
+<table><thead><tr><th>Field</th><th>Bits</th><th>Values</th></tr></thead><tbody>
+<tr><td><code>address</code></td><td>12</td><td>DCC accessory address 1–4094, <b>0xFFF = none</b></td></tr>
+<tr><td><code>pin</code></td><td>6</td><td>as for outputs; the firmware sets <code>INPUT_PULLUP</code> (button to GND). <b>Or an analog comparison</b>: <code>0x20 + 8 × mode + channel</code>, see below</td></tr>
+<tr><td><code>type</code></td><td>3</td><td>see below</td></tr>
+<tr><td><code>outputID</code></td><td>4</td><td>0–15: the output (direct), or the sensor number (feedback)</td></tr>
+<tr><td><code>linked[8]</code></td><td>8 × 8</td><td>v1 route: bit 7 = state, bits 0–6 = output id; 0x7F/0xFF = end. **<code>linked[0]</code> for an analog input = threshold / 4**</td></tr>
 </tbody></table>
-<p><b>Analoge inputs (HELLO-bit4).</b> In plaats van een pinnummer bevat <code>pin</code> dan <code>0x20 | mode &lt;&lt; 3 | kanaal</code>: kanaal 0–7 = A0–A7 (de echte pin is 14 + kanaal), mode 0 = <b>onder</b> de drempel, 1 = <b>boven</b> de drempel, 2 = <b>op</b> de drempel (één knop van een weerstandsladder). Mode 3 (dus ook <code>0x3F</code> = niet gebruikt) is nooit analoog. De drempel (0–1016, stappen van 8) staat in <code>linked[0]</code> als <b>drempel / 4</b>: <code>SET_INPUT_DATA</code> neemt hem daar, <code>GET_INPUT_DATA</code> zet hem daar terug (alleen bij een analoge input; anders blijft <code>linked[]</code> de v1-route). De firmware bewaart drempel / 8 (7 bits, <code>EEPROM.md</code>).</p>
-<table><thead><tr><th>Mode</th><th>Ingedrukt als</th><th>Weer los als</th></tr></thead><tbody>
-<tr><td>0 onder</td><td>waarde &lt; drempel</td><td>waarde ≥ drempel + 20</td></tr>
-<tr><td>1 boven</td><td>waarde &gt; drempel</td><td>waarde ≤ drempel − 20</td></tr>
-<tr><td>2 op</td><td>waarde − drempel tussen −10 en +10</td><td>daarbuiten</td></tr>
+<p><b>Analog inputs (HELLO bit4).</b> Instead of a pin number, <code>pin</code> then contains <code>0x20 | mode &lt;&lt; 3 | channel</code>: channel 0–7 = A0–A7 (the real pin is 14 + channel), mode 0 = <b>below</b> the threshold, 1 = <b>above</b> the threshold, 2 = <b>at</b> the threshold (one button of a resistor ladder). Mode 3 (so also <code>0x3F</code> = not used) is never analog. The threshold (0–1016, steps of 8) is in <code>linked[0]</code> as <b>threshold / 4</b>: <code>SET_INPUT_DATA</code> takes it from there, <code>GET_INPUT_DATA</code> puts it back there (only for an analog input; otherwise <code>linked[]</code> remains the v1 route). The firmware stores threshold / 8 (7 bits, <code>EEPROM.md</code>).</p>
+<table><thead><tr><th>Mode</th><th>Pressed when</th><th>Released again when</th></tr></thead><tbody>
+<tr><td>0 below</td><td>value &lt; threshold</td><td>value ≥ threshold + 20</td></tr>
+<tr><td>1 above</td><td>value &gt; threshold</td><td>value ≤ threshold − 20</td></tr>
+<tr><td>2 at</td><td>value − threshold between −10 and +10</td><td>outside that</td></tr>
 </tbody></table>
-<p>De firmware leest elke 50 ms en telt een verandering pas na twee gelijke metingen. "Ingedrukt" werkt precies als een knop naar GND (LOW): toggle wisselt bij het indrukken, absoluut volgt (ingedrukt = 0), alle drie de route-types starten bij het indrukken, recorder en feedback werken hetzelfde. Voor het kanaal gelden de regels van de echte pin (A7 = configknop, A6 alleen op de Nano, A4/A5 niet met de recorder) en een analoge code als output geeft <code>NACK 5</code>. Meerdere analoge inputs mogen één kanaal delen (weerstandsladder); een digitale input of een output op die pin is wel een conflict.</p>
-<p>Input-types:</p>
+<p>The firmware reads every 50 ms and counts a change only after two equal readings. "Pressed" works exactly like a button to GND (LOW): toggle switches when pressed, absolute follows (pressed = 0), all three route types start when pressed, recorder and feedback work the same. The rules of the real pin apply to the channel (A7 = config button, A6 only on the Nano, A4/A5 not with the recorder) and an analog code as an output gives <code>NACK 5</code>. Several analog inputs may share one channel (resistor ladder); a digital input or an output on that pin is a conflict.</p>
+<p>Input types:</p>
 <ul><li>
-0 toggle — wisselt bij het indrukken (falling edge) of bij elk DCC-commando;
+0 toggle — switches when the button is pressed (falling edge) or on every DCC command;
 </li><li>
-1 absoluut — volgt het niveau (gesloten = 0) of de DCC-richting;
+1 absolute — follows the level (closed = 0) or the DCC direction;
 </li><li>
-2 route — start bij het indrukken van de knop (falling edge) of bij <b>elk</b> DCC-commando voor het adres,
- richting 0 en 1;
+2 route — starts when the button is pressed (falling edge) or on <b>every</b> DCC command for the address,
+ direction 0 and 1;
 </li><li>
-3 niet in gebruik;
+3 not in use;
 </li><li>
-4 recorder — lang drukken (1,5 s) = opnemen aan/uit, kort drukken = afspelen aan/uit;
+4 recorder — long press (1.5 s) = recording on/off, short press = playback on/off;
 </li><li>
-5 feedback — sensor waar een opname tijdens het afspelen op wacht.
+5 feedback — sensor that a recording waits for during playback.
 </li><li>
-6 route <b>alleen straight</b> — start bij het indrukken van de knop, of alleen bij een DCC-commando
- 'straight' (richting 1) voor het adres;
+6 route <b>straight only</b> — starts when the button is pressed, or only on a DCC command
+ 'straight' (direction 1) for the address;
 </li><li>
-7 route <b>alleen curved</b> — idem, alleen bij 'curved' (richting 0).
+7 route <b>curved only</b> — same, only on 'curved' (direction 0).
 </li></ul>
-<p>Met 6 en 7 delen twee routes één DCC-adres, bijvoorbeeld een AHOB: curved = dicht, straight = open.</p>
-<p><b>Herhaalde DCC-pakketten.</b> Een centrale stuurt een wisselcommando een paar keer. Een toggle-input en een route nemen het eerste en negeren hetzelfde adres daarna 500 ms (<code>DCC_LOCKOUT_MS</code>). Een absolute input heeft dat niet nodig (zelfde richting = zelfde stand). <code>SET_INPUT_STATE</code> (0x32) gaat door dezelfde code, dus ook daar geldt de blokkeertijd.</p>
-<h3>2.3 Presets (in de GUI)</h3>
-<p>Sinds 2026-11-13 zitten de presets niet meer in de firmware (dat scheelde 2,7 KB flash). De GUI rekent een preset uit (<code>presetBoard()</code> in <code>gpioconfig.cpp</code>) en stuurt het resultaat als gewone <code>SET_OUTPUT_DATA</code> / <code>SET_INPUT_DATA</code> (live opslaan). Dat werkt dus ook offline en in de simulatie.</p>
-<p>Pinnen beginnen bij D3 en slaan <b>D13</b> over (config-LED): D3–D12, A0–A5. De gebruikte inputs worden absoluut, DCC-adres 1, 2, …, input <i>n</i> → output <i>n</i>; de rest wordt <i>not in use</i>.</p>
-<table><thead><tr><th>Preset</th><th>Opstelling</th></tr></thead><tbody>
-<tr><td>0</td><td>16 servo's</td></tr>
-<tr><td>1</td><td>8 servo's + unifrog-relais</td></tr>
-<tr><td>2</td><td>5 servo's + electrofrog-relais</td></tr>
+<p>With 6 and 7 two routes share one DCC address, for example a level crossing barrier: curved = closed, straight = open.</p>
+<p><b>Repeated DCC packets.</b> A command station sends a turnout command a few times. A toggle input and a route take the first one and ignore the same address for 500 ms afterwards (<code>DCC_LOCKOUT_MS</code>). An absolute input does not need this (same direction = same state). <code>SET_INPUT_STATE</code> (0x32) goes through the same code, so the lockout time applies there too.</p>
+<h3>2.3 Presets (in the GUI)</h3>
+<p>Since 2026-11-13 the presets are no longer in the firmware (that saved 2.7 KB of flash). The GUI calculates a preset (<code>presetBoard()</code> in <code>gpioconfig.cpp</code>) and sends the result as normal <code>SET_OUTPUT_DATA</code> / <code>SET_INPUT_DATA</code> (saved live). So this also works offline and in the simulation.</p>
+<p>Pins start at D3 and skip <b>D13</b> (config LED): D3–D12, A0–A5. The inputs that are used become absolute, DCC address 1, 2, …, input <i>n</i> → output <i>n</i>; the rest become <i>not in use</i>.</p>
+<table><thead><tr><th>Preset</th><th>Set-up</th></tr></thead><tbody>
+<tr><td>0</td><td>16 servos</td></tr>
+<tr><td>1</td><td>8 servos + unifrog relay</td></tr>
+<tr><td>2</td><td>5 servos + electrofrog relay</td></tr>
 <tr><td>3</td><td>16 × single steady</td></tr>
 <tr><td>4</td><td>8 × double pulse</td></tr>
-<tr><td>5</td><td>5 × double pulse + unifrog-relais</td></tr>
-<tr><td>6</td><td>4 × double pulse + electrofrog-relais</td></tr>
+<tr><td>5</td><td>5 × double pulse + unifrog relay</td></tr>
+<tr><td>6</td><td>4 × double pulse + electrofrog relay</td></tr>
 <tr><td>7</td><td>8 × double steady</td></tr>
 </tbody></table>
-<h2>3. HELLO — aanmelden en configuratiesessie (v2)</h2>
+<h2>3. HELLO — logging in and configuration session (v2)</h2>
 <pre><code>host   -&gt; 90
 device -&gt; 95 &lt;protocol&gt; &lt;max steps per route&gt; &lt;step pool lo&gt; &lt;step pool hi&gt; &lt;flags&gt;
 flags  : bit0 = D0/D1 usable as I/O outside a config session
@@ -162,122 +162,122 @@ flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
 step pool: number of route steps that still fit with the current board settings
            (timing on/off, recorder on/off), all routes together</code></pre>
-<p>De GUI stuurt <code>HELLO</code> direct na het boot-bericht (versie). Dat is ongeveer 1,5 s na de reset die het openen van de poort via DTR veroorzaakt. Bij boards zonder auto-reset stuurt hij het na <code>REQ_VERSION</code>.</p>
-<p><b>Wat de decoder doet (voorstel, zodat D0/D1 bruikbaar worden):</b></p>
+<p>The GUI sends <code>HELLO</code> right after the boot message (version). That is about 1.5 s after the reset that opening the port causes through DTR. For boards without auto-reset it sends it after <code>REQ_VERSION</code>.</p>
+<p><b>What the decoder does (proposal, so that D0/D1 become usable):</b></p>
 <ol><li>
-Na power-up of reset wacht hij <b>5 s</b> met Serial actief en voert hij nog <b>niets</b> uit op D0/D1.
+After power-up or reset it waits <b>5 s</b> with Serial active and does <b>nothing</b> yet on D0/D1.
 </li><li>
-Komt er binnen die 5 s een <code>HELLO</code>, dan is er een <b>configuratiesessie</b>: D0/D1 blijven Serial tot de
- volgende reset. Outputs en inputs op D0/D1 doen in die sessie niets.
+If a <code>HELLO</code> arrives within those 5 s, there is a <b>configuration session</b>: D0/D1 stay Serial until the
+ next reset. Outputs and inputs on D0/D1 do nothing in that session.
 </li><li>
-Komt er geen <code>HELLO</code>, dan doet hij <code>Serial.end()</code> en zet hij D0/D1 als gewone I/O
- (<code>pinMode</code> volgens de configuratie).
+If no <code>HELLO</code> arrives, it does <code>Serial.end()</code> and sets D0/D1 as normal I/O
+ (<code>pinMode</code> according to the configuration).
 </li><li>
-Wil je later weer configureren, dan reset je het board. De GUI doet dat zelf bij het verbinden (DTR).
+If you want to configure again later, you reset the board. The GUI does this itself when connecting (DTR).
 </li></ol>
-<p><b>Is D0/D1 gebruiken überhaupt verstandig?</b> Het kan, met drie kanttekeningen:</p>
+<p><b>Is using D0/D1 sensible at all?</b> It can be done, with three caveats:</p>
 <ul><li>
-Op een Uno/Nano zitten D0/D1 via 1 kΩ aan de USB-serial chip. Een output werkt gewoon. Een input met
- een knop naar GND ook, want de knop wint van de 1 kΩ.
+On an Uno/Nano, D0/D1 are connected to the USB-serial chip through 1 kΩ. An output simply works. An input with
+ a button to GND works too, because the button wins over the 1 kΩ.
 </li><li>
-Een zware last of een laagohmig circuit op <b>D0 (RX)</b> kan het <b>uploaden van firmware</b> verstoren.
- Gebruik ze bij voorkeur voor LEDs, of voor relais via een transistor.
+A heavy load or a low-impedance circuit on <b>D0 (RX)</b> can disturb <b>uploading firmware</b>.
+ Preferably use them for LEDs, or for relays through a transistor.
 </li><li>
-Tijdens een configuratiesessie werken ze niet. Een "Test state" op een output aan D0/D1 doet dan niets.
+They do not work during a configuration session. A "Test state" on an output on D0/D1 then does nothing.
 </li></ul>
-<p>De GUI laat D0/D1 kiezen als de decoder bit0 meldt, en offline. Hij geeft er dan een waarschuwing bij. Bij v1-firmware zijn ze gereserveerd en rood.</p>
+<p>The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a warning. With v1 firmware they are reserved and red.</p>
 <h2>4. Routes (v2)</h2>
-<h3>Stap = 4 bytes</h3>
+<h3>Step = 4 bytes</h3>
 <pre><code>byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bit 5 STEP_VALUES (custom value) | bits 6-7 reserved (0)
 byte 1 : value   raw = 0: state 0 = curved, 1 = straight
                  raw = 1: aspect 0-255 (signal), angle 10-170 (servo), PWM 0-255, track 0-255 (sound, 0 = stop)
 byte 2 : wait time bits 0-7
 byte 3 : bits 0-5 = wait time bits 8-13 | bits 6-7 reserved (0)
 wait   : 14 bits of 0.1 s = 0 .. 1638.3 s (~27 min), time after this step before the next one</code></pre>
-<p>Voorbeeld: output 13, aspect 200, wachttijd 1638,3 s → <code>1D C8 FF 3F</code>.</p>
+<p>Example: output 13, aspect 200, wait time 1638.3 s → <code>1D C8 FF 3F</code>.</p>
 <ul><li>
-<b>De GUI kiest de waarde-soort per output-type.</b> Wissels, licht en relais krijgen curved/straight.
- Een 4-lampsein krijgt een aspect-nummer. Een servo krijgt curved/straight <b>of</b> een hoek, en mag
- meerdere keren in één route voorkomen (tussenstanden). PWM krijgt een waarde.
+<b>The GUI chooses the value kind per output type.</b> Turnouts, lights and relays get curved/straight.
+ A 4-aspect signal gets an aspect number. A servo gets curved/straight <b>or</b> an angle, and may
+ occur several times in one route (intermediate positions). PWM gets a value.
 </li><li>
-<b>Nieuwe stappen</b> krijgen 0,3 s wachttijd.
+<b>New steps</b> get a 0.3 s wait time.
 </li><li>
-<b>Timing uit</b> (board-instelling, §10): op de draad blijft een stap 4 bytes, maar de decoder bewaart
- alleen byte 0 en 1 (2 B per stap) en wacht na elke stap de vaste <code>delay</code> uit de board-instellingen.
- Bij teruglezen zijn byte 2 en 3 dan 0. De GUI verbergt de wachttijd-kolom.
+<b>Timing off</b> (board setting, §10): on the wire a step stays 4 bytes, but the decoder stores
+ only byte 0 and 1 (2 B per step) and after each step waits the fixed <code>delay</code> from the board settings.
+ When read back, byte 2 and 3 are 0. The GUI hides the wait time column.
 </li><li>
-<b>De decoder voert een stap zo uit:</b>
+<b>The decoder executes a step like this:</b>
 </li></ul>
 <pre><code>// raw == 0 -&gt; like a DCC command:   callbackInput( id, value, 0 )
 // raw == 1 -&gt; signal / PWM:         output[id].setVal( value )
 //             servo:                output[id].setPosition( value )   // new, moves to this angle
 // then wait &#x27;delay&#x27; x 100 ms before the next step</code></pre>
-<h3>Eigen waarden van een toggle- of absolute input (firmware 2026-11-14)</h3>
-<p>Een directe input (toggle of absoluut) mag in <b>zijn eigen route-slot</b> (zelfde index, <code>GET/SET_ROUTE</code>) precies <b>2 stappen</b> hebben, allebei met **bit 5 = <code>STEP_VALUES</code> (0x20)** in byte 0. Stap 0 geldt als de stand van de input 0 wordt (uit / curved), stap 1 als hij 1 wordt (aan / straight). Elke stap werkt als een route-stap: <code>raw = 0</code> zet curved / straight, <code>raw = 1</code> stuurt een hoek, aspect, PWM-waarde of track. De output-id van de stap wordt gebruikt (de GUI zet daar de <code>outputID</code> van de input in); de wachttijd telt niet.</p>
+<h3>Own values of a toggle or absolute input (firmware 2026-11-14)</h3>
+<p>A direct input (toggle or absolute) may have exactly <b>2 steps</b> in <b>its own route slot</b> (same index, <code>GET/SET_ROUTE</code>), both with **bit 5 = <code>STEP_VALUES</code> (0x20)** in byte 0. Step 0 applies when the state of the input becomes 0 (off / curved), step 1 when it becomes 1 (on / straight). Each step works like a route step: <code>raw = 0</code> sets curved / straight, <code>raw = 1</code> sends an angle, aspect, PWM value or track. The output id of the step is used (the GUI puts the <code>outputID</code> of the input there); the wait time does not count.</p>
 <ul><li>
-Dit geldt voor de knop, de analoge voorwaarde en gewone DCC-accessorycommando's op het adres van de input.
- DCC-extended stuurt zijn waarde nog steeds rechtstreeks door.
+This applies to the button, the analog condition and normal DCC accessory commands on the address of the input.
+ DCC-extended still passes its value straight through.
 </li><li>
-Zonder die 2 gemarkeerde stappen (een ander aantal, of stappen zonder 0x20 die van een oude route zijn
- blijven staan) werkt de input zoals altijd: de stand gaat naar de output.
+Without those 2 marked steps (another number, or steps without 0x20 that remained from an old route),
+ the input works as always: the state goes to the output.
 </li><li>
-De GUI stuurt voor een directe input zonder eigen waarden een <b>lege route</b>, zodat het slot leeg is. De 2
- stappen tellen mee in de route-pool. In het board-bestand staan ze als <code>&quot;values&quot;: [ {value, raw}, {value, raw} ]</code>.
+For a direct input without own values the GUI sends an <b>empty route</b>, so that the slot is empty. The 2
+ steps count towards the route pool. In the board file they are stored as <code>&quot;values&quot;: [ {value, raw}, {value, raw} ]</code>.
 </li></ul>
-<h3>Overdracht in stukken van maximaal 7 stappen</h3>
+<h3>Transfer in pieces of at most 7 steps</h3>
 <pre><code>GET_ROUTE  82 &lt;route&gt; &lt;first&gt;
 SET_ROUTE  8F &lt;len = 4 + 4n&gt; &lt;route&gt; &lt;total&gt; &lt;first&gt; &lt;step ...&gt;     (also the reply to GET_ROUTE)</code></pre>
 <ul><li>
-Een route van 16 stappen gaat in drie berichten: 7 + 7 + 2. Een lege route is één bericht met
+A route of 16 steps goes in three messages: 7 + 7 + 2. An empty route is one message with
  <code>total = 0</code>.
 </li><li>
-Bij <code>first = 0</code> begint de decoder de route opnieuw. Hij slaat de route op zodra <code>total</code> stappen
- binnen zijn.
+With <code>first = 0</code> the decoder starts the route again. It saves the route as soon as <code>total</code> steps
+ have arrived.
 </li><li>
-De GUI schrijft per input: <code>SET_INPUT_DATA</code>, dan <code>SET_ROUTE</code>(s), en leest daarna input en route terug.
+Per input the GUI writes: <code>SET_INPUT_DATA</code>, then <code>SET_ROUTE</code>(s), and then reads back the input and route.
 </li></ul>
 <h2>5. SERVO_LIVE (v2)</h2>
-<p><code>A2 &lt;output&gt; &lt;angle&gt;</code> beweegt de servo meteen naar <code>angle</code>. Er wordt <b>niets</b> opgeslagen en de state machine verandert niet.</p>
+<p><code>A2 &lt;output&gt; &lt;angle&gt;</code> moves the servo to <code>angle</code> immediately. <b>Nothing</b> is saved and the state machine does not change.</p>
 <ul><li>
-De GUI stuurt dit terwijl je een servo-slider versleept, als het vinkje <i>Live</i> aan staat. Een snelle
- reeks slider-waarden wordt samengevoegd tot alleen de laatste.
+The GUI sends this while you drag a servo slider, if the <i>Live</i> checkbox is on. A fast
+ series of slider values is merged into only the last one.
 </li><li>
-<b>Voorstel voor de decoder:</b> attach de servo, schrijf de hoek, en detach na ongeveer 1 s zonder nieuw
+<b>Proposal for the decoder:</b> attach the servo, write the angle, and detach after about 1 s without a new
  <code>SERVO_LIVE</code>.
 </li></ul>
-<h2>6. EEPROM-budget</h2>
-<p>Zie **<code>EEPROM.md</code>**: de indeling van v2, wat er in 1024 B past, en wat er nog te comprimeren valt. Kort: zonder <code>linked[8]</code> is een input 4 B, de routes hebben een pool van 762 B voor zich alleen, en met timing uit past 16 × 16 stappen intern (512 B). De recorder staat altijd in de externe I2C-EEPROM.</p>
-<h2>7. Wat de GUI doet bij v1-firmware (huidige stand)</h2>
+<h2>6. EEPROM budget</h2>
+<p>See **<code>EEPROM.md</code>**: the layout of v2, what fits in 1024 B, and what can still be compressed. In short: without <code>linked[8]</code> an input is 4 B, the routes have a pool of 762 B to themselves, and with timing off 16 × 16 steps fit internally (512 B). The recorder is always in the external I2C EEPROM.</p>
+<h2>7. What the GUI does with v1 firmware (current state)</h2>
 <ul><li>
-**Geen <code>HELLO</code>-antwoord** → protocol v1. Dat telt niet als fout.
+**No <code>HELLO</code> reply** → protocol v1. That does not count as an error.
 </li><li>
-<b>Routes:</b> maximaal 8 stappen, alleen curved/straight, vaste 0,5 s per stap. Ze worden opgeslagen in de
- <code>linked</code>-bytes van <code>SET_INPUT_DATA</code>. <code>GET/SET_ROUTE</code> worden niet verstuurd.
+<b>Routes:</b> at most 8 steps, only curved/straight, fixed 0.5 s per step. They are stored in the
+ <code>linked</code> bytes of <code>SET_INPUT_DATA</code>. <code>GET/SET_ROUTE</code> are not sent.
 </li><li>
-<b>Geen Live-servo</b>, en D0/D1 zijn gereserveerd.
+<b>No live servo</b>, and D0/D1 are reserved.
 </li><li>
-<b>Statusbalk:</b> "protocol v1 · routes: 8 steps, no times".
+<b>Status bar:</b> "protocol v1 · routes: 8 steps, no times".
 </li></ul>
 <h2>8. DCCnext (ArCoMoRa)</h2>
-<table><thead><tr><th>Poort</th><th>1–10</th><th>11–16</th><th>n.v.t.</th></tr></thead><tbody>
-<tr><td>Arduino-pin</td><td>D3–D12</td><td>A0–A5</td><td>D13, D0/D1 (USB), D2 (DCC)</td></tr>
+<table><thead><tr><th>Port</th><th>1–10</th><th>11–16</th><th>n/a</th></tr></thead><tbody>
+<tr><td>Arduino pin</td><td>D3–D12</td><td>A0–A5</td><td>D13, D0/D1 (USB), D2 (DCC)</td></tr>
 </tbody></table>
 <ul><li>
-PWM werkt op poort 1, 3, 4 en 9 (D3, D5, D6, D11).
+PWM works on port 1, 3, 4 and 9 (D3, D5, D6, D11).
 </li><li>
-D9/D10 geven geen PWM zolang de Servo-library actief is (timer 1). Dat geldt ook voor GPIOcore op een
- gewone Nano.
+D9/D10 give no PWM as long as the Servo library is active (timer 1). That also applies to GPIOcore on a
+ normal Nano.
 </li><li>
-Bron: het <a href="https://www.arcomora.com/wp-content/uploads/2024/09/ArsigdecRocRailUK.pdf">DCCNext-schema</a>
- en de <a href="https://www.arcomora.com/wp-content/uploads/2021/08/Mardec7UK.pdf">Mardec 7-handleiding</a>.
- ArCoMoRa noemt het schema "niet compleet", dus controleer het op je eigen board.
+Source: the <a href="https://www.arcomora.com/wp-content/uploads/2024/09/ArsigdecRocRailUK.pdf">DCCNext schematic</a>
+ and the <a href="https://www.arcomora.com/wp-content/uploads/2021/08/Mardec7UK.pdf">Mardec 7 manual</a>.
+ ArCoMoRa calls the schematic "not complete", so check it on your own board.
 </li><li>
-In de GUI zet je het vinkje <i>DCCnext board</i>. De pin-keuzes tonen dan "D3 · port 1", en D13 wordt rood.
+In the GUI you tick the <i>DCCnext board</i> checkbox. The pin choices then show "D3 · port 1", and D13 turns red.
 </li></ul>
-<h2>9. Decoder-firmware v2</h2>
-<p>De taken staan in <code>EEPROM.md</code> §4 en in de commits van <code>software/GPIOcore</code>. Samengevat: HELLO met bootvenster, board-instellingen (§10), route-pool met dynamische toewijzing, per-stap timing, interlocking, SERVO_LIVE en <code>setPosition()</code>, A6/A7 als analoge input, en pin 2 beschermen.</p>
-<p><b>Pin 2 (DCC-ingang), D13 (config-LED) en A7 (configknop)</b> mogen nooit als input of output. Een <code>SET_INPUT_DATA</code> of <code>SET_OUTPUT_DATA</code> met pin 2 krijgt <code>NACK 5</code> (ongeldige pin) en wordt niet opgeslagen. Hetzelfde geldt voor D0/D1 zolang de decoder geen bit0 in HELLO meldt, en voor A6/A7 als output of op een ander board dan de Nano.</p>
-<h2>10. Board-instellingen en naam (v2)</h2>
+<h2>9. Decoder firmware v2</h2>
+<p>The tasks are in <code>EEPROM.md</code> §4 and in the commits of <code>software/GPIOcore</code>. In short: HELLO with boot window, board settings (§10), route pool with dynamic allocation, per-step timing, interlocking, SERVO_LIVE and <code>setPosition()</code>, A6/A7 as analog input, and protecting pin 2.</p>
+<p><b>Pin 2 (DCC input), D13 (config LED) and A7 (config button)</b> must never be used as input or output. A <code>SET_INPUT_DATA</code> or <code>SET_OUTPUT_DATA</code> with pin 2 gets <code>NACK 5</code> (invalid pin) and is not saved. The same applies to D0/D1 as long as the decoder does not report bit0 in HELLO, and to A6/A7 as output or on a board other than the Nano.</p>
+<h2>10. Board settings and name (v2)</h2>
 <pre><code>host   -&gt; C0                                        (GET_BOARD, no payload)
 device -&gt; CF &lt;len&gt; &lt;type&gt; &lt;flags&gt; &lt;delay&gt; &lt;name ...&gt; (also SET_BOARD from host -&gt; ACK)
 len    : 4 + name length (name 0..16 ASCII bytes, no terminator)
@@ -290,69 +290,69 @@ flags  : bit0   = recorder enabled
                                                 other routes run in parallel)  &lt;- default
 delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3 = 0.3 s)</code></pre>
 <ul><li>
-<b>Naam.</b> De naam identificeert het board. De GUI bewaart per board een bestand <code>&lt;naam&gt;.json</code> (namen
- van in- en outputs plus alle instellingen). Bij verbinden leest hij <code>HELLO</code>, dan <code>GET_BOARD</code>, laadt hij
- <code>&lt;naam&gt;.json</code> als dat bestaat, en leest daarna <b>alles</b> van het board. Wat het board zegt wint; de
- namen komen uit het bestand. Een nieuw board heeft een lege naam; de GUI vraagt er dan om.
+<b>Name.</b> The name identifies the board. The GUI keeps a file <code>&lt;name&gt;.json</code> per board (names
+ of inputs and outputs plus all settings). When connecting it reads <code>HELLO</code>, then <code>GET_BOARD</code>, loads
+ <code>&lt;name&gt;.json</code> if it exists, and then reads <b>everything</b> from the board. What the board says wins; the
+ names come from the file. A new board has an empty name; the GUI then asks for one.
 </li><li>
-<b>Type.</b> Bepaalt welke pinnen bestaan. Op de Nano zijn A6/A7 (pin-index 20/21) alleen analoge
- inputs zonder pull-up: de firmware leest ze met <code>analogRead() &lt; 512</code> als "ingedrukt", en de knop heeft
- een externe pull-up van 10 kΩ nodig. Het type wordt door de GUI gezet; de firmware gebruikt het alleen
- om pinnen te controleren.
+<b>Type.</b> Determines which pins exist. On the Nano, A6/A7 (pin index 20/21) are analog-only
+ inputs without pull-up: the firmware reads them with <code>analogRead() &lt; 512</code> as "pressed", and the button
+ needs an external 10 kΩ pull-up. The type is set by the GUI; the firmware only uses it
+ to check pins.
 </li><li>
-<b>Recorder.</b> Vraagt <b>altijd</b> een externe I2C-EEPROM (24LC256) op A4 (SDA) / A5 (SCL). Recorder aan ⇒
- A4/A5 mogen niet als in- of output (<code>NACK 5</code>), en aanzetten wordt geweigerd (<code>NACK 5</code>) zolang A4/A5 in
- gebruik zijn. Recorder uit ⇒ een recorder-input doet niets en A4/A5 zijn vrij. HELLO-bit2 = recorder aan.
+<b>Recorder.</b> <b>Always</b> needs an external I2C EEPROM (24LC256) on A4 (SDA) / A5 (SCL). Recorder on ⇒
+ A4/A5 may not be used as input or output (<code>NACK 5</code>), and switching it on is refused (<code>NACK 5</code>) as long as A4/A5 are in
+ use. Recorder off ⇒ a recorder input does nothing and A4/A5 are free. HELLO bit2 = recorder on.
 </li><li>
-<b>Timing aan/uit omzetten.</b> De decoder zet de opgeslagen routes om (2 ↔ 4 B per stap). Past het niet
- (timing aan met te veel stappen), dan <code>NACK 4</code> en blijft de oude instelling staan.
+<b>Switching timing on/off.</b> The decoder converts the stored routes (2 ↔ 4 B per step). If it does not fit
+ (timing on with too many steps), the answer is <code>NACK 4</code> and the old setting stays.
 </li><li>
-<b>Interlocking.</b> Een route die door interlocking geweigerd wordt, wordt genegeerd (niet in een
- wachtrij gezet): dat beschermt tegen een verkeerde druk op de knop. "Een wissel bewegen" = de route
- bevat een output van het type servo, single pulse of double pulse.
+<b>Interlocking.</b> A route that is refused by interlocking is ignored (not put in a
+ queue): this protects against a wrong button press. "Moving a turnout" = the route
+ contains an output of type servo, single pulse or double pulse.
 </li><li>
-<b>NACK-redenen</b> in v2: 1 checksum, 2 te lang, 3 timeout, 4 vol (pool of route), 5 ongeldige pin.
+<b>NACK reasons</b> in v2: 1 checksum, 2 too long, 3 timeout, 4 full (pool or route), 5 invalid pin.
 </li></ul>
-<h3>10.1 Zo doet de firmware het (2026-11-12, afwijkingen en keuzes)</h3>
+<h3>10.1 How the firmware does it (2026-11-12, deviations and choices)</h3>
 <ul><li>
-<b>Standaardwaarden</b> nieuw board: Nano, recorder <b>uit</b>, timing <b>uit</b>, interlocking auto, delay 0,3 s.
- Een gemigreerd v1-board krijgt delay 0,5 s, zodat routes even snel blijven. De oude opname wordt gewist.
+<b>Default values</b> new board: Nano, recorder <b>off</b>, timing <b>off</b>, interlocking auto, delay 0.3 s.
+ A migrated v1 board gets a delay of 0.5 s, so that routes stay equally fast. The old recording is erased.
 </li><li>
-<b>SET_ROUTE schrijft meteen.</b> <code>first = 0</code> maakt de route meteen de nieuwe lengte (de routes erachter
- schuiven op, <code>NACK 4</code> als het niet past); elk volgend stuk wordt direct geschreven. Een afgebroken
- overdracht laat dus een half geschreven route achter. De GUI leest de route daarna altijd terug.
+<b>SET_ROUTE writes immediately.</b> <code>first = 0</code> makes the route its new length at once (the routes behind it
+ shift up, <code>NACK 4</code> if it does not fit); every following piece is written directly. An interrupted
+ transfer therefore leaves a half-written route behind. The GUI always reads the route back afterwards.
 </li><li>
-<b>Recorder</b> (sinds de I2C-wijziging): events van 8 B in de externe EEPROM vanaf adres 0. I2C draait alleen
- als de recorder aan staat; zonder EEPROM op de bus gebeurt er niets (Wire-time-out 3 ms).
+<b>Recorder</b> (since the I2C change): events of 8 B in the external EEPROM from address 0. I2C only runs
+ if the recorder is on; without an EEPROM on the bus nothing happens (Wire timeout 3 ms).
 </li><li>
-<b>Timing aanzetten</b> geeft elke bestaande stap de board-delay als wachttijd. De eerste stap start meteen
- (v1 wachtte eerst 0,5 s). Wachttijden lopen af op de 50 ms-tik van de inputs.
+<b>Switching timing on</b> gives every existing step the board delay as wait time. The first step starts immediately
+ (v1 waited 0.5 s first). Wait times run down on the 50 ms tick of the inputs.
 </li><li>
-<b>Interlocking:</b> een route telt als lopend tot de wachttijd na de laatste stap voorbij is.
+<b>Interlocking:</b> a route counts as running until the wait time after the last step has passed.
 </li><li>
-<b>Nog open:</b> <code>setPosition()</code>/<code>SERVO_LIVE</code> zetten het unifrog-relais niet om; <code>SET_OUTPUT_DATA</code> zet geen
- <code>pinMode</code> voor nieuw ingestelde pinnen (was in v1 ook zo); een output op D0/D1 wordt tijdens het
- bootvenster niet tegengehouden.
+<b>Still open:</b> <code>setPosition()</code>/<code>SERVO_LIVE</code> do not switch the unifrog relay; <code>SET_OUTPUT_DATA</code> does not set
+ <code>pinMode</code> for newly configured pins (this was also so in v1); an output on D0/D1 is not stopped during the
+ boot window.
 </li></ul>
-<h2>11. Configknop (A7), config-LED (D13) en servo's inleren (firmware, 2026-11-13)</h2>
+<h2>11. Config button (A7), config LED (D13) and teaching servos (firmware, 2026-11-13)</h2>
 <ul><li>
-<b>A7</b> = configknop: drukknop naar GND, met een <b>externe</b> pull-up van 10 kΩ naar 5 V (A7 heeft geen interne
- pull-up). De firmware leest hem met <code>analogRead()</code> met hysterese: ingedrukt onder 200, los boven 800.
+<b>A7</b> = config button: push button to GND, with an <b>external</b> 10 kΩ pull-up to 5 V (A7 has no internal
+ pull-up). The firmware reads it with <code>analogRead()</code> with hysteresis: pressed below 200, released above 800.
 </li><li>
-<b>D13</b> = LED: aan = normaal, knippert = configmodus.
+<b>D13</b> = LED: on = normal, flashing = config mode.
 </li><li>
-Een output of input die D13 of A7 gebruikt, wordt bij het opstarten <i>not in use</i> gezet; <code>SET_*_DATA</code> met
- D13/A7 krijgt <code>NACK 5</code>.
+An output or input that uses D13 or A7 is set to <i>not in use</i> at start-up; <code>SET_*_DATA</code> with
+ D13/A7 gets <code>NACK 5</code>.
 </li></ul>
-<table><thead><tr><th>Actie</th><th>Gevolg</th></tr></thead><tbody>
-<tr><td>A7 2 s ingedrukt</td><td>configmodus aan / uit</td></tr>
-<tr><td>A7 kort (in configmodus)</td><td>volgende servo selecteren; die zet om, zodat je ziet welke het is</td></tr>
-<tr><td>Loc <b>9999</b>, rijknop + richting</td><td>geselecteerde servo beweegt (1–10° per 100 ms)</td></tr>
-<tr><td>Loc 9999 <b>F1</b></td><td>huidige hoek opslaan als <i>curved</i> (<code>servoMin</code>)</td></tr>
-<tr><td>Loc 9999 <b>F2</b></td><td>huidige hoek opslaan als <i>straight</i> (<code>servoMax</code>)</td></tr>
-<tr><td>Loc 9999 <b>F3</b></td><td>geselecteerde servo omzetten</td></tr>
-<tr><td>Loc 9999 <b>F4</b></td><td>volgende servo</td></tr>
+<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody>
+<tr><td>A7 pressed for 2 s</td><td>config mode on / off</td></tr>
+<tr><td>A7 short press (in config mode)</td><td>select next servo; it toggles, so you can see which one it is</td></tr>
+<tr><td>Loc <b>9999</b>, speed knob + direction</td><td>selected servo moves (1–10° per 100 ms)</td></tr>
+<tr><td>Loc 9999 <b>F1</b></td><td>save current angle as <i>curved</i> (<code>servoMin</code>)</td></tr>
+<tr><td>Loc 9999 <b>F2</b></td><td>save current angle as <i>straight</i> (<code>servoMax</code>)</td></tr>
+<tr><td>Loc 9999 <b>F3</b></td><td>toggle the selected servo</td></tr>
+<tr><td>Loc 9999 <b>F4</b></td><td>next servo</td></tr>
 </tbody></table>
-<p>Zelfde bediening als de OS-Servo-Decoder. De hoeken staan meteen in de EEPROM; de GUI leest ze bij het verbinden terug.</p>
-<p><b>Servo's bij opstarten:</b> één voor één, elke 500 ms de volgende. Elke servo krijgt ~500 ms zijn opgeslagen stand (curved of straight) en wordt daarna losgekoppeld. Een eigen hoek (route-stap, live) wordt niet onthouden.</p>
+<p>Same operation as the OS-Servo-Decoder. The angles are in the EEPROM immediately; the GUI reads them back when connecting.</p>
+<p><b>Servos at start-up:</b> one by one, the next one every 500 ms. Each servo gets its stored position (curved or straight) for ~500 ms and is then detached. An own angle (route step, live) is not remembered.</p>
 </body></html>

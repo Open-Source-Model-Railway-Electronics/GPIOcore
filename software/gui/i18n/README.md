@@ -1,67 +1,67 @@
-# Vertalingen toevoegen
+# Adding translations
 
-De GUI is in het Engels geschreven. Een vertaling bestaat uit twee delen, die je los van elkaar kunt maken.
+The GUI is written in English. A translation consists of two parts, which you can make independently of each other.
 
-| Wat | Waar | Hoe vertalen |
+| What | Where | How to translate |
 |---|---|---|
-| **Korte schermteksten** (knoppen, labels, menu's, meldingen) | `i18n/gpiocore_<taal>.ts` | Qt Linguist (`C:\Qt\6.10.1\mingw_64\bin\linguist.exe`) |
-| **Uitlegteksten** achter de (i)-knopjes en *Help → Getting started* | `i18n/info/<taal>/<onderwerp>.html` | Een gewone teksteditor (HTML) |
+| **Short UI texts** (buttons, labels, menus, messages) | `i18n/gpiocore_<language>.ts` | Qt Linguist (`C:\Qt\6.10.1\mingw_64\bin\linguist.exe`) |
+| **Explanation texts** behind the (i) buttons and *Help → Getting started* | `i18n/info/<language>/<topic>.html` | A plain text editor (HTML) |
 
-`<taal>` is de ISO-code van de taal: `nl`, `de`, `fr`, `en`, enzovoort.
+`<language>` is the ISO code of the language: `nl`, `de`, `fr`, `en`, and so on.
 
-## Een nieuwe taal toevoegen, bijvoorbeeld Duits (`de`)
+## Adding a new language, for example German (`de`)
 
-### 1. Uitlegteksten
+### 1. Explanation texts
 
-1. Kopieer de map `i18n/info/en` naar `i18n/info/de`.
-2. Vertaal de `.html`-bestanden. Laat de bestandsnamen ongewijzigd.
+1. Copy the folder `i18n/info/en` to `i18n/info/de`.
+2. Translate the `.html` files. Leave the file names unchanged.
 
-Een bestand dat (nog) ontbreekt, valt automatisch terug op het Engels. Je kunt dus per onderwerp vertalen.
+A file that is (still) missing automatically falls back to English. So you can translate topic by topic.
 
-**Testen zonder opnieuw te bouwen:** zet de map ook naast het programma (`<map van GPIOcoreGUI.exe>\i18n\info\de\`).
-Bestanden daar gaan voor op de ingebouwde. Start het programma opnieuw en klik op een (i).
+**Testing without rebuilding:** also put the folder next to the program (`<folder of GPIOcoreGUI.exe>\i18n\info\de\`).
+Files there take priority over the built-in ones. Restart the program and click an (i).
 
-### 2. Schermteksten
+### 2. UI texts
 
-1. Voeg de taal toe in `CMakeLists.txt`:
+1. Add the language in `CMakeLists.txt`:
    ```cmake
    set(GPIOCORE_LANGUAGES nl de CACHE STRING "...")
    ```
-   Je kunt ook bij het configureren `-DGPIOCORE_LANGUAGES="nl;de"` meegeven.
-2. Maak of ververs het `.ts`-bestand. In Qt Creator: *Build → Run CMake*, en daarna het target
-   **update_translations** bouwen. Op de command line:
+   You can also pass `-DGPIOCORE_LANGUAGES="nl;de"` when configuring.
+2. Create or refresh the `.ts` file. In Qt Creator: *Build → Run CMake*, and then build the target
+   **update_translations**. On the command line:
    ```bash
-   cmake --build <build-map> --target update_translations
+   cmake --build <build-folder> --target update_translations
    ```
-   Daarna staan alle teksten in `i18n/gpiocore_de.ts`.
-3. Open dat bestand in **Qt Linguist**. Vertaal per tekst en zet hem op "klaar" (vinkje), en sla op.
-4. Bouw het programma opnieuw. Het `.qm`-bestand wordt automatisch gemaakt en ingebouwd.
+   After that all texts are in `i18n/gpiocore_de.ts`.
+3. Open that file in **Qt Linguist**. Translate text by text and mark it as "done" (check mark), and save.
+4. Build the program again. The `.qm` file is created and built in automatically.
 
-### 3. Taal kiezen
+### 3. Choosing the language
 
-Kies in het programma *View → Language → Deutsch (de)* en start het programma opnieuw. Bij
-*Automatic* volgt het de taal van Windows.
+In the program choose *View → Language → Deutsch (de)* and restart the program. With
+*Automatic* it follows the language of Windows.
 
-## Tips voor vertalers
+## Tips for translators
 
-- **`%1`, `%2`** zijn plekken waar het programma een getal of naam invult. Laat ze staan; de volgorde mag
-  veranderen.
-- **`&File`**: de `&` maakt de volgende letter de sneltoets (Alt+F). Zet hem op een handige letter in jouw taal.
-- **Teksten met de context `Gpio`** zijn type-namen ("Servo", "Double pulse") en pinomschrijvingen. Houd ze kort,
-  want ze staan ook op de blokken in het canvas.
-- **Modelspoortermen:** gebruik de woorden die op forums in jouw taal gebruikelijk zijn. Een "frog" is in het
-  Nederlands het **puntstuk**, niet "kikker".
-- **Nieuwe teksten na een update:** bouw opnieuw `update_translations`. Bestaande vertalingen blijven staan;
-  nieuwe teksten verschijnen in Linguist als "onvertaald".
+- **`%1`, `%2`** are places where the program fills in a number or name. Leave them in place; the order may
+  change.
+- **`&File`**: the `&` makes the next letter the shortcut key (Alt+F). Put it on a convenient letter in your language.
+- **Texts with the context `Gpio`** are type names ("Servo", "Double pulse") and pin descriptions. Keep them short,
+  because they are also shown on the blocks in the canvas.
+- **Model railway terms:** use the words that are common on forums in your language. A "frog" is in
+  Dutch the **puntstuk**, not "kikker".
+- **New texts after an update:** run `update_translations` again. Existing translations stay;
+  new texts appear in Linguist as "unfinished".
 
 ## Status (2026-11-13)
 
-| Taal | Schermteksten | Uitlegteksten |
+| Language | UI texts | Explanation texts |
 |---|---|---|
-| English (`en`) | bron (441 teksten) | volledig (21) |
-| Nederlands (`nl`), Deutsch (`de`), Français (`fr`), Español (`es`), Italiano (`it`) | 441 van 441 vertaald | volledig (21) |
-| `pl` `cs` `da` `nb` `sv` `hu` `pt` | 441 van 441 vertaald | nog niet (valt terug op Engels) |
+| English (`en`) | source (441 texts) | complete (21) |
+| Nederlands (`nl`), Deutsch (`de`), Français (`fr`), Español (`es`), Italiano (`it`) | 441 of 441 translated | complete (21) |
+| `pl` `cs` `da` `nb` `sv` `hu` `pt` | 441 of 441 translated | not yet (falls back to English) |
 
-Termen zijn nog **niet** op forums gecontroleerd. Afwijkingen van de bestaande handleidingen: NL puntstuk (niet
-"hartpunt"), SV hjärtstycke, HU szív, NB sporveksel, en ES/IT/PT/NB een eigen woord voor frog (corazón, cuore, coração,
-hjertestykke). In het Nederlands heet de print in de GUI "board" (het product heet "GPIOcore board").
+Terms have **not** yet been checked on forums. Deviations from the existing manuals: NL puntstuk (not
+"hartpunt"), SV hjärtstycke, HU szív, NB sporveksel, and ES/IT/PT/NB a word of their own for frog (corazón, cuore, coração,
+hjertestykke). In Dutch the circuit board is called "board" in the GUI (the product is called "GPIOcore board").

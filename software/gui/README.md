@@ -1,9 +1,9 @@
 # GPIOcore Configurator (Qt)
 
-Een desktop-GUI om een GPIOcore-board (Arduino Uno/Nano) via de seriële poort te configureren: outputs,
-inputs, routes en presets. Daarnaast is er een pinmap met conflictcontrole en een serial log.
+A desktop GUI to configure a GPIOcore board (Arduino Uno/Nano) over the serial port: outputs,
+inputs, routes and presets. It also has a pin map with conflict checking and a serial log.
 
-## Openen en bouwen
+## Opening and building
 
 **Qt Creator**: *File → Open File or Project* → `CMakeLists.txt` → kit *Desktop Qt 6.10.1 MinGW 64-bit*
 → Run.
@@ -15,67 +15,67 @@ export PATH="/c/Qt/Tools/mingw1310_64/bin:/c/Qt/Tools/CMake_64/bin:/c/Qt/Tools/N
 cmake -S . -B build -G Ninja -DCMAKE_PREFIX_PATH=C:/Qt/6.10.1/mingw_64 && cmake --build build && (cd build && ctest)
 ```
 
-Benodigde Qt-modules: Widgets, SerialPort, Test. De code is ook voor Qt 5.12+ geschreven, maar daarmee
-nog niet getest.
+Required Qt modules: Widgets, SerialPort, Test. The code is also written for Qt 5.12+, but has not
+been tested with it yet.
 
-## Gebruik
+## Usage
 
-1. Kies de poort en klik **Connect**. De GUI wacht op het boot-bericht en meldt zich dan aan met
-   `HELLO` (zie `../../PROTOCOL.md`). Een v2-decoder antwoordt met wat hij kan; de huidige firmware
-   antwoordt niet, en dan werkt de GUI in v1-modus. De statusbalk toont welke van de twee het is.
-   Daarna leest de GUI alle inputs, outputs en routes in.
-2. Tab **Configuration**: in het midden de inputs (links) en outputs (rechts) met de verbindingen.
-   - **Klik op een input**: de input-instellingen schuiven **links** in.
-   - **Klik op een output**: de output-instellingen schuiven **rechts** in.
-   - Er is steeds één paneel open; **Esc** of ✕ sluit het.
-   - **Sleep een output op een input** om ze te koppelen.
-   - Elke gekoppelde input heeft een eigen kleur. Een output neemt de kleur over van de input die hem
-     bedient; directe inputs gaan daarbij voor routes. Extra stipjes tonen de andere inputs.
-   - **Directe controle**: één output per input, *Toggle* of *Absoluut*. Slepen vervangt de output.
-   - **Route**: elke gesleepte output wordt de volgende stap, tot maximaal 16 per route en binnen de
-     pool van het board. Dezelfde output mag vaker voorkomen, bijvoorbeeld een servo met tussenstanden.
-     Een route start bij het **indrukken** van de knop, of bij **elk** DCC-commando voor het adres
-     (straight én curved). Daar valt niets te kiezen. Per stap stel je in het paneel in:
-     - de waarde: curved/straight, een aspect (sein), een hoek van 10°–170° (servo) of een PWM-waarde;
-     - de **wachttijd** in stappen van 0,1 s (standaard 0,3 s, maximaal 1638,3 s).
+1. Choose the port and click **Connect**. The GUI waits for the boot message and then logs in with
+   `HELLO` (see `../../PROTOCOL.md`). A v2 decoder answers with what it can do; the current firmware
+   does not answer, and then the GUI works in v1 mode. The status bar shows which of the two it is.
+   After that the GUI reads all inputs, outputs and routes.
+2. Tab **Configuration**: in the middle are the inputs (left) and outputs (right) with the connections.
+   - **Click an input**: the input settings slide in from the **left**.
+   - **Click an output**: the output settings slide in from the **right**.
+   - One panel is open at a time; **Esc** or ✕ closes it.
+   - **Drag an output onto an input** to link them.
+   - Every linked input has its own colour. An output takes over the colour of the input that
+     controls it; direct inputs take priority over routes. Extra dots show the other inputs.
+   - **Direct control**: one output per input, *Toggle* or *Absolute*. Dragging replaces the output.
+   - **Route**: every dragged output becomes the next step, up to 16 per route and within the
+     pool of the board. The same output may occur more than once, for example a servo with intermediate positions.
+     A route starts when the button is **pressed**, or on **every** DCC command for the address
+     (straight and curved). There is nothing to choose there. Per step you set in the panel:
+     - the value: curved/straight, an aspect (signal), an angle of 10°–170° (servo) or a PWM value;
+     - the **wait time** in steps of 0.1 s (default 0.3 s, maximum 1638.3 s).
 
-     Op de draad staat een label, bijvoorbeeld "1 S", "3 A2" of "5 45°".
-   - Verwijderen: klik op een draad en druk op **Delete**, of gebruik het rechtsklikmenu.
-   - Er kan maar **één recorder** zijn.
-   - Er staat altijd minstens één stap-regel open. Bij een lege route kies je daar meteen een output.
-     Verwijder een stap met de **prullenbak** achter de regel.
-   - De **(i)-knopjes** leggen alles uitgebreid uit, voor beginners: recorder, feedback,
-     electrofrog/unifrog, servo, pinnen, …. *Help → Getting started* (F1) is een stappenplan voor nieuwe
-     gebruikers.
-   - *View → Language* kiest de taal. Hoe je een vertaling toevoegt, staat in `i18n/README.md`.
-3. Bij een output:
-   - **Frog**: kies *geen*, *electrofrog* (2 relais) **of** *unifrog* (1 relais). Ze sluiten elkaar uit.
-   - **Servo**: zet *Live* aan, dan beweegt de servo mee terwijl je de slider versleept. Dat vraagt een
-     v2-decoder.
-   - **4-lampsein**: het aspect komt van DCC of uit een route. Het board onthoudt het laatste aspect in
-     EEPROM, dus er is geen start-aspect.
-4. **Live opslaan.** Elke wijziging gaat na 0,35 s vanzelf naar het board en wordt teruggelezen.
-   *Write changes* bestaat alleen nog in het menu *Board*.
-5. **Board** in de toolbar: Arduino Uno, Arduino Nano (A6/A7 als analoge input), DCCnext (poortnummers,
-   geen D13) of Jack of all trades. *Board settings…*: naam, recorder aan/uit, wachttijd per stap aan/uit
-   (uit = vaste wachttijd, halve geheugenruimte), route-interlocking (uit / aan / automatisch).
-6. **Board-bestanden.** Elk board heeft een naam (op het board zelf). De GUI houdt per board een bestand
-   `Documenten/GPIOcore/boards/<naam>.json` bij met alle instellingen plus de namen van in- en outputs.
-   Bij verbinden: naam lezen → bestand laden (namen) → alles van het board lezen (het board wint).
-   Offline: *File → New board* of *Open*; dat bestand is leesbaar JSON met uitleg in het veld `about`, zodat
-   je het ook met de hand of door een AI kunt laten invullen.
-7. **Eenvoudig / expert.** Standaard eenvoudig: geen bytes, geen serial log, geen protocol-details.
-   *View → Expert mode* zet ze terug. De presets staan altijd op de tweede werkbalkregel. *View → Show unused inputs and outputs*
-   toont ook de ongebruikte blokken; anders voeg je ze toe met **+ Add input / + Add output** en haal je ze
-   weg met **Remove** in het paneel.
-8. **Firmware flashen:** *Board → Flash firmware…* (avrdude zit in `tools/avrdude`). Standaardbestand:
+     There is a label on the wire, for example "1 S", "3 A2" or "5 45°".
+   - Deleting: click a wire and press **Delete**, or use the right-click menu.
+   - There can be only **one recorder**.
+   - At least one step row is always open. For an empty route you choose an output there straight away.
+     Delete a step with the **trash can** behind the row.
+   - The **(i) buttons** explain everything in detail, for beginners: recorder, feedback,
+     electrofrog/unifrog, servo, pins, …. *Help → Getting started* (F1) is a step-by-step guide for new
+     users.
+   - *View → Language* chooses the language. How to add a translation is described in `i18n/README.md`.
+3. For an output:
+   - **Frog**: choose *none*, *electrofrog* (2 relays) **or** *unifrog* (1 relay). They exclude each other.
+   - **Servo**: switch *Live* on, and the servo moves along while you drag the slider. That needs a
+     v2 decoder.
+   - **4-aspect signal**: the aspect comes from DCC or from a route. The board remembers the last aspect in
+     EEPROM, so there is no start aspect.
+4. **Live saving.** Every change goes to the board by itself after 0.35 s and is read back.
+   *Write changes* now only exists in the *Board* menu.
+5. **Board** in the toolbar: Arduino Uno, Arduino Nano (A6/A7 as analog input), DCCnext (port numbers,
+   no D13) or Jack of all trades. *Board settings…*: name, recorder on/off, wait time per step on/off
+   (off = fixed wait time, half the memory space), route interlocking (off / on / automatic).
+6. **Board files.** Every board has a name (on the board itself). The GUI keeps a file per board
+   `Documents/GPIOcore/boards/<name>.json` with all settings plus the names of inputs and outputs.
+   When connecting: read the name → load the file (names) → read everything from the board (the board wins).
+   Offline: *File → New board* or *Open*; that file is readable JSON with an explanation in the field `about`, so that
+   you can also fill it in by hand or let an AI do it.
+7. **Simple / expert.** Simple by default: no bytes, no serial log, no protocol details.
+   *View → Expert mode* brings them back. The presets are always on the second toolbar row. *View → Show unused inputs and outputs*
+   also shows the unused blocks; otherwise you add them with **+ Add input / + Add output** and remove them
+   with **Remove** in the panel.
+8. **Flashing firmware:** *Board → Flash firmware…* (avrdude is in `tools/avrdude`). Default file:
    `release/GPIOcore.hex`.
-   `examples/routes-demo.json` is een voorbeeld met routes, een sein en servo's.
+   `examples/routes-demo.json` is an example with routes, a signal and servos.
 
-Met **Demo** verbind je met een ingebouwde simulatie van een **v2-decoder** (16 stappen, pool 256,
-Live-servo). Zo kun je de GUI zonder hardware proberen.
+With **Demo** you connect to a built-in simulation of a **v2 decoder** (16 steps, pool 256,
+live servo). This way you can try the GUI without hardware.
 
-Startopties (handig voor tests en documentatie):
+Start options (handy for tests and documentation):
 
 ```text
 GPIOcoreGUI --demo                      start connected to the simulator (protocol v2)
@@ -84,40 +84,40 @@ GPIOcoreGUI --open examples/routes-demo.json --demo
 GPIOcoreGUI --demo --preset 2 --screenshot out.png --tab outputs --select 1   (tab: outputs, inputs, pins)
 ```
 
-**Hardware-afspraak voor inputs:** de pinnen staan op `INPUT_PULLUP`, dus een knop of contact gaat naar
-GND. Indrukken geeft een dalende flank, loslaten een stijgende.
-- *Toggle* schakelt bij het indrukken (dalende flank).
-- *Absolute* volgt het niveau: ingedrukt = 0.
-- *Route* start bij het indrukken, of bij elk DCC-commando (richting 0 en 1).
+**Hardware convention for inputs:** the pins are set to `INPUT_PULLUP`, so a button or contact goes to
+GND. Pressing gives a falling edge, releasing a rising edge.
+- *Toggle* switches when pressed (falling edge).
+- *Absolute* follows the level: pressed = 0.
+- *Route* starts when pressed, or on every DCC command (direction 0 and 1).
 
-## Structuur
+## Structure
 
-| Bestand                    | Rol                                                                                       |
+| File                       | Role                                                                                      |
 |----------------------------|-------------------------------------------------------------------------------------------|
-| `src/protocol.*`           | framing (opcode/lengte-nibble, checksum, ACK/NACK zonder checksum)                        |
-| `src/gpioconfig.*`         | output/input-model, union-velden (little endian), bitfield-truncatie, JSON, pinnen        |
-| `src/connections.*`        | koppel-logica input → output(s): direct/route, stappen, kleurbron per output              |
-| `src/connectionview.*`     | het canvas: blokken, draden, slepen, Delete en het rechtsklikmenu                         |
-| `src/infotexts.*`          | teksten van de (i)-knopjes en de popup                                                    |
-| `src/devicelink.*`         | request/response-queue, timeouts, retries, drain van extra ACK's, legacy 0x2D-detectie    |
-| `src/simulateddevice.*`    | firmware-simulator (spiegel van `Transceiver.cpp` + `messageParser.cpp`)                  |
-| `src/mainwindow.*`         | hoofdvenster, dirty-tracking, waarschuwingen                                              |
-| `src/outputeditor.*`, `src/inputeditor.*`, `src/pinmapview.*` | editors en pinmap                                      |
-| `tests/`                   | unit tests (protocol, model, link ↔ simulator) en GUI-tests                               |
+| `src/protocol.*`           | framing (opcode/length nibble, checksum, ACK/NACK without checksum)                       |
+| `src/gpioconfig.*`         | output/input model, union fields (little endian), bitfield truncation, JSON, pins         |
+| `src/connections.*`        | linking logic input → output(s): direct/route, steps, colour source per output            |
+| `src/connectionview.*`     | the canvas: blocks, wires, dragging, Delete and the right-click menu                      |
+| `src/infotexts.*`          | texts of the (i) buttons and the popup                                                    |
+| `src/devicelink.*`         | request/response queue, timeouts, retries, draining of extra ACKs, legacy 0x2D detection  |
+| `src/simulateddevice.*`    | firmware simulator (mirror of `Transceiver.cpp` + `messageParser.cpp`)                    |
+| `src/mainwindow.*`         | main window, dirty tracking, warnings                                                     |
+| `src/outputeditor.*`, `src/inputeditor.*`, `src/pinmapview.*` | editors and pin map                                    |
+| `tests/`                   | unit tests (protocol, model, link ↔ simulator) and GUI tests                              |
 
-Zie `../../REVIEW_GPIOcore.md` voor de firmware-bevindingen. De firmware gebruikt sinds de fixes
-(2026-11-09) `OPCODE_SET_OUTPUT_DATA` = 0x2E (14 bytes). Oude firmware (0x2D, 13 bytes, `data[3]` gaat
-verloren) wordt automatisch herkend; de GUI toont dan een legacy-melding. Demo bootst de gefixte firmware
-na; `SimulatedDevice::Options::oldFirmware()` bootst de oude na (gebruikt in de tests).
+See `../../REVIEW_GPIOcore.md` for the firmware findings. Since the fixes (2026-11-09) the firmware uses
+`OPCODE_SET_OUTPUT_DATA` = 0x2E (14 bytes). Old firmware (0x2D, 13 bytes, `data[3]` is lost)
+is recognised automatically; the GUI then shows a legacy message. Demo imitates the fixed firmware;
+`SimulatedDevice::Options::oldFirmware()` imitates the old one (used in the tests).
 
-## Bijgewerkt 2026-11-13
+## Updated 2026-11-13
 
-- **Modusknoppen** bovenin: ● Configure (rood kader, echt board, live opslaan), ● Simulate (geel, je eigen
-  configuratie op een gesimuleerd board, met input-knoppen), ● Live test (groen, input-knoppen op een echt board).
-- **Panelen** input links en output rechts staan altijd in beeld (splitter, breedte wordt onthouden).
-- **Pinnen**: bezette pinnen staan rood in de lijst met wie ze gebruikt. Kies je er een, dan wordt de vorige
-  gebruiker *not in use*. D2, D13 (config-LED) en A7 (configknop) zijn nooit beschikbaar.
-- **Presets** rekent de GUI zelf uit (*Board → Apply a preset*, Expert mode); ze werken ook offline.
+- **Mode buttons** at the top: ● Configure (red frame, real board, live saving), ● Simulate (yellow, your own
+  configuration on a simulated board, with input buttons), ● Live test (green, input buttons on a real board).
+- **Panels** input on the left and output on the right are always in view (splitter, width is remembered).
+- **Pins**: occupied pins are red in the list with who uses them. If you choose one, the previous
+  user becomes *not in use*. D2, D13 (config LED) and A7 (config button) are never available.
+- **Presets** are calculated by the GUI itself (*Board → Apply a preset*, Expert mode); they also work offline.
 - **Routes**: *Starts on DCC* = any command / straight only / curved only.
-- **Thema**: *View → Theme* (automatisch, licht, donker). Lampkleuren van een sein in het board-bestand.
+- **Theme**: *View → Theme* (automatic, light, dark). Lamp colours of a signal in the board file.
 - **Help**: *Help → Getting started*, *Configure, simulate and live test*, *Board settings*, *Config button*.
