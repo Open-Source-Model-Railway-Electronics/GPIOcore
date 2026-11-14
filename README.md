@@ -39,7 +39,7 @@ with a bell, lights that come on at dusk, a water crane, and more).
 - **Turnouts:** servos (with adjustable speed), coil turnouts (two coils, short pulse), stall motors.
   It can also switch the **frog** power with a relay, so locos never stall on the turnout.
 - **Lights:** on/off, blinking, level crossing lights, a flickering fireplace, a fluorescent tube that
-  starts up, welding flashes, a lamp at a set brightness.
+  starts up, welding flashes, a lamp at a set brightness that can fade slowly (day and night).
 - **Signals:** up to four lamps per signal.
 - **Sound:** plays MP3 files (bell, announcement, whistle) with a DFPlayer Mini module.
 - **Routes:** one button press or one DCC command does several things one after another, with wait times
@@ -126,7 +126,7 @@ Click an output and choose its **Type**:
 | **Single flashing / Double flashing** | blinking light(s) | 1 / 2 |
 | **Swing light** | level crossing lights, two lamps blinking in turn | 2 |
 | **Fireplace / TL tube / Welder** | light effects | 1–2 |
-| **PWM** | a lamp at a set brightness | 1 |
+| **PWM** | a lamp at a set brightness; with a **Fade time** it changes slowly (day / night) | 1 |
 | **4-aspect signal** | a light signal with up to four lamps | 4 |
 | **Sound effect** | plays MP3 tracks on a DFPlayer Mini (see chapter 10) | D1 |
 

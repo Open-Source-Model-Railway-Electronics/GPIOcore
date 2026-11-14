@@ -33,6 +33,7 @@ Quick reminder:
 13. [Playing sounds](#13-playing-sounds)
 14. [Light effects](#14-light-effects)
 15. [A signal](#15-a-signal)
+16. [Day and night: lights that fade slowly](#16-day-and-night-lights-that-fade-slowly)
 
 ---
 
@@ -347,9 +348,7 @@ Every output can be a little light show, controlled like any other output (butto
 | **Fireplace** | flickering fire or a campfire (needs PWM pins: D3, D5, D6, D9, D10, D11) | 2 |
 | **TL tube** | a fluorescent tube that flickers a few times before it stays on | 1 (PWM) |
 | **Welder** | random blue welding flashes in a workshop | 1 |
-| **PWM** | a lamp at a fixed brightness | 1 (PWM) |
-
-> Fading (slowly dimming lights, e.g. for day and night) is **not** available yet.
+| **PWM** | a lamp at a set brightness, which can **fade** slowly to a new brightness | 1 (PWM) |
 
 ---
 
@@ -360,3 +359,31 @@ Every output can be a little light show, controlled like any other output (butto
 **In the program:** output type **4-aspect signal**, lamps on pins A–D. The command station sends the
 aspect with **DCC extended**, or a route step sets it (click the aspect picker next to the value and tick
 the lamps). Lamps can also flash; set the blink rate once per signal.
+
+---
+
+## 16. Day and night: lights that fade slowly
+
+**What it does:** the layout lighting slowly goes from day to night and back, like a sunset, for example
+in one minute.
+
+**You need:** LED strips or lamps with a **MOSFET module** (an Arduino pin can't power a strip by itself), on
+a PWM pin (D3, D5, D6, D9, D10, D11). One output per group: daylight, evening light, street lights.
+
+**In the program:**
+
+1. Output type **PWM**, set the **Fade time**: the time a full change from off to fully on takes, e.g.
+   60 s. A half change takes half that time.
+2. An input (a switch, a button or a DCC address) with **Direct control** and **Custom values**:
+   *Off / curved* = 0, *On / straight* = 255. Every change now fades instead of jumping.
+3. For a real evening, use a **route** that sets several outputs to different brightnesses with wait times
+   in between:
+
+| Step | Output | Value | Wait after |
+|---|---|---|---|
+| 1 | Daylight | PWM 80 (dusk) | 30 s |
+| 2 | Street lights | PWM 255 | 20 s |
+| 3 | Daylight | PWM 0 (night) | 0 s |
+
+A second route does the morning the other way round. With an LDR (example 11) the room light can even
+start the evening by itself.
