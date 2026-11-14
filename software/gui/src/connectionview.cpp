@@ -144,7 +144,7 @@ qreal ConnectionView::flashLevel(qint64 t) const
 bool ConnectionView::liveValueInput(int i) const
 {
     const InputConfig &c = m_board.inputs[i];
-    if (!isDirectType(c.type))
+    if (!isDirectType(c.type) || c.hasCustomValues())   // custom values: the normal press buttons send them
         return false;
     const quint8 t = m_board.outputs[c.outputId].type;
     return t == FourToneSignal || t == Pwm;

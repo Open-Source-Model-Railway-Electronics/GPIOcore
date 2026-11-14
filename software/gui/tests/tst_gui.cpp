@@ -241,6 +241,58 @@ private slots:
         QCOMPARE(view->board().inputs[4].route.size(), 2);
     }
 
+    void liveCustomValuesSignalAndPwm()
+    {
+        // a direct input with custom values on a signal / PWM output: the canvas shows the normal
+        // press buttons (no DCC extended value button) and they send the two values
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+
+        OutputConfig sig = view->board().outputs[5];
+        sig.type = FourToneSignal; sig.data = { { 0, 0, 0, 0 } };
+        emit oed->changed(5, sig);
+        OutputConfig pwm = view->board().outputs[6];
+        pwm.type = Pwm; pwm.data = { { 128, 0, 0, 0 } };
+        emit oed->changed(6, pwm);
+        QTRY_VERIFY_WITH_TIMEOUT(view->board().outputs[6].type == Pwm, 3000);
+
+        InputConfig in5 = view->board().inputs[5];
+        in5.type = Latching; in5.outputId = 5;
+        in5.setCustomValues(true, FourToneSignal);
+        in5.route[0].value = 3; in5.route[1].value = 9;
+        emit ied->changed(5, in5);
+        InputConfig in6 = view->board().inputs[6];
+        in6.type = Latching; in6.outputId = 6;
+        in6.setCustomValues(true, Pwm);
+        in6.route[0].value = 50; in6.route[1].value = 200;
+        emit ied->changed(6, in6);
+        QTest::qWait(800);
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
+
+        int aspect = -1, level = -1;
+        connect(link, &DeviceLink::outputEvent, this, [&](int o, int st, int v) {
+            if (o == 5 && st == 2) aspect = v;
+            if (o == 6 && st == 2) level = v;
+        });
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text().contains(QLatin1String("Live test"))) a->trigger();
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveState(5) >= 0, 3000);
+
+        QVERIFY(!view->liveValueInput(5));
+        QVERIFY(!view->liveValueInput(6));
+        click(view, view->liveButtonRect(5, 1).center());
+        QTRY_COMPARE_WITH_TIMEOUT(aspect, 9, 2000);
+        click(view, view->liveButtonRect(5, 0).center());
+        QTRY_COMPARE_WITH_TIMEOUT(aspect, 3, 2000);
+        click(view, view->liveButtonRect(6, 1).center());
+        QTRY_COMPARE_WITH_TIMEOUT(level, 200, 2000);
+        click(view, view->liveButtonRect(6, 0).center());
+        QTRY_COMPARE_WITH_TIMEOUT(level, 50, 2000);
+    }
+
     void liveServoAndSignal()
     {
         MainWindow w;
