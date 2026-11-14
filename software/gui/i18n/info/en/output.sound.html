@@ -7,10 +7,11 @@
 <ul>
 <li>The <b>1 k&Omega; resistor</b> in the TX line protects the DFPlayer; nothing goes back to the Arduino.</li>
 <li>Files on the SD card: <b>0001.mp3</b>, <b>0002.mp3</b> … Track 1 is 0001.mp3.</li>
-<li><b>Track when curved / off</b> and <b>Track when straight / on</b> are played when the output switches.
-<i>stop</i> (0) stops playing.</li>
-<li>A route step or a DCC extended command plays its own track number (0 = stop).</li>
-<li>Several sound outputs may use D1 together, for example one per button, each with its own tracks.</li>
+<li><b>The input chooses the track</b>, so one sound output can play many sounds: give a toggle or absolute
+input <b>Custom values</b> (a track for off and one for on), use a route step, or send a DCC extended value.
+Track 0 = stop. Without custom values: on = track 1, off = stop.</li>
+<li>An input you connect to a sound output gets custom values by itself: off = stop, on = track 1.</li>
+<li>Several sound outputs may use D1 together, but one is usually enough.</li>
 <li><b>Only without a PC:</b> D1 is also the USB line to the computer. With the GUI connected the board only
 reports the track (♪ on the canvas). Unplug the USB cable and power the board otherwise to hear it.</li>
 </ul>

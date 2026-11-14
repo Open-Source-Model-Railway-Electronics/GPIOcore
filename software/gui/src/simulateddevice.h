@@ -80,6 +80,8 @@ private:
     void   triggerInput(int index, int direction);           // like the firmware's setDccAddress()
     void   startRoute(int index);                            // Input::startRoute(), with interlocking
     void   pinLevel(int index, bool pressed);                // Input::update(): a button edge
+    void   switchOutput(int index, int state);               // Input::switchOutput(): custom value or state
+    void   applyStep(const Gpio::RouteStep &s);              // a route step / custom value on its output
     void   evaluateAnalog(int index);                        // Input::readAnalog()
     void   runRouteStep(int input, int step);
     bool   routeMovesTurnout(int input) const;
@@ -124,4 +126,5 @@ private:
     std::array<quint8, Gpio::NumOutputs> m_frog {};
     std::array<int,  8> m_analog;                              // analogRead() per channel
     std::array<bool, Gpio::NumInputs> m_pressed {};            // analog inputs: condition met
+    std::array<quint8, Gpio::NumInputs> m_inState {};          // Input::state (toggle / absolute)
 };

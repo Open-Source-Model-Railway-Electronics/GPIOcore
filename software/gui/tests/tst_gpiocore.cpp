@@ -755,7 +755,6 @@ private slots:
         OutputConfig snd;
         snd.type = SoundEffect;
         snd.pinA = SoundPin;
-        snd.data = { { 3, 7, 0, 0 } };
         r.sim->setOutput(5, snd);
         InputConfig toggle;
         toggle.type = Momentary; toggle.address = 50; toggle.outputId = 5;
@@ -764,6 +763,12 @@ private slots:
         route.type = Route; route.address = 51;
         route.route = { RouteStep{ 5, 9, true, 1 }, RouteStep{ 5, 0, true, 1 } };
         r.sim->setInput(6, route);
+        InputConfig absolute;                    // custom values: off = track 3, on = track 7
+        absolute.type = Latching; absolute.address = 52; absolute.outputId = 5;
+        absolute.setCustomValues(true, SoundEffect);
+        absolute.route[0].value = 3;
+        absolute.route[1].value = 7;
+        r.sim->setInput(7, absolute);
 
         QSignalSpy events(r.link, &DeviceLink::outputEvent);
         auto seen = [&events](int o, int state, int value) {
@@ -772,16 +777,162 @@ private slots:
                     return true;
             return false;
         };
-        r.link->triggerInput(5, 1);              // toggle: 0 -> 1 plays data[1]
+        r.link->triggerInput(5, 1);              // no custom values: on = track 1
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 1), 2000);
+        events.clear();
+        r.link->triggerInput(5, 1);              // off = stop
+        QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 0), 2000);
+        r.link->triggerInput(7, 1);              // the input chooses the track
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 7), 2000);
-        r.link->triggerInput(5, 1);              // 1 -> 0 plays data[0]
+        r.link->triggerInput(7, 0);
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 3), 2000);
+        events.clear();
         r.link->triggerInput(6, 1);              // route: track 9, then stop
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 9), 2000);
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 0), 2000);
         r.link->dccExt(50, 12);                  // DCC extended: the value is the track
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 12), 2000);
         waitFinished(r);
+        QCOMPARE(r.errors, 0);
+    }
+
+    // ── Custom values of toggle / absolute inputs ──────────────────────────
+    void customValuesModel()
+    {
+        InputConfig c;
+        c.type = Momentary; c.outputId = 3;
+        c.setCustomValues(true, ServoType);
+        QVERIFY(c.hasCustomValues());
+        QCOMPARE(c.route.size(), 2);
+        QVERIFY(!c.route[0].raw && c.route[0].value == 0);      // curved / straight to start with
+        QVERIFY(!c.route[1].raw && c.route[1].value == 1);
+        c.route[0].raw = true; c.route[0].value = 45;
+        c.route[1].raw = true; c.route[1].value = 135;
+        const QByteArray step = encodeStep(c.route[0]);
+        QCOMPARE(int(quint8(step.at(0))), 0x03 | 0x10 | 0x20);  // id | raw | STEP_VALUES
+        QVERIFY(decodeStep(step.constData()) == c.route[0]);
+        c.syncLinkedFromRoute();
+        for (quint8 l : c.linked)
+            QCOMPARE(int(l), int(LinkNone));                     // no v1 route
+
+        BoardConfig b;
+        b.inputs[2] = c;
+        const QJsonObject j = b.toJson();
+        const QJsonObject in = j["inputs"].toArray().at(2).toObject();
+        QCOMPARE(in["values"].toArray().size(), 2);
+        QCOMPARE(in["values"].toArray().at(1).toObject()["value"].toInt(), 135);
+        QVERIFY(in["route"].toArray().isEmpty());
+        BoardConfig back;
+        QString err;
+        QVERIFY(BoardConfig::fromJson(j, back, &err));
+        QVERIFY(back.inputs[2].hasCustomValues());
+        QVERIFY(back.inputs[2] == c);
+        QCOMPARE(totalRouteSteps(back), 2);                      // the pool counts them
+
+        InputConfig d = c;                                       // another output: the steps follow
+        d.outputId = 7;
+        d.syncCustomValues();
+        QCOMPARE(d.route[0].output, 7);
+        QCOMPARE(d.route[1].output, 7);
+        d.type = Route;                                          // not a direct input: no values
+        d.syncCustomValues();
+        QVERIFY(d.route.isEmpty());
+        InputConfig e;                                           // a direct input never keeps a stale route
+        e.type = Latching;
+        e.route = { RouteStep{ 4, 1, false, 3 } };
+        e.syncCustomValues();
+        QVERIFY(e.route.isEmpty());
+
+        InputConfig snd;
+        snd.type = Latching; snd.outputId = 1;
+        snd.setCustomValues(true, SoundEffect);                  // off = stop, on = track 1
+        QVERIFY(snd.route[0].raw && snd.route[0].value == 0);
+        QVERIFY(snd.route[1].raw && snd.route[1].value == 1);
+        InputConfig pwm;
+        pwm.type = Latching;
+        pwm.setCustomValues(true, Pwm);
+        QCOMPARE(int(pwm.route[0].value), 0);
+        QCOMPARE(int(pwm.route[1].value), 255);
+
+        BoardConfig s;                                           // dragging onto a sound output: values on
+        s.outputs[4].type = SoundEffect;
+        s.inputs[0].type = Latching;
+        connectOutput(s, 0, 4);
+        QVERIFY(s.inputs[0].hasCustomValues());
+        QCOMPARE(s.inputs[0].route[1].output, 4);
+    }
+
+    void simulatorCustomValues()
+    {
+        Rig r; makeRig(r, SimulatedDevice::Options());
+        OutputConfig servo;
+        servo.type = ServoType; servo.pinA = 3;
+        servo.data = { { 80, 100, 1, 0 } };
+        r.sim->setOutput(3, servo);
+        InputConfig toggle;
+        toggle.type = Momentary; toggle.address = 30; toggle.outputId = 3;
+        r.sim->setInput(3, toggle);
+        InputConfig values = toggle;                             // sent with SET_ROUTE, like the GUI does
+        values.setCustomValues(true, ServoType);
+        values.route[0].raw = true; values.route[0].value = 45;
+        values.route[1].raw = true; values.route[1].value = 135;
+        r.link->writeRoute(3, values.route);
+        waitFinished(r);
+        QVERIFY(r.sim->input(3).hasCustomValues());
+        r.link->readRoute(3);
+        waitFinished(r);
+        QCOMPARE(r.routes[3].size(), 2);
+        QVERIFY(r.routes[3][0].values && r.routes[3][1].values);
+
+        QSignalSpy events(r.link, &DeviceLink::outputEvent);
+        auto seen = [&events](int o, int state, int value) {
+            for (const QList<QVariant> &e : events)
+                if (e.at(0).toInt() == o && e.at(1).toInt() == state && e.at(2).toInt() == value)
+                    return true;
+            return false;
+        };
+        auto last = [&events]() { return events.isEmpty() ? -1 : events.last().at(2).toInt(); };
+        r.link->triggerInput(3, 1);              // toggle 0 -> 1: on = 135 degrees (the servo sweeps there)
+        QTRY_COMPARE_WITH_TIMEOUT(last(), 135, 5000);
+        r.link->triggerInput(3, 1);              // 1 -> 0: off = 45 degrees
+        QTRY_COMPARE_WITH_TIMEOUT(last(), 45, 5000);
+        QTest::qWait(50);
+
+        OutputConfig pwm;                        // a raw value is reported at once (no sweep)
+        pwm.type = Pwm; pwm.pinA = 5;
+        r.sim->setOutput(6, pwm);
+        events.clear();
+        InputConfig absolute;                    // absolute + DCC command
+        absolute.type = Latching; absolute.address = 40; absolute.outputId = 6;
+        absolute.setCustomValues(true, Pwm);
+        absolute.route[0].raw = true; absolute.route[0].value = 60;
+        absolute.route[1].raw = true; absolute.route[1].value = 120;
+        r.sim->setInput(4, absolute);
+        r.link->triggerInput(4, 1);
+        QTRY_VERIFY_WITH_TIMEOUT(seen(6, 2, 120), 3000);
+        r.link->triggerInput(4, 0);
+        QTRY_VERIFY_WITH_TIMEOUT(seen(6, 2, 60), 3000);
+
+        // a button press (analog condition) uses them too
+        InputConfig analog = absolute;
+        analog.address = AddrNone; analog.analog = AnalogBelow; analog.pin = 14; analog.threshold = 512;
+        analog.route[0].value = 70;              // pressed = LOW = state 0
+        r.sim->setInput(5, analog);
+        events.clear();
+        r.sim->setAnalogValue(0, 100);
+        QTRY_VERIFY_WITH_TIMEOUT(seen(6, 2, 70), 3000);
+
+        // leftover steps without the marker are ignored: the plain state goes to the output
+        OutputConfig light = r.sim->output(0);
+        light.state = 1;
+        r.sim->setOutput(0, light);
+        InputConfig stale;
+        stale.type = Latching; stale.address = 90; stale.outputId = 0;
+        stale.route = { RouteStep{ 0, 1, false, 0 }, RouteStep{ 0, 1, false, 0 } };
+        r.sim->setInput(9, stale);
+        r.link->triggerInput(9, 0);
+        waitFinished(r);
+        QCOMPARE(int(r.sim->output(0).state), 0);
         QCOMPARE(r.errors, 0);
     }
 };

@@ -99,7 +99,7 @@ Frog-relais: `relayA` + `relayB` = **electrofrog** (A bij straight, B bij curved
 | 11 | servo | A (+ relais) | `data[0]` hoek bij state 0, `data[1]` hoek bij state 1, `data[2]` snelheid in ms/° (≥ 1), `data[3]` ongebruikt |
 | 12 | PWM | A (PWM) | `data[0]` = 0–255 |
 | 13 | not in use | – | – |
-| 14 | sound effect | A = altijd **1 (D1, TX)** | `data[0]` track bij state 0 (curved / uit), `data[1]` track bij state 1 (straight / aan); 0 = stoppen. Een route-stap (ruw) of DCC-ext speelt zijn eigen waarde als tracknummer (0 = stoppen) |
+| 14 | sound effect | A = altijd **1 (D1, TX)** | – (geen eigen tracks). De input kiest de track: eigen waarden (§4), een route-stap (ruw) of DCC-ext speelt zijn waarde als tracknummer (0 = stoppen). Zonder eigen waarden: state 1 = track 1, state 0 = stoppen |
 
 **Sound effect (type 14, HELLO-bit4).** Een DFPlayer Mini hangt met zijn RX aan de TX-pin D1 van de Nano
 (via 1 kΩ). De firmware stuurt het DFPlayer-frame (9600 baud, 10 bytes: `7E FF 06 03 00 00 track csH csL EF`,
@@ -221,9 +221,9 @@ Bij v1-firmware zijn ze gereserveerd en rood.
 ### Stap = 4 bytes
 
 ```text
-byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bits 5-7 reserved (0)
+byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bit 5 STEP_VALUES (custom value) | bits 6-7 reserved (0)
 byte 1 : value   raw = 0: state 0 = curved, 1 = straight
-                 raw = 1: aspect 0-255 (signal), angle 10-170 (servo), PWM 0-255
+                 raw = 1: aspect 0-255 (signal), angle 10-170 (servo), PWM 0-255, track 0-255 (sound, 0 = stop)
 byte 2 : wait time bits 0-7
 byte 3 : bits 0-5 = wait time bits 8-13 | bits 6-7 reserved (0)
 wait   : 14 bits of 0.1 s = 0 .. 1638.3 s (~27 min), time after this step before the next one
@@ -246,6 +246,21 @@ Voorbeeld: output 13, aspect 200, wachttijd 1638,3 s → `1D C8 FF 3F`.
 //             servo:                output[id].setPosition( value )   // new, moves to this angle
 // then wait 'delay' x 100 ms before the next step
 ```
+
+### Eigen waarden van een toggle- of absolute input (firmware 2026-11-14)
+
+Een directe input (toggle of absoluut) mag in **zijn eigen route-slot** (zelfde index, `GET/SET_ROUTE`)
+precies **2 stappen** hebben, allebei met **bit 5 = `STEP_VALUES` (0x20)** in byte 0. Stap 0 geldt als de
+stand van de input 0 wordt (uit / curved), stap 1 als hij 1 wordt (aan / straight). Elke stap werkt als een
+route-stap: `raw = 0` zet curved / straight, `raw = 1` stuurt een hoek, aspect, PWM-waarde of track. De
+output-id van de stap wordt gebruikt (de GUI zet daar de `outputID` van de input in); de wachttijd telt niet.
+
+- Dit geldt voor de knop, de analoge voorwaarde en gewone DCC-accessorycommando's op het adres van de input.
+  DCC-extended stuurt zijn waarde nog steeds rechtstreeks door.
+- Zonder die 2 gemarkeerde stappen (een ander aantal, of stappen zonder 0x20 die van een oude route zijn
+  blijven staan) werkt de input zoals altijd: de stand gaat naar de output.
+- De GUI stuurt voor een directe input zonder eigen waarden een **lege route**, zodat het slot leeg is. De 2
+  stappen tellen mee in de route-pool. In het board-bestand staan ze als `"values": [ {value, raw}, {value, raw} ]`.
 
 ### Overdracht in stukken van maximaal 7 stappen
 

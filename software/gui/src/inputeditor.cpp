@@ -201,6 +201,42 @@ void InputEditor::buildUi()
     m_infoFeedback = Info::button(QStringLiteral("input.feedback"));
     targetRow->addWidget(m_infoFeedback);
     tf->addRow(m_targetLabel, targetRow);
+    // custom values: per state a value like a route step (angle, aspect, PWM, sound track) instead of 0 / 1
+    m_custom = new QCheckBox(tr("Custom values"));
+    m_custom->setToolTip(tr("Off / curved and on / straight each send their own value, like a route step"));
+    auto *customLay = new QHBoxLayout;
+    customLay->setContentsMargins(0, 0, 0, 0);
+    customLay->addWidget(m_custom, 1);
+    customLay->addWidget(Info::button(QStringLiteral("input.values")));
+    m_customRow = new QWidget;
+    m_customRow->setLayout(customLay);
+    tf->addRow(m_customRow);
+    const QString valueLabels[2] = { tr("Off / curved"), tr("On / straight") };
+    for (int k = 0; k < 2; ++k)
+    {
+        m_valueMode[k] = new QComboBox;
+        m_valueMode[k]->setSizeAdjustPolicy(QComboBox::AdjustToContents);   // filled per output type later
+        m_value[k] = new QSpinBox;
+        m_value[k]->setMinimumWidth(80);
+        m_value[k]->setKeyboardTracking(false);
+        m_valuePick[k] = new QToolButton;
+        m_valuePick[k]->setText(QStringLiteral("▾"));
+        m_valuePick[k]->setToolTip(tr("Choose the aspect lamp by lamp"));
+        auto *lay = new QHBoxLayout;
+        lay->setContentsMargins(0, 0, 0, 0);
+        lay->setSpacing(4);
+        lay->addWidget(m_valueMode[k]);
+        lay->addWidget(m_value[k]);
+        lay->addWidget(m_valuePick[k]);
+        lay->addStretch();
+        m_valueRow[k] = new QWidget;
+        m_valueRow[k]->setLayout(lay);
+        tf->addRow(valueLabels[k], m_valueRow[k]);
+        connect(m_valuePick[k], &QToolButton::clicked, this, [this, k] {
+            const int v = Ui::pickAspect(this, m_value[k]->value(), m_cfg.outputId);
+            if (v >= 0) m_value[k]->setValue(v);
+        });
+    }
     root->addWidget(m_targetBox);
 
     // Recorder explanation
@@ -264,6 +300,12 @@ void InputEditor::buildUi()
     connect(m_output, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     connect(m_addr,   QOverload<int>::of(&QSpinBox::valueChanged),         this, onEdit);
     connect(m_useAddr, &QCheckBox::toggled, this, onEdit);
+    connect(m_custom,  &QCheckBox::toggled, this, onEdit);
+    for (int k = 0; k < 2; ++k)
+    {
+        connect(m_valueMode[k], QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
+        connect(m_value[k],     QOverload<int>::of(&QSpinBox::valueChanged),         this, onEdit);
+    }
     connect(m_addStep, &QPushButton::clicked, this, [this] {
         const int out = m_cfg.route.isEmpty() ? 0 : m_cfg.route.last().output;
         RouteStep s = defaultStep(out, outputType(out));
@@ -548,59 +590,7 @@ void InputEditor::updateSteps()
         const StepKind kind = m_limits.v1 ? StepKind::State : stepKind(outputType(s.output));
 
         Ui::selectData(r.output, s.output);
-        r.pick->setVisible(kind == StepKind::Aspect);
-        r.value->setToolTip(QString());
-        r.value->setSpecialValueText(QString());
-        r.mode->clear();
-        if (kind == StepKind::State || kind == StepKind::ServoStateOrAngle)
-        {
-            r.mode->addItem(tr("Curved (0)"),   int(ModeCurved));
-            r.mode->addItem(tr("Straight (1)"), int(ModeStraight));
-            if (kind == StepKind::ServoStateOrAngle)
-                r.mode->addItem(tr("Angle"), int(ModeAngle));
-            r.mode->setCurrentIndex(s.raw ? ModeAngle : (s.value ? ModeStraight : ModeCurved));
-            r.mode->setVisible(true);
-        }
-        else
-            r.mode->setVisible(false);
-
-        switch (kind)
-        {
-        case StepKind::ServoStateOrAngle:
-            r.value->setRange(ServoAngleMin, ServoAngleMax);
-            r.value->setPrefix(QString());
-            r.value->setSuffix(QStringLiteral("°"));
-            r.value->setVisible(s.raw);
-            r.value->setValue(s.raw ? s.value : (ServoAngleMin + ServoAngleMax) / 2);
-            break;
-        case StepKind::Aspect:
-            r.value->setRange(0, 255);
-            r.value->setPrefix(tr("aspect "));
-            r.value->setSuffix(QString());
-            r.value->setVisible(true);
-            r.value->setValue(s.value);
-            r.value->setToolTip(Ui::aspectText(s.value));
-            break;
-        case StepKind::PwmValue:
-            r.value->setRange(0, 255);
-            r.value->setPrefix(tr("PWM "));
-            r.value->setSuffix(QString());
-            r.value->setVisible(true);
-            r.value->setValue(s.value);
-            break;
-        case StepKind::Track:
-            r.value->setRange(0, 255);
-            r.value->setPrefix(tr("track "));
-            r.value->setSuffix(QString());
-            r.value->setSpecialValueText(tr("stop"));
-            r.value->setToolTip(tr("MP3 track 1-255 (0001.mp3 …), 0 = stop"));
-            r.value->setVisible(true);
-            r.value->setValue(s.value);
-            break;
-        case StepKind::State:
-            r.value->setVisible(false);
-            break;
-        }
+        showStepValue(r.mode, r.value, r.pick, s, kind);
         r.wait->setValue(s.delay / 10.0);
         r.wait->setEnabled(!m_limits.v1);
         r.wait->setVisible(m_timing);
@@ -614,6 +604,92 @@ void InputEditor::updateSteps()
                               .arg(n).arg(maxSteps).arg(total).arg(m_limits.pool));
     m_addStep->setEnabled(n < maxSteps && total < m_limits.pool);
     m_routeV1->setVisible(m_limits.v1);
+}
+
+void InputEditor::showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *pick, const RouteStep &s, StepKind kind)
+{
+    pick->setVisible(kind == StepKind::Aspect);
+    value->setToolTip(QString());
+    value->setSpecialValueText(QString());
+    mode->clear();
+    if (kind == StepKind::State || kind == StepKind::ServoStateOrAngle)
+    {
+        mode->addItem(tr("Curved (0)"),   int(ModeCurved));
+        mode->addItem(tr("Straight (1)"), int(ModeStraight));
+        if (kind == StepKind::ServoStateOrAngle)
+            mode->addItem(tr("Angle"), int(ModeAngle));
+        mode->setCurrentIndex(s.raw ? ModeAngle : (s.value ? ModeStraight : ModeCurved));
+        mode->setVisible(true);
+    }
+    else
+        mode->setVisible(false);
+
+    switch (kind)
+    {
+    case StepKind::ServoStateOrAngle:
+        value->setRange(ServoAngleMin, ServoAngleMax);
+        value->setPrefix(QString());
+        value->setSuffix(QStringLiteral("°"));
+        value->setVisible(s.raw);
+        value->setValue(s.raw ? s.value : (ServoAngleMin + ServoAngleMax) / 2);
+        break;
+    case StepKind::Aspect:
+        value->setRange(0, 255);
+        value->setPrefix(tr("aspect "));
+        value->setSuffix(QString());
+        value->setVisible(true);
+        value->setValue(s.value);
+        value->setToolTip(Ui::aspectText(s.value));
+        break;
+    case StepKind::PwmValue:
+        value->setRange(0, 255);
+        value->setPrefix(tr("PWM "));
+        value->setSuffix(QString());
+        value->setVisible(true);
+        value->setValue(s.value);
+        break;
+    case StepKind::Track:
+        value->setRange(0, 255);
+        value->setPrefix(tr("track "));
+        value->setSuffix(QString());
+        value->setSpecialValueText(tr("stop"));
+        value->setToolTip(tr("MP3 track 1-255 (0001.mp3 …), 0 = stop"));
+        value->setVisible(true);
+        value->setValue(s.value);
+        break;
+    case StepKind::State:
+        value->setVisible(false);
+        break;
+    }
+}
+
+void InputEditor::readStepValue(const QComboBox *mode, const QSpinBox *value, StepKind kind, RouteStep &s)
+{
+    switch (kind)
+    {
+    case StepKind::State:
+        s.raw = false;
+        s.value = quint8(mode->currentIndex() == ModeStraight);
+        break;
+    case StepKind::ServoStateOrAngle:
+        if (mode->currentIndex() == ModeAngle)
+        {
+            s.raw = true;
+            s.value = quint8(value->value());
+        }
+        else
+        {
+            s.raw = false;
+            s.value = quint8(mode->currentIndex() == ModeStraight);
+        }
+        break;
+    case StepKind::Aspect:
+    case StepKind::PwmValue:
+    case StepKind::Track:
+        s.raw = true;
+        s.value = quint8(value->value());
+        break;
+    }
 }
 
 void InputEditor::refresh()
@@ -650,6 +726,22 @@ void InputEditor::refresh()
     Ui::selectData(m_output, m_cfg.outputId);
 
     m_targetBox->setVisible(info.usesOutput);
+    const bool values = m_cfg.hasCustomValues();
+    m_customRow->setVisible(fn == FnDirect);
+    m_custom->setChecked(values);
+    m_custom->setEnabled(!m_limits.v1 || values);
+    m_custom->setToolTip(m_limits.v1 ? tr("Needs a board with protocol v2")
+                                     : tr("Off / curved and on / straight each send their own value, like a route step"));
+    for (int k = 0; k < 2; ++k)
+    {
+        const bool show = fn == FnDirect && values;
+        m_valueRow[k]->setVisible(show);
+        if (auto *form = qobject_cast<QFormLayout *>(m_targetBox->layout()))
+            if (QWidget *label = form->labelForField(m_valueRow[k]))
+                label->setVisible(show);
+        if (show)
+            showStepValue(m_valueMode[k], m_value[k], m_valuePick[k], m_cfg.route[k], stepKind(outputType(m_cfg.outputId)));
+    }
     m_targetLabel->setText(m_cfg.type == FeedbackInput ? tr("Feedback id") : tr("Output"));
     m_infoFeedback->setVisible(m_cfg.type == FeedbackInput);
     m_recorderBox->setVisible(fn == FnRecorder);
@@ -672,6 +764,8 @@ void InputEditor::refresh()
 
 void InputEditor::collect()
 {
+    const quint8 oldType = m_cfg.type, oldOutput = m_cfg.outputId;
+    const bool hadValues = m_cfg.hasCustomValues();
     const bool a = m_optA->isChecked();
     Function fn = Function(Ui::currentData(m_function));
     if (fn == FnRecorder && m_recorderTaken)
@@ -698,7 +792,7 @@ void InputEditor::collect()
     m_cfg.threshold = quint16(InputConfig::roundThreshold(m_threshold->value()));
     m_cfg.outputId = quint8(Ui::currentData(m_output) & 0x0F);
 
-    for (int i = 0; i < m_rows.size() && i < m_cfg.route.size(); ++i)
+    for (int i = 0; fn == FnRoute && i < m_rows.size() && i < m_cfg.route.size(); ++i)
     {
         const StepRow &r = m_rows[i];
         RouteStep &s = m_cfg.route[i];
@@ -713,34 +807,26 @@ void InputEditor::collect()
             continue;
         }
         const StepKind kind = m_limits.v1 ? StepKind::State : stepKind(outputType(s.output));
-        switch (kind)
-        {
-        case StepKind::State:
-            s.raw = false;
-            s.value = quint8(r.mode->currentIndex() == ModeStraight);
-            break;
-        case StepKind::ServoStateOrAngle:
-            if (r.mode->currentIndex() == ModeAngle)
-            {
-                s.raw = true;
-                s.value = quint8(r.value->value());
-            }
-            else
-            {
-                s.raw = false;
-                s.value = quint8(r.mode->currentIndex() == ModeStraight);
-            }
-            break;
-        case StepKind::Aspect:
-        case StepKind::PwmValue:
-        case StepKind::Track:
-            s.raw = true;
-            s.value = quint8(r.value->value());
-            break;
-        }
+        readStepValue(r.mode, r.value, kind, s);
         s.delay = m_limits.v1 ? V1StepDelay : quint16(std::lround(r.wait->value() * 10.0));
     }
-    m_cfg.syncLinkedFromRoute();
+    if (fn == FnDirect)
+    {
+        const quint8 t = outputType(m_cfg.outputId);
+        const bool newTarget = oldOutput != m_cfg.outputId || !isDirectType(oldType);
+        if (!m_custom->isChecked() && hadValues && isDirectType(oldType))
+            m_cfg.route.clear();                                      // switched off
+        else if (m_custom->isChecked() && !hadValues)
+            m_cfg.setCustomValues(true, t);                           // switched on: defaults for the output
+        else if (hadValues && stepKind(t) != stepKind(outputType(oldOutput)))
+            m_cfg.setCustomValues(true, t);                           // another kind of output: its defaults
+        else if (hadValues)
+            for (int k = 0; k < 2; ++k)
+                readStepValue(m_valueMode[k], m_value[k], stepKind(t), m_cfg.route[k]);
+        if (t == SoundEffect && newTarget && !m_cfg.hasCustomValues())
+            m_cfg.setCustomValues(true, t);                           // a sound output plays the input's tracks
+    }
+    m_cfg.syncCustomValues();
 
     refresh();
     emit changed(m_index, m_cfg);

@@ -1,0 +1,16 @@
+<h3>Aangepaste waarden: meer dan aan en uit</h3>
+<p>Normaal zet een omschakel- of absolute ingang zijn uitgang op <b>afbuigend / uit</b> (0) of <b>rechtdoor /
+aan</b> (1). Met <b>Aangepaste waarden</b> stuurt elk van de twee standen een eigen waarde, net als een rijwegstap:</p>
+<ul>
+<li><b>Servo</b> — een hoek, bijvoorbeeld uit = 45&deg;, aan = 135&deg; (of gewoon afbuigend / rechtdoor).</li>
+<li><b>4-beelden sein</b> — een seinbeeld per stand, lamp voor lamp te kiezen met &#9662;.</li>
+<li><b>PWM</b> — een helderheid per stand, bijvoorbeeld uit = 20 (gedimd), aan = 255.</li>
+<li><b>Geluidseffect</b> — een track per stand; <i>stop</i> (0) stopt het afspelen. Eén geluidsuitgang kan zo
+veel tracks spelen, elk gekozen door een eigen ingang.</li>
+<li>Andere uitgangen — afbuigend of rechtdoor per stand, bijvoorbeeld andersom.</li>
+</ul>
+<p><b>Uit / afbuigend</b> geldt als de stand van de ingang 0 wordt (een absolute ingang: knop ingedrukt of een
+DCC-commando 'afbuigend'), <b>Aan / rechtdoor</b> als hij 1 wordt. Een omschakelingang wisselt tussen de twee.</p>
+<p>De twee waarden worden als 2 stappen in het rijweggeheugen van de ingang bewaard, dus ze tellen mee in het
+totaal van het board. DCC extended-commando's sturen nog steeds hun eigen waarde. Werkt met firmware met protocol v2.</p>
+<p>Koppel je een ingang aan een geluidsuitgang, dan gaan de aangepaste waarden vanzelf aan: uit = stop, aan = track 1.</p>

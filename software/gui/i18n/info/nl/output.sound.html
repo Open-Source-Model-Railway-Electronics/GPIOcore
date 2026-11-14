@@ -8,10 +8,11 @@ een omroepbericht.</p>
 <ul>
 <li>De <b>weerstand van 1 k&Omega;</b> in de TX-lijn beschermt de DFPlayer; er gaat niets terug naar de Arduino.</li>
 <li>Bestanden op de SD-kaart: <b>0001.mp3</b>, <b>0002.mp3</b> … Track 1 is 0001.mp3.</li>
-<li><b>Track bij afbuigend / uit</b> en <b>Track bij rechtdoor / aan</b> worden afgespeeld als de uitgang omschakelt.
-<i>stop</i> (0) stopt het afspelen.</li>
-<li>Een rijwegstap of een DCC extended-commando speelt zijn eigen tracknummer (0 = stop).</li>
-<li>Meerdere geluidsuitgangen mogen samen D1 gebruiken, bijvoorbeeld één per knop, elk met eigen tracks.</li>
+<li><b>De ingang kiest de track</b>, dus één geluidsuitgang kan veel geluiden spelen: geef een omschakel- of
+absolute ingang <b>Aangepaste waarden</b> (een track voor uit en een voor aan), gebruik een rijwegstap, of stuur
+een DCC extended-waarde. Track 0 = stop. Zonder aangepaste waarden: aan = track 1, uit = stop.</li>
+<li>Een ingang die je aan een geluidsuitgang koppelt, krijgt vanzelf aangepaste waarden: uit = stop, aan = track 1.</li>
+<li>Meerdere geluidsuitgangen mogen samen D1 gebruiken, maar meestal is er één genoeg.</li>
 <li><b>Alleen zonder pc:</b> D1 is ook de USB-lijn naar de computer. Met de GUI verbonden meldt het board alleen
 de track (♪ op het canvas). Haal de USB-kabel eruit en voed het board anders om het te horen.</li>
 </ul>

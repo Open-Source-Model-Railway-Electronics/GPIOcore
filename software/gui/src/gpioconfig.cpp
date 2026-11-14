@@ -38,9 +38,11 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
       QT_TRANSLATE_NOOP("Gpio", "Fixed PWM value on pin A.") },
     { "notInUse",        QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
-    { "soundEffect",     QT_TRANSLATE_NOOP("Gpio", "Sound effect"),      1, false, false, ParamKind::SoundTracks, 0,
-      QT_TRANSLATE_NOOP("Gpio", "Plays an MP3 track on a DFPlayer Mini wired to TX (D1). It only plays when no PC is connected: "
-                                "with the GUI connected, D1 is the USB line and the board only reports the track.") },
+    { "soundEffect",     QT_TRANSLATE_NOOP("Gpio", "Sound effect"),      1, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Plays an MP3 track on a DFPlayer Mini wired to TX (D1). The input chooses the track: its custom "
+                                "values, a route step or a DCC extended value (0 = stop); without custom values on = track 1, "
+                                "off = stop. It only plays when no PC is connected: with the GUI connected, D1 is the USB line "
+                                "and the board only reports the track.") },
     { "unknown",         QT_TRANSLATE_NOOP("Gpio", "Unknown type"),      4, true,  false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
 };
@@ -201,14 +203,14 @@ bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c, bool legacy)
 }
 
 // ── Route steps ─────────────────────────────────────────────────────────────
-// byte 0: bits 0-3 output id, bit 4 raw value, bits 5-7 reserved (0)
+// byte 0: bits 0-3 output id, bit 4 raw value, bit 5 custom value (STEP_VALUES), bits 6-7 reserved (0)
 // byte 1: value
 // byte 2: delay bits 0-7    byte 3: bits 0-5 = delay bits 8-13, bits 6-7 reserved (0)
 QByteArray encodeStep(const RouteStep &s)
 {
     const quint16 d = qMin<quint16>(s.delay, MaxStepDelay);
     QByteArray b(4, '\0');
-    b[0] = char((s.output & 0x0F) | (s.raw ? 0x10 : 0));
+    b[0] = char((s.output & 0x0F) | (s.raw ? 0x10 : 0) | (s.values ? 0x20 : 0));
     b[1] = char(s.value);
     b[2] = char(d & 0xFF);
     b[3] = char((d >> 8) & 0x3F);
@@ -221,6 +223,7 @@ RouteStep decodeStep(const char *bytes)
     RouteStep s;
     s.output = b[0] & 0x0F;
     s.raw    = (b[0] & 0x10) != 0;
+    s.values = (b[0] & 0x20) != 0;
     s.value  = b[1];
     s.delay  = quint16(b[2] | (b[3] & 0x3F) << 8);
     return s;
@@ -280,9 +283,56 @@ int InputConfig::roundThreshold(int t)
     return qBound(0, (t + 4) / 8 * 8, AnalogMaxThreshold);
 }
 
+bool InputConfig::hasCustomValues() const
+{
+    return isDirectType(type) && route.size() == 2 && route[0].values && route[1].values;
+}
+
+void InputConfig::setCustomValues(bool on, quint8 outputType)
+{
+    route.clear();
+    for (int k = 0; on && k < 2; ++k)
+    {
+        RouteStep s = defaultStep(outputId, outputType);
+        if (!s.raw)
+            s.value = quint8(k);                     // curved / straight, as without custom values
+        else if (k == 0 && (stepKind(outputType) == StepKind::PwmValue || stepKind(outputType) == StepKind::Track))
+            s.value = 0;                             // off: dark / stop
+        s.delay  = 0;
+        s.values = true;
+        route.append(s);
+    }
+    syncLinkedFromRoute();
+}
+
+void InputConfig::syncCustomValues()
+{
+    const bool pair = route.size() == 2 && route[0].values && route[1].values;
+    if (isDirectType(type))
+    {
+        if (!pair)
+            route.clear();
+        for (RouteStep &s : route)
+        {
+            s.output = outputId & 0x0F;
+            s.delay  = 0;
+        }
+    }
+    else
+    {
+        if (pair)
+            route.clear();
+        for (RouteStep &s : route)
+            s.values = false;
+    }
+    syncLinkedFromRoute();
+}
+
 void InputConfig::syncLinkedFromRoute()
 {
     linked.fill(LinkNone);
+    if (!route.isEmpty() && route[0].values)
+        return;                          // custom values are no v1 route
     for (int i = 0; i < route.size() && i < MaxLinked; ++i)
     {
         const RouteStep &s = route[i];
@@ -361,8 +411,21 @@ QJsonObject InputConfig::toJson() const
     }
     o["output"]  = int(outputId);
     QJsonArray steps;
+    if (hasCustomValues())                   // [ off / curved, on / straight ]
+    {
+        QJsonArray values;
+        for (const RouteStep &s : route)
+        {
+            QJsonObject v;
+            v["value"] = int(s.value);
+            v["raw"]   = s.raw;
+            values.append(v);
+        }
+        o["values"] = values;
+    }
     for (const RouteStep &s : route)
     {
+        if (s.values) continue;
         QJsonObject step;
         step["output"] = s.output;
         step["value"]  = int(s.value);
@@ -404,6 +467,21 @@ InputConfig InputConfig::fromJson(const QJsonObject &o)
         s.raw    = step["raw"].toBool(false);
         s.delay  = quint16(step.contains("delay") ? step["delay"].toInt() : V1StepDelay);
         c.route.append(s);
+    }
+    const QJsonArray values = o["values"].toArray();
+    if (isDirectType(c.type) && values.size() == 2)
+    {
+        c.route.clear();
+        for (const QJsonValue &v : values)
+        {
+            RouteStep s;
+            s.output = c.outputId;
+            s.value  = quint8(v.toObject()["value"].toInt());
+            s.raw    = v.toObject()["raw"].toBool(false);
+            s.delay  = 0;
+            s.values = true;
+            c.route.append(s);
+        }
     }
     c.syncLinkedFromRoute();
     return c.normalized();
@@ -458,6 +536,7 @@ QJsonObject BoardConfig::toJson() const
         "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
         "Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. "
         "An analog input has 'analog': {mode below / above / at, channel 0-7 = A0-A7, threshold 0-1016} instead of a pin. "
+        "A toggle / absolute input may have 'values': [off / curved, on / straight], each {value, raw} like a route step. "
         "Output data[4] depends on the type, see PROTOCOL.md section 2.1. Input address: DCC accessory address or null. "
         "Route steps: output 0-15, value = 0 curved / 1 straight, or with raw = true an aspect / servo angle 10-170 / PWM 0-255, "
         "delay = wait after the step in 0.1 s. 'name' fields are only kept in this file.");

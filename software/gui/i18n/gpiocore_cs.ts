@@ -25,97 +25,97 @@
         <translation>▶ stisk</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="599"/>
+        <location filename="../src/connectionview.cpp" line="606"/>
         <source>In %1</source>
         <translation>Vst. %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="624"/>
+        <location filename="../src/connectionview.cpp" line="631"/>
         <source>now %1</source>
         <translation>nyní %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="659"/>
+        <location filename="../src/connectionview.cpp" line="666"/>
         <source>Out %1</source>
         <translation>Výst. %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="722"/>
+        <location filename="../src/connectionview.cpp" line="729"/>
         <source>Inputs</source>
         <translation>Vstupy</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="723"/>
+        <location filename="../src/connectionview.cpp" line="730"/>
         <source>Outputs</source>
         <translation>Výstupy</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="735"/>
+        <location filename="../src/connectionview.cpp" line="742"/>
         <source>● SIMULATION — click the input buttons</source>
         <translation>● SIMULACE — klikejte na tlačítka vstupů</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="735"/>
+        <location filename="../src/connectionview.cpp" line="742"/>
         <source>SIMULATION</source>
         <translation>SIMULACE</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="740"/>
+        <location filename="../src/connectionview.cpp" line="747"/>
         <source>● LIVE TEST</source>
         <translation>● ŽIVÝ TEST</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="745"/>
+        <location filename="../src/connectionview.cpp" line="752"/>
         <source>CONFIGURING THE BOARD</source>
         <translation>KONFIGURACE DESKY</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="766"/>
+        <location filename="../src/connectionview.cpp" line="773"/>
         <source>drag an output onto an input</source>
         <translation>přetáhněte výstup na vstup</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="980"/>
+        <location filename="../src/connectionview.cpp" line="987"/>
         <source>Remove connection In %1 → Out %2</source>
         <translation>Odebrat spojení Vst. %1 → Výst. %2</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="985"/>
+        <location filename="../src/connectionview.cpp" line="992"/>
         <source>Set curved (0)</source>
         <translation>Nastavit do odbočky (0)</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="985"/>
+        <location filename="../src/connectionview.cpp" line="992"/>
         <source>Set straight (1)</source>
         <translation>Nastavit přímo (1)</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="988"/>
+        <location filename="../src/connectionview.cpp" line="995"/>
         <source>Edit value in the input panel</source>
         <translation>Upravit hodnotu v panelu vstupu</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="990"/>
+        <location filename="../src/connectionview.cpp" line="997"/>
         <source>Move earlier in the route</source>
         <translation>Dříve v jízdní cestě</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="993"/>
+        <location filename="../src/connectionview.cpp" line="1000"/>
         <source>Move later in the route</source>
         <translation>Později v jízdní cestě</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1000"/>
+        <location filename="../src/connectionview.cpp" line="1007"/>
         <source>Remove all connections of In %1</source>
         <translation>Odebrat všechna spojení Vst. %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1023"/>
+        <location filename="../src/connectionview.cpp" line="1030"/>
         <source>In %1 → Out %2 (%3)</source>
         <translation>Vst. %1 → Výst. %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1025"/>
+        <location filename="../src/connectionview.cpp" line="1032"/>
         <source>
 step %1: %2, then wait %3</source>
         <translation>
@@ -691,7 +691,7 @@ krok %1: %2, pak čekat %3</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
-        <location filename="../src/gpioconfig.cpp" line="59"/>
+        <location filename="../src/gpioconfig.cpp" line="61"/>
         <source>Not in use</source>
         <translation>Nepoužito</translation>
     </message>
@@ -707,124 +707,124 @@ krok %1: %2, pak čekat %3</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="42"/>
-        <source>Plays an MP3 track on a DFPlayer Mini wired to TX (D1). It only plays when no PC is connected: with the GUI connected, D1 is the USB line and the board only reports the track.</source>
-        <translation>Přehraje skladbu MP3 na DFPlayer Mini připojeném na TX (D1). Hraje jen bez připojeného PC: s připojeným GUI je D1 linka USB a deska jen hlásí skladbu.</translation>
+        <source>Plays an MP3 track on a DFPlayer Mini wired to TX (D1). The input chooses the track: its custom values, a route step or a DCC extended value (0 = stop); without custom values on = track 1, off = stop. It only plays when no PC is connected: with the GUI connected, D1 is the USB line and the board only reports the track.</source>
+        <translation>Přehraje skladbu MP3 na DFPlayer Mini připojeném na TX (D1). Skladbu volí vstup: jeho vlastní hodnoty, krok jízdní cesty nebo hodnota DCC extended (0 = stop); bez vlastních hodnot zap = skladba 1, vyp = stop. Hraje jen bez připojeného PC: s připojeným GUI je D1 linka USB a deska jen hlásí skladbu.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="44"/>
+        <location filename="../src/gpioconfig.cpp" line="46"/>
         <source>Unknown type</source>
         <translation>Neznámý typ</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="45"/>
-        <location filename="../src/gpioconfig.cpp" line="64"/>
+        <location filename="../src/gpioconfig.cpp" line="47"/>
+        <location filename="../src/gpioconfig.cpp" line="66"/>
         <source>Type value not known by this GUI.</source>
         <translation>Hodnota typu je tomuto programu neznámá.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="56"/>
+        <location filename="../src/gpioconfig.cpp" line="58"/>
         <source>Toggle</source>
         <translation>Přepínání</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="56"/>
+        <location filename="../src/gpioconfig.cpp" line="58"/>
         <source>Each press (falling edge) or DCC command toggles the output.</source>
         <translation>Každý stisk (sestupná hrana) nebo DCC příkaz přepne výstup.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="57"/>
+        <location filename="../src/gpioconfig.cpp" line="59"/>
         <source>Absolute</source>
         <translation>Absolutní</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="57"/>
+        <location filename="../src/gpioconfig.cpp" line="59"/>
         <source>The output follows the input level or the DCC direction.</source>
         <translation>Výstup sleduje úroveň vstupu nebo směr DCC.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="58"/>
-        <location filename="../src/gpioconfig.cpp" line="62"/>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
+        <location filename="../src/gpioconfig.cpp" line="60"/>
+        <location filename="../src/gpioconfig.cpp" line="64"/>
+        <location filename="../src/gpioconfig.cpp" line="65"/>
         <source>Route</source>
         <translation>Jízdní cesta</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="58"/>
+        <location filename="../src/gpioconfig.cpp" line="60"/>
         <source>Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).</source>
         <translation>Postupně nastaví až 16 výstupů, každý krok s vlastní dobou čekání. Spustí se stiskem tlačítka nebo jakýmkoli DCC příkazem na svou adresu (přímo i do odbočky).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="59"/>
+        <location filename="../src/gpioconfig.cpp" line="61"/>
         <source>Input disabled.</source>
         <translation>Vstup vypnut.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="60"/>
+        <location filename="../src/gpioconfig.cpp" line="62"/>
         <source>Recorder</source>
         <translation>Záznamník</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="60"/>
+        <location filename="../src/gpioconfig.cpp" line="62"/>
         <source>Long press = record on/off, short press = play on/off.</source>
         <translation>Dlouhý stisk = záznam zap/vyp, krátký stisk = přehrávání zap/vyp.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="61"/>
+        <location filename="../src/gpioconfig.cpp" line="63"/>
         <source>Feedback</source>
         <translation>Zpětné hlášení</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="61"/>
+        <location filename="../src/gpioconfig.cpp" line="63"/>
         <source>Sensor for the recorder; &apos;output&apos; is used as feedback id.</source>
         <translation>Senzor pro záznamník; &apos;výstup&apos; slouží jako id zpětného hlášení.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Route that starts on a button press, or only on a DCC &apos;straight&apos; command for its address.</source>
         <translation>Jízdní cesta, která se spustí stiskem tlačítka, nebo jen povelem DCC &apos;přímo&apos; pro její adresu.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
+        <location filename="../src/gpioconfig.cpp" line="65"/>
         <source>Route that starts on a button press, or only on a DCC &apos;curved&apos; command for its address.</source>
         <translation>Jízdní cesta, která se spustí stiskem tlačítka, nebo jen povelem DCC &apos;do odbočky&apos; pro její adresu.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="64"/>
+        <location filename="../src/gpioconfig.cpp" line="66"/>
         <source>Unknown</source>
         <translation>Neznámý</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1491"/>
+        <location filename="../src/mainwindow.cpp" line="1501"/>
         <source>Pin A</source>
         <translation>Pin A</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1491"/>
+        <location filename="../src/mainwindow.cpp" line="1501"/>
         <source>Pin B</source>
         <translation>Pin B</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1492"/>
+        <location filename="../src/mainwindow.cpp" line="1502"/>
         <source>Pin C</source>
         <translation>Pin C</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1492"/>
+        <location filename="../src/mainwindow.cpp" line="1502"/>
         <source>Pin D</source>
         <translation>Pin D</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1493"/>
+        <location filename="../src/mainwindow.cpp" line="1503"/>
         <source>Electrofrog A</source>
         <translation>Electrofrog A</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1493"/>
+        <location filename="../src/mainwindow.cpp" line="1503"/>
         <source>Electrofrog B</source>
         <translation>Electrofrog B</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1494"/>
+        <location filename="../src/mainwindow.cpp" line="1504"/>
         <source>Unifrog</source>
         <translation>Unifrog</translation>
     </message>
@@ -886,7 +886,7 @@ krok %1: %2, pak čekat %3</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="64"/>
-        <location filename="../src/inputeditor.cpp" line="443"/>
+        <location filename="../src/inputeditor.cpp" line="485"/>
         <source>Out %1 · %2</source>
         <translation>Výst. %1 · %2</translation>
     </message>
@@ -907,7 +907,7 @@ krok %1: %2, pak čekat %3</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="83"/>
-        <location filename="../src/inputeditor.cpp" line="207"/>
+        <location filename="../src/inputeditor.cpp" line="243"/>
         <source>Recorder</source>
         <translation>Záznamník</translation>
     </message>
@@ -948,18 +948,18 @@ krok %1: %2, pak čekat %3</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="198"/>
-        <location filename="../src/inputeditor.cpp" line="426"/>
-        <location filename="../src/inputeditor.cpp" line="653"/>
+        <location filename="../src/inputeditor.cpp" line="468"/>
+        <location filename="../src/inputeditor.cpp" line="745"/>
         <source>Output</source>
         <translation>Výstup</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="209"/>
+        <location filename="../src/inputeditor.cpp" line="245"/>
         <source>Long press: record on / off.  Short press: play on / off.</source>
         <translation>Dlouhý stisk: záznam zap / vyp.  Krátký stisk: přehrávání zap / vyp.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="217"/>
+        <location filename="../src/inputeditor.cpp" line="253"/>
         <source>Route steps</source>
         <translation>Kroky jízdní cesty</translation>
     </message>
@@ -1049,172 +1049,199 @@ krok %1: %2, pak čekat %3</translation>
         <translation>Živé měření</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="225"/>
+        <location filename="../src/inputeditor.cpp" line="205"/>
+        <source>Custom values</source>
+        <translation>Vlastní hodnoty</translation>
+    </message>
+    <message>
+        <location filename="../src/inputeditor.cpp" line="206"/>
+        <location filename="../src/inputeditor.cpp" line="734"/>
+        <source>Off / curved and on / straight each send their own value, like a route step</source>
+        <translation>Vyp / do odbočky a zap / přímo posílají každý vlastní hodnotu, jako krok jízdní cesty</translation>
+    </message>
+    <message>
+        <location filename="../src/inputeditor.cpp" line="214"/>
+        <source>Off / curved</source>
+        <translation>Vyp / do odbočky</translation>
+    </message>
+    <message>
+        <location filename="../src/inputeditor.cpp" line="214"/>
+        <source>On / straight</source>
+        <translation>Zap / přímo</translation>
+    </message>
+    <message>
+        <location filename="../src/inputeditor.cpp" line="261"/>
         <source>This board speaks protocol v1: max. 8 steps, curved / straight only, fixed 0.5 s per step.</source>
         <translation>Tato deska používá protokol v1: max. 8 kroků, jen do odbočky / přímo, pevně 0,5 s na krok.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="234"/>
+        <location filename="../src/inputeditor.cpp" line="270"/>
         <source>+ Add step</source>
         <translation>+ Přidat krok</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="235"/>
+        <location filename="../src/inputeditor.cpp" line="271"/>
         <source>Or drag an output onto this input in the canvas</source>
         <translation>Nebo na plátně přetáhněte výstup na tento vstup</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="335"/>
+        <location filename="../src/inputeditor.cpp" line="377"/>
         <source>Pressed below %1, released again from %2.</source>
         <translation>Stisknuto pod %1, uvolněno opět od %2.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="338"/>
+        <location filename="../src/inputeditor.cpp" line="380"/>
         <source>Pressed above %1, released again at %2 or lower.</source>
         <translation>Stisknuto nad %1, uvolněno opět při %2 nebo méně.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="341"/>
+        <location filename="../src/inputeditor.cpp" line="383"/>
         <source>Pressed from %1 to %2.</source>
         <translation>Stisknuto od %1 do %2.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="346"/>
+        <location filename="../src/inputeditor.cpp" line="388"/>
         <source>Now: —</source>
         <translation>Nyní: —</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="347"/>
+        <location filename="../src/inputeditor.cpp" line="389"/>
         <source>Needs a board with analog input support (connected or simulated).</source>
         <translation>Potřebuje desku s analogovými vstupy (připojenou nebo simulovanou).</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="351"/>
+        <location filename="../src/inputeditor.cpp" line="393"/>
         <source>Now: %1</source>
         <translation>Nyní: %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="351"/>
+        <location filename="../src/inputeditor.cpp" line="393"/>
         <source>Now: …</source>
         <translation>Nyní: …</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="383"/>
+        <location filename="../src/inputeditor.cpp" line="425"/>
         <source>There already is a recorder input; only one is allowed</source>
         <translation>Vstup záznamníku už existuje; povolen je jen jeden</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="426"/>
+        <location filename="../src/inputeditor.cpp" line="468"/>
         <source>#</source>
         <translation>#</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="426"/>
+        <location filename="../src/inputeditor.cpp" line="468"/>
         <source>Value</source>
         <translation>Hodnota</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="426"/>
+        <location filename="../src/inputeditor.cpp" line="468"/>
         <source>Wait after</source>
         <translation>Čekat poté</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="440"/>
+        <location filename="../src/inputeditor.cpp" line="482"/>
         <source>— choose an output —</source>
         <translation>— vyberte výstup —</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="444"/>
+        <location filename="../src/inputeditor.cpp" line="486"/>
         <source>or drag an output onto this input</source>
         <translation>nebo přetáhněte výstup na tento vstup</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="480"/>
+        <location filename="../src/inputeditor.cpp" line="522"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="483"/>
+        <location filename="../src/inputeditor.cpp" line="525"/>
         <source>Earlier</source>
         <translation>Dříve</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="484"/>
+        <location filename="../src/inputeditor.cpp" line="526"/>
         <source>Later</source>
         <translation>Později</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="488"/>
+        <location filename="../src/inputeditor.cpp" line="530"/>
         <source>Delete step %1</source>
         <translation>Smazat krok %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="498"/>
+        <location filename="../src/inputeditor.cpp" line="224"/>
+        <location filename="../src/inputeditor.cpp" line="540"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvolit návěst světlo po světle</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="557"/>
+        <location filename="../src/inputeditor.cpp" line="617"/>
         <source>Curved (0)</source>
         <translation>Do odbočky (0)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="558"/>
+        <location filename="../src/inputeditor.cpp" line="618"/>
         <source>Straight (1)</source>
         <translation>Přímo (1)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="560"/>
+        <location filename="../src/inputeditor.cpp" line="620"/>
         <source>Angle</source>
         <translation>Úhel</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="578"/>
+        <location filename="../src/inputeditor.cpp" line="638"/>
         <source>aspect </source>
         <translation>návěst </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="586"/>
+        <location filename="../src/inputeditor.cpp" line="646"/>
         <source>PWM </source>
         <translation>PWM </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="593"/>
+        <location filename="../src/inputeditor.cpp" line="653"/>
         <source>track </source>
         <translation>skladba </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="595"/>
+        <location filename="../src/inputeditor.cpp" line="655"/>
         <source>stop</source>
         <translation>stop</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="596"/>
+        <location filename="../src/inputeditor.cpp" line="656"/>
         <source>MP3 track 1-255 (0001.mp3 …), 0 = stop</source>
         <translation>Skladba MP3 1-255 (0001.mp3 …), 0 = stop</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="613"/>
+        <location filename="../src/inputeditor.cpp" line="603"/>
         <source>%1 / %2 steps  ·  board total %3 / %4</source>
         <translation>%1 / %2 kroků  ·  deska celkem %3 / %4</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="624"/>
+        <location filename="../src/inputeditor.cpp" line="700"/>
         <source>Input %1</source>
         <translation>Vstup %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="633"/>
+        <location filename="../src/inputeditor.cpp" line="709"/>
         <source>Toggle — every press switches the output over</source>
         <translation>Přepínání — každý stisk přepne výstup</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="634"/>
+        <location filename="../src/inputeditor.cpp" line="710"/>
         <source>Absolute — the output follows the input</source>
         <translation>Absolutní — výstup sleduje vstup</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="653"/>
+        <location filename="../src/inputeditor.cpp" line="733"/>
+        <source>Needs a board with protocol v2</source>
+        <translation>Potřebuje desku s protokolem v2</translation>
+    </message>
+    <message>
+        <location filename="../src/inputeditor.cpp" line="745"/>
         <source>Feedback id</source>
         <translation>Id zpětného hlášení</translation>
     </message>
@@ -1223,10 +1250,10 @@ krok %1: %2, pak čekat %3</translation>
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.cpp" line="88"/>
-        <location filename="../src/mainwindow.cpp" line="1334"/>
-        <location filename="../src/mainwindow.cpp" line="2082"/>
-        <location filename="../src/mainwindow.cpp" line="2135"/>
-        <location filename="../src/mainwindow.cpp" line="2255"/>
+        <location filename="../src/mainwindow.cpp" line="1344"/>
+        <location filename="../src/mainwindow.cpp" line="2092"/>
+        <location filename="../src/mainwindow.cpp" line="2145"/>
+        <location filename="../src/mainwindow.cpp" line="2265"/>
         <source>GPIOcore Configurator</source>
         <translation>GPIOcore Configurator</translation>
     </message>
@@ -1346,166 +1373,166 @@ krok %1: %2, pak čekat %3</translation>
         <translation>Vstup %1 je vstup záznamníku / zpětného hlášení a nemůže ovládat výstupy</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="590"/>
+        <location filename="../src/mainwindow.cpp" line="599"/>
         <source>protocol v%1 · %2 steps/route · %3 in total</source>
         <translation>protokol v%1 · %2 kroků/cesta · celkem %3</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="591"/>
+        <location filename="../src/mainwindow.cpp" line="600"/>
         <source>protocol v1 · routes: 8 steps, no times</source>
         <translation>protokol v1 · jízdní cesty: 8 kroků, bez časů</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="625"/>
+        <location filename="../src/mainwindow.cpp" line="635"/>
         <source>Main</source>
         <translation>Hlavní</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="632"/>
+        <location filename="../src/mainwindow.cpp" line="642"/>
         <source>Open</source>
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="633"/>
+        <location filename="../src/mainwindow.cpp" line="643"/>
         <source>Save</source>
         <translation>Uložit</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="634"/>
+        <location filename="../src/mainwindow.cpp" line="644"/>
         <source>Open a board file (Ctrl+O)</source>
         <translation>Otevřít soubor desky (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="635"/>
-        <location filename="../src/mainwindow.cpp" line="729"/>
+        <location filename="../src/mainwindow.cpp" line="645"/>
+        <location filename="../src/mainwindow.cpp" line="739"/>
         <source>Save to this board&apos;s file (Ctrl+S)</source>
         <translation>Uložit do souboru této desky (Ctrl+S)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="643"/>
+        <location filename="../src/mainwindow.cpp" line="653"/>
         <source>  Port </source>
         <translation>  Port </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="646"/>
+        <location filename="../src/mainwindow.cpp" line="656"/>
         <source>Refresh port list</source>
         <translation>Obnovit seznam portů</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="647"/>
-        <location filename="../src/mainwindow.cpp" line="998"/>
-        <location filename="../src/mainwindow.cpp" line="1013"/>
+        <location filename="../src/mainwindow.cpp" line="657"/>
+        <location filename="../src/mainwindow.cpp" line="1008"/>
+        <location filename="../src/mainwindow.cpp" line="1023"/>
         <source>Connect</source>
         <translation>Připojit</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="661"/>
+        <location filename="../src/mainwindow.cpp" line="671"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="664"/>
+        <location filename="../src/mainwindow.cpp" line="674"/>
         <source>Try your configuration without a board: press the buttons on the inputs and watch the outputs. Nothing can be changed here.</source>
         <translation>Vyzkoušejte konfiguraci bez desky: mačkejte tlačítka vstupů a sledujte výstupy. Zde nelze nic měnit.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="667"/>
+        <location filename="../src/mainwindow.cpp" line="677"/>
         <source>Press the buttons on the inputs and watch what the real board does. Connects by itself. Blue = straight / on, red = curved / off; servos show their angle.</source>
         <translation>Mačkejte tlačítka vstupů a sledujte, co dělá skutečná deska. Připojí se sama. Modrá = přímo / zap., červená = do odbočky / vyp.; serva ukazují svůj úhel.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="687"/>
+        <location filename="../src/mainwindow.cpp" line="697"/>
         <source>Read board</source>
         <translation>Načíst desku</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="691"/>
-        <location filename="../src/mainwindow.cpp" line="1381"/>
+        <location filename="../src/mainwindow.cpp" line="701"/>
+        <location filename="../src/mainwindow.cpp" line="1391"/>
         <source>Write changes</source>
         <translation>Zapsat změny</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="693"/>
+        <location filename="../src/mainwindow.cpp" line="703"/>
         <source>Revert</source>
         <translation>Vrátit změny</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="699"/>
+        <location filename="../src/mainwindow.cpp" line="709"/>
         <source> Preset </source>
         <translation> Předvolba </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="701"/>
+        <location filename="../src/mainwindow.cpp" line="711"/>
         <source>Apply</source>
         <translation>Použít</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="708"/>
+        <location filename="../src/mainwindow.cpp" line="718"/>
         <source>Which board this is: decides which pins exist</source>
         <translation>Jaká je to deska: určuje, které piny existují</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="715"/>
+        <location filename="../src/mainwindow.cpp" line="725"/>
         <source> Board </source>
         <translation> Deska </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="681"/>
+        <location filename="../src/mainwindow.cpp" line="691"/>
         <source>Board</source>
         <translation>Deska</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="718"/>
+        <location filename="../src/mainwindow.cpp" line="728"/>
         <source>Board settings…</source>
         <translation>Nastavení desky…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="726"/>
+        <location filename="../src/mainwindow.cpp" line="736"/>
         <source>&amp;Save</source>
         <translation>&amp;Uložit</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="730"/>
+        <location filename="../src/mainwindow.cpp" line="740"/>
         <source>Save &amp;as…</source>
         <translation>Uložit &amp;jako…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="750"/>
+        <location filename="../src/mainwindow.cpp" line="760"/>
         <source>&amp;Phone remote…</source>
         <translation>&amp;Ovládání z telefonu…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="986"/>
+        <location filename="../src/mainwindow.cpp" line="996"/>
         <source>● Simulation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="988"/>
+        <location filename="../src/mainwindow.cpp" line="998"/>
         <source>● Connected: %1 (%2)</source>
         <translation>● Připojeno: %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="988"/>
+        <location filename="../src/mainwindow.cpp" line="998"/>
         <source>board</source>
         <translation>deska</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="991"/>
+        <location filename="../src/mainwindow.cpp" line="1001"/>
         <source>◌ Connecting to %1…</source>
         <translation>◌ Připojování k %1…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="993"/>
+        <location filename="../src/mainwindow.cpp" line="1003"/>
         <source>○ Offline</source>
         <translation>○ Offline</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1057"/>
+        <location filename="../src/mainwindow.cpp" line="1067"/>
         <source>Connected. Read board loads its configuration; Write all puts the one on screen on the board. Changes you make now go to the board.</source>
         <translation>Připojeno. Načíst desku načte její konfiguraci; Zapsat vše přenese konfiguraci z obrazovky do desky. Změny, které nyní provedete, jdou do desky.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1117"/>
+        <location filename="../src/mainwindow.cpp" line="1127"/>
         <source>Read everything from the board?
 
 What is on screen now is replaced by the board&apos;s configuration. Save it first (Ctrl+S) if you want to keep it.</source>
@@ -1514,12 +1541,12 @@ What is on screen now is replaced by the board&apos;s configuration. Save it fir
 To, co je nyní na obrazovce, bude nahrazeno konfigurací desky. Pokud si to chcete ponechat, nejprve to uložte (Ctrl+S).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1136"/>
+        <location filename="../src/mainwindow.cpp" line="1146"/>
         <source>the board</source>
         <translation>desky</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1138"/>
+        <location filename="../src/mainwindow.cpp" line="1148"/>
         <source>Write the whole configuration on screen to %1?
 
 Everything on the board is replaced.</source>
@@ -1528,346 +1555,346 @@ Everything on the board is replaced.</source>
 Vše v desce bude nahrazeno.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1187"/>
+        <location filename="../src/mainwindow.cpp" line="1197"/>
         <source>The board keeps a different value for %1; not sending it again.</source>
         <translation>Deska si pro %1 drží jinou hodnotu; znovu se neodesílá.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1246"/>
+        <location filename="../src/mainwindow.cpp" line="1256"/>
         <source>Preset applied</source>
         <translation>Předvolba použita</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1288"/>
+        <location filename="../src/mainwindow.cpp" line="1298"/>
         <source>Send this configuration to the connected board now?</source>
         <translation>Odeslat tuto konfiguraci nyní do připojené desky?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1310"/>
+        <location filename="../src/mainwindow.cpp" line="1320"/>
         <source>Loaded %1</source>
         <translation>Načteno %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1536"/>
+        <location filename="../src/mainwindow.cpp" line="1546"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on D9 and D10 stops working as soon as at least one servo output exists. Use D3, D5, D6 or D11 for PWM, or remove the servo.</source>
         <translation>%1 (%2): konflikt se servem/servy. Knihovna Servo používá časovač 1, takže PWM na D9 a D10 přestane fungovat, jakmile existuje alespoň jeden výstup serva. Pro PWM použijte D3, D5, D6 nebo D11, nebo servo odeberte.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1612"/>
+        <location filename="../src/mainwindow.cpp" line="1622"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1668"/>
+        <location filename="../src/mainwindow.cpp" line="1678"/>
         <source>The pin was in use: %1 is now not in use.</source>
         <translation>Pin byl obsazen: %1 je nyní nepoužito.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1706"/>
+        <location filename="../src/mainwindow.cpp" line="1716"/>
         <source>Phone: output %1 %2 = %3°</source>
         <translation>Telefon: výstup %1 %2 = %3°</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1707"/>
+        <location filename="../src/mainwindow.cpp" line="1717"/>
         <source>straight</source>
         <translation>přímo</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1707"/>
+        <location filename="../src/mainwindow.cpp" line="1717"/>
         <source>curved</source>
         <translation>do odbočky</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1732"/>
+        <location filename="../src/mainwindow.cpp" line="1742"/>
         <source>Phone remote</source>
         <translation>Ovládání z telefonu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1734"/>
+        <location filename="../src/mainwindow.cpp" line="1744"/>
         <source>Adjust servos from your phone: it must be on the same Wi-Fi as this computer. Scan the code with the phone&apos;s camera, or type the address in its browser. Keep this program open; the code changes every time the remote is switched on.</source>
         <translation>Nastavujte serva z telefonu: musí být ve stejné síti Wi-Fi jako tento počítač. Naskenujte kód fotoaparátem telefonu, nebo zadejte adresu do jeho prohlížeče. Nechte tento program otevřený; kód se mění při každém zapnutí ovládání.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1739"/>
+        <location filename="../src/mainwindow.cpp" line="1749"/>
         <source>Allow phones on my network</source>
         <translation>Povolit telefony v mé síti</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1753"/>
+        <location filename="../src/mainwindow.cpp" line="1763"/>
         <source>The first time, Windows may ask whether the program may use the network: allow it for private networks.</source>
         <translation>Při prvním spuštění se Windows může zeptat, zda program smí používat síť: povolte to pro soukromé sítě.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1767"/>
+        <location filename="../src/mainwindow.cpp" line="1777"/>
         <source>Off</source>
         <translation>Vypnuto</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1786"/>
+        <location filename="../src/mainwindow.cpp" line="1796"/>
         <source>Could not open a network port (8080-8089).</source>
         <translation>Nepodařilo se otevřít síťový port (8080-8089).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1813"/>
+        <location filename="../src/mainwindow.cpp" line="1823"/>
         <source>Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and reports back; nothing needs to be connected.</source>
         <translation>Živý test: klikněte u vstupu na ◀ / ▶ nebo ▶ start. Deska přepne své piny a ohlásí stav zpět; nic nemusí být připojeno.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1824"/>
+        <location filename="../src/mainwindow.cpp" line="1834"/>
         <source>Input %1 has no DCC address, so it cannot receive a DCC extended command.</source>
         <translation>Vstup %1 nemá adresu DCC, takže nemůže přijmout povel DCC extended.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1831"/>
+        <location filename="../src/mainwindow.cpp" line="1841"/>
         <source>DCC extended — address %1</source>
         <translation>DCC extended — adresa %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1835"/>
+        <location filename="../src/mainwindow.cpp" line="1845"/>
         <source>Value sent: %1 (0x%2)</source>
         <translation>Odeslaná hodnota: %1 (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1856"/>
+        <location filename="../src/mainwindow.cpp" line="1866"/>
         <source>flashing</source>
         <translation>bliká</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1856"/>
+        <location filename="../src/mainwindow.cpp" line="1866"/>
         <source>flashing, opposite phase</source>
         <translation>bliká, v protifázi</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1861"/>
+        <location filename="../src/mainwindow.cpp" line="1871"/>
         <source>Lamp %1</source>
         <translation>Světlo %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1871"/>
+        <location filename="../src/mainwindow.cpp" line="1881"/>
         <source>PWM value</source>
         <translation>Hodnota PWM</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1875"/>
+        <location filename="../src/mainwindow.cpp" line="1885"/>
         <source>Sent as if your command station sent a DCC extended accessory command to address %1. Every change is sent straight away.</source>
         <translation>Odesláno, jako by vaše centrála poslala povel DCC extended pro příslušenství na adresu %1. Každá změna se odešle hned.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1880"/>
-        <location filename="../src/mainwindow.cpp" line="1929"/>
+        <location filename="../src/mainwindow.cpp" line="1890"/>
+        <location filename="../src/mainwindow.cpp" line="1939"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2001"/>
+        <location filename="../src/mainwindow.cpp" line="2011"/>
         <source>&lt;h2&gt;GPIOcore Configurator&lt;/h2&gt;&lt;p&gt;Plug a GPIOcore board into a USB port, choose its port at the top and press &lt;b&gt;Connect&lt;/b&gt;. Everything you change is sent to the board straight away.&lt;/p&gt;</source>
         <translation>&lt;h2&gt;GPIOcore Configurator&lt;/h2&gt;&lt;p&gt;Zapojte desku GPIOcore do portu USB, nahoře zvolte její port a stiskněte &lt;b&gt;Připojit&lt;/b&gt;. Vše, co změníte, se hned odešle do desky.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2017"/>
+        <location filename="../src/mainwindow.cpp" line="2027"/>
         <source>Connect to the board</source>
         <translation>Připojit k desce</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2017"/>
+        <location filename="../src/mainwindow.cpp" line="2027"/>
         <source>Uses the port selected at the top.</source>
         <translation>Použije port zvolený nahoře.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2020"/>
+        <location filename="../src/mainwindow.cpp" line="2030"/>
         <source>Open a board file…</source>
         <translation>Otevřít soubor desky…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2020"/>
+        <location filename="../src/mainwindow.cpp" line="2030"/>
         <source>Look at or prepare the settings of a board without connecting it.</source>
         <translation>Prohlédnout nebo připravit nastavení desky bez jejího připojení.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2021"/>
+        <location filename="../src/mainwindow.cpp" line="2031"/>
         <source>New board (offline)…</source>
         <translation>Nová deska (offline)…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2021"/>
+        <location filename="../src/mainwindow.cpp" line="2031"/>
         <source>Prepare a new board on this computer and send it later.</source>
         <translation>Připravit novou desku v tomto počítači a odeslat ji později.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2022"/>
+        <location filename="../src/mainwindow.cpp" line="2032"/>
         <source>Flash firmware…</source>
         <translation>Nahrát firmware…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2022"/>
+        <location filename="../src/mainwindow.cpp" line="2032"/>
         <source>Put the GPIOcore firmware on an Arduino.</source>
         <translation>Nahrát firmware GPIOcore do Arduina.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2054"/>
+        <location filename="../src/mainwindow.cpp" line="2064"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2060"/>
+        <location filename="../src/mainwindow.cpp" line="2070"/>
         <source>Connected to &quot;%1&quot;, the screen shows &quot;%2&quot;. Read board or Write all.</source>
         <translation>Připojeno k &quot;%1&quot;, obrazovka zobrazuje &quot;%2&quot;. Načíst desku, nebo Zapsat vše.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2077"/>
+        <location filename="../src/mainwindow.cpp" line="2087"/>
         <source>Names loaded from %1</source>
         <translation>Názvy načteny z %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1335"/>
-        <location filename="../src/mainwindow.cpp" line="2082"/>
-        <location filename="../src/mainwindow.cpp" line="2136"/>
-        <location filename="../src/mainwindow.cpp" line="2255"/>
+        <location filename="../src/mainwindow.cpp" line="1345"/>
+        <location filename="../src/mainwindow.cpp" line="2092"/>
+        <location filename="../src/mainwindow.cpp" line="2146"/>
+        <location filename="../src/mainwindow.cpp" line="2265"/>
         <source>%1 — GPIOcore Configurator</source>
         <translation>%1 — GPIOcore Configurator</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2267"/>
+        <location filename="../src/mainwindow.cpp" line="2277"/>
         <source>max. 16 letters, e.g. Station-left</source>
         <translation>max. 16 znaků, např. Stanice-levá</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2270"/>
+        <location filename="../src/mainwindow.cpp" line="2280"/>
         <source>Empty (1 input, 1 output)</source>
         <translation>Prázdná (1 vstup, 1 výstup)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2272"/>
+        <location filename="../src/mainwindow.cpp" line="2282"/>
         <source>Preset: %1</source>
         <translation>Předvolba: %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2274"/>
+        <location filename="../src/mainwindow.cpp" line="2284"/>
         <source>Start with</source>
         <translation>Začít s</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2275"/>
+        <location filename="../src/mainwindow.cpp" line="2285"/>
         <source>When you later connect a board and give it this name, these settings belong to it. Use Write all to put them on the board.</source>
         <translation>Když později připojíte desku a dáte jí tento název, budou tato nastavení patřit k ní. Pomocí Zapsat vše je přenesete do desky.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2356"/>
+        <location filename="../src/mainwindow.cpp" line="2366"/>
         <source>Output %1 removed; %2 drove it and is now not in use as well.</source>
         <translation>Výstup %1 odstraněn; %2 jej ovládal a nyní se také nepoužívá.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2044"/>
+        <location filename="../src/mainwindow.cpp" line="2054"/>
         <source>● %1 — %2</source>
         <translation>● %1 — %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2044"/>
+        <location filename="../src/mainwindow.cpp" line="2054"/>
         <source>board without a name</source>
         <translation>deska bez názvu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2158"/>
+        <location filename="../src/mainwindow.cpp" line="2168"/>
         <source>Name this board</source>
         <translation>Pojmenovat tuto desku</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2159"/>
+        <location filename="../src/mainwindow.cpp" line="2169"/>
         <source>This board has no name yet. Give it a short, unique name (max. 16 letters, e.g. &quot;Station-left&quot;).
 The name is stored on the board; your names for inputs and outputs are kept in a file with this name.</source>
         <translation>Tato deska ještě nemá název. Dejte jí krátký, jedinečný název (max. 16 znaků, např. &quot;Stanice-vlevo&quot;).
 Název se uloží v desce; vaše názvy vstupů a výstupů se uchovávají v souboru s tímto názvem.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="829"/>
-        <location filename="../src/mainwindow.cpp" line="2174"/>
-        <location filename="../src/mainwindow.cpp" line="2227"/>
+        <location filename="../src/mainwindow.cpp" line="839"/>
+        <location filename="../src/mainwindow.cpp" line="2184"/>
+        <location filename="../src/mainwindow.cpp" line="2237"/>
         <source>Board settings</source>
         <translation>Nastavení desky</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1800"/>
+        <location filename="../src/mainwindow.cpp" line="1810"/>
         <source>Live test needs a connected board with firmware v2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2186"/>
+        <location filename="../src/mainwindow.cpp" line="2196"/>
         <source>Own wait time per route step</source>
         <translation>Vlastní čekací doba pro každý krok jízdní cesty</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2188"/>
+        <location filename="../src/mainwindow.cpp" line="2198"/>
         <source>Off: every step waits the same time and routes need half the memory</source>
         <translation>Vypnuto: každý krok čeká stejně dlouho a jízdní cesty zabírají polovinu paměti</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2193"/>
+        <location filename="../src/mainwindow.cpp" line="2203"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2196"/>
+        <location filename="../src/mainwindow.cpp" line="2206"/>
         <source>Off — routes may run at the same time</source>
         <translation>Vypnuto — jízdní cesty mohou běžet současně</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2197"/>
+        <location filename="../src/mainwindow.cpp" line="2207"/>
         <source>On — one route at a time</source>
         <translation>Zapnuto — vždy jen jedna jízdní cesta</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2198"/>
+        <location filename="../src/mainwindow.cpp" line="2208"/>
         <source>Automatic — turnout routes one at a time, lights in parallel</source>
         <translation>Automaticky — jízdní cesty s výhybkami postupně, osvětlení souběžně</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2200"/>
-        <location filename="../src/mainwindow.cpp" line="2273"/>
+        <location filename="../src/mainwindow.cpp" line="2210"/>
+        <location filename="../src/mainwindow.cpp" line="2283"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2201"/>
+        <location filename="../src/mainwindow.cpp" line="2211"/>
         <source>Board type</source>
         <translation>Typ desky</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2204"/>
+        <location filename="../src/mainwindow.cpp" line="2214"/>
         <source>Wait time per step</source>
         <translation>Čekací doba na krok</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2205"/>
+        <location filename="../src/mainwindow.cpp" line="2215"/>
         <source>Route interlocking</source>
         <translation>Vzájemné vyloučení jízdních cest</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2207"/>
+        <location filename="../src/mainwindow.cpp" line="2217"/>
         <source>This board&apos;s firmware cannot store these settings yet; they are only kept in the file.</source>
         <translation>Firmware této desky zatím tato nastavení neumí uložit; uchovávají se jen v souboru.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2228"/>
+        <location filename="../src/mainwindow.cpp" line="2238"/>
         <source>The recorder needs an I2C EEPROM on A4 (SDA) and A5 (SCL), but A4 or A5 is in use by an input or output. Move that first, then switch the recorder on.</source>
         <translation>Záznamník potřebuje paměť I2C EEPROM na A4 (SDA) a A5 (SCL), ale A4 nebo A5 používá vstup nebo výstup. Nejdřív ho přesuňte, pak záznamník zapněte.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2263"/>
+        <location filename="../src/mainwindow.cpp" line="2273"/>
         <source>New board</source>
         <translation>Nová deska</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2312"/>
+        <location filename="../src/mainwindow.cpp" line="2322"/>
         <source>All 16 outputs are in use.</source>
         <translation>Všech 16 výstupů je obsazeno.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2324"/>
+        <location filename="../src/mainwindow.cpp" line="2334"/>
         <source>All 16 inputs are in use.</source>
         <translation>Všech 16 vstupů je obsazeno.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="721"/>
+        <location filename="../src/mainwindow.cpp" line="731"/>
         <source>&amp;File</source>
         <translation>&amp;Soubor</translation>
     </message>
@@ -1884,14 +1911,14 @@ Název se uloží v desce; vaše názvy vstupů a výstupů se uchovávají v so
     <message>
         <location filename="../src/mainwindow.cpp" line="129"/>
         <location filename="../src/mainwindow.cpp" line="130"/>
-        <location filename="../src/mainwindow.cpp" line="1856"/>
+        <location filename="../src/mainwindow.cpp" line="1866"/>
         <source>on</source>
         <translation>zap</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="129"/>
         <location filename="../src/mainwindow.cpp" line="130"/>
-        <location filename="../src/mainwindow.cpp" line="1856"/>
+        <location filename="../src/mainwindow.cpp" line="1866"/>
         <source>off</source>
         <translation>vyp</translation>
     </message>
@@ -1937,228 +1964,228 @@ Název se uloží v desce; vaše názvy vstupů a výstupů se uchovávají v so
         <translation>Barva světla %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="660"/>
+        <location filename="../src/mainwindow.cpp" line="670"/>
         <source>● Configure</source>
         <translation>● Konfigurovat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="663"/>
+        <location filename="../src/mainwindow.cpp" line="673"/>
         <source>● Simulate</source>
         <translation>● Simulovat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="666"/>
+        <location filename="../src/mainwindow.cpp" line="676"/>
         <source>● Live test</source>
         <translation>● Živý test</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="722"/>
+        <location filename="../src/mainwindow.cpp" line="732"/>
         <source>&amp;New board (offline)…</source>
         <translation>&amp;Nová deska (offline)…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="723"/>
+        <location filename="../src/mainwindow.cpp" line="733"/>
         <source>&amp;Open configuration…</source>
         <translation>&amp;Otevřít konfiguraci…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="732"/>
+        <location filename="../src/mainwindow.cpp" line="742"/>
         <source>Open the boards folder</source>
         <translation>Otevřít složku desek</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="737"/>
+        <location filename="../src/mainwindow.cpp" line="747"/>
         <source>&amp;Quit</source>
         <translation>&amp;Konec</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="739"/>
+        <location filename="../src/mainwindow.cpp" line="749"/>
         <source>&amp;Board</source>
         <translation>&amp;Deska</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="747"/>
+        <location filename="../src/mainwindow.cpp" line="757"/>
         <source>Apply a preset…</source>
         <translation>Použít předvolbu…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="749"/>
+        <location filename="../src/mainwindow.cpp" line="759"/>
         <source>&amp;Flash firmware…</source>
         <translation>&amp;Nahrát firmware…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="754"/>
+        <location filename="../src/mainwindow.cpp" line="764"/>
         <source>&amp;View</source>
         <translation>&amp;Zobrazení</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="755"/>
+        <location filename="../src/mainwindow.cpp" line="765"/>
         <source>&amp;Expert mode</source>
         <translation>Režim &amp;experta</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="757"/>
+        <location filename="../src/mainwindow.cpp" line="767"/>
         <source>Show bytes, the serial log and protocol details</source>
         <translation>Zobrazit bajty, sériový log a podrobnosti protokolu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="759"/>
+        <location filename="../src/mainwindow.cpp" line="769"/>
         <source>Show unused inputs and outputs</source>
         <translation>Zobrazit nepoužité vstupy a výstupy</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="768"/>
+        <location filename="../src/mainwindow.cpp" line="778"/>
         <source>Show TX/RX bytes in log</source>
         <translation>Zobrazit bajty TX/RX v logu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="771"/>
+        <location filename="../src/mainwindow.cpp" line="781"/>
         <source>Clear log</source>
         <translation>Vymazat log</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="777"/>
+        <location filename="../src/mainwindow.cpp" line="787"/>
         <source>Theme</source>
         <translation>Motiv</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="779"/>
+        <location filename="../src/mainwindow.cpp" line="789"/>
         <source>Automatic (Windows)</source>
         <translation>Automaticky (Windows)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="780"/>
+        <location filename="../src/mainwindow.cpp" line="790"/>
         <source>Light</source>
         <translation>Světlý</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="781"/>
+        <location filename="../src/mainwindow.cpp" line="791"/>
         <source>Dark</source>
         <translation>Tmavý</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="798"/>
+        <location filename="../src/mainwindow.cpp" line="808"/>
         <source>Language</source>
         <translation>Jazyk</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="808"/>
+        <location filename="../src/mainwindow.cpp" line="818"/>
         <source>The language changes the next time you start the program.</source>
         <translation>Jazyk se změní při příštím spuštění programu.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="811"/>
+        <location filename="../src/mainwindow.cpp" line="821"/>
         <source>Automatic (system language)</source>
         <translation>Automaticky (jazyk systému)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="820"/>
+        <location filename="../src/mainwindow.cpp" line="830"/>
         <source>&amp;Help</source>
         <translation>&amp;Nápověda</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="821"/>
+        <location filename="../src/mainwindow.cpp" line="831"/>
         <source>&amp;Getting started</source>
         <translation>&amp;Začínáme</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="822"/>
+        <location filename="../src/mainwindow.cpp" line="832"/>
         <source>Getting started</source>
         <translation>Začínáme</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="825"/>
+        <location filename="../src/mainwindow.cpp" line="835"/>
         <source>&amp;Configure, simulate and live test</source>
         <translation>&amp;Konfigurace, simulace a živý test</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="826"/>
+        <location filename="../src/mainwindow.cpp" line="836"/>
         <source>Configure, simulate and live test</source>
         <translation>Konfigurace, simulace a živý test</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="828"/>
+        <location filename="../src/mainwindow.cpp" line="838"/>
         <source>&amp;Board settings</source>
         <translation>Nastavení &amp;desky</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="831"/>
+        <location filename="../src/mainwindow.cpp" line="841"/>
         <source>Config &amp;button and teaching servos (9999)</source>
         <translation>&amp;Tlačítko konfigurace a nastavení serv (9999)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="832"/>
+        <location filename="../src/mainwindow.cpp" line="842"/>
         <source>Config button and teaching servos</source>
         <translation>Tlačítko konfigurace a nastavení serv</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="835"/>
+        <location filename="../src/mainwindow.cpp" line="845"/>
         <source>&amp;About</source>
         <translation>&amp;O programu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="837"/>
+        <location filename="../src/mainwindow.cpp" line="847"/>
         <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano / Uno, DCCnext) for model railways.&lt;br&gt;Language: %2</source>
         <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Konfiguruje desky GPIOcore (Arduino Nano / Uno, DCCnext) pro modelová kolejiště.&lt;br&gt;Jazyk: %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="861"/>
+        <location filename="../src/mainwindow.cpp" line="871"/>
         <source>no serial ports found</source>
         <translation>nenalezeny žádné sériové porty</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="884"/>
+        <location filename="../src/mainwindow.cpp" line="894"/>
         <source>Select a serial port first, or use Demo.</source>
         <translation>Nejprve vyberte sériový port, nebo použijte Demo.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="897"/>
+        <location filename="../src/mainwindow.cpp" line="907"/>
         <source>Could not open %1:
 %2</source>
         <translation>Nelze otevřít %1:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="998"/>
-        <location filename="../src/mainwindow.cpp" line="1013"/>
+        <location filename="../src/mainwindow.cpp" line="1008"/>
+        <location filename="../src/mainwindow.cpp" line="1023"/>
         <source>Disconnect</source>
         <translation>Odpojit</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1017"/>
+        <location filename="../src/mainwindow.cpp" line="1027"/>
         <source>● %1 — waiting for board…</source>
         <translation>● %1 — čekám na desku…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1022"/>
+        <location filename="../src/mainwindow.cpp" line="1032"/>
         <source>○ Not connected</source>
         <translation>○ Nepřipojeno</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1041"/>
+        <location filename="../src/mainwindow.cpp" line="1051"/>
         <source>● %1 — GPIOcore %2</source>
         <translation>● %1 — GPIOcore %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1166"/>
-        <location filename="../src/mainwindow.cpp" line="1663"/>
-        <location filename="../src/mainwindow.cpp" line="2351"/>
+        <location filename="../src/mainwindow.cpp" line="1176"/>
+        <location filename="../src/mainwindow.cpp" line="1673"/>
+        <location filename="../src/mainwindow.cpp" line="2361"/>
         <source>input %1</source>
         <translation>vstup %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1176"/>
-        <location filename="../src/mainwindow.cpp" line="1652"/>
+        <location filename="../src/mainwindow.cpp" line="1186"/>
+        <location filename="../src/mainwindow.cpp" line="1662"/>
         <source>output %1</source>
         <translation>výstup %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1183"/>
+        <location filename="../src/mainwindow.cpp" line="1193"/>
         <source>Writing %1 item(s), each is read back for verification</source>
         <translation>Zapisuji položky (%1), každá se pro kontrolu čte zpět</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1206"/>
+        <location filename="../src/mainwindow.cpp" line="1216"/>
         <source>Apply preset &quot;%1&quot;?
 
 This replaces all outputs and inputs (and their routes).</source>
@@ -2167,214 +2194,214 @@ This replaces all outputs and inputs (and their routes).</source>
 Tím se nahradí všechny výstupy a vstupy (a jejich jízdní cesty).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1208"/>
+        <location filename="../src/mainwindow.cpp" line="1218"/>
         <source>Also clear the names of inputs and outputs (recommended)</source>
         <translation>Smazat také názvy vstupů a výstupů (doporučeno)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1524"/>
+        <location filename="../src/mainwindow.cpp" line="1534"/>
         <source>The firmware on this board has no sound effect output yet: update the firmware (Board &gt; Flash firmware).</source>
         <translation>Firmware této desky zatím nemá výstup zvukového efektu: aktualizujte firmware (Deska &gt; Nahrát firmware).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1564"/>
+        <location filename="../src/mainwindow.cpp" line="1574"/>
         <source>The firmware on this board cannot read analog inputs yet: update the firmware (Board &gt; Flash firmware).</source>
         <translation>Firmware této desky zatím neumí číst analogové vstupy: aktualizujte firmware (Deska &gt; Nahrát firmware).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1898"/>
+        <location filename="../src/mainwindow.cpp" line="1908"/>
         <source>Value on A%1 (0–1023)</source>
         <translation>Hodnota na A%1 (0–1023)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1914"/>
+        <location filename="../src/mainwindow.cpp" line="1924"/>
         <source>A%1</source>
         <translation>A%1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1920"/>
+        <location filename="../src/mainwindow.cpp" line="1930"/>
         <source>In %1: %2 %3</source>
         <translation>Vst. %1: %2 %3</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1925"/>
+        <location filename="../src/mainwindow.cpp" line="1935"/>
         <source>1023 = 5 V, nothing pressed. Every input on A%1 reacts: %2</source>
         <translation>1023 = 5 V, nic nestisknuto. Každý vstup na A%1 reaguje: %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2018"/>
+        <location filename="../src/mainwindow.cpp" line="2028"/>
         <source>Simulate</source>
         <translation>Simulovat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2018"/>
+        <location filename="../src/mainwindow.cpp" line="2028"/>
         <source>Try a configuration without a board: open a board file or start a new one, then simulate it. Nothing can break.</source>
         <translation>Vyzkoušejte konfiguraci bez desky: otevřete soubor desky nebo začněte novou a pak ji simulujte. Nic se nemůže rozbít.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2182"/>
+        <location filename="../src/mainwindow.cpp" line="2192"/>
         <source>Use the recorder (needs an I2C EEPROM on A4/A5)</source>
         <translation>Používat záznamník (potřebuje I2C EEPROM na A4/A5)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2184"/>
+        <location filename="../src/mainwindow.cpp" line="2194"/>
         <source>The recorder stores its recording in an external 24LC256 EEPROM. While it is on, A4 and A5 cannot be used as inputs or outputs.</source>
         <translation>Záznamník ukládá záznam do externí paměti EEPROM 24LC256. Dokud je zapnutý, nelze A4 a A5 použít jako vstupy ani výstupy.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1261"/>
+        <location filename="../src/mainwindow.cpp" line="1271"/>
         <source>Open configuration</source>
         <translation>Otevřít konfiguraci</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="688"/>
+        <location filename="../src/mainwindow.cpp" line="698"/>
         <source>Load the configuration from the board (replaces what is on screen)</source>
         <translation>Načíst konfiguraci z desky (nahradí to, co je na obrazovce)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="689"/>
+        <location filename="../src/mainwindow.cpp" line="699"/>
         <source>Write all</source>
         <translation>Zapsat vše</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="690"/>
+        <location filename="../src/mainwindow.cpp" line="700"/>
         <source>Put the whole configuration on screen on the board</source>
         <translation>Přenést celou konfiguraci z obrazovky do desky</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1262"/>
-        <location filename="../src/mainwindow.cpp" line="1321"/>
+        <location filename="../src/mainwindow.cpp" line="1272"/>
+        <location filename="../src/mainwindow.cpp" line="1331"/>
         <source>GPIOcore configuration (*.json)</source>
         <translation>Konfigurace GPIOcore (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1319"/>
+        <location filename="../src/mainwindow.cpp" line="1329"/>
         <source>Save configuration</source>
         <translation>Uložit konfiguraci</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1336"/>
+        <location filename="../src/mainwindow.cpp" line="1346"/>
         <source>Saved %1</source>
         <translation>%1 uloženo</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1381"/>
+        <location filename="../src/mainwindow.cpp" line="1391"/>
         <source>Write %1 change(s)</source>
         <translation>Zapsat změny (%1)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1387"/>
+        <location filename="../src/mainwindow.cpp" line="1397"/>
         <source>Saving on the board…</source>
         <translation>Ukládání do desky…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1387"/>
+        <location filename="../src/mainwindow.cpp" line="1397"/>
         <source>%1 change(s) waiting</source>
         <translation>Čekající změny: %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1389"/>
+        <location filename="../src/mainwindow.cpp" line="1399"/>
         <source>%1 unsent change(s)</source>
         <translation>Neodeslané změny: %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1472"/>
-        <location filename="../src/mainwindow.cpp" line="1473"/>
+        <location filename="../src/mainwindow.cpp" line="1482"/>
+        <location filename="../src/mainwindow.cpp" line="1483"/>
         <source>Output %1 · %2</source>
         <translation>Výstup %1 · %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1502"/>
+        <location filename="../src/mainwindow.cpp" line="1512"/>
         <source>%1 is not set.</source>
         <translation>%1 není nastaven.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1506"/>
+        <location filename="../src/mainwindow.cpp" line="1516"/>
         <source>%1 uses %2, which is the %3.</source>
         <translation>%1 používá %2 (%3).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1511"/>
+        <location filename="../src/mainwindow.cpp" line="1521"/>
         <source>%1 (%2) is also used by output %3 (%4).</source>
         <translation>%1 (%2) používá také výstup %3 (%4).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1512"/>
+        <location filename="../src/mainwindow.cpp" line="1522"/>
         <source>%1 (%2) is also used by input %3.</source>
         <translation>%1 (%2) používá také vstup %3.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1515"/>
+        <location filename="../src/mainwindow.cpp" line="1525"/>
         <source>%1 (%2) is not PWM capable; %3 needs PWM.</source>
         <translation>%1 (%2) neumí PWM; %3 potřebuje PWM.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1519"/>
+        <location filename="../src/mainwindow.cpp" line="1529"/>
         <source>This board runs old firmware, which never ends the pulse — a coil can stay energised. Update the firmware (review F9).</source>
         <translation>Tato deska má starý firmware, který nikdy neukončí impuls — cívka může zůstat pod proudem. Aktualizujte firmware (revize F9).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1522"/>
+        <location filename="../src/mainwindow.cpp" line="1532"/>
         <source>Min is larger than max: positions are swapped.</source>
         <translation>Min je větší než max: polohy jsou prohozené.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1527"/>
+        <location filename="../src/mainwindow.cpp" line="1537"/>
         <source>%1 (%2) is a serial pin: it only works when no GUI is connected.</source>
         <translation>%1 (%2) je sériový pin: funguje jen tehdy, když není připojen žádný program.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1556"/>
+        <location filename="../src/mainwindow.cpp" line="1566"/>
         <source>Pin %1 is the %2.</source>
         <translation>Pin %1 je rezervován: %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1560"/>
+        <location filename="../src/mainwindow.cpp" line="1570"/>
         <source>Pin %1 is also used by output %2.</source>
         <translation>Pin %1 používá také výstup %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1561"/>
+        <location filename="../src/mainwindow.cpp" line="1571"/>
         <source>Pin %1 is also used by input %2.</source>
         <translation>Pin %1 používá také vstup %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1566"/>
+        <location filename="../src/mainwindow.cpp" line="1576"/>
         <source>This type needs an input pin.</source>
         <translation>Tento typ potřebuje vstupní pin.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1568"/>
+        <location filename="../src/mainwindow.cpp" line="1578"/>
         <source>Input %1 is a recorder too. Only one recorder per board is allowed.</source>
         <translation>Vstup %1 je také záznamník. Na desce je povolen jen jeden záznamník.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1570"/>
+        <location filename="../src/mainwindow.cpp" line="1580"/>
         <source>Neither a DCC address nor a pin is set: this input never triggers.</source>
         <translation>Není nastavena DCC adresa ani pin: tento vstup se nikdy nespustí.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1575"/>
+        <location filename="../src/mainwindow.cpp" line="1585"/>
         <source>Route step %1 sets output %2, which is not in use.</source>
         <translation>Krok jízdní cesty %1 nastavuje výstup %2, který se nepoužívá.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1578"/>
+        <location filename="../src/mainwindow.cpp" line="1588"/>
         <source>This board stores only %1 route steps (protocol v1); steps %2 and later are lost.</source>
         <translation>Tato deska ukládá jen %1 kroků jízdních cest (protokol v1); kroky od %2 dál se ztratí.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1581"/>
+        <location filename="../src/mainwindow.cpp" line="1591"/>
         <source>All routes together use %1 steps; the board has room for %2.</source>
         <translation>Všechny jízdní cesty dohromady používají %1 kroků; deska má místo pro %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1584"/>
+        <location filename="../src/mainwindow.cpp" line="1594"/>
         <source>Output %1 is not in use.</source>
         <translation>Výstup %1 se nepoužívá.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1623"/>
+        <location filename="../src/mainwindow.cpp" line="1633"/>
         <source>%1 change(s) have not been written to the board. Quit anyway?</source>
         <translation>Změny (%1) nebyly zapsány do desky. Přesto ukončit?</translation>
     </message>
@@ -2382,238 +2409,218 @@ Tím se nahradí všechny výstupy a vstupy (a jejich jízdní cesty).</translat
 <context>
     <name>OutputEditor</name>
     <message>
-        <location filename="../src/outputeditor.cpp" line="80"/>
+        <location filename="../src/outputeditor.cpp" line="79"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="97"/>
-        <location filename="../src/outputeditor.cpp" line="478"/>
+        <location filename="../src/outputeditor.cpp" line="96"/>
+        <location filename="../src/outputeditor.cpp" line="455"/>
         <source>Pins</source>
         <translation>Piny</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="99"/>
+        <location filename="../src/outputeditor.cpp" line="98"/>
         <source>Pin A</source>
         <translation>Pin A</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="99"/>
+        <location filename="../src/outputeditor.cpp" line="98"/>
         <source>Pin B</source>
         <translation>Pin B</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="99"/>
+        <location filename="../src/outputeditor.cpp" line="98"/>
         <source>Pin C</source>
         <translation>Pin C</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="99"/>
+        <location filename="../src/outputeditor.cpp" line="98"/>
         <source>Pin D</source>
         <translation>Pin D</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="116"/>
+        <location filename="../src/outputeditor.cpp" line="117"/>
         <source>Frog polarity</source>
         <translation>Polarita srdcovky</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="122"/>
+        <location filename="../src/outputeditor.cpp" line="123"/>
         <source>None (dead frog)</source>
         <translation>Žádná (izolovaná srdcovka)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="123"/>
+        <location filename="../src/outputeditor.cpp" line="124"/>
         <source>Electrofrog — 2 relays</source>
         <translation>Electrofrog — 2 relé</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="124"/>
+        <location filename="../src/outputeditor.cpp" line="125"/>
         <source>Unifrog — 1 change-over relay</source>
         <translation>Unifrog — 1 přepínací relé</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="128"/>
+        <location filename="../src/outputeditor.cpp" line="129"/>
         <source>Frog</source>
         <translation>Srdcovka</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="129"/>
+        <location filename="../src/outputeditor.cpp" line="130"/>
         <source>Relay straight (A)</source>
         <translation>Relé přímo (A)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="129"/>
+        <location filename="../src/outputeditor.cpp" line="130"/>
         <source>Relay curved (B)</source>
         <translation>Relé do odbočky (B)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="129"/>
+        <location filename="../src/outputeditor.cpp" line="130"/>
         <source>Unifrog relay</source>
         <translation>Relé Unifrog</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="143"/>
+        <location filename="../src/outputeditor.cpp" line="144"/>
         <source>Parameters</source>
         <translation>Parametry</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="149"/>
+        <location filename="../src/outputeditor.cpp" line="150"/>
         <source>This type has no parameters.</source>
         <translation>Tento typ nemá žádné parametry.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="163"/>
+        <location filename="../src/outputeditor.cpp" line="164"/>
         <source>Switch time</source>
         <translation>Doba přestavení</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="173"/>
+        <location filename="../src/outputeditor.cpp" line="174"/>
         <source>LED on time</source>
         <translation>Doba svícení LED</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="174"/>
+        <location filename="../src/outputeditor.cpp" line="175"/>
         <source>Pause</source>
         <translation>Pauza</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="193"/>
+        <location filename="../src/outputeditor.cpp" line="194"/>
         <source>Live: move the servo while adjusting</source>
         <translation>Živě: servo se při nastavování pohybuje</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="198"/>
+        <location filename="../src/outputeditor.cpp" line="199"/>
         <source>Position 0 (curved)</source>
         <translation>Poloha 0 (do odbočky)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="199"/>
+        <location filename="../src/outputeditor.cpp" line="200"/>
         <source>Position 1 (straight)</source>
         <translation>Poloha 1 (přímo)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="200"/>
+        <location filename="../src/outputeditor.cpp" line="201"/>
         <source> ms/°</source>
         <translation> ms/°</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="203"/>
+        <location filename="../src/outputeditor.cpp" line="204"/>
         <source>Speed</source>
         <translation>Rychlost</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="218"/>
+        <location filename="../src/outputeditor.cpp" line="219"/>
         <source>Duty cycle</source>
         <translation>Střída</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="228"/>
+        <location filename="../src/outputeditor.cpp" line="229"/>
         <source> Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="230"/>
+        <location filename="../src/outputeditor.cpp" line="231"/>
         <source>Flashing</source>
         <translation>Blikání</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="231"/>
+        <location filename="../src/outputeditor.cpp" line="232"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Jak rychle blikající světla blikají (1 Hz = jednou za sekundu). Samotnou návěst zvolíte přes DCC extended nebo v jízdní cestě.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="245"/>
-        <source>stop</source>
-        <translation>stop</translation>
-    </message>
-    <message>
-        <location filename="../src/outputeditor.cpp" line="253"/>
-        <source>Track when curved / off</source>
-        <translation>Skladba při do odbočky / vyp</translation>
-    </message>
-    <message>
-        <location filename="../src/outputeditor.cpp" line="254"/>
-        <source>Track when straight / on</source>
-        <translation>Skladba při přímo / zap</translation>
-    </message>
-    <message>
-        <location filename="../src/outputeditor.cpp" line="255"/>
-        <source>Track n is the file 000n.mp3 on the SD card (0001.mp3, 0002.mp3 …). A route step or a DCC extended command plays its own track number.</source>
-        <translation>Skladba n je soubor 000n.mp3 na kartě SD (0001.mp3, 0002.mp3 …). Krok jízdní cesty nebo příkaz DCC extended přehraje vlastní číslo skladby.</translation>
-    </message>
-    <message>
-        <location filename="../src/outputeditor.cpp" line="264"/>
+        <location filename="../src/outputeditor.cpp" line="242"/>
         <source>This board runs old firmware (output opcode 0x2D, 13 bytes): the 4th data byte is not transferred. Update the firmware (review F1).</source>
         <translation>Tato deska má starý firmware (opcode výstupu 0x2D, 13 bajtů): 4. datový bajt se nepřenáší. Aktualizujte firmware (revize F1).</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="271"/>
+        <location filename="../src/outputeditor.cpp" line="249"/>
         <source>State</source>
         <translation>Stav</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="278"/>
+        <location filename="../src/outputeditor.cpp" line="256"/>
         <source>0  (off / curved)</source>
         <translation>0  (vyp / do odbočky)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="279"/>
+        <location filename="../src/outputeditor.cpp" line="257"/>
         <source>1  (on / straight)</source>
         <translation>1  (zap / přímo)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="280"/>
+        <location filename="../src/outputeditor.cpp" line="258"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Test: do odbočky / vyp</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="281"/>
+        <location filename="../src/outputeditor.cpp" line="259"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Test: přímo / zap</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="284"/>
+        <location filename="../src/outputeditor.cpp" line="262"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>Zapíše tento výstup do desky se zvoleným stavem (uloží se i do EEPROM)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="287"/>
+        <location filename="../src/outputeditor.cpp" line="265"/>
         <source>Stored state</source>
         <translation>Uložený stav</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="428"/>
+        <location filename="../src/outputeditor.cpp" line="406"/>
         <source>Output %1</source>
         <translation>Výstup %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="436"/>
+        <location filename="../src/outputeditor.cpp" line="414"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Jsou nastavena relé Electrofrog i Unifrog. Povolen je jen jeden režim srdcovky: relé Unifrog se odstraní, když tento výstup změníte.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="456"/>
+        <location filename="../src/outputeditor.cpp" line="432"/>
         <source>Needs a connected board that speaks protocol v2 (SERVO_LIVE)</source>
         <translation>Vyžaduje připojenou desku s protokolem v2 (SERVO_LIVE)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="478"/>
+        <location filename="../src/outputeditor.cpp" line="455"/>
         <source>Pins (PWM capable: D3 D5 D6 D9 D10 D11)</source>
         <translation>Piny (s PWM: D3 D5 D6 D9 D10 D11)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="510"/>
+        <location filename="../src/outputeditor.cpp" line="487"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="511"/>
+        <location filename="../src/outputeditor.cpp" line="488"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  zap %2 ms, pauza %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="514"/>
+        <location filename="../src/outputeditor.cpp" line="491"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Celý přestavný pohyb ≈ %1 ms</translation>
     </message>
@@ -2649,17 +2656,17 @@ Tím se nahradí všechny výstupy a vstupy (a jejich jízdní cesty).</translat
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/connectionview.cpp" line="555"/>
+        <location filename="../src/connectionview.cpp" line="562"/>
         <source>DCC %1 straight</source>
         <translation>DCC %1 přímo</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="556"/>
+        <location filename="../src/connectionview.cpp" line="563"/>
         <source>DCC %1 curved</source>
         <translation>DCC %1 do odbočky</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="565"/>
+        <location filename="../src/connectionview.cpp" line="572"/>
         <source>no trigger</source>
         <translation>bez spouštěče</translation>
     </message>

@@ -22,7 +22,7 @@
 
 using namespace Gpio;
 
-enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal, PageSound };
+enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal };
 
 static Page pageFor(ParamKind k)
 {
@@ -33,7 +33,6 @@ static Page pageFor(ParamKind k)
     case ParamKind::Servo:      return PageServo;
     case ParamKind::PwmValue:   return PagePwm;
     case ParamKind::FourTone:   return PageSignal;
-    case ParamKind::SoundTracks: return PageSound;
     default:                    break;
     }
     return PageNone;
@@ -105,6 +104,8 @@ void OutputEditor::buildUi()
             auto *row = new QHBoxLayout;
             row->addWidget(m_pins[i], 1);
             row->addWidget(Info::button(QStringLiteral("output.pins")));
+            m_soundInfo = Info::button(QStringLiteral("output.sound"));   // shown for a sound effect only
+            row->addWidget(m_soundInfo);
             m_pinForm->addRow(pinLabels[i], row);
         }
         else
@@ -236,29 +237,6 @@ void OutputEditor::buildUi()
         m_params->addWidget(w);
         connect(m_blinkHz, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
     }
-    { // sound effect: the MP3 track for each state, 0 = stop
-        auto *w = new QWidget;
-        auto *f = new QFormLayout(w);
-        for (int k = 0; k < 2; ++k)
-        {
-            m_track[k] = makeSpin(0, 255);
-            m_track[k]->setSpecialValueText(tr("stop"));
-            m_track[k]->setKeyboardTracking(false);
-            connect(m_track[k], QOverload<int>::of(&QSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
-        }
-        auto *row = new QHBoxLayout;
-        row->addWidget(m_track[0]);
-        row->addStretch();
-        row->addWidget(Info::button(QStringLiteral("output.sound")));
-        f->addRow(tr("Track when curved / off"), row);
-        f->addRow(tr("Track when straight / on"), m_track[1]);
-        auto *hint = new QLabel(tr("Track n is the file 000n.mp3 on the SD card (0001.mp3, 0002.mp3 …). "
-                                   "A route step or a DCC extended command plays its own track number."));
-        hint->setWordWrap(true);
-        hint->setObjectName(QStringLiteral("help"));
-        f->addRow(hint);
-        m_params->addWidget(w);
-    }
     root->addWidget(m_paramBox);
 
     m_legacyNote = new QLabel(tr("This board runs old firmware (output opcode 0x2D, 13 bytes): "
@@ -317,7 +295,7 @@ void OutputEditor::buildUi()
         case ServoType:      m_cfg.data = { { 80, 100, 20, 0 } }; break;
         case Pwm:            m_cfg.data = { { 128, 0, 0, 0 } };   break;
         case FourToneSignal: break;                              // keep the aspect the board has
-        case SoundEffect:    m_cfg.data = { { 1, 2, 0, 0 } };     // track 1 when curved / off, 2 when straight / on
+        case SoundEffect:    m_cfg.data = { { 0, 0, 0, 0 } };     // the input chooses the track
                              m_cfg.pinA = SoundPin;   break;
         default:             m_cfg.data = { { 0, 0, 0, 0 } };     break;
         }
@@ -446,8 +424,6 @@ void OutputEditor::refresh()
     m_servoSpeed->setValue(qMax<int>(1, m_cfg.servoSpeed()));
     m_pwm->setValue(m_cfg.pwmValue());
     m_blinkHz->setValue(m_cfg.data[1] ? m_cfg.data[1] / 10.0 : 1.0);
-    m_track[0]->setValue(m_cfg.data[0]);
-    m_track[1]->setValue(m_cfg.data[1]);
     m_state->setCurrentIndex(m_cfg.state ? 1 : 0);
 
     const bool liveOk = m_connected && m_liveAvailable;
@@ -474,6 +450,7 @@ void OutputEditor::updateVisibility()
             label->setVisible(used);
     }
     m_pins[0]->setEnabled(m_cfg.type != SoundEffect);   // the DFPlayer is always on TX (D1)
+    m_soundInfo->setVisible(m_cfg.type == SoundEffect);
     m_pinBox->setVisible(info.pinCount > 0);
     m_pinBox->setTitle(info.needsPwm ? tr("Pins (PWM capable: D3 D5 D6 D9 D10 D11)") : tr("Pins"));
 
@@ -549,10 +526,6 @@ void OutputEditor::collect()
         break;
     case ParamKind::FourTone:
         m_cfg.data[1] = quint8(qRound(m_blinkHz->value() * 10));   // data[0] (aspect) stays as it is
-        break;
-    case ParamKind::SoundTracks:
-        m_cfg.data[0] = quint8(m_track[0]->value());
-        m_cfg.data[1] = quint8(m_track[1]->value());
         break;
     default:
         break;

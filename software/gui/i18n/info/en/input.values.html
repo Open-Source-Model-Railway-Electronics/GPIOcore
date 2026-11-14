@@ -1,0 +1,16 @@
+<h3>Custom values: more than on and off</h3>
+<p>Normally a toggle or absolute input switches its output to <b>curved / off</b> (0) or <b>straight / on</b> (1).
+With <b>Custom values</b> each of the two states sends its own value instead, just like a route step:</p>
+<ul>
+<li><b>Servo</b> — an angle, e.g. off = 45&deg;, on = 135&deg; (or curved / straight as usual).</li>
+<li><b>4-aspect signal</b> — an aspect per state, chosen lamp by lamp with &#9662;.</li>
+<li><b>PWM</b> — a brightness per state, e.g. off = 20 (dimmed), on = 255.</li>
+<li><b>Sound effect</b> — a track per state; <i>stop</i> (0) stops playing. One sound output can play many
+tracks, each chosen by its own input.</li>
+<li>Other outputs — curved or straight per state, for example the other way round.</li>
+</ul>
+<p><b>Off / curved</b> is used when the input's state becomes 0 (an absolute input: button pressed or a DCC
+'curved' command), <b>On / straight</b> when it becomes 1. A toggle input alternates between the two.</p>
+<p>The two values are stored as 2 steps in the input's route memory, so they count in the board's route
+total. DCC extended commands still send their own value. Needs firmware with protocol v2.</p>
+<p>Connect an input to a sound output and custom values are switched on by themselves: off = stop, on = track 1.</p>

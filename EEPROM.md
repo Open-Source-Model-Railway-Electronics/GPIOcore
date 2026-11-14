@@ -44,6 +44,9 @@ gebruikt bij een analoge input. Een `static_assert` houdt het record op 4 B.
   - **uit** (standaard): **2 B** — `id | raw`, `value`;
   - **aan**: **4 B** — `id | raw`, `value`, wachttijd laag, wachttijd hoog (14 bit × 0,1 s).
 - Wordt een route langer of korter, dan schuiven de routes erachter op. Timing aan/uit zet de hele pool om.
+- Het slot van een **toggle- of absolute input** is normaal leeg. Met *eigen waarden* staan er 2 stappen in met
+  bit 5 (`STEP_VALUES`, 0x20) in byte 0: de waarde voor stand 0 en voor stand 1 (`PROTOCOL.md` §4). Byte 0 wordt
+  ongewijzigd bewaard, dus ook bij timing uit (2 B per stap) blijft de markering staan.
 
 | Timing | Stap | Past in 762 B | 16 routes × 16 stappen (256) |
 |---|---|---|---|

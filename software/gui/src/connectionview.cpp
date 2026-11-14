@@ -492,6 +492,13 @@ void ConnectionView::rebuildWires()
             w.input = i; w.output = c.outputId; w.step = -1;
             w.path  = curve(inputPort(i), outputPort(w.output));
             w.label = w.path.pointAtPercent(0.5);
+            if (c.hasCustomValues())             // custom values: "off / on", e.g. "45° / 135°" or "♪■ / ♪7"
+            {
+                const quint8 t = m_board.outputs[w.output].type;
+                w.text = QStringLiteral("%1 / %2").arg(Ui::stepValueText(c.route[0], t), Ui::stepValueText(c.route[1], t));
+                const qreal tw = QFontMetricsF(smallFont()).horizontalAdvance(w.text) + 12;
+                w.labelRect = QRectF(w.label - QPointF(tw / 2, 9), QSizeF(tw, 18));
+            }
             m_wires.append(w);
         }
         else if (isRouteType(c.type))
@@ -780,7 +787,7 @@ void ConnectionView::paintEvent(QPaintEvent *)
     // route step labels on top of wires
     for (const Wire &wire : m_wires)
     {
-        if (wire.step < 0) continue;
+        if (wire.text.isEmpty()) continue;
         const QColor col = Ui::inputColor(wire.input);
         const QRectF lr = wire.labelRect;
         QPainterPath b; b.addRoundedRect(lr, 9, 9);

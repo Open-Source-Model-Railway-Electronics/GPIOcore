@@ -98,7 +98,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>11</td><td>servo</td><td>A (+ relais)</td><td><code>data[0]</code> hoek bij state 0, <code>data[1]</code> hoek bij state 1, <code>data[2]</code> snelheid in ms/° (≥ 1), <code>data[3]</code> ongebruikt</td></tr>
 <tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = 0–255</td></tr>
 <tr><td>13</td><td>not in use</td><td>–</td><td>–</td></tr>
-<tr><td>14</td><td>sound effect</td><td>A = altijd <b>1 (D1, TX)</b></td><td><code>data[0]</code> track bij state 0 (curved / uit), <code>data[1]</code> track bij state 1 (straight / aan); 0 = stoppen. Een route-stap (ruw) of DCC-ext speelt zijn eigen waarde als tracknummer (0 = stoppen)</td></tr>
+<tr><td>14</td><td>sound effect</td><td>A = altijd <b>1 (D1, TX)</b></td><td>– (geen eigen tracks). De input kiest de track: eigen waarden (§4), een route-stap (ruw) of DCC-ext speelt zijn waarde als tracknummer (0 = stoppen). Zonder eigen waarden: state 1 = track 1, state 0 = stoppen</td></tr>
 </tbody></table>
 <p><b>Sound effect (type 14, HELLO-bit4).</b> Een DFPlayer Mini hangt met zijn RX aan de TX-pin D1 van de Nano (via 1 kΩ). De firmware stuurt het DFPlayer-frame (9600 baud, 10 bytes: <code>7E FF 06 03 00 00 track csH csL EF</code>, <code>16</code> in plaats van <code>03</code> = stop) alleen als er <b>geen pc</b> verbonden is: in een configuratiesessie is D1 de USB-lijn. Elke keer dat er een track gestart (of gestopt) wordt, meldt de output <code>OUTPUT_EVENT</code> met <b>state 2, value = track</b>, ook als hij niets kon afspelen. Meerdere sound-outputs mogen D1 delen (de GUI telt dat niet als conflict); D1 samen met een andere input of output wel.</p>
 <p>PWM-pinnen zijn D3, D5, D6, D9, D10 en D11. D9/D10 doen geen PWM zolang er een servo-output bestaat (Servo-library, timer 1).</p>
@@ -188,9 +188,9 @@ Tijdens een configuratiesessie werken ze niet. Een "Test state" op een output aa
 <p>De GUI laat D0/D1 kiezen als de decoder bit0 meldt, en offline. Hij geeft er dan een waarschuwing bij. Bij v1-firmware zijn ze gereserveerd en rood.</p>
 <h2>4. Routes (v2)</h2>
 <h3>Stap = 4 bytes</h3>
-<pre><code>byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bits 5-7 reserved (0)
+<pre><code>byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bit 5 STEP_VALUES (custom value) | bits 6-7 reserved (0)
 byte 1 : value   raw = 0: state 0 = curved, 1 = straight
-                 raw = 1: aspect 0-255 (signal), angle 10-170 (servo), PWM 0-255
+                 raw = 1: aspect 0-255 (signal), angle 10-170 (servo), PWM 0-255, track 0-255 (sound, 0 = stop)
 byte 2 : wait time bits 0-7
 byte 3 : bits 0-5 = wait time bits 8-13 | bits 6-7 reserved (0)
 wait   : 14 bits of 0.1 s = 0 .. 1638.3 s (~27 min), time after this step before the next one</code></pre>
@@ -212,6 +212,18 @@ wait   : 14 bits of 0.1 s = 0 .. 1638.3 s (~27 min), time after this step before
 // raw == 1 -&gt; signal / PWM:         output[id].setVal( value )
 //             servo:                output[id].setPosition( value )   // new, moves to this angle
 // then wait &#x27;delay&#x27; x 100 ms before the next step</code></pre>
+<h3>Eigen waarden van een toggle- of absolute input (firmware 2026-11-14)</h3>
+<p>Een directe input (toggle of absoluut) mag in <b>zijn eigen route-slot</b> (zelfde index, <code>GET/SET_ROUTE</code>) precies <b>2 stappen</b> hebben, allebei met **bit 5 = <code>STEP_VALUES</code> (0x20)** in byte 0. Stap 0 geldt als de stand van de input 0 wordt (uit / curved), stap 1 als hij 1 wordt (aan / straight). Elke stap werkt als een route-stap: <code>raw = 0</code> zet curved / straight, <code>raw = 1</code> stuurt een hoek, aspect, PWM-waarde of track. De output-id van de stap wordt gebruikt (de GUI zet daar de <code>outputID</code> van de input in); de wachttijd telt niet.</p>
+<ul><li>
+Dit geldt voor de knop, de analoge voorwaarde en gewone DCC-accessorycommando's op het adres van de input.
+ DCC-extended stuurt zijn waarde nog steeds rechtstreeks door.
+</li><li>
+Zonder die 2 gemarkeerde stappen (een ander aantal, of stappen zonder 0x20 die van een oude route zijn
+ blijven staan) werkt de input zoals altijd: de stand gaat naar de output.
+</li><li>
+De GUI stuurt voor een directe input zonder eigen waarden een <b>lege route</b>, zodat het slot leeg is. De 2
+ stappen tellen mee in de route-pool. In het board-bestand staan ze als <code>&quot;values&quot;: [ {value, raw}, {value, raw} ]</code>.
+</li></ul>
 <h3>Overdracht in stukken van maximaal 7 stappen</h3>
 <pre><code>GET_ROUTE  82 &lt;route&gt; &lt;first&gt;
 SET_ROUTE  8F &lt;len = 4 + 4n&gt; &lt;route&gt; &lt;total&gt; &lt;first&gt; &lt;step ...&gt;     (also the reply to GET_ROUTE)</code></pre>

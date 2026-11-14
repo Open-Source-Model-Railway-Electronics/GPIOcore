@@ -36,7 +36,7 @@ int totalRouteSteps(const BoardConfig &board)
 {
     int n = 0;
     for (const InputConfig &c : board.inputs)
-        if (isRouteType(c.type))
+        if (isRouteType(c.type) || c.hasCustomValues())   // custom values use 2 steps of the pool
             n += c.route.size();
     return n;
 }
@@ -58,10 +58,21 @@ ConnectResult connectOutput(BoardConfig &board, int input, int output, const Rou
     if (c.type == Recorder || c.type == FeedbackInput)
         return ConnectResult::NotConnectable;
 
+    // a sound output plays a track chosen by the input: custom values on (off = stop, on = track 1)
+    auto values = [&c, &board](quint8 before) {
+        const quint8 now = board.outputs[c.outputId].type;
+        if (now == SoundEffect && !c.hasCustomValues())
+            c.setCustomValues(true, now);
+        else if (c.hasCustomValues() && stepKind(now) != stepKind(before))
+            c.setCustomValues(true, now);            // other kind of value: start from its defaults
+        c.syncCustomValues();
+    };
     if (c.type == InputNotInUse)
     {
         c.type     = Latching;
         c.outputId = quint8(output);
+        c.route.clear();
+        values(board.outputs[output].type);
         return ConnectResult::Connected;
     }
 
@@ -69,7 +80,9 @@ ConnectResult connectOutput(BoardConfig &board, int input, int output, const Rou
     {
         if (c.outputId == output)
             return ConnectResult::AlreadyConnected;
+        const quint8 before = board.outputs[c.outputId].type;
         c.outputId = quint8(output);
+        values(before);
         return ConnectResult::Replaced;
     }
 

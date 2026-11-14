@@ -27,11 +27,11 @@ enum OutputType : quint8
     DoubleSteady, DoublePulse, DoubleFlashing,
     SwingLight, FirePlaceLight, TubeLight, WelderLight,
     FourToneSignal, ServoType, Pwm, OutputNotInUse,
-    SoundEffect,    // DFPlayer Mini on TX (D1): data[0] = track when curved / off, data[1] = when straight / on
+    SoundEffect,    // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
     OutputTypeCount
 };
 
-enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, SoundTracks };
+enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone };
 constexpr quint8 SoundPin = 1;   // a sound effect output always uses TX (D1)
 
 struct OutputTypeInfo
@@ -135,9 +135,10 @@ struct RouteStep
     quint8  value  = 1;                       // state 0/1, or a raw value (raw = true)
     bool    raw    = false;                   // false: curved/straight, true: aspect / angle / PWM
     quint16 delay  = DefaultStepDelay;        // wait after this step, 0.1 s units
+    bool    values = false;                   // STEP_VALUES (0x20): a custom value of a toggle / absolute input
 
     bool operator==(const RouteStep &o) const
-    { return output == o.output && value == o.value && raw == o.raw && delay == o.delay; }
+    { return output == o.output && value == o.value && raw == o.raw && delay == o.delay && values == o.values; }
     bool operator!=(const RouteStep &o) const { return !(*this == o); }
 };
 
@@ -177,6 +178,15 @@ struct InputConfig
     quint8 pinByte() const;                   // the pin field on the wire / in EEPROM
     void   setPinByte(quint8 b);
     static int roundThreshold(int t);         // to a multiple of 8, 0-1016
+
+    // Custom values of a toggle / absolute input: its route slot holds exactly 2 steps marked
+    // 'values', step 0 for state 0 (off / curved) and step 1 for state 1 (on / straight).
+    bool hasCustomValues() const;
+    // on: start from the defaults for this output type (sound: off = stop, on = track 1); off: no steps.
+    void setCustomValues(bool on, quint8 outputType);
+    // After an edit: a direct input keeps either its 2 value steps (on its own output, no wait) or an
+    // empty route, so the board's slot is cleared; other inputs drop a pair of value steps.
+    void syncCustomValues();
 
     void syncLinkedFromRoute();               // route -> linked (first 8 steps, state only)
     void routeFromLinked();                   // linked -> route (v1 firmware)

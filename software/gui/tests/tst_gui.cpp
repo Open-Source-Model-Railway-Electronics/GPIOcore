@@ -12,6 +12,7 @@
 #include "qrcode.h"
 #include "webremote.h"
 
+#include <QCheckBox>
 #include <QDialog>
 #include <QMessageBox>
 #include <QPushButton>
@@ -457,21 +458,57 @@ private slots:
         QCOMPARE(int(view->board().inputs[2].pin), 14);
     }
 
+    void customValuesWriteRoute()
+    {
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *ied  = w.findChild<InputEditor *>();
+        auto *sim  = w.findChild<SimulatedDevice *>();
+        InputConfig c = view->board().inputs[0];
+        c.type = Latching; c.outputId = 0;
+        emit ied->changed(0, c);
+        QCheckBox *custom = nullptr;
+        for (QCheckBox *b : ied->findChildren<QCheckBox *>())
+            if (b->text() == QLatin1String("Custom values")) custom = b;
+        QVERIFY(custom);
+        QVERIFY(!custom->isChecked());
+        custom->setChecked(true);
+        QVERIFY(view->board().inputs[0].hasCustomValues());
+        QTRY_VERIFY_WITH_TIMEOUT(sim->input(0).hasCustomValues(), 3000);      // 2 marked steps on the board
+        QCOMPARE(sim->input(0).route.size(), 2);
+        maybeScreenshot(w, "custom-values.png");
+        waitIdleOrNot(link);
+        custom->setChecked(false);
+        QVERIFY(view->board().inputs[0].route.isEmpty());
+        QTRY_VERIFY_WITH_TIMEOUT(sim->input(0).route.isEmpty(), 3000);        // the slot is cleared
+        waitIdleOrNot(link);
+    }
+
     void soundOutputOnD1()
     {
         MainWindow w;
         ConnectionView *view = w.findChild<ConnectionView *>();
         auto *oed = w.findChild<OutputEditor *>();
+        InputConfig direct = view->board().inputs[0];           // an absolute input on output 0
+        direct.type = Latching; direct.outputId = 0;
+        emit w.findChild<InputEditor *>()->changed(0, direct);
+        QVERIFY(!view->board().inputs[0].hasCustomValues());
         QCOMPARE(oed->index(), 0);
         QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
         QVERIFY(type);
         type->setCurrentIndex(type->findData(int(SoundEffect)));
         QCOMPARE(int(view->board().outputs[0].type), int(SoundEffect));
         QCOMPARE(int(view->board().outputs[0].pinA), 1);        // always TX (D1)
+        QVERIFY(view->board().inputs[0].hasCustomValues());     // the input chooses the track now
+        QVERIFY(view->board().inputs[0].route[0].raw && view->board().inputs[0].route[0].value == 0);
+        QVERIFY(view->board().inputs[0].route[1].raw && view->board().inputs[0].route[1].value == 1);
         QComboBox *pinA = comboWith(oed, trGpio("—  not used"));
         QVERIFY(pinA);
         QCOMPARE(Ui::currentData(pinA), 1);
         QVERIFY(!pinA->isEnabled());
+        for (QSpinBox *s : oed->findChildren<QSpinBox *>())          // no tracks on the output itself
+            QVERIFY(s->specialValueText() != QLatin1String("stop"));
         if (!qgetenv("GPIOCORE_SHOT_DIR").isEmpty())
         {
             w.resize(1320, 900);

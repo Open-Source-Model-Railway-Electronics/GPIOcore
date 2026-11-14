@@ -500,8 +500,6 @@ QString outputSummaryParams(const OutputConfig &c)
         return QStringLiteral("%1°–%2°, %3 ms/°").arg(c.servoMin()).arg(c.servoMax()).arg(c.servoSpeed());
     case ParamKind::PwmValue:
         return QStringLiteral("value %1").arg(c.pwmValue());
-    case ParamKind::SoundTracks:
-        return QStringLiteral("♪ %1 / %2").arg(c.data[0]).arg(c.data[1]);
     case ParamKind::FourTone:
         return QStringLiteral("on %1  blink %2")
             .arg(c.pwmValue() & 0x0F, 4, 2, QLatin1Char('0'))

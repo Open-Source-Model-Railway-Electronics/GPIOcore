@@ -57,6 +57,11 @@ private:
     };
 
     void buildUi();
+    // The value editor of a route step or a custom value: curved / straight [/ angle], or a raw value
+    void showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *pick, const Gpio::RouteStep &s,
+                       Gpio::StepKind kind);
+    static void readStepValue(const QComboBox *mode, const QSpinBox *value, Gpio::StepKind kind,
+                              Gpio::RouteStep &s);
     void refresh();
     void collect();
     void rebuildSteps();
@@ -105,6 +110,12 @@ private:
     QLabel       *m_targetLabel = nullptr;
     QComboBox    *m_output = nullptr;
     QToolButton  *m_infoFeedback = nullptr;
+    QCheckBox    *m_custom = nullptr;      // custom values of a toggle / absolute input
+    QWidget      *m_customRow = nullptr;
+    QWidget      *m_valueRow[2] {};        // off / curved, on / straight
+    QComboBox    *m_valueMode[2] {};
+    QSpinBox     *m_value[2] {};
+    QToolButton  *m_valuePick[2] {};
     QGroupBox    *m_recorderBox = nullptr;
     QGroupBox    *m_routeBox = nullptr;
     QComboBox    *m_routeTrigger = nullptr;   // any / straight only / curved only

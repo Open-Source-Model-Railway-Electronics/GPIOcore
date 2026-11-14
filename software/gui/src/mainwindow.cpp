@@ -453,6 +453,15 @@ void MainWindow::buildUi()
         if (!taken.isEmpty()) statusBar()->showMessage(taken, 8000);
         const QString name = m_edit.outputs[i].name;
         const QStringList lamps = m_edit.outputs[i].lampColors;
+        const quint8 oldType = m_edit.outputs[i].type;
+        for (InputConfig &in : m_edit.inputs)           // toggle / absolute inputs on this output
+        {
+            if (!isDirectType(in.type) || in.outputId != i || oldType == c.type) continue;
+            if (c.type == SoundEffect && !in.hasCustomValues())
+                in.setCustomValues(true, c.type);        // a sound output plays the input's tracks
+            else if (in.hasCustomValues() && stepKind(c.type) != stepKind(oldType))
+                in.setCustomValues(true, c.type);        // another kind of value: start from its defaults
+        }
         m_edit.outputs[i] = c;
         m_edit.outputs[i].name = name;
         m_edit.outputs[i].lampColors = lamps;
@@ -601,7 +610,8 @@ void MainWindow::applyCapabilities()
 void MainWindow::updateInputEditorLimits()
 {
     const int i = m_inEd->index();
-    const int mine = isRouteType(m_edit.inputs[i].type) ? m_edit.inputs[i].route.size() : 0;
+    const int mine = isRouteType(m_edit.inputs[i].type) || m_edit.inputs[i].hasCustomValues()
+                         ? m_edit.inputs[i].route.size() : 0;
     m_inEd->setRouteLimits(routeLimits(), totalRouteSteps(m_edit) - mine);
     m_inEd->setRecorderTaken(recorderInput(m_edit, i) >= 0);
 }

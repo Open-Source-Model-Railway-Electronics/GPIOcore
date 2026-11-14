@@ -463,8 +463,10 @@ void SimulatedDevice::triggerInput(int index, int direction)
     InputConfig &in = m_in[index];
     if (isDirectType(in.type))
     {
-        const OutputConfig &o = m_out[in.outputId];
-        setOutputState(in.outputId, quint8(in.type == Latching ? (direction ? 1 : 0) : (o.state ^ 1)));
+        if (in.type == Latching)
+            switchOutput(index, direction ? 1 : 0);
+        else                             // toggle: the output's state without custom values
+            switchOutput(index, in.hasCustomValues() ? m_inState[index] ^ 1 : m_out[in.outputId].state ^ 1);
         return;
     }
     if (!isRouteType(in.type))
@@ -485,9 +487,39 @@ void SimulatedDevice::pinLevel(int index, bool pressed)
         return;
     }
     if (in.type == Momentary && pressed)
-        setOutputState(in.outputId, quint8(m_out[in.outputId].state ^ 1));
+        switchOutput(index, in.hasCustomValues() ? m_inState[index] ^ 1 : m_out[in.outputId].state ^ 1);
     else if (in.type == Latching)
-        setOutputState(in.outputId, pressed ? 0 : 1);
+        switchOutput(index, pressed ? 0 : 1);
+}
+
+// Custom values: 2 steps marked 'values' in the input's route slot, one per state. Steps without
+// the marker (left over from a route) are ignored, like in the firmware.
+void SimulatedDevice::switchOutput(int index, int state)
+{
+    const InputConfig &in = m_in[index];
+    m_inState[index] = quint8(state & 1);
+    if (in.route.size() == 2 && in.route[state & 1].values)
+        applyStep(in.route[state & 1]);
+    else
+        setOutputState(in.outputId, quint8(state & 1));
+}
+
+// callbackRouteValue() / callbackInput(): a raw value goes to a servo as an angle, to a sound
+// output as a track (0 = stop) and is reported for the others; otherwise curved / straight.
+void SimulatedDevice::applyStep(const RouteStep &s)
+{
+    if (s.raw && m_out[s.output].type == ServoType)
+    {
+        if (s.value <= 180) servoTo(s.output, s.value);
+    }
+    else if (s.raw)
+    {
+        reportOutput(s.output, 2, s.value);
+    }
+    else
+    {
+        setOutputState(s.output, quint8(s.value ? 1 : 0));
+    }
 }
 
 void SimulatedDevice::setAnalogValue(int channel, int value)
@@ -545,18 +577,7 @@ void SimulatedDevice::runRouteStep(int input, int step)
         return;
     }
     const RouteStep &s = r[step];
-    if (s.raw && m_out[s.output].type == ServoType)
-    {
-        if (s.value <= 180) servoTo(s.output, s.value);
-    }
-    else if (s.raw)
-    {
-        reportOutput(s.output, 2, s.value);
-    }
-    else
-    {
-        setOutputState(s.output, quint8(s.value ? 1 : 0));
-    }
+    applyStep(s);
     const int waitMs = 100 * (m_board.timing ? s.delay : m_board.delay);
     QTimer::singleShot(waitMs, this, [this, input, step] { runRouteStep(input, step + 1); });
 }
@@ -564,10 +585,10 @@ void SimulatedDevice::runRouteStep(int input, int step)
 void SimulatedDevice::setOutputState(int output, quint8 state)
 {
     OutputConfig &o = m_out[output];
-    if (o.type == SoundEffect)           // GPIOcore.ino playSound(): curved / off plays data[0], straight / on data[1]
+    if (o.type == SoundEffect)           // GPIOcore.ino callbackInput(): without custom values on = track 1, off = stop
     {
         o.state = state;
-        reportOutput(output, 2, o.data[state ? 1 : 0]);
+        reportOutput(output, 2, state ? 1 : 0);
         return;
     }
     const bool changed = o.state != state || m_servoTarget[output] >= 0;
