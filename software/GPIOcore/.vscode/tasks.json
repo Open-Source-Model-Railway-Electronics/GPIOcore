@@ -12,25 +12,25 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "python3 ./src/build.py",
+            "command": "build.py",
             "problemMatcher": []
         },
         {
             "label": "upload",
             "type": "shell",
-            "command": "python3 ./src/upload.py",
+            "command": "python ./src/upload.py",
             "problemMatcher": []
         },
         {
             "label": "release new version",
             "type": "shell",
-            "command": "python3 release.py",
+            "command": "python release.py",
             "problemMatcher": []
         },
         {
             "label": "initialize git repository",
             "type": "shell",
-            "command": "python3 initGit.py",
+            "command": "python initGit.py",
             "problemMatcher": []
         },
         {
