@@ -255,7 +255,7 @@ void SimulatedDevice::messageReceived()
                 OutputConfig &o = m_out[m_in[i].outputId];
                 if (o.type == ServoType) { if (p[2] <= 180) servoTo(m_in[i].outputId, p[2]); continue; }
                 if (o.type == SoundEffect) { reportOutput(m_in[i].outputId, 2, p[2]); continue; }   // track, 0 = stop
-                if (o.type == FourToneSignal || o.type == Pwm) o.data[0] = p[2];
+                if (o.type == FourToneSignal || o.type == Pwm) o.data[0] = p[2];   // PWM fading (data[1]): the target is reported at once
                 if (o.type == FourToneSignal) reportOutput(m_in[i].outputId, 2, p[2]);
                 else                          setOutputState(m_in[i].outputId, 0);
             }

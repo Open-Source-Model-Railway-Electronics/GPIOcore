@@ -935,6 +935,40 @@ private slots:
         QCOMPARE(int(r.sim->output(0).state), 0);
         QCOMPARE(r.errors, 0);
     }
+
+    void pwmFadeTime()
+    {
+        OutputConfig c;
+        c.type = Pwm; c.pinA = 5;
+        c.data = { { 200, 30, 0, 0 } };                          // brightness 200, 30 s for 0 -> 255
+        QCOMPARE(int(c.pwmFade()), 30);
+        int idx = -1;
+        OutputConfig d;
+        QVERIFY(decodeOutput(encodeOutput(4, c, false), idx, d, false));
+        QCOMPARE(int(d.data[1]), 30);
+        QVERIFY(d == c);
+        QVERIFY(OutputConfig::fromJson(c.toJson()) == c);
+        for (int p = 0; p < presetNames().size(); ++p)           // presets: no fading
+            for (const OutputConfig &o : presetBoard(p).outputs)
+                if (o.type == Pwm) QCOMPARE(int(o.data[1]), 0);
+
+        // the board keeps the fade time; a new brightness is reported as the target at once
+        Rig r; makeRig(r, SimulatedDevice::Options());
+        r.link->writeOutput(4, c);
+        r.link->readOutput(4);
+        waitFinished(r);
+        QCOMPARE(int(r.outputs[4].data[1]), 30);
+        InputConfig route;
+        route.type = Route; route.address = 60;
+        route.route = { RouteStep{ 4, 90, true, 0 } };
+        r.sim->setInput(8, route);
+        QSignalSpy events(r.link, &DeviceLink::outputEvent);
+        r.link->triggerInput(8, 1);
+        QTRY_VERIFY_WITH_TIMEOUT(!events.isEmpty() && events.last().at(0).toInt() == 4
+                                 && events.last().at(1).toInt() == 2 && events.last().at(2).toInt() == 90, 2000);
+        QCOMPARE(int(r.sim->output(4).data[1]), 30);
+        QCOMPARE(r.errors, 0);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestGpioCore)

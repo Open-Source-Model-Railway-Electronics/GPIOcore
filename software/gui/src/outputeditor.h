@@ -89,6 +89,8 @@ private:
     int             m_livePending = -1;      // newest angle not sent yet
     QSpinBox       *m_pwm = nullptr;
     QSlider        *m_pwmSlider = nullptr;
+    QSpinBox       *m_fade = nullptr;        // PWM: data[1] = fade time in s for a full 0-255 change
+    QLabel         *m_fadeNote = nullptr;
     QDoubleSpinBox *m_blinkHz = nullptr;     // signal: blink frequency (data[1] = Hz x 10)
     QWidget        *m_soundInfo = nullptr;   // sound effect: wiring and SD card help
 

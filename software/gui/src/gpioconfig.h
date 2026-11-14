@@ -73,6 +73,7 @@ struct OutputConfig
     quint8  servoSpeed()   const { return data[2]; }
     quint8  servoPattern() const { return data[3]; }
     quint8  pwmValue()     const { return data[0]; }
+    quint8  pwmFade()      const { return data[1]; }   // s for a full 0-255 change, 0 = at once
 
     quint8  pin(int slot) const;           // 0..3 = A..D, 4..6 = relay A..C
     void    setPin(int slot, quint8 pin);

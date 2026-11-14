@@ -686,8 +686,8 @@ krok %1: %2, pak čekat %3</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="38"/>
-        <source>Fixed PWM value on pin A.</source>
-        <translation>Pevná hodnota PWM na pinu A.</translation>
+        <source>PWM brightness on pin A. With a fade time it changes slowly to every new value.</source>
+        <translation>Jas PWM na pinu A. S dobou přechodu se mění pomalu na každou novou hodnotu.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
@@ -2415,7 +2415,7 @@ Tím se nahradí všechny výstupy a vstupy (a jejich jízdní cesty).</translat
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="96"/>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="468"/>
         <source>Pins</source>
         <translation>Piny</translation>
     </message>
@@ -2535,94 +2535,119 @@ Tím se nahradí všechny výstupy a vstupy (a jejich jízdní cesty).</translat
         <translation>Střída</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="229"/>
+        <location filename="../src/outputeditor.cpp" line="221"/>
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="222"/>
+        <source>at once</source>
+        <translation>ihned</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="231"/>
+        <source>Fade time</source>
+        <translation>Doba přechodu</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="241"/>
         <source> Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="231"/>
+        <location filename="../src/outputeditor.cpp" line="243"/>
         <source>Flashing</source>
         <translation>Blikání</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="232"/>
+        <location filename="../src/outputeditor.cpp" line="244"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Jak rychle blikající světla blikají (1 Hz = jednou za sekundu). Samotnou návěst zvolíte přes DCC extended nebo v jízdní cestě.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="242"/>
+        <location filename="../src/outputeditor.cpp" line="254"/>
         <source>This board runs old firmware (output opcode 0x2D, 13 bytes): the 4th data byte is not transferred. Update the firmware (review F1).</source>
         <translation>Tato deska má starý firmware (opcode výstupu 0x2D, 13 bajtů): 4. datový bajt se nepřenáší. Aktualizujte firmware (revize F1).</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="249"/>
+        <location filename="../src/outputeditor.cpp" line="261"/>
         <source>State</source>
         <translation>Stav</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="256"/>
+        <location filename="../src/outputeditor.cpp" line="268"/>
         <source>0  (off / curved)</source>
         <translation>0  (vyp / do odbočky)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="257"/>
+        <location filename="../src/outputeditor.cpp" line="269"/>
         <source>1  (on / straight)</source>
         <translation>1  (zap / přímo)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="258"/>
+        <location filename="../src/outputeditor.cpp" line="270"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Test: do odbočky / vyp</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="259"/>
+        <location filename="../src/outputeditor.cpp" line="271"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Test: přímo / zap</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="262"/>
+        <location filename="../src/outputeditor.cpp" line="274"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>Zapíše tento výstup do desky se zvoleným stavem (uloží se i do EEPROM)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="265"/>
+        <location filename="../src/outputeditor.cpp" line="277"/>
         <source>Stored state</source>
         <translation>Uložený stav</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="406"/>
+        <location filename="../src/outputeditor.cpp" line="418"/>
         <source>Output %1</source>
         <translation>Výstup %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="414"/>
+        <location filename="../src/outputeditor.cpp" line="426"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Jsou nastavena relé Electrofrog i Unifrog. Povolen je jen jeden režim srdcovky: relé Unifrog se odstraní, když tento výstup změníte.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="432"/>
+        <location filename="../src/outputeditor.cpp" line="445"/>
         <source>Needs a connected board that speaks protocol v2 (SERVO_LIVE)</source>
         <translation>Vyžaduje připojenou desku s protokolem v2 (SERVO_LIVE)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="468"/>
         <source>Pins (PWM capable: D3 D5 D6 D9 D10 D11)</source>
         <translation>Piny (s PWM: D3 D5 D6 D9 D10 D11)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="487"/>
+        <location filename="../src/outputeditor.cpp" line="500"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="488"/>
+        <location filename="../src/outputeditor.cpp" line="501"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  zap %2 ms, pauza %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="491"/>
+        <location filename="../src/outputeditor.cpp" line="504"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Celý přestavný pohyb ≈ %1 ms</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="506"/>
+        <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
+        <translation>Plná změna (0 → 255) trvá %1 s, poloviční %2 s.</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="507"/>
+        <source>A new brightness is set at once.</source>
+        <translation>Nový jas se nastaví ihned.</translation>
     </message>
 </context>
 <context>

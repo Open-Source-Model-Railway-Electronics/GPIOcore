@@ -686,8 +686,8 @@ steg %1: %2, vänta sedan %3</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="38"/>
-        <source>Fixed PWM value on pin A.</source>
-        <translation>Fast PWM-värde på pinne A.</translation>
+        <source>PWM brightness on pin A. With a fade time it changes slowly to every new value.</source>
+        <translation>PWM-ljusstyrka på pinne A. Med en övergångstid ändras den långsamt till varje nytt värde.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
@@ -2415,7 +2415,7 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="96"/>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="468"/>
         <source>Pins</source>
         <translation>Pinnar</translation>
     </message>
@@ -2535,94 +2535,119 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
         <translation>Pulskvot</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="229"/>
+        <location filename="../src/outputeditor.cpp" line="221"/>
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="222"/>
+        <source>at once</source>
+        <translation>direkt</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="231"/>
+        <source>Fade time</source>
+        <translation>Övergångstid</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="241"/>
         <source> Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="231"/>
+        <location filename="../src/outputeditor.cpp" line="243"/>
         <source>Flashing</source>
         <translation>Blinkning</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="232"/>
+        <location filename="../src/outputeditor.cpp" line="244"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Hur snabbt blinkande lampor blinkar (1 Hz = en gång per sekund). Själva signalbilden väljs med DCC extended eller i en tågväg.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="242"/>
+        <location filename="../src/outputeditor.cpp" line="254"/>
         <source>This board runs old firmware (output opcode 0x2D, 13 bytes): the 4th data byte is not transferred. Update the firmware (review F1).</source>
         <translation>Detta kort har gammal firmware (utgångs-opcode 0x2D, 13 byte): den 4:e databyten överförs inte. Uppdatera firmware (granskning F1).</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="249"/>
+        <location filename="../src/outputeditor.cpp" line="261"/>
         <source>State</source>
         <translation>Läge</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="256"/>
+        <location filename="../src/outputeditor.cpp" line="268"/>
         <source>0  (off / curved)</source>
         <translation>0  (av / avvikande)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="257"/>
+        <location filename="../src/outputeditor.cpp" line="269"/>
         <source>1  (on / straight)</source>
         <translation>1  (på / rakt)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="258"/>
+        <location filename="../src/outputeditor.cpp" line="270"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Test: avvikande / av</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="259"/>
+        <location filename="../src/outputeditor.cpp" line="271"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Test: rakt / på</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="262"/>
+        <location filename="../src/outputeditor.cpp" line="274"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>Skriver denna utgång till kortet med valt läge (sparas även i EEPROM)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="265"/>
+        <location filename="../src/outputeditor.cpp" line="277"/>
         <source>Stored state</source>
         <translation>Sparat läge</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="406"/>
+        <location filename="../src/outputeditor.cpp" line="418"/>
         <source>Output %1</source>
         <translation>Utgång %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="414"/>
+        <location filename="../src/outputeditor.cpp" line="426"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Både Electrofrog- och Unifrog-reläer är inställda. Endast ett hjärtstyckesläge är tillåtet: Unifrog-reläet tas bort när du ändrar denna utgång.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="432"/>
+        <location filename="../src/outputeditor.cpp" line="445"/>
         <source>Needs a connected board that speaks protocol v2 (SERVO_LIVE)</source>
         <translation>Kräver ett anslutet kort som talar protokoll v2 (SERVO_LIVE)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="468"/>
         <source>Pins (PWM capable: D3 D5 D6 D9 D10 D11)</source>
         <translation>Pinnar (PWM-kapabla: D3 D5 D6 D9 D10 D11)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="487"/>
+        <location filename="../src/outputeditor.cpp" line="500"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="488"/>
+        <location filename="../src/outputeditor.cpp" line="501"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  på %2 ms, paus %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="491"/>
+        <location filename="../src/outputeditor.cpp" line="504"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Hel rörelse ≈ %1 ms</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="506"/>
+        <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
+        <translation>En full ändring (0 → 255) tar %1 s, en halv %2 s.</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="507"/>
+        <source>A new brightness is set at once.</source>
+        <translation>En ny ljusstyrka ställs in direkt.</translation>
     </message>
 </context>
 <context>

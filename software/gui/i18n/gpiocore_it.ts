@@ -686,8 +686,8 @@ passo %1: %2, poi attendi %3</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="38"/>
-        <source>Fixed PWM value on pin A.</source>
-        <translation>Valore PWM fisso sul pin A.</translation>
+        <source>PWM brightness on pin A. With a fade time it changes slowly to every new value.</source>
+        <translation>Luminosità PWM sul pin A. Con un tempo di dissolvenza passa lentamente a ogni nuovo valore.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
@@ -2415,7 +2415,7 @@ Sostituisce tutte le uscite e gli ingressi (e i loro itinerari).</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="96"/>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="468"/>
         <source>Pins</source>
         <translation>Pin</translation>
     </message>
@@ -2535,94 +2535,119 @@ Sostituisce tutte le uscite e gli ingressi (e i loro itinerari).</translation>
         <translation>Duty cycle</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="229"/>
+        <location filename="../src/outputeditor.cpp" line="221"/>
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="222"/>
+        <source>at once</source>
+        <translation>subito</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="231"/>
+        <source>Fade time</source>
+        <translation>Tempo di dissolvenza</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="241"/>
         <source> Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="231"/>
+        <location filename="../src/outputeditor.cpp" line="243"/>
         <source>Flashing</source>
         <translation>Lampeggio</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="232"/>
+        <location filename="../src/outputeditor.cpp" line="244"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Velocità di lampeggio delle lampade (1 Hz = una volta al secondo). L’aspetto si sceglie con DCC esteso o in un itinerario.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="242"/>
+        <location filename="../src/outputeditor.cpp" line="254"/>
         <source>This board runs old firmware (output opcode 0x2D, 13 bytes): the 4th data byte is not transferred. Update the firmware (review F1).</source>
         <translation>Questa scheda ha un vecchio firmware (opcode uscita 0x2D, 13 byte): il 4° byte di dati non viene trasferito. Aggiorna il firmware (revisione F1).</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="249"/>
+        <location filename="../src/outputeditor.cpp" line="261"/>
         <source>State</source>
         <translation>Stato</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="256"/>
+        <location filename="../src/outputeditor.cpp" line="268"/>
         <source>0  (off / curved)</source>
         <translation>0  (spento / deviato)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="257"/>
+        <location filename="../src/outputeditor.cpp" line="269"/>
         <source>1  (on / straight)</source>
         <translation>1  (acceso / dritto)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="258"/>
+        <location filename="../src/outputeditor.cpp" line="270"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Test: deviato / spento</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="259"/>
+        <location filename="../src/outputeditor.cpp" line="271"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Test: dritto / acceso</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="262"/>
+        <location filename="../src/outputeditor.cpp" line="274"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>Scrive questa uscita sulla scheda con lo stato scelto (salvato anche in EEPROM)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="265"/>
+        <location filename="../src/outputeditor.cpp" line="277"/>
         <source>Stored state</source>
         <translation>Stato memorizzato</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="406"/>
+        <location filename="../src/outputeditor.cpp" line="418"/>
         <source>Output %1</source>
         <translation>Uscita %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="414"/>
+        <location filename="../src/outputeditor.cpp" line="426"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Sono impostati sia i relè Electrofrog sia il relè Unifrog. È ammessa una sola modalità del cuore: il relè Unifrog viene rimosso quando modifichi questa uscita.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="432"/>
+        <location filename="../src/outputeditor.cpp" line="445"/>
         <source>Needs a connected board that speaks protocol v2 (SERVO_LIVE)</source>
         <translation>Richiede una scheda connessa che parli il protocollo v2 (SERVO_LIVE)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="468"/>
         <source>Pins (PWM capable: D3 D5 D6 D9 D10 D11)</source>
         <translation>Pin (con PWM: D3 D5 D6 D9 D10 D11)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="487"/>
+        <location filename="../src/outputeditor.cpp" line="500"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="488"/>
+        <location filename="../src/outputeditor.cpp" line="501"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  acceso %2 ms, pausa %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="491"/>
+        <location filename="../src/outputeditor.cpp" line="504"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Corsa completa ≈ %1 ms</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="506"/>
+        <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
+        <translation>Un cambio completo (0 → 255) dura %1 s, uno a metà %2 s.</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="507"/>
+        <source>A new brightness is set at once.</source>
+        <translation>Una nuova luminosità viene impostata subito.</translation>
     </message>
 </context>
 <context>

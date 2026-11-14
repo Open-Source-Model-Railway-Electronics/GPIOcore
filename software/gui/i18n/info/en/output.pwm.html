@@ -1,0 +1,12 @@
+<h3>PWM: brightness and fading</h3>
+<p>A PWM output dims a lamp or LED string on a PWM pin (D3, D5, D6, D9, D10, D11): <b>0</b> = off,
+<b>255</b> = full brightness. Use a transistor or MOSFET module for more than about 20 mA.</p>
+<ul>
+<li><b>Duty cycle</b> — the brightness after power-up, until custom values, a route step or DCC extended set another one.</li>
+<li><b>Fade time</b> — how many seconds a full change from 0 to 255 takes; a half change takes half as long.
+<i>at once</i> (0) switches straight away. Every new brightness fades at this rate: from custom values, a
+route step or a DCC extended command. At power-up the output fades in from dark.</li>
+</ul>
+<p><b>Example — day and night:</b> an absolute input (a switch, or a DCC address) with <b>Custom values</b>
+off = 0 and on = 255, and a fade time of 60 s. Switching to night dims the lights in one minute;
+switching back brings the day in just as slowly.</p>

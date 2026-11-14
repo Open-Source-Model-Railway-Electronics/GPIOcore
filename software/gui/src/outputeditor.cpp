@@ -217,6 +217,18 @@ void OutputEditor::buildUi()
         row->addWidget(m_pwmSlider, 1);
         row->addWidget(m_pwm);
         f->addRow(tr("Duty cycle"), row);
+        // data[1]: seconds for a full 0 -> 255 change; every new brightness fades at that rate
+        m_fade = makeSpin(0, 255, tr(" s"));
+        m_fade->setSpecialValueText(tr("at once"));
+        m_fade->setKeyboardTracking(false);
+        m_fadeNote = new QLabel;
+        m_fadeNote->setObjectName(QStringLiteral("help"));
+        m_fadeNote->setWordWrap(true);
+        auto *fadeRow = new QHBoxLayout;
+        fadeRow->addWidget(m_fade);
+        fadeRow->addWidget(m_fadeNote, 1);
+        fadeRow->addWidget(Info::button(QStringLiteral("output.pwm")));
+        f->addRow(tr("Fade time"), fadeRow);
         m_params->addWidget(w);
     }
     { // signal: blink frequency; the aspect itself comes from DCC extended or a route
@@ -311,7 +323,7 @@ void OutputEditor::buildUi()
     for (auto *c : m_pins)   connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     for (auto *c : m_relays) connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     connect(m_state, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
-    for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm })
+    for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm, m_fade })
         connect(s, QOverload<int>::of(&QSpinBox::valueChanged), this, onEdit);
 
     // live servo positions while adjusting: at most 4 per second, the newest angle always goes out
@@ -423,6 +435,7 @@ void OutputEditor::refresh()
     m_servoMax->setValue(m_cfg.servoMax());
     m_servoSpeed->setValue(qMax<int>(1, m_cfg.servoSpeed()));
     m_pwm->setValue(m_cfg.pwmValue());
+    m_fade->setValue(m_cfg.data[1]);
     m_blinkHz->setValue(m_cfg.data[1] ? m_cfg.data[1] / 10.0 : 1.0);
     m_state->setCurrentIndex(m_cfg.state ? 1 : 0);
 
@@ -489,6 +502,9 @@ void OutputEditor::updateTimeLabels()
                            .arg(unit).arg(m_cfg.swingPulse() * unit).arg(m_cfg.swingPause() * unit));
     const int sweep = qAbs(int(m_cfg.servoMax()) - int(m_cfg.servoMin())) * qMax<int>(1, m_cfg.servoSpeed());
     m_servoTime->setText(tr("Full sweep ≈ %1 ms").arg(sweep));
+    const int fade = m_cfg.type == Pwm ? m_cfg.data[1] : 0;
+    m_fadeNote->setText(fade ? tr("A full change (0 → 255) takes %1 s, a half change %2 s.").arg(fade).arg(fade / 2.0)
+                             : tr("A new brightness is set at once."));
 }
 
 void OutputEditor::collect()
@@ -523,6 +539,7 @@ void OutputEditor::collect()
         break;
     case ParamKind::PwmValue:
         m_cfg.data[0] = quint8(m_pwm->value());
+        m_cfg.data[1] = quint8(m_fade->value());
         break;
     case ParamKind::FourTone:
         m_cfg.data[1] = quint8(qRound(m_blinkHz->value() * 10));   // data[0] (aspect) stays as it is

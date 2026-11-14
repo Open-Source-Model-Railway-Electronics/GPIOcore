@@ -97,7 +97,7 @@ Frog-relais: `relayA` + `relayB` = **electrofrog** (A bij straight, B bij curved
 | 9 | welder | A | – |
 | 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 aan, bits 4–7 knipperen (gezet door DCC-ext of een route; de GUI laat hem staan) |
 | 11 | servo | A (+ relais) | `data[0]` hoek bij state 0, `data[1]` hoek bij state 1, `data[2]` snelheid in ms/° (≥ 1), `data[3]` ongebruikt |
-| 12 | PWM | A (PWM) | `data[0]` = 0–255 |
+| 12 | PWM | A (PWM) | `data[0]` = helderheid 0–255, `data[1]` = overvloeitijd in s voor een volledige verandering 0→255 (0 = direct, max. 255 s). De output loopt elke `data[1] × 1000 / 255` ms één stap naar de nieuwe helderheid (eigen waarden, route-stap, DCC-ext); bij het opstarten komt hij op vanuit 0. `OUTPUT_EVENT` meldt meteen de doelwaarde |
 | 13 | not in use | – | – |
 | 14 | sound effect | A = altijd **1 (D1, TX)** | – (geen eigen tracks). De input kiest de track: eigen waarden (§4), een route-stap (ruw) of DCC-ext speelt zijn waarde als tracknummer (0 = stoppen). Zonder eigen waarden: state 1 = track 1, state 0 = stoppen |
 

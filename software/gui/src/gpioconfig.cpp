@@ -35,7 +35,7 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
     { "servo",           QT_TRANSLATE_NOOP("Gpio", "Servo"),             1, true,  false, ParamKind::Servo,      0,
       QT_TRANSLATE_NOOP("Gpio", "Servo on pin A, sweeps between min and max.") },
     { "pwm",             QT_TRANSLATE_NOOP("Gpio", "PWM"),               1, false, true,  ParamKind::PwmValue,   0,
-      QT_TRANSLATE_NOOP("Gpio", "Fixed PWM value on pin A.") },
+      QT_TRANSLATE_NOOP("Gpio", "PWM brightness on pin A. With a fade time it changes slowly to every new value.") },
     { "notInUse",        QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
     { "soundEffect",     QT_TRANSLATE_NOOP("Gpio", "Sound effect"),      1, false, false, ParamKind::None,       0,
@@ -537,7 +537,7 @@ QJsonObject BoardConfig::toJson() const
         "Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. "
         "An analog input has 'analog': {mode below / above / at, channel 0-7 = A0-A7, threshold 0-1016} instead of a pin. "
         "A toggle / absolute input may have 'values': [off / curved, on / straight], each {value, raw} like a route step. "
-        "Output data[4] depends on the type, see PROTOCOL.md section 2.1. Input address: DCC accessory address or null. "
+        "Output data[4] depends on the type, see PROTOCOL.md section 2.1 (PWM: data[0] brightness, data[1] fade time in s). Input address: DCC accessory address or null. "
         "Route steps: output 0-15, value = 0 curved / 1 straight, or with raw = true an aspect / servo angle 10-170 / PWM 0-255, "
         "delay = wait after the step in 0.1 s. 'name' fields are only kept in this file.");
     root["board"]   = board.toJson();

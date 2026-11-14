@@ -1,0 +1,13 @@
+<h3>PWM: helderheid en overvloeien</h3>
+<p>Een PWM-uitgang dimt een lamp of LED-strip op een PWM-pin (D3, D5, D6, D9, D10, D11): <b>0</b> = uit,
+<b>255</b> = volle helderheid. Gebruik een transistor- of MOSFET-module voor meer dan ongeveer 20 mA.</p>
+<ul>
+<li><b>Duty cycle</b> — de helderheid na het opstarten, tot aangepaste waarden, een rijwegstap of DCC extended een andere zetten.</li>
+<li><b>Overvloeitijd</b> — hoeveel seconden een volledige verandering van 0 naar 255 duurt; een halve
+verandering duurt half zo lang. <i>direct</i> (0) schakelt meteen. Elke nieuwe helderheid vloeit in dit tempo
+over: uit aangepaste waarden, een rijwegstap of een DCC extended-commando. Bij het opstarten komt de uitgang
+langzaam op vanuit donker.</li>
+</ul>
+<p><b>Voorbeeld — dag en nacht:</b> een absolute ingang (een schakelaar, of een DCC-adres) met <b>Aangepaste
+waarden</b> uit = 0 en aan = 255, en een overvloeitijd van 60 s. Naar nacht schakelen dimt de lampen in één
+minuut; terug naar dag gaat net zo langzaam.</p>

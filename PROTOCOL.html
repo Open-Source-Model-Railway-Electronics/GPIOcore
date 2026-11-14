@@ -96,7 +96,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>9</td><td>welder</td><td>A</td><td>–</td></tr>
 <tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 aan, bits 4–7 knipperen (gezet door DCC-ext of een route; de GUI laat hem staan)</td></tr>
 <tr><td>11</td><td>servo</td><td>A (+ relais)</td><td><code>data[0]</code> hoek bij state 0, <code>data[1]</code> hoek bij state 1, <code>data[2]</code> snelheid in ms/° (≥ 1), <code>data[3]</code> ongebruikt</td></tr>
-<tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = 0–255</td></tr>
+<tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = helderheid 0–255, <code>data[1]</code> = overvloeitijd in s voor een volledige verandering 0→255 (0 = direct, max. 255 s). De output loopt elke <code>data[1] × 1000 / 255</code> ms één stap naar de nieuwe helderheid (eigen waarden, route-stap, DCC-ext); bij het opstarten komt hij op vanuit 0. <code>OUTPUT_EVENT</code> meldt meteen de doelwaarde</td></tr>
 <tr><td>13</td><td>not in use</td><td>–</td><td>–</td></tr>
 <tr><td>14</td><td>sound effect</td><td>A = altijd <b>1 (D1, TX)</b></td><td>– (geen eigen tracks). De input kiest de track: eigen waarden (§4), een route-stap (ruw) of DCC-ext speelt zijn waarde als tracknummer (0 = stoppen). Zonder eigen waarden: state 1 = track 1, state 0 = stoppen</td></tr>
 </tbody></table>

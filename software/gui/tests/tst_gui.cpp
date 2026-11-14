@@ -14,6 +14,7 @@
 
 #include <QCheckBox>
 #include <QDialog>
+#include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
@@ -529,6 +530,29 @@ private slots:
         emit w.findChild<InputEditor *>()->changed(3, in);
         QCOMPARE(int(view->board().outputs[0].type), int(OutputNotInUse));
         QCOMPARE(int(view->board().outputs[1].type), int(OutputNotInUse));
+    }
+
+    void pwmFadeTimeEditor()
+    {
+        MainWindow w;
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
+        QVERIFY(type);
+        type->setCurrentIndex(type->findData(int(Pwm)));
+        QCOMPARE(int(view->board().outputs[0].type), int(Pwm));
+        QCOMPARE(int(view->board().outputs[0].data[1]), 0);      // default: no fading
+        QSpinBox *fade = nullptr;
+        for (QSpinBox *s : oed->findChildren<QSpinBox *>())
+            if (s->specialValueText() == QLatin1String("at once")) fade = s;
+        QVERIFY(fade);
+        fade->setValue(60);
+        QCOMPARE(int(view->board().outputs[0].data[1]), 60);
+        QCOMPARE(int(view->board().outputs[0].data[0]), 128);    // the brightness stays
+        bool note = false;
+        for (QLabel *l : oed->findChildren<QLabel *>())
+            note |= l->text().contains(QLatin1String("takes 60 s, a half change 30 s"));
+        QVERIFY(note);
     }
 
     void qrStructure()
