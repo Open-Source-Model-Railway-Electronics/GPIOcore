@@ -75,10 +75,27 @@ void Input::setDccAddress( uint16_t address, uint8_t direction )
     if( eedata.type == MOMENTARY ) state  ^= 1 ;
     if( eedata.type == LATCHING  ) state   = direction ;
 
-    if( callbackInput && ( eedata.type == MOMENTARY || eedata.type == LATCHING ) )
+    if( eedata.type == MOMENTARY || eedata.type == LATCHING ) switchOutput() ;
+}
+
+// Custom values: the input's route slot holds 2 steps marked STEP_VALUES, one per state, each
+// a curved / straight or a raw value (servo angle, aspect, PWM, sound track) like a route step.
+void Input::switchOutput()
+{
+    uint8_t me = this - input ;
+    uint8_t step[4] ;
+    if( routeCount[ me ] == 2 )
     {
-        callbackInput( eedata.outputID, state, 0 ) ;
+        readStep( me, state, step ) ;
+        if( step[0] & STEP_VALUES )
+        {
+            uint8_t id = step[0] & STEP_ID ;
+            if( step[0] & STEP_RAW ) { if( callbackRouteValue ) callbackRouteValue( id, step[1] ) ; }
+            else                     { if( callbackInput      ) callbackInput( id, step[1], 0 ) ; }
+            return ;
+        }
     }
+    if( callbackInput ) callbackInput( eedata.outputID, state, 0 ) ;
 }
 
 void Input::setDccAddressExt( uint16_t address, uint8_t val )
@@ -127,10 +144,7 @@ void Input::update()
             if( eedata.type == MOMENTARY && !trigger.state ) state ^= 1 ;           // toggle on press only
             if( eedata.type == LATCHING  ) state   = trigger.state ;
 
-            if( callbackInput && ( eedata.type == LATCHING || ( eedata.type == MOMENTARY && !trigger.state ) ) )
-            {
-                callbackInput( eedata.outputID, state, 0 ) ;
-            }
+            if( eedata.type == LATCHING || ( eedata.type == MOMENTARY && !trigger.state ) ) switchOutput() ;
         }
     }
     triggerOutputs() ;

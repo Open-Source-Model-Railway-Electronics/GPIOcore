@@ -58,7 +58,7 @@ enum types
     servoType,
     PWM,
     notInUse,
-    soundEffect         // DFPlayer Mini on TX (D1): data[0] = track when curved/off, data[1] = when straight/on
+    soundEffect         // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
 } ;
 
 const Settings defaultSettings = {

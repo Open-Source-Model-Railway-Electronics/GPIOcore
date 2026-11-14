@@ -39,6 +39,7 @@ public:
 
 private:
     void    triggerOutputs() ;
+    void    switchOutput() ;          // toggle / absolute: the custom value of this state, or the state itself
     uint8_t movesTurnout() ;
     uint8_t readPin() ;
     uint8_t readAnalog() ;

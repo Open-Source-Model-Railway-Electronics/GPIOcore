@@ -18,6 +18,7 @@ const uint8_t  MAX_STEPS_PER_ROUTE = 16 ;
 // step on the wire (PROTOCOL.md section 4): <id | raw> <value> <wait lo> <wait hi>
 const uint8_t  STEP_ID      = 0x0F ;
 const uint8_t  STEP_RAW     = 0x10 ;
+const uint8_t  STEP_VALUES  = 0x20 ;   // custom values of a toggle / absolute input: 2 steps (off / curved, on / straight)
 
 extern uint8_t routeCount[16] ;
 

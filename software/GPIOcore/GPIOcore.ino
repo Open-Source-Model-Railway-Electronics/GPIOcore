@@ -326,10 +326,10 @@ void playSound( uint8_t index, uint8_t track )
 void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 {
     uint8_t type = output[index].eedata.type ;
-    if( type == soundEffect )                       // curved / off plays data[0], straight / on data[1]
+    if( type == soundEffect )                       // without custom values: on = track 1, off = stop
     {
         output[index].setState( state ) ;
-        playSound( index, val ? val : output[index].eedata.data[ state ? 1 : 0 ] ) ;
+        playSound( index, val ? val : state ) ;
         return ;
     }
     reportOutput( index, ( type == fourToneSignal ) ? 2 : state, val ) ;   // a signal reports its aspect
