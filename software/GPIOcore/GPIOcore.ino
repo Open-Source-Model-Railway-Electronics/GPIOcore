@@ -328,12 +328,13 @@ void callbackInput( uint8_t index, uint8_t state, uint8_t val )
     uint8_t type = output[index].eedata.type ;
     if( type == soundEffect )                       // without custom values: on = track 1, off = stop
     {
-        output[index].setState( state ) ;
+        output[index].eedata.state = state ;        // not stored: no EEPROM wear for sounds
         playSound( index, val ? val : state ) ;
         return ;
     }
     reportOutput( index, ( type == fourToneSignal ) ? 2 : state, val ) ;   // a signal reports its aspect
-    output[index].setState( state ) ;
+    if( type == PWM ) output[index].eedata.state = state ;   // PWM: not stored (EEPROM wear)
+    else              output[index].setState( state ) ;      // turnouts, relays, lamps, signals: kept
     if( output[index].eedata.type == PWM || output[index].eedata.type == fourToneSignal ) output[index].setVal( val ) ;   // val shares the union with servo / time settings
 
     recorder.storeEvent( OUTPUT_EVENT, index, state ) ; // logged when recording

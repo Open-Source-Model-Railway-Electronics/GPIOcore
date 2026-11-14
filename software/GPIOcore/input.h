@@ -5,10 +5,10 @@
 
 typedef struct eeInputSettings
 {
-    uint16_t myAddress : 12 ;   // DCC adres of ID
+    uint16_t myAddress : 12 ;   // DCC address (0xFFF = none)
     uint8_t  pin       : 6  ;   // GPIO pin (of NA)
     uint8_t  type      : 3  ;   // input type (3 bits → 0-7)
-    uint8_t  outputID  : 4  ;   // gekoppeld output object (0-15)
+    uint8_t  outputID  : 4  ;   // linked output (0-15)
     uint8_t  level     : 7  ;   // analog inputs: threshold / 8 (config.h, ANALOG_*)
 } InputSettings ;               // 4 bytes, the route is stored in the route pool (routes.h)
 static_assert( sizeof( InputSettings ) == 4, "the input record must stay 4 bytes (EEPROM layout)" ) ;

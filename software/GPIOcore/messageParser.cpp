@@ -31,15 +31,6 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
     return true ;
 }
 
-
-// To avoid compilation errors, this version uses the Input::set() public method instead of directly accessing eedata.
-// Adjust 'latching' definition if needed to match your project context.
-
-// Laat me weten als je direct de definitie van 'latching' of je MAX_OUTPUTS context hiernaast wilt integreren en centraliseren.
-
-
-
-
 OPCODE( OPCODE_SET_INPUT_DATA )
 {
     uint8_t index = msg->payload[0] ;

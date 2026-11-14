@@ -21,7 +21,7 @@ Output::Output() {}
 uint8_t Output::setVal( uint8_t _val )
 {
     eedata.pwmVal = _val ;
-    saveEEPROM() ;
+    if( eedata.type != PWM ) saveEEPROM() ;     // a PWM level is not kept (EEPROM wear); a signal aspect is
     return 0 ;
 }
 
@@ -408,7 +408,7 @@ StateFunction( flashing )
         if( eedata.state ) // BLINK
         {
             digitalWrite( eedata.pinA, !digitalRead( eedata.pinA )) ;
-            if( eedata.pinB != NA ) digitalWrite( eedata.pinB, !digitalRead( eedata.pinA ) ); // maken B inverted from A
+            if( eedata.pinB != NA ) digitalWrite( eedata.pinB, !digitalRead( eedata.pinA ) ); // B is the inverse of A
         }
         else                // OFF
         {
