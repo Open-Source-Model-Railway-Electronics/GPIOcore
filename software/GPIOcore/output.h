@@ -57,7 +57,8 @@ enum types
     fourToneSignal,
     servoType,
     PWM,
-    notInUse
+    notInUse,
+    soundEffect         // DFPlayer Mini on TX (D1): data[0] = track when curved/off, data[1] = when straight/on
 } ;
 
 const Settings defaultSettings = {

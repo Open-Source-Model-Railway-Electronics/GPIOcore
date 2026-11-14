@@ -250,6 +250,13 @@ void loop()
         Serial.flush() ;
         Serial.end() ;
         serialIsIO = 1 ;
+        for( uint8_t i = 0 ; i < 16 ; i++ )      // a sound effect output: TX (D1) at 9600 baud for the DFPlayer,
+        {                                        // RX stays off so D0 can be an input
+            if( output[i].eedata.type != soundEffect ) continue ;
+            Serial.begin( 9600 ) ;
+            UCSR0B &= ~_BV( RXEN0 ) ;
+            break ;
+        }
         for( uint8_t i = 0 ; i < 16 ; i++ )
         {
             output[i].setPinModes() ;
@@ -301,9 +308,30 @@ void reportOutput( uint8_t index, uint8_t state, uint8_t value )
 }
 
 // ── Output callback — central point for all output state changes ───────────────
+// ── Sound effect: DFPlayer Mini on TX (D1), 9600 baud, nothing is read back. Without a PC only:
+// with the GUI connected the serial port is the GUI's, so the board only reports the track.
+void playSound( uint8_t index, uint8_t track )
+{
+    reportOutput( index, 2, track ) ;
+    if( !serialIsIO ) return ;
+    uint8_t f[10] = { 0x7E, 0xFF, 0x06, (uint8_t)( track ? 0x03 : 0x16 ), 0x00, 0x00, track, 0, 0, 0xEF } ;   // 03 play track, 16 stop
+    uint16_t sum = 0 ;
+    for( uint8_t i = 1 ; i < 7 ; i ++ ) sum += f[i] ;
+    sum  = -sum ;
+    f[7] = sum >> 8 ;
+    f[8] = sum & 0xFF ;
+    Serial.write( f, 10 ) ;
+}
+
 void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 {
     uint8_t type = output[index].eedata.type ;
+    if( type == soundEffect )                       // curved / off plays data[0], straight / on data[1]
+    {
+        output[index].setState( state ) ;
+        playSound( index, val ? val : output[index].eedata.data[ state ? 1 : 0 ] ) ;
+        return ;
+    }
     reportOutput( index, ( type == fourToneSignal ) ? 2 : state, val ) ;   // a signal reports its aspect
     output[index].setState( state ) ;
     if( output[index].eedata.type == PWM || output[index].eedata.type == fourToneSignal ) output[index].setVal( val ) ;   // val shares the union with servo / time settings
@@ -328,6 +356,7 @@ void callbackFrog( Output *o, uint8_t relays )
 // ── Raw route step: signal aspect, PWM value or servo angle ───────────────────
 void callbackRouteValue( uint8_t index, uint8_t value )
 {
+    if( output[index].eedata.type == soundEffect ) { playSound( index, value ) ; return ; }   // value = track, 0 = stop
     if( output[index].eedata.type == servoType )
     {
         if( value <= 180 ) output[index].moveTo( value ) ;   // at its speed; the degrees are reported
@@ -341,6 +370,7 @@ void callbackRouteValue( uint8_t index, uint8_t value )
 void callbackInputExt( uint8_t index, uint8_t value )
 {
     if( output[index].eedata.type == servoType ) { if( value <= 180 ) output[index].moveTo( value ) ; return ; }
+    if( output[index].eedata.type == soundEffect ) { playSound( index, value ) ; return ; }   // value = track, 0 = stop
     callbackInput( index, 0, value ) ;
 }
 

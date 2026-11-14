@@ -31,7 +31,9 @@ const int OPCODE_SERVO_LIVE        = 0xA2 ;   // <output> <angle>
 const int OPCODE_DCC_EXT          = 0x33 ;   // <addr H> <addr L> <value>: as if a DCC extended accessory packet arrived
 const int OPCODE_OUTPUT_EVENT      = 0x45 ;   // device -> host: <output> <state> <value> <ms lo> <ms hi>
 const int OPCODE_GET_BOARD         = 0xC0 ;   // no payload -> reply SET_BOARD
-const int OPCODE_SET_BOARD         = 0xCF ;   // <len> <type> <flags> <delay> <name 0..16>
+const int OPCODE_SET_BOARD         = 0xCF ;
+const int OPCODE_GET_ANALOG        = 0xD1 ;   // <channel 0-7> -> reply ANALOG_VALUE
+const int OPCODE_ANALOG_VALUE      = 0xD3 ;   // device -> host: <channel> <value H> <value L> (analogRead, 0-1023)   // <len> <type> <flags> <delay> <name 0..16>
 
 const uint8_t NACK_FULL            = 4 ;
 const uint8_t NACK_INVALID_PIN     = 5 ;
@@ -42,5 +44,6 @@ const uint8_t HELLO_IO_ON_SERIAL   = 0x01 ;   // D0/D1 usable as I/O outside a c
 const uint8_t HELLO_SERVO_LIVE     = 0x02 ;
 const uint8_t HELLO_EXT_EEPROM     = 0x04 ;
 const uint8_t HELLO_BOARD          = 0x08 ;
+const uint8_t HELLO_ANALOG_SOUND   = 0x10 ;   // analog inputs (GET_ANALOG) and the sound effect output
 
 extern uint16_t freeRouteSteps() ;

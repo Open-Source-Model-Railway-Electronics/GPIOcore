@@ -583,7 +583,8 @@ uint8_t Output::update()
             else if( eedata.type == singleFlashing
             ||       eedata.type == doubleFlashing) { sm.nextState( flashing           ) ; }
             else if( eedata.state == oldPos                                         // only act on a state change
-                 ||  eedata.type  == notInUse )     { }
+                 ||  eedata.type  == notInUse
+                 ||  eedata.type  == soundEffect )  { }               // sound: played by GPIOcore.ino
             else if( eedata.relayPinA != NA
                  &&  eedata.relayPinB != NA )       { oldPos = eedata.state ; sm.nextState( turnOffRelays ) ; }
             else {                                    oldPos = eedata.state ; sm.nextState( moveActuator  ) ; } }

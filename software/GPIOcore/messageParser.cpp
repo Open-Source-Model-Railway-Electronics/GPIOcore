@@ -176,6 +176,17 @@ OPCODE( OPCODE_SET_OUTPUT_STATE )
 {
 }
 
+OPCODE( OPCODE_GET_ANALOG )             // live reading of an analog pin, for setting up analog inputs
+{
+    uint8_t  ch = msg->payload[0] & 7 ;
+    uint16_t v  = analogRead( 14 + ch ) ;
+    msg->command    = OPCODE_ANALOG_VALUE ;
+    msg->payload[0] = ch ;
+    msg->payload[1] = v >> 8 ;
+    msg->payload[2] = v & 0xFF ;
+    transceiver.sendMessage( msg ) ;
+}
+
 // <output> -> OUTPUT_EVENT with the current state
 OPCODE( OPCODE_GET_OUTPUT_STATE )
 {
@@ -222,7 +233,7 @@ OPCODE( OPCODE_HELLO )
     msg->payload[1] = MAX_ROUTE_STEPS ;
     msg->payload[2] = pool & 0xFF ;
     msg->payload[3] = pool >> 8 ;
-    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL
+    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL | HELLO_ANALOG_SOUND
                     | ( ( board.flags & BOARD_RECORDER ) ? HELLO_EXT_EEPROM : 0 ) ;
     transceiver.sendMessage( msg ) ;
 }
@@ -360,6 +371,7 @@ void messageReceived( Message *msg, uint8 len )  // call back message
         process( OPCODE_GET_ROUTE        ) ;
         process( OPCODE_SET_ROUTE        ) ;
         process( OPCODE_SERVO_LIVE       ) ;
+        process( OPCODE_GET_ANALOG       ) ;
     }
 }
 #undef process
