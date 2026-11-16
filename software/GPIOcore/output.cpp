@@ -203,7 +203,8 @@ uint8_t Output::sweep()
         callbackSetServo( eedata.pinA, pos ) ;
 
         uint8_t middlePos = ( eedata.servo.servoMin + eedata.servo.servoMax ) / 2 ;
-        if( !custom ) relayWrite( 2, pos < middlePos ? LOW : HIGH ) ;   // unifrog only for curved / straight
+        uint8_t straightSide = eedata.servo.servoMin <= eedata.servo.servoMax ? pos >= middlePos : pos <= middlePos ;   // min > max is allowed
+        if( !custom ) relayWrite( 2, straightSide ? HIGH : LOW ) ;   // unifrog only for curved / straight
     }
 
     return 0 ;
