@@ -292,6 +292,7 @@ void playSound( uint8_t index, uint8_t track )
 void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 {
     uint8_t type = output[index].eedata.type ;
+    if( type == blockSignal ) return ;              // automatic: commands are ignored
     if( type == soundEffect )                       // without custom values: on = track 1, off = stop
     {
         output[index].eedata.state = state ;        // not stored: no EEPROM wear for sounds
@@ -322,6 +323,7 @@ void callbackFrog( Output *o, uint8_t relays )
 // ── Raw route step: signal aspect, PWM value or servo angle ───────────────────
 void callbackRouteValue( uint8_t index, uint8_t value )
 {
+    if( output[index].eedata.type == blockSignal ) return ;                                       // automatic
     if( output[index].eedata.type == soundEffect ) { playSound( index, value ) ; return ; }   // value = track, 0 = stop
     if( output[index].eedata.type == servoType )
     {
@@ -340,24 +342,33 @@ void callbackInputExt( uint8_t index, uint8_t value )
     callbackInput( index, 0, value ) ;
 }
 
-// ── Automatic block signal (4-aspect signal with data[3] bit7): red when its own block is occupied,
-// yellow when the next block is, green otherwise; recalculated every 50 ms from the detector levels.
-// data[2] = own block input | next block input << 4
-// data[3] = 0x80 | 0x40 (has a next block) | green lamp << 4 | yellow lamp << 2 | red lamp   (lamp 0-3 = A-D)
+// ── Automatic signals, recalculated every 50 ms from the detector levels (Input::occupied()):
+// - block signal (type blockSignal): aspect data[0] when its own block is occupied, data[1] when the
+//   next block is, data[2] otherwise; data[3] = own block input | next block input << 4 (equal = no next)
+// - servo with data[3] bit7 (semaphore arm): follows input data[3] & 0x0F, occupied = curved (stop),
+//   free = straight (clear); bit6 swaps them
 void blockSignals()
 {
     for( uint8_t o = 0 ; o < 16 ; o ++ )
     {
-        const Settings &s = output[o].eedata ;
-        if( s.type != fourToneSignal || !( s.data[3] & 0x80 ) ) continue ;
+        Output &out = output[o] ;
+        const Settings &s = out.eedata ;
 
-        uint8_t lamp ;
-        if(      input[ s.data[2] & 0x0F ].occupied()                            ) lamp =   s.data[3]        & 3 ;
-        else if( ( s.data[3] & 0x40 ) && input[ s.data[2] >> 4 ].occupied()      ) lamp = ( s.data[3] >> 2 ) & 3 ;
-        else                                                                       lamp = ( s.data[3] >> 4 ) & 3 ;
-
-        uint8_t aspect = 1 << lamp ;
-        if( aspect != s.data[0] ) callbackRouteValue( o, aspect ) ;   // reports it and keeps it
+        if( s.type == blockSignal )
+        {
+            uint8_t own  = s.data[3] & 0x0F ;
+            uint8_t next = s.data[3] >> 4 ;
+            uint8_t aspect = input[own].occupied()                    ? s.data[0]
+                           : ( next != own && input[next].occupied() ) ? s.data[1]
+                           :                                             s.data[2] ;
+            if( out.showAspect( aspect ) ) reportOutput( o, 2, aspect ) ;
+        }
+        else if( s.type == servoType && ( s.data[3] & 0x80 ) )
+        {
+            uint8_t state = !input[ s.data[3] & 0x0F ].occupied() ;
+            if( s.data[3] & 0x40 ) state = !state ;
+            if( state != s.state ) callbackInput( o, state, 0 ) ;
+        }
     }
 }
 

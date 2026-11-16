@@ -34,7 +34,7 @@ target_include_directories(gpiocore_fw_host PRIVATE fwhost fwhost/arduino ${GPIO
 # ARDUINO: NmraDcc.h includes Arduino.h. weak=unused: the firmware declares its callbacks
 # __attribute__((weak)); MinGW's linker resolves a weak reference to a weak definition in another
 # object file to null, so they would never be called. The firmware defines all of them anyway.
-target_compile_definitions(gpiocore_fw_host PRIVATE ARDUINO=10819 weak=unused)
+target_compile_definitions(gpiocore_fw_host PRIVATE ARDUINO=10819 weak=unused GPIOCORE_HOST)
 # The firmware's EEPROM structs need the AVR layout: packed, bit-fields across byte boundaries
 # (static_asserts in GPIOcore.ino / input.h check it). Not for main.cpp: it uses the C++ library.
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

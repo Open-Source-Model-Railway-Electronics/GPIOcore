@@ -58,7 +58,10 @@ enum types
     servoType,
     PWM,
     notInUse,
-    soundEffect         // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
+    soundEffect,        // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
+    blockSignal         // automatic block signal, lamps A-D: data[0] aspect when its own block is occupied,
+                        // data[1] when the next block is, data[2] when both are free, data[3] = own | next << 4
+                        // (next == own: no next block); the current aspect is only in RAM
 } ;
 
 const Settings defaultSettings = {
@@ -115,7 +118,8 @@ public:
     void        setPinModes() ;
 
     Settings    eedata ;
-    uint8_t     position() { return pos ; }   // servo: current angle
+    uint8_t     position() { return pos ; }   // servo: current angle, block signal: current aspect
+    uint8_t     showAspect( uint8_t a ) { if( a == pos ) return 0 ; pos = a ; return 1 ; }   // block signal: 1 = changed
     uint8_t     frogRelays() { return relays ; }   // bit0 relay A, bit1 relay B, bit2 relay C (unifrog)
 
 private:

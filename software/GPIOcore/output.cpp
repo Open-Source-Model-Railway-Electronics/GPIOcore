@@ -36,7 +36,7 @@ void Output::set( Settings *data )
     for( uint8_t i = 0 ; i < 7 ; i ++ )
     {
         uint8_t p = oldPins[i] ;
-        if( p == NA || p == 2 || p >= 20 || ( p < 2 && !serialIsIO ) ) continue ;
+        if( p == NA || p == 2 || p >= 20 || ( p < 2 && !serialPinsFree() ) ) continue ;
         uint8_t kept = 0 ;
         for( uint8_t j = 0 ; j < 7 ; j ++ ) kept |= ( newPins[j] == p ) ;
         if( !kept ) { digitalWrite( p, LOW ) ; pinMode( p, INPUT ) ; }
@@ -113,7 +113,7 @@ void Output::saveEEPROM()
 
 static void outputPin( uint8_t pin )    // D0/D1 only after the boot window (no HELLO)
 {
-    if( pin != NA && ( pin > 1 || serialIsIO ) ) pinMode( pin, OUTPUT ) ;
+    if( pin != NA && ( pin > 1 || serialPinsFree() ) ) pinMode( pin, OUTPUT ) ;
 }
 
 void Output::setPinModes()
@@ -232,7 +232,7 @@ StateFunction( pwm )
     }
 
     timer.PT = eedata.data[1] ? eedata.data[1] * 1000UL / 255 : 100 ;
-    timer.update() ;
+    timer.update( 1 ) ;                                // a BLEEP timer only runs with its input on
     if( timer.Q )
     {
         if(      !eedata.data[1]          ) pos = eedata.pwmVal ;
@@ -539,13 +539,14 @@ StateFunction( fourToneSignalState )
         timer.PT   = 500 ;          // blink interval 500ms
     }
 
-    uint8_t onMask   = eedata.pwmVal & 0x0F ;
-    uint8_t blinkMask = ( eedata.pwmVal >> 4 ) & 0x0F ;
+    const uint8_t aspect = eedata.type == blockSignal ? pos : eedata.pwmVal ;   // block signal: computed, not stored
+    uint8_t onMask   = aspect & 0x0F ;
+    uint8_t blinkMask = ( aspect >> 4 ) & 0x0F ;
 
     const uint8_t pins[4] = { eedata.pinA, eedata.pinB, eedata.pinC, eedata.pinD } ;
 
     // data[1] = blink frequency in 0.1 Hz (0 = 1 Hz): half a period = 5000 / data[1] ms
-    timer.PT = eedata.data[1] ? 5000 / eedata.data[1] : 500 ;
+    timer.PT = ( eedata.type != blockSignal && eedata.data[1] ) ? 5000 / eedata.data[1] : 500 ;   // block signal: 1 Hz
     if( timer.update(1) ) phase ^= 1 ;     // timer.Q is high for one call only: keep our own phase
 
     for( uint8_t i = 0 ; i < 4 ; i++ )
@@ -569,7 +570,7 @@ StateFunction( fourToneSignalState )
         }
     }
 
-    if( eedata.type != fourToneSignal ) return 1 ;
+    if( eedata.type != fourToneSignal && eedata.type != blockSignal ) return 1 ;
     return 0 ;
 }
 
@@ -584,7 +585,8 @@ uint8_t Output::update()
             else if( eedata.type == firePlaceLight) { sm.nextState( firePlaceLightState) ; }
             else if( eedata.type == tubeLight    )  { sm.nextState( tubeLightState     ) ; }
             else if( eedata.type == welderLight  )  { sm.nextState( welderLightState   ) ; }
-            else if( eedata.type == fourToneSignal   )  { sm.nextState( fourToneSignalState    ) ; }
+            else if( eedata.type == fourToneSignal
+                 ||  eedata.type == blockSignal  )  { sm.nextState( fourToneSignalState    ) ; }
             else if( eedata.type == singleFlashing
             ||       eedata.type == doubleFlashing) { sm.nextState( flashing           ) ; }
             else if( eedata.state == oldPos                                         // only act on a state change

@@ -179,8 +179,9 @@ OPCODE( OPCODE_GET_OUTPUT_STATE )
     if( i >= 16 ) return ;
     uint32_t now = millis() ;
     msg->command    = OPCODE_OUTPUT_EVENT ;
-    msg->payload[1] = output[i].eedata.state ;
-    msg->payload[2] = output[i].eedata.type == servoType ? output[i].position() : output[i].eedata.data[0] ;
+    const uint8_t type = output[i].eedata.type ;
+    msg->payload[1] = ( type == fourToneSignal || type == blockSignal ) ? 2 : output[i].eedata.state ;   // signals: the aspect
+    msg->payload[2] = ( type == servoType || type == blockSignal ) ? output[i].position() : output[i].eedata.data[0] ;
     msg->payload[3] = now & 0xFF ;
     msg->payload[4] = ( now >> 8 ) & 0xFF ;
     transceiver.sendMessage( msg ) ;

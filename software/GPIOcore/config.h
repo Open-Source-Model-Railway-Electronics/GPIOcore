@@ -63,5 +63,10 @@ extern BoardSettings board ;
 extern uint16_t      boardEEAddress ;
 extern uint8_t       configSession ;    // set by HELLO
 extern uint8_t       serialIsIO ;       // D0/D1 are I/O: no HELLO within the boot window
+#ifdef GPIOCORE_HOST
+inline uint8_t serialPinsFree() { return 1 ; }            // simulator: the GUI does not talk over D0/D1
+#else
+inline uint8_t serialPinsFree() { return serialIsIO ; }   // board: D0/D1 are I/O only without a PC
+#endif
 
 bool    isValidPin( uint8_t pin, uint8_t isOutput ) ;   // pin rules, PROTOCOL.md section 9
