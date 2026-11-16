@@ -34,6 +34,8 @@ Quick reminder:
 14. [Light effects](#14-light-effects)
 15. [A signal](#15-a-signal)
 16. [Day and night: lights that fade slowly](#16-day-and-night-lights-that-fade-slowly)
+17. [Automatic block signals](#17-automatic-block-signals)
+18. [Semaphore signals that follow the track](#18-semaphore-signals-that-follow-the-track)
 
 ---
 
@@ -387,3 +389,39 @@ a PWM pin (D3, D5, D6, D9, D10, D11). One output per group: daylight, evening li
 
 A second route does the morning the other way round. With an LDR (example 11) the room light can even
 start the evening by itself.
+
+---
+
+## 17. Automatic block signals
+
+**What it does:** a line divided into blocks, each with a light signal. A train sets the signal behind it to
+red, the one before that to yellow, the rest stays green, like the Dutch 3-aspect system. No DCC needed.
+
+**You need:** one occupancy detector per block (current detection module with an optocoupler output, or
+an IR / reed sensor), three-lamp signals.
+
+**In the program**, for 4 blocks:
+
+1. Inputs 0–3: **Function: Sensor (occupancy)**, one per detector.
+2. Outputs 0–3: type **Block signal**, lamps on pins A (green), B (yellow), C (red).
+3. Signal *n*: **Own block** = sensor *n*, **Next block** = sensor *n + 1*, aspects
+   *own occupied* = red, *next occupied* = yellow, *both free* = green.
+4. The last signal: **Next block** = the first block of the next board (see the README, *Linking boards*),
+   or *none*.
+
+Test it in **Simulate**: click a sensor to make its block occupied. A long train in two blocks gives red, red,
+yellow, green.
+
+**Unlinked blocks with distant signals:** a main signal with *Next block: none* shows red / green. Its distant
+signal is a second block signal output with the **same detector** as own block and aspects yellow / green.
+
+---
+
+## 18. Semaphore signals that follow the track
+
+**What it does:** a semaphore arm (servo) goes to *stop* when its block is occupied and back to *clear* when
+it is free. A combined post with a main arm and a distant arm uses two servos.
+
+**In the program:** output type **Servo**, set the stop and clear positions as *curved* and *straight*,
+then tick **Follows a detector** and choose the Sensor input. Use **Swap** if your arm works the other way.
+The arm moves at the servo's own speed.

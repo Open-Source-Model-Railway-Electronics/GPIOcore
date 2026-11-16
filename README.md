@@ -27,6 +27,7 @@ with a bell, lights that come on at dusk, a water crane, and more).
 8. [Custom values](#8-custom-values)
 9. [Analog inputs: sensors and many buttons on one pin](#9-analog-inputs-sensors-and-many-buttons-on-one-pin)
 10. [Sound (DFPlayer Mini)](#10-sound-dfplayer-mini)
+10a. [Automatic block signals](#10a-automatic-block-signals)
 11. [Setting servos at the layout](#11-setting-servos-at-the-layout)
 12. [Saving your work](#12-saving-your-work)
 13. [When something doesn't work](#13-when-something-doesnt-work)
@@ -129,6 +130,7 @@ Click an output and choose its **Type**:
 | **PWM** | a lamp at a set brightness; with a **Fade time** it changes slowly (day / night) | 1 |
 | **4-aspect signal** | a light signal with up to four lamps | 4 |
 | **Sound effect** | plays MP3 tracks on a DFPlayer Mini (see chapter 10) | D1 |
+| **Block signal** | a light signal that sets itself from track occupancy (see chapter 10a) | 1–4 |
 
 Every output has two states: **curved / off** and **straight / on**. **Test: curved / off** and
 **Test: straight / on** let you try it.
@@ -162,6 +164,7 @@ The **Function** decides what happens:
 | **Direct control**, behaviour **Toggle** | every press switches the output over (straight ↔ curved, on ↔ off) |
 | **Direct control**, behaviour **Absolute** | the output follows: button pressed = curved / off, released = straight / on. With DCC: "straight" = straight, "curved" = curved |
 | **Route** | does a list of steps, see chapter 7 |
+| **Sensor (occupancy)** | a track occupancy detector or other sensor; it switches nothing itself, block signals and semaphore arms read it |
 
 If your command station sends the same command a few times in a row, the decoder only reacts to the
 first one, so a toggle doesn't switch back and forth.
@@ -250,6 +253,40 @@ Track **0 = stop**. Without custom values: on = track 1, off = stop.
 
 > **Important:** D1 is also the USB connection. **Sound only plays when no PC is connected.** With the
 > program connected, the output shows "♪ 3" instead, so you can still check that the right track would play.
+
+---
+
+## 10a. Automatic block signals
+
+A **Block signal** output sets its own aspect from track occupancy, without DCC or a route. You choose:
+
+- **Own block:** the detector input of the block behind the signal;
+- **Next block:** the detector input of the block after that, or *none*;
+- three **aspects** (any combination of lamps, also flashing at 1 Hz): *own block occupied*,
+  *next block occupied* and *both free*.
+
+The decoder looks at the detectors every 50 ms, so the signals are right again straight after power-up.
+Inputs, routes and DCC cannot set a block signal.
+
+| Signal | Own block | Next block | Occupied | Next occupied | Free |
+|---|---|---|---|---|---|
+| Dutch 3-aspect, linked blocks | its block | the next block | red | yellow | green |
+| Main signal, blocks not linked | its block | none | red | – | green |
+| Distant signal (own output) | the block of the main signal ahead | none | yellow | – | green |
+
+One detector may drive several signals (a main signal and its distant signal).
+
+**Detectors:** use inputs with function **Sensor (occupancy)**: occupied = the pin is pulled to GND (or the
+analog condition is true). Any input in use counts as a detector, so an **Absolute** input can be a detector
+*and* switch an output, e.g. a panel LED or the line to the next board.
+
+**Semaphore signals:** a servo can follow a detector (servo settings, *Follows a detector*): occupied =
+curved (stop), free = straight (clear), or swapped.
+
+**Linking boards:** the last signal of a board needs the first block of the next board. Use D0 (RX) with an
+optocoupler as a Sensor input for "next board's first block", and D1 (TX) as a *Single steady* output driven
+by an Absolute input on your own first detector. D0/D1 only work when no PC is connected (5 s after
+power-up without the program); in the simulator they always work.
 
 ---
 
