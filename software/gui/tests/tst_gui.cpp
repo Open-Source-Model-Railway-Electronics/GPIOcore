@@ -475,6 +475,7 @@ private slots:
         QSpinBox *spin = d->findChild<QSpinBox *>();
         QVERIFY(spin);
         spin->setValue(100);                                     // below 512: pressed = curved / off
+        QTest::qWait(300);                                       // the board samples it twice (50 ms apart), then switches
         QTRY_COMPARE_WITH_TIMEOUT(view->liveState(0), 0, 2000);
         maybeScreenshot(w, "analog-simulate.png");
         spin->setValue(1000);                                    // released

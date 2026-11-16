@@ -82,9 +82,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     m_link = new DeviceLink(this);
 
     // Start with what a factory-fresh board contains, so the GUI is useful offline.
-    SimulatedDevice defaults;
-    for (int i = 0; i < NumOutputs; ++i) m_edit.outputs[i] = defaults.output(i);
-    for (int i = 0; i < NumInputs;  ++i) m_edit.inputs[i]  = defaults.input(i);
+    const BoardConfig defaults = SimulatedDevice::factoryDefaults();
+    m_edit.outputs = defaults.outputs;
+    m_edit.inputs  = defaults.inputs;
     m_edit.board.type = quint8(QSettings().value(QStringLiteral("board/type"), int(BoardNano)).toInt());
     m_shadow = m_edit;
     Gpio::setBoardType(m_edit.board.type);
@@ -894,7 +894,8 @@ void MainWindow::connectSimulatedBoard()
     m_simulating = false;
     showWorkspace();
     QString err;
-    m_link->openDevice(new SimulatedDevice, true, &err);
+    if (!m_link->openDevice(new SimulatedDevice, false, &err))     // the firmware in it waits for a request
+        QMessageBox::warning(this, windowTitle(), err);
     updateFrame();
 }
 
@@ -944,7 +945,11 @@ void MainWindow::startSimulation()
     m_shadow = m_edit;
     m_simulating = true;
     QString err;
-    m_link->openDevice(sim, true, &err);
+    if (!m_link->openDevice(sim, false, &err))
+    {
+        m_simulating = false;
+        QMessageBox::warning(this, windowTitle(), err);
+    }
     updateFrame();
     // a simulation is for trying things: the input buttons are on right away
     auto *once = new QObject(this);

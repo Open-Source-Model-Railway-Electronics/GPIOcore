@@ -1,38 +1,73 @@
 #include "simulateddevice.h"
 #include "protocol.h"
 
-#include <QTimer>
-
-#include <functional>
-#include <memory>
+#include <QCoreApplication>
+#include <QDebug>
+#include <QDeadlineTimer>
+#include <QFileInfo>
+#include <QProcess>
 
 using namespace Gpio;
 
-SimulatedDevice::SimulatedDevice(QObject *parent) : SimulatedDevice(Options(), parent) {}
+// The channel to gpiocore_fw_host, both ways: <type> <length lo> <length hi> <payload>
+// (see fwhost/main.cpp for the frame types).
 
-SimulatedDevice::SimulatedDevice(const Options &options, QObject *parent)
-    : QIODevice(parent), m_opt(options)
+static QByteArray bytes(std::initializer_list<int> values)
 {
-    m_live.fill(-1);
-    m_servoPos.fill(-1);
-    m_servoTarget.fill(-1);
-    m_analog.fill(AnalogMaxValue);       // pull-up, no button pressed
-    factoryDefaults();
+    QByteArray b;
+    for (int v : values)
+        b.append(char(v & 0xFF));
+    return b;
 }
 
-void SimulatedDevice::factoryDefaults()
+SimulatedDevice::SimulatedDevice(QObject *parent) : QIODevice(parent)
 {
-    // Output::defaults(): defaultSettings with pinA = 3 + index, singleSteady, switchTime 50
+    const BoardConfig d = factoryDefaults();
+    for (int i = 0; i < NumOutputs; ++i) m_out[i] = d.outputs[i];
+    for (int i = 0; i < NumInputs; ++i)  m_in[i]  = d.inputs[i];
+    m_board = d.board;
+    m_analog.fill(AnalogMaxValue);       // pull-up, no button pressed
+}
+
+SimulatedDevice::~SimulatedDevice()
+{
+    close();
+}
+
+QString SimulatedDevice::hostProgram()
+{
+#ifdef Q_OS_WIN
+    const QString exe = QStringLiteral("gpiocore_fw_host.exe");
+#else
+    const QString exe = QStringLiteral("gpiocore_fw_host");
+#endif
+    QStringList candidates;
+    const QString env = qEnvironmentVariable("GPIOCORE_FW_HOST");
+    if (!env.isEmpty())
+        candidates << env;
+    candidates << QCoreApplication::applicationDirPath() + QLatin1Char('/') + exe;
+#ifdef GPIOCORE_FW_HOST_PATH
+    candidates << QStringLiteral(GPIOCORE_FW_HOST_PATH);   // the build tree
+#endif
+    for (const QString &c : candidates)
+        if (QFileInfo(c).isExecutable())
+            return c;
+    return QString();
+}
+
+BoardConfig SimulatedDevice::factoryDefaults()
+{
+    BoardConfig b;
+    // Output::defaults(): pinA = D3-D12, A0-A5 (D13 is the config LED), single steady, switch time 50
     for (int i = 0; i < NumOutputs; ++i)
     {
         OutputConfig c;
-        c.pinA = quint8(3 + i);
-        if (c.pinA >= 13) ++c.pinA;      // D13 = config LED
+        c.pinA = quint8(i < 10 ? 3 + i : 4 + i);
         c.type = SingleSteady;
         c.setSwitchTime(50);
-        m_out[i] = c.normalized();
+        b.outputs[i] = c.normalized();
     }
-    // Input::defaults(): outputID = i, address = i + 1, latching
+    // Input::defaults(): output i, DCC address i + 1, absolute, no pin
     for (int i = 0; i < NumInputs; ++i)
     {
         InputConfig c;
@@ -40,26 +75,77 @@ void SimulatedDevice::factoryDefaults()
         c.address  = quint16(i + 1);
         c.pin      = PinNA;
         c.type     = Latching;
-        m_in[i] = c.normalized();
+        b.inputs[i] = c.normalized();
     }
+    return b;   // board settings: the BoardSettings defaults (Nano, timing off, interlock auto, 0.3 s)
 }
 
 bool SimulatedDevice::open(OpenMode mode)
 {
+    if (isOpen())
+        return true;
+    const QString program = hostProgram();
+    if (program.isEmpty())
+    {
+        setErrorString(tr("The firmware simulator (gpiocore_fw_host) is missing next to the program."));
+        return false;
+    }
     if (!QIODevice::open(mode | QIODevice::Unbuffered))
         return false;
-    m_state = 0;
+
+    m_proc = new QProcess(this);
+    m_proc->setProcessChannelMode(QProcess::ForwardedErrorChannel);
+    connect(m_proc, &QProcess::readyReadStandardOutput, this, &SimulatedDevice::readHost);
+    connect(m_proc, &QProcess::finished, this, [this](int code, QProcess::ExitStatus status) {
+        if (isOpen() && m_proc)
+            qWarning() << "firmware simulator stopped:" << code << status;
+    });
+    m_booted = false;
+    m_fromHost.clear();
     m_rx.clear();
-    m_tx.clear();
-    QTimer::singleShot(m_opt.bootDelayMs, this, [this] { if (isOpen()) sendVersion(); });
+    m_proc->start(program, QStringList(), QIODevice::ReadWrite);
+    if (!m_proc->waitForStarted(5000))
+    {
+        setErrorString(tr("Could not start the firmware simulator: %1").arg(m_proc->errorString()));
+        close();
+        return false;
+    }
+
+    // the configuration that was set before: board settings first (they decide the route format)
+    if (m_setupBoard) sendBoard(*m_setupBoard);
+    for (int i = 0; i < NumOutputs; ++i) if (m_setupOut[i]) sendOutput(i, *m_setupOut[i]);
+    for (int i = 0; i < NumInputs; ++i)  if (m_setupIn[i])  sendInput(i, *m_setupIn[i]);
+    m_setupBoard.reset();
+    for (auto &o : m_setupOut) o.reset();
+    for (auto &in : m_setupIn) in.reset();
+
+    const QDeadlineTimer deadline(5000);
+    while (!m_booted && m_proc && m_proc->state() == QProcess::Running && !deadline.hasExpired())
+        m_proc->waitForReadyRead(50);
+    if (!m_booted)
+    {
+        setErrorString(tr("The firmware simulator did not start up."));
+        close();
+        return false;
+    }
     return true;
 }
 
 void SimulatedDevice::close()
 {
+    if (m_proc)
+    {
+        QProcess *p = m_proc;
+        m_proc = nullptr;                // no more reads or warnings from it
+        p->disconnect(this);
+        p->closeWriteChannel();          // the host program ends when its stdin closes
+        if (!p->waitForFinished(1000))
+            p->kill(), p->waitForFinished(1000);
+        delete p;
+    }
     m_rx.clear();
-    m_tx.clear();
-    QIODevice::close();
+    if (isOpen())
+        QIODevice::close();
 }
 
 qint64 SimulatedDevice::readData(char *data, qint64 maxSize)
@@ -72,486 +158,209 @@ qint64 SimulatedDevice::readData(char *data, qint64 maxSize)
 
 qint64 SimulatedDevice::writeData(const char *data, qint64 size)
 {
-    for (qint64 i = 0; i < size; ++i)
-        receiveByte(quint8(data[i]));
+    QByteArray bytes(data, int(size));
+    if (m_corrupt > 0 && bytes.size() > 1)   // a frame with a checksum: break it
+    {
+        --m_corrupt;
+        bytes[bytes.size() - 1] = char(bytes.at(bytes.size() - 1) ^ 0x5A);
+    }
+    sendFrame('S', bytes);
     return size;
 }
 
-void SimulatedDevice::scheduleFlush()
+void SimulatedDevice::sendFrame(char type, const QByteArray &data)
 {
-    if (m_flushScheduled)
+    if (!m_proc)
         return;
-    m_flushScheduled = true;
-    QTimer::singleShot(m_opt.replyDelayMs, this, [this] {
-        m_flushScheduled = false;
-        if (!isOpen() || m_tx.isEmpty())
-            return;
-        m_rx += m_tx;
-        m_tx.clear();
-        emit readyRead();
-    });
+    QByteArray f;
+    f.append(type);
+    f.append(char(data.size() & 0xFF));
+    f.append(char(data.size() >> 8));
+    f += data;
+    m_proc->write(f);
 }
 
-// ── Transceiver (firmware side) ─────────────────────────────────────────────
-void SimulatedDevice::sendMessage(quint8 command, const quint8 *payload)
+// ── Setting the board up ─────────────────────────────────────────────────────
+void SimulatedDevice::sendSetup(quint8 command, const QByteArray &payload)
 {
-    int len = command & 0x0F;
-    if (len == 0x0F) len = payload[0];
-    m_tx.append(char(command));
-    quint8 cs = command;
-    for (int i = 0; i < len; ++i)
-    {
-        m_tx.append(char(payload[i]));
-        cs ^= payload[i];
-    }
-    m_tx.append(char(cs));
-    scheduleFlush();
+    sendFrame('X', QByteArray(1, char(command)) + payload);
 }
 
-void SimulatedDevice::sendAck()
+void SimulatedDevice::sendOutput(int i, const OutputConfig &c)
 {
-    m_tx.append(char(Proto::ACK));
-    scheduleFlush();
+    sendSetup(Proto::SET_OUTPUT_DATA, encodeOutput(i, c));
 }
 
-void SimulatedDevice::sendNack(quint8 reason)
+void SimulatedDevice::sendInput(int i, const InputConfig &c)
 {
-    m_tx.append(char(Proto::NACK));
-    m_tx.append(char(reason));
-    scheduleFlush();
+    sendSetup(Proto::SET_INPUT_DATA, encodeInput(i, c));
+    // the route (or the custom values) in chunks, like DeviceLink::writeRoute(); 0 steps clears it
+    const int total = qMin(int(c.route.size()), MaxRouteSteps);
+    int first = 0;
+    do
+    {
+        const int n = qMin(Proto::RouteChunkSteps, total - first);
+        QByteArray p;
+        p.append(char(4 + 4 * n));
+        p.append(char(i));
+        p.append(char(total));
+        p.append(char(first));
+        for (int k = 0; k < n; ++k)
+            p += encodeStep(c.route[first + k]);
+        sendSetup(Proto::SET_ROUTE, p);
+        first += n;
+    } while (first < total);
 }
 
-void SimulatedDevice::sendVersion()
+void SimulatedDevice::sendBoard(const BoardSettings &b)
 {
-    // the firmware sends src/version.h
-    const QByteArray v = QByteArrayLiteral("v0.0.0");
-    sendMessage(quint8(0x50 | v.size()), reinterpret_cast<const quint8 *>(v.constData()));
+    const QByteArray body = encodeBoard(b);
+    sendSetup(Proto::SET_BOARD, QByteArray(1, char(body.size() + 1)) + body);
 }
 
-void SimulatedDevice::receiveByte(quint8 b)
+void SimulatedDevice::setOutput(int i, const OutputConfig &c)
 {
-    switch (m_state)
-    {
-    case 0:
-        m_command  = b;
-        m_len      = b & 0x0F;
-        m_count    = 0;
-        m_checksum = b;
-        if (m_len == 0)
-        {
-            ++m_framesReceived;
-            messageReceived();             // no ACK for zero-length messages
-        }
-        else if (m_len == 0x0F) m_state = 1;
-        else                    m_state = 2;
-        break;
-
-    case 1:
-        if (b > 32) { sendNack(Proto::NACK_INVALID_LENGTH); m_state = 0; break; }
-        m_len = b;
-        m_payload[m_count++] = b;
-        m_checksum ^= b;
-        m_state = 2;
-        break;
-
-    case 2:
-        if (m_count >= 32) { sendNack(Proto::NACK_INVALID_LENGTH); m_state = 0; break; }
-        m_payload[m_count++] = b;
-        m_checksum ^= b;
-        if (m_count == m_len) m_state = 3;
-        break;
-
-    case 3:
-        ++m_framesReceived;
-        if (b == m_checksum && m_corrupt == 0)
-        {
-            messageReceived();
-            sendAck();
-        }
-        else
-        {
-            if (m_corrupt > 0) --m_corrupt;
-            sendNack(Proto::NACK_INVALID_CHECKSUM);
-        }
-        m_state = 0;
-        break;
-    }
+    m_out[i] = c.normalized();           // the firmware's report follows
+    if (m_proc) sendOutput(i, c);
+    else        m_setupOut[i] = c;
 }
 
-// ── messageParser.cpp (firmware side) ───────────────────────────────────────
-void SimulatedDevice::messageReceived()
+void SimulatedDevice::setInput(int i, const InputConfig &c)
 {
-    quint8 *p = m_payload.data();
-    const quint8 index = p[0];
-
-    if (m_command == Proto::SET_INPUT_DATA)
-    {
-        if (index >= NumInputs) return;                 // firmware: out of bounds write
-        int idx; InputConfig c;
-        decodeInput(QByteArray(reinterpret_cast<const char *>(p), 14), idx, c);
-        c.route = m_in[index].route;                    // routes come with SET_ROUTE
-        m_in[index] = c.normalized();
-    }
-    else if (m_command == Proto::HELLO)
-    {
-        m_session = true;                               // keep D0/D1 as serial
-        const quint8 reply[5] = { 2 /* PROTOCOL_VERSION */, quint8(m_opt.maxRouteSteps),
-                                  quint8(m_opt.stepPool & 0xFF), quint8(m_opt.stepPool >> 8),
-                                  m_opt.helloFlags };
-        sendMessage(quint8(Proto::HELLO_GROUP << 4 | 5), reply);
-    }
-    else if ((m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::GET_BOARD)
-    {
-        const QByteArray body = encodeBoard(m_board);
-        quint8 msg[32] = {};
-        msg[0] = quint8(body.size() + 1);
-        memcpy(msg + 1, body.constData(), size_t(body.size()));
-        sendMessage(Proto::SET_BOARD, msg);
-    }
-    else if ((m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::SET_BOARD)
-    {
-        decodeBoard(QByteArray(reinterpret_cast<const char *>(p + 1), m_len - 1), m_board);
-    }
-    else if (m_command == Proto::SET_INPUT_STATE)
-    {
-        if (index < NumInputs) triggerInput(index, p[1]);
-    }
-    else if ((m_opt.helloFlags & Proto::HELLO_FLAG_ANALOG_SOUND) && m_command == Proto::GET_ANALOG)
-    {
-        const quint8 ch = p[0] & 7;
-        const quint8 msg[3] = { ch, quint8(m_analog[ch] >> 8), quint8(m_analog[ch] & 0xFF) };
-        sendMessage(Proto::ANALOG_VALUE, msg);
-    }
-    else if (m_command == Proto::DCC_EXT)
-    {
-        const int address = p[0] << 8 | p[1];
-        for (int i = 0; i < NumInputs; ++i)          // input.cpp setDccAddressExt(): direct inputs only
-            if (m_in[i].address == address && isDirectType(m_in[i].type))
-            {
-                OutputConfig &o = m_out[m_in[i].outputId];
-                if (o.type == ServoType) { if (p[2] <= 180) servoTo(m_in[i].outputId, p[2]); continue; }
-                if (o.type == SoundEffect) { reportOutput(m_in[i].outputId, 2, p[2]); continue; }   // track, 0 = stop
-                if (o.type == FourToneSignal || o.type == Pwm) o.data[0] = p[2];   // PWM fading (data[1]): the target is reported at once
-                if (o.type == FourToneSignal) reportOutput(m_in[i].outputId, 2, p[2]);
-                else                          setOutputState(m_in[i].outputId, 0);
-            }
-    }
-    else if (m_command == Proto::GET_OUTPUT_STATE)
-    {
-        if (index >= NumOutputs) return;
-        const quint32 now = quint32(m_clock.isValid() ? m_clock.elapsed() : 0);
-        const quint8 msg[5] = { index, m_out[index].state, m_out[index].data[0], quint8(now), quint8(now >> 8) };
-        sendMessage(Proto::OUTPUT_EVENT, msg);
-        const OutputConfig &o = m_out[index];
-        if (o.relayA != PinNA || o.relayB != PinNA || o.relayC != PinNA)
-        {
-            const quint8 frog[5] = { index, 3, m_frog[index], quint8(now), quint8(now >> 8) };
-            sendMessage(Proto::OUTPUT_EVENT, frog);
-        }
-    }
-    else if (m_command == Proto::GET_ROUTE)
-    {
-        if (index >= NumInputs) return;
-        const QVector<RouteStep> &r = m_in[index].route;
-        const int first = p[1];
-        const int n = qBound(0, int(r.size()) - first, Proto::RouteChunkSteps);
-        quint8 msg[32] = {};
-        msg[0] = quint8(4 + 4 * n);
-        msg[1] = index;
-        msg[2] = quint8(r.size());
-        msg[3] = quint8(first);
-        for (int i = 0; i < n; ++i)
-        {
-            RouteStep st = r[first + i];
-            if (!m_board.timing && (m_opt.helloFlags & Proto::HELLO_FLAG_BOARD))
-                st.delay = 0;            // firmware: timing off stores 2 bytes per step, no wait time
-            memcpy(msg + 4 + 4 * i, encodeStep(st).constData(), 4);
-        }
-        sendMessage(Proto::SET_ROUTE, msg);
-    }
-    else if (m_command == Proto::SET_ROUTE)
-    {
-        // p[0] = length, p[1] = route, p[2] = total steps, p[3] = first step
-        const int route = p[1], total = qMin(int(p[2]), m_opt.maxRouteSteps), first = p[3];
-        if (route >= NumInputs) return;
-        QVector<RouteStep> &r = m_in[route].route;
-        if (first == 0) r.clear();
-        const int n = (m_len - 4) / 4;
-        for (int i = 0; i < n && r.size() < total; ++i)
-            r.append(decodeStep(reinterpret_cast<const char *>(p + 4 + 4 * i)));
-    }
-    else if (m_command == Proto::SERVO_LIVE)
-    {
-        if (index < NumOutputs) m_live[index] = p[1];
-    }
-    else if (m_command == Proto::GET_INPUT_DATA)
-    {
-        if (index >= NumInputs) return;
-        const QByteArray enc = encodeInput(index, m_in[index]);
-        memcpy(p, enc.constData(), 14);
-        sendMessage(Proto::SET_INPUT_DATA, p);
-    }
-    else if (m_command == Proto::SET_OUTPUT_DATA)
-    {
-        if (index >= NumOutputs) return;
-        int idx; OutputConfig c;
-        decodeOutput(QByteArray(reinterpret_cast<const char *>(p), 14), idx, c);
-        m_out[index] = c.normalized();
-    }
-    else if (m_command == Proto::GET_OUTPUT_DATA)
-    {
-        if (index >= NumOutputs) return;
-        const QByteArray enc = encodeOutput(index, m_out[index]);
-        memcpy(p, enc.constData(), 14);
-        sendMessage(Proto::SET_OUTPUT_DATA, p);
-    }
-    else if (m_command == Proto::REQ_VERSION)
-    {
-        sendVersion();
-    }
-    // SET/GET_*_STATE: empty handlers in the firmware
+    m_in[i] = c.normalized();
+    if (m_proc) sendInput(i, c);
+    else        m_setupIn[i] = c;
 }
 
-// ── Live test (SET_INPUT_STATE / OUTPUT_EVENT), mirrors GPIOcore.ino + input.cpp ──
-void SimulatedDevice::reportOutput(int output, int state, int value)
+void SimulatedDevice::setBoard(const BoardSettings &b)
 {
-    if (!m_session)
-        return;
-    if (!m_clock.isValid())
-        m_clock.start();
-    const quint32 now = quint32(m_clock.elapsed());
-    const quint8 msg[5] = { quint8(output), quint8(state), quint8(value), quint8(now), quint8(now >> 8) };
-    sendMessage(Proto::OUTPUT_EVENT, msg);
+    m_board = b;
+    if (m_proc) sendBoard(b);
+    else        m_setupBoard = b;
 }
 
-bool SimulatedDevice::routeMovesTurnout(int input) const
-{
-    for (const RouteStep &s : m_in[input].route)
-    {
-        const quint8 t = m_out[s.output].type;
-        if (t == ServoType || t == SinglePulse || t == DoublePulse)
-            return true;
-    }
-    return false;
-}
-
-void SimulatedDevice::triggerInput(int index, int direction)
-{
-    InputConfig &in = m_in[index];
-    if (isDirectType(in.type))
-    {
-        if (in.type == Latching)
-            switchOutput(index, direction ? 1 : 0);
-        else                             // toggle: the output's state without custom values
-            switchOutput(index, in.hasCustomValues() ? m_inState[index] ^ 1 : m_out[in.outputId].state ^ 1);
-        return;
-    }
-    if (!isRouteType(in.type))
-        return;
-    if ((in.type == RouteStraight && direction != 1) || (in.type == RouteCurved && direction != 0))
-        return;                          // this route reacts to the other direction only
-    startRoute(index);
-}
-
-// A button edge (input.cpp, normal inputs): a press starts any route and toggles, absolute follows
-// the level (pressed = LOW = 0).
-void SimulatedDevice::pinLevel(int index, bool pressed)
-{
-    const InputConfig &in = m_in[index];
-    if (isRouteType(in.type))
-    {
-        if (pressed) startRoute(index);
-        return;
-    }
-    if (in.type == Momentary && pressed)
-        switchOutput(index, in.hasCustomValues() ? m_inState[index] ^ 1 : m_out[in.outputId].state ^ 1);
-    else if (in.type == Latching)
-        switchOutput(index, pressed ? 0 : 1);
-}
-
-// Custom values: 2 steps marked 'values' in the input's route slot, one per state. Steps without
-// the marker (left over from a route) are ignored, like in the firmware.
-void SimulatedDevice::switchOutput(int index, int state)
-{
-    const InputConfig &in = m_in[index];
-    m_inState[index] = quint8(state & 1);
-    if (in.route.size() == 2 && in.route[state & 1].values)
-        applyStep(in.route[state & 1]);
-    else
-        setOutputState(in.outputId, quint8(state & 1));
-}
-
-// callbackRouteValue() / callbackInput(): a raw value goes to a servo as an angle, to a sound
-// output as a track (0 = stop) and is reported for the others; otherwise curved / straight.
-void SimulatedDevice::applyStep(const RouteStep &s)
-{
-    if (s.raw && m_out[s.output].type == ServoType)
-    {
-        if (s.value <= 180) servoTo(s.output, s.value);
-    }
-    else if (s.raw)
-    {
-        reportOutput(s.output, 2, s.value);
-    }
-    else
-    {
-        setOutputState(s.output, quint8(s.value ? 1 : 0));
-    }
-}
-
+// ── The outside world ────────────────────────────────────────────────────────
 void SimulatedDevice::setAnalogValue(int channel, int value)
 {
     channel &= 7;
     m_analog[channel] = qBound(0, value, AnalogMaxValue);
-    for (int i = 0; i < NumInputs; ++i)
-        if (m_in[i].isAnalog() && m_in[i].analogChannel() == channel && m_in[i].type != InputNotInUse)
-            evaluateAnalog(i);
+    sendFrame('A', bytes({ 14 + channel, m_analog[channel] >> 8, m_analog[channel] }));
 }
 
-// Input::readAnalog(): below / above keep a pressed button pressed for 20 more counts, 'at' is a
-// window of +/- 10. (The firmware also wants two equal samples 50 ms apart; a typed value is stable.)
-void SimulatedDevice::evaluateAnalog(int index)
+void SimulatedDevice::setPinLevel(int pin, bool high)
 {
-    const InputConfig &c = m_in[index];
-    const int  v    = m_analog[c.analogChannel() & 7];
-    const int  t    = c.threshold;
-    const bool held = m_pressed[index];
-    bool hit = false;
-    switch (c.analog)
+    if (pin >= 14 && pin < NumPins)
     {
-    case AnalogBelow: hit = v < t + (held ? AnalogHysteresis : 0); break;
-    case AnalogAbove: hit = v > t - (held ? AnalogHysteresis : 0); break;
-    case AnalogAt:    hit = qAbs(v - t) <= AnalogWindow;            break;
-    }
-    if (hit == held)
+        setAnalogValue(pin - 14, high ? AnalogMaxValue : 0);
         return;
-    m_pressed[index] = hit;
-    pinLevel(index, hit);
+    }
+    const int v = high ? AnalogMaxValue : 0;
+    sendFrame('A', bytes({ pin, v >> 8, v & 0xFF }));
 }
 
-void SimulatedDevice::startRoute(int index)
+void SimulatedDevice::dccAccessory(int address, int direction)
 {
-    const InputConfig &in = m_in[index];
-    if (m_routeBusy[index] || in.route.isEmpty())
-        return;
-    // interlocking (PROTOCOL.md section 10): a refused route is ignored
-    for (int i = 0; i < NumInputs; ++i)
-    {
-        if (!m_routeBusy[i]) continue;
-        if (m_board.interlock == InterlockOn) return;
-        if (m_board.interlock == InterlockAuto && routeMovesTurnout(i) && routeMovesTurnout(index)) return;
-    }
-    m_routeBusy[index] = true;
-    runRouteStep(index, 0);
+    sendFrame('D', bytes({ address >> 8, address & 0xFF, direction ? 1 : 0, 1 }));
 }
 
-void SimulatedDevice::runRouteStep(int input, int step)
+void SimulatedDevice::dccExtended(int address, int value)
 {
-    const QVector<RouteStep> &r = m_in[input].route;
-    if (step >= r.size())
-    {
-        m_routeBusy[input] = false;
-        return;
-    }
-    const RouteStep &s = r[step];
-    applyStep(s);
-    const int waitMs = 100 * (m_board.timing ? s.delay : m_board.delay);
-    QTimer::singleShot(waitMs, this, [this, input, step] { runRouteStep(input, step + 1); });
+    sendFrame('E', bytes({ address >> 8, address & 0xFF, value }));
 }
 
-void SimulatedDevice::setOutputState(int output, quint8 state)
+void SimulatedDevice::dccLocoSpeed(int address, int speed, bool forward)
 {
-    OutputConfig &o = m_out[output];
-    if (o.type == SoundEffect)           // GPIOcore.ino callbackInput(): without custom values on = track 1, off = stop
-    {
-        o.state = state;
-        reportOutput(output, 2, state ? 1 : 0);
-        return;
-    }
-    const bool changed = o.state != state || m_servoTarget[output] >= 0;
-    m_servoTarget[output] = -1;
-    o.state = state;
-    reportOutput(output, state, o.data[0]);
-    if (!changed)
-        return;
-    const bool electro = o.relayA != PinNA && o.relayB != PinNA;
-    if (electro)                         // output.cpp: turnOffRelays, 100 ms, then the actuator moves
-    {
-        setFrog(output, 0, false);
-        setFrog(output, 1, false);
-    }
-    auto relaysOn = [this, output] {     // turnOnRelays, after the actuator is done
-        const OutputConfig &c = m_out[output];
-        if (c.relayA == PinNA || c.relayB == PinNA) return;
-        setFrog(output, 0, c.state);
-        setFrog(output, 1, !c.state);
-    };
-    if (o.type == ServoType)
-    {
-        QTimer::singleShot(electro ? 100 : 0, this, [this, output] { sweepServo(output); });
-    }
-    else if (electro)
-    {
-        int ms = 0;
-        if (o.type == SinglePulse) ms = int(o.switchTime()) * 100;
-        if (o.type == DoublePulse) ms = int(o.switchTime()) * 10;
-        QTimer::singleShot(100 + ms, this, relaysOn);
-    }
-    if (o.relayC != PinNA && (o.type == SinglePulse || o.type == DoublePulse))   // unifrog at the end of the pulse
-    {
-        const int ms = int(o.switchTime()) * (o.type == SinglePulse ? 100 : 10);
-        QTimer::singleShot(qMax(1, ms), this, [this, output] { setFrog(output, 2, m_out[output].state); });
-    }
+    sendFrame('L', bytes({ address >> 8, address & 0xFF, speed, forward ? 1 : 0 }));
 }
 
-void SimulatedDevice::setFrog(int output, int bit, bool on)
+void SimulatedDevice::dccFunctions(int address, quint8 f0f4)
 {
-    const quint8 bits = on ? quint8(m_frog[output] | (1 << bit)) : quint8(m_frog[output] & ~(1 << bit));
-    if (bits == m_frog[output])
-        return;
-    m_frog[output] = bits;
-    reportOutput(output, 3, bits);
+    sendFrame('F', bytes({ address >> 8, address & 0xFF, f0f4 }));
 }
 
-// like Output::sweep(): one degree per 'speed' ms, every degree is reported
-void SimulatedDevice::sweepServo(int output)
+// ── From the firmware ────────────────────────────────────────────────────────
+void SimulatedDevice::readHost()
 {
-    OutputConfig &o = m_out[output];
-    const int target = o.state ? o.servoMax() : o.servoMin();
-    if (m_servoPos[output] < 0)
-        m_servoPos[output] = o.state ? o.servoMin() : o.servoMax();
-    if (m_sweeping[output])
-        return;                          // the running sweep follows the new target
-    m_sweeping[output] = true;
-    auto step = std::make_shared<std::function<void()>>();
-    *step = [this, output, step] {
-        const OutputConfig &c = m_out[output];
-        const int to = m_servoTarget[output] >= 0 ? m_servoTarget[output] : (c.state ? c.servoMax() : c.servoMin());
-        int &pos = m_servoPos[output];
-        if (pos == to)
+    if (!m_proc)
+        return;
+    m_fromHost += m_proc->readAllStandardOutput();
+    bool serial = false, state = false;
+    int pos = 0;
+    while (m_fromHost.size() - pos >= 3)
+    {
+        const int n = quint8(m_fromHost.at(pos + 1)) | quint8(m_fromHost.at(pos + 2)) << 8;
+        if (m_fromHost.size() - pos < 3 + n)
+            break;
+        const char type = m_fromHost.at(pos);
+        if (handleFrame(type, m_fromHost.mid(pos + 3, n))) serial = true;
+        else if (type != 'R' && type != 'x')              state  = true;
+        pos += 3 + n;
+    }
+    m_fromHost.remove(0, pos);
+    if (state)
+        emit stateChanged();
+    if (serial && isOpen())
+        emit readyRead();
+}
+
+bool SimulatedDevice::handleFrame(char type, const QByteArray &d)
+{
+    auto at = [&d](int i) { return i < d.size() ? quint8(d.at(i)) : quint8(0); };
+    switch (type)
+    {
+    case 'R':
+        m_booted = true;
+        break;
+    case 'S':
+        m_rx += d;
+        return true;
+    case 'x':
+        if (at(1))
+            qWarning() << "firmware simulator: set-up message" << Proto::commandName(at(0))
+                       << "refused:" << Proto::nackReason(at(1));
+        break;
+    case 'O':                            // GET_OUTPUT_DATA layout + servo angle + frog relays
+    {
+        int idx = -1;
+        OutputConfig c;
+        if (d.size() >= 16 && decodeOutput(d.left(14), idx, c))
         {
-            m_sweeping[output] = false;
-            // the servo holds ~500 ms before it detaches; then turnOnRelays (electrofrog)
-            QTimer::singleShot(500, this, [this, output] {
-                const OutputConfig &e = m_out[output];
-                if (m_sweeping[output] || e.relayA == PinNA || e.relayB == PinNA) return;
-                setFrog(output, 0, e.state);
-                setFrog(output, 1, !e.state);
-            });
-            return;
+            c.name       = m_out[idx].name;
+            c.lampColors = m_out[idx].lampColors;
+            m_out[idx]  = c;
+            m_pos[idx]  = at(14);
+            m_frog[idx] = at(15);
         }
-        pos += pos < to ? 1 : -1;
-        reportOutput(output, 2, pos);
-        if (c.relayC != PinNA && m_servoTarget[output] < 0)  // unifrog switches at the middle of the sweep
-            setFrog(output, 2, pos >= (c.servoMin() + c.servoMax()) / 2);
-        QTimer::singleShot(qMax(1, int(c.servoSpeed())), this, *step);
-    };
-    Q_UNUSED(target);
-    QTimer::singleShot(qMax(1, int(o.servoSpeed())), this, *step);
-}
-
-void SimulatedDevice::servoTo(int output, int angle)
-{
-    m_servoTarget[output] = angle;
-    sweepServo(output);
+        break;
+    }
+    case 'I':                            // <index> <addr H> <addr L> <pin> <type> <output> <level> <steps> <steps x 4>
+    {
+        QByteArray p = d.left(6);
+        p.append(char(quint8(at(6) << 1)));               // GET_INPUT_DATA: threshold / 4
+        p.append(QByteArray(7, char(0xFF)));
+        int idx = -1;
+        InputConfig c;
+        if (d.size() >= 8 && decodeInput(p, idx, c))
+        {
+            for (int k = 0; k < at(7) && 8 + 4 * k + 4 <= d.size(); ++k)
+                c.route.append(decodeStep(d.constData() + 8 + 4 * k));
+            c.name = m_in[idx].name;
+            m_in[idx] = c;
+        }
+        break;
+    }
+    case 'B':
+        decodeBoard(d, m_board);
+        break;
+    case 'G':
+        for (int i = 0; i < 3; ++i) m_globals[i] = at(i) != 0;
+        break;
+    case 'P':
+        for (int p = 0; p < NumPins && 4 * p + 3 < d.size(); ++p)
+            m_pins[p] = Pin { at(4 * p), at(4 * p + 1), at(4 * p + 2), at(4 * p + 3) };
+        break;
+    default:
+        break;
+    }
+    return false;
 }

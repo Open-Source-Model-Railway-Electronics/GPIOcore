@@ -3,6 +3,7 @@
 Build the GUI for end users into <repo>/release/:
 
     GPIOcoreGUI.exe       the configuration program (Release build) + the Qt files it needs
+    gpiocore_fw_host.exe  the firmware compiled for the PC: the GUI's simulator runs it
     tools/avrdude/        the upload program the GUI uses to put the firmware on a Nano
     examples/             example board files
 
@@ -24,6 +25,7 @@ GUI_DIR = Path(__file__).resolve().parent                    # software/gui
 REPO_ROOT = GUI_DIR.parent.parent
 RELEASE_DIR = REPO_ROOT / "release"
 EXE = "GPIOcoreGUI.exe"
+FW_HOST = "gpiocore_fw_host.exe"                             # must be next to EXE (Simulate mode)
 
 
 def fail(msg):
@@ -72,12 +74,15 @@ def build_gui():
     try:
         run(["cmake", "-S", GUI_DIR, "-B", build_dir, "-G", "Ninja",
              "-DCMAKE_BUILD_TYPE=Release", f"-DCMAKE_PREFIX_PATH={qt}"], env)
-        run(["cmake", "--build", build_dir, "--target", "GPIOcoreGUI"], env)
+        run(["cmake", "--build", build_dir, "--target", "GPIOcoreGUI", "gpiocore_fw_host"], env)
         exe = build_dir / EXE
         if not exe.is_file():
             fail(f"{EXE} was not built")
+        if not (build_dir / FW_HOST).is_file():
+            fail(f"{FW_HOST} was not built")
         RELEASE_DIR.mkdir(exist_ok=True)
         shutil.copy2(exe, RELEASE_DIR / EXE)
+        shutil.copy2(build_dir / FW_HOST, RELEASE_DIR / FW_HOST)   # statically linked, no DLLs
         # Qt libraries, plugins, Qt's own translations and the MinGW runtime next to the exe
         run([qt / "bin" / "windeployqt.exe", "--release", "--no-opengl-sw", "--no-system-d3d-compiler",
              "--dir", RELEASE_DIR, RELEASE_DIR / EXE], env)

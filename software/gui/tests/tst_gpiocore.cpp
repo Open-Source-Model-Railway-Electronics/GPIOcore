@@ -1,5 +1,5 @@
 // Unit tests: protocol framing, config model and DeviceLink against the
-// firmware simulator.
+// simulated board, which runs the real firmware (gpiocore_fw_host).
 
 #include "connections.h"
 #include "devicelink.h"
@@ -31,6 +31,29 @@ protected:
     }
 };
 
+// A board whose HELLO reply has no 'analog + sound' flag (firmware before analog inputs): the
+// flags byte of the reply is rewritten on its way to the host.
+class NoAnalogDevice : public SimulatedDevice
+{
+public:
+    using SimulatedDevice::SimulatedDevice;
+
+protected:
+    qint64 readData(char *data, qint64 maxSize) override
+    {
+        const qint64 n = SimulatedDevice::readData(data, maxSize);
+        for (qint64 i = 0; i + 6 < n; ++i)
+            if (quint8(data[i]) == (Proto::HELLO_GROUP << 4 | 5) && quint8(data[i + 1]) == 2)
+            {
+                const quint8 old = quint8(data[i + 5]);
+                data[i + 5] = char(old & ~Proto::HELLO_FLAG_ANALOG_SOUND);
+                data[i + 6] = char(quint8(data[i + 6]) ^ old ^ quint8(data[i + 5]));   // checksum
+                break;
+            }
+        return n;
+    }
+};
+
 class TestGpioCore : public QObject
 {
     Q_OBJECT
@@ -49,15 +72,14 @@ private:
         ~Rig() { delete link; }   // owns the simulator; drops the lambdas capturing this Rig
     };
 
-    // Link + simulator with short timings, connected and version received.
-    void makeRig(Rig &r, SimulatedDevice::Options opt)
+    // Link + simulated board with short timings, connected and version received.
+    void makeRig(Rig &r, SimulatedDevice *device = nullptr)
     {
-        opt.bootDelayMs = 5;
         r.link = new DeviceLink(this);
         r.link->bootWaitMs = 200;
         r.link->timeoutMs  = 100;
         r.link->drainMs    = 3;
-        r.sim = new SimulatedDevice(opt);
+        r.sim = device ? device : new SimulatedDevice;
         connect(r.link, &DeviceLink::outputReceived, this, [&r](int i, const OutputConfig &c) { r.outputs[i] = c; ++r.outputsSeen; });
         connect(r.link, &DeviceLink::inputReceived,  this, [&r](int i, const InputConfig &c)  { r.inputs[i]  = c; ++r.inputsSeen;  });
         connect(r.link, &DeviceLink::errorOccurred,  this, [&r](const QString &) { ++r.errors; });
@@ -65,7 +87,7 @@ private:
 
         QSignalSpy ready(r.link, &DeviceLink::ready);
         QString err;
-        QVERIFY(r.link->openDevice(r.sim, true, &err));
+        QVERIFY2(r.link->openDevice(r.sim, false, &err), qPrintable(err));   // the firmware is silent until asked
         QVERIFY(ready.wait(1000));
         QCOMPARE(ready.first().first().toString(), QStringLiteral("v0.0.0"));
         waitFinished(r);                 // HELLO
@@ -195,7 +217,7 @@ private slots:
     // ── Device link vs simulator ────────────────────────────────────────────
     void readAllFromFixedFirmware()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         r.link->readAll();
         waitFinished(r);
         QCOMPARE(r.errors, 0);
@@ -208,7 +230,7 @@ private slots:
 
     void writeAndReadBackFixedFirmware()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         OutputConfig c;
         c.type = ServoType; c.pinA = 10; c.relayA = 11; c.relayB = 12;
         c.data = { { 60, 120, 25, 3 } };
@@ -222,7 +244,7 @@ private slots:
 
     void nackIsRetried()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         r.sim->corruptNextFrames(1);
         r.link->readInput(2);
         waitFinished(r);
@@ -347,10 +369,10 @@ private slots:
     // ── Protocol v2 ─────────────────────────────────────────────────────────
     void helloV2Capabilities()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         QCOMPARE(r.link->caps().protocol, 2);
         QCOMPARE(r.link->caps().maxRouteSteps, 16);
-        QCOMPARE(r.link->caps().stepPool, 256);
+        QCOMPARE(r.link->caps().stepPool, (1024 - 262) / 2);   // the EEPROM pool, timing off: 2 B per step
         QVERIFY(r.link->caps().servoLive);
         QVERIFY(r.sim->configSession());
         QCOMPARE(r.errors, 0);
@@ -370,7 +392,7 @@ private slots:
         QCOMPARE(int(d.delay), 7);
         QCOMPARE(BoardSettings::fromJson(d.toJson()), d);
 
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         QVERIFY(r.link->caps().boardSettings);
         BoardSettings got;
         QObject::connect(r.link, &DeviceLink::boardReceived, r.link, [&got](const BoardSettings &x) { got = x; });
@@ -423,12 +445,10 @@ private slots:
         link.bootWaitMs = 200;
         link.timeoutMs  = 100;
         link.drainMs    = 3;
-        SimulatedDevice::Options o;
-        o.bootDelayMs = 5;
         QSignalSpy closed(&link, &DeviceLink::closed);
         QSignalSpy errors(&link, &DeviceLink::errorOccurred);
         QString err;
-        QVERIFY(link.openDevice(new NoHelloDevice(o), true, &err));
+        QVERIFY(link.openDevice(new NoHelloDevice, true, &err));
         QVERIFY(closed.wait(3000));                         // no HELLO reply: not a GPIOcore board, link closed
         QCOMPARE(errors.size(), 1);
         QVERIFY(!link.isOpen());
@@ -437,7 +457,7 @@ private slots:
 
     void routeRoundTripV2()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         BoardSettings timed; timed.timing = true;
         r.sim->setBoard(timed);                             // keep per-step wait times
         InputConfig in;
@@ -462,11 +482,15 @@ private slots:
 
     void servoLiveV2()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
+        OutputConfig servo = r.sim->output(2);               // SERVO_LIVE moves servos only
+        servo.type = ServoType;
+        servo.data = { { 60, 120, 20, 0 } };
+        r.sim->setOutput(2, servo);
         for (int a = 60; a <= 120; a += 5)
             r.link->servoLive(2, a);                         // a burst, as from a slider
         waitFinished(r);
-        QCOMPARE(r.sim->liveAngle(2), 120);
+        QCOMPARE(r.sim->servoPosition(2), 120);
         QCOMPARE(r.errors, 0);
     }
 
@@ -583,7 +607,7 @@ private slots:
 
     void simulatorAnalogSharedChannel()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         QVERIFY(r.link->caps().analogSound);
         auto analog = [](quint8 type, quint8 mode, int threshold, int output) {
             InputConfig c;
@@ -591,7 +615,9 @@ private slots:
             c.outputId = quint8(output); c.address = AddrNone;
             return c;
         };
-        // four inputs on A0, like a resistor ladder plus a sensor
+        // four inputs on A0, like a resistor ladder plus a sensor. A0 starts at 700, where no
+        // condition holds (at 1023 'above 800' would hold from the start: no edge, nothing happens).
+        r.sim->setAnalogValue(0, 700);
         r.sim->setInput(0, analog(Latching,  AnalogBelow, 512, 0));
         r.sim->setInput(1, analog(Momentary, AnalogAt,    296, 1));
         InputConfig route = analog(Route, AnalogAbove, 800, 0);
@@ -605,28 +631,34 @@ private slots:
             r.sim->setOutput(o, out);
         }
         QSignalSpy events(r.link, &DeviceLink::outputEvent);
+        QTest::qWait(150);                       // the inputs read 'released' first (their first edge only arms them)
+        // the firmware samples every 50 ms and wants two equal samples: a change counts after 50-100 ms
+        const int settle = 250;
 
         r.sim->setAnalogValue(0, 1000);          // above 800: the route and input 3
-        QCOMPARE(int(r.sim->output(2).state), 1);
-        QCOMPARE(int(r.sim->output(3).state), 0);    // pressed = LOW, like a button
+        QTRY_COMPARE(int(r.sim->output(2).state), 1);
+        QTRY_COMPARE(int(r.sim->output(3).state), 0);    // pressed = LOW, like a button
         QCOMPARE(int(r.sim->output(0).state), 1);    // not below 512
         r.sim->setAnalogValue(0, 790);           // still above 800 - 20
+        QTest::qWait(settle);
         QCOMPARE(int(r.sim->output(3).state), 0);
         r.sim->setAnalogValue(0, 779);           // released
-        QCOMPARE(int(r.sim->output(3).state), 1);
+        QTRY_COMPARE(int(r.sim->output(3).state), 1);
 
         r.sim->setAnalogValue(0, 300);           // 'at 296' and 'below 512'
-        QCOMPARE(int(r.sim->output(1).state), 1);    // toggled
-        QCOMPARE(int(r.sim->output(0).state), 0);
+        QTRY_COMPARE(int(r.sim->output(1).state), 1);    // toggled
+        QTRY_COMPARE(int(r.sim->output(0).state), 0);
         r.sim->setAnalogValue(0, 520);           // below 512 + 20: still pressed
+        QTest::qWait(settle);
         QCOMPARE(int(r.sim->output(0).state), 0);
         r.sim->setAnalogValue(0, 540);           // released
-        QCOMPARE(int(r.sim->output(0).state), 1);
+        QTRY_COMPARE(int(r.sim->output(0).state), 1);
         r.sim->setAnalogValue(0, 505);           // pressed again (no hysteresis on the way in)
-        QCOMPARE(int(r.sim->output(0).state), 0);
+        QTRY_COMPARE(int(r.sim->output(0).state), 0);
         r.sim->setAnalogValue(0, 290);           // 'at' window: 286-306
-        QCOMPARE(int(r.sim->output(1).state), 0);    // toggled back
+        QTRY_COMPARE(int(r.sim->output(1).state), 0);    // toggled back
         r.sim->setAnalogValue(1, 1000);          // another channel: nothing on A0 changes
+        QTest::qWait(settle);
         QCOMPARE(int(r.sim->output(0).state), 0);
         QCOMPARE(int(r.sim->output(1).state), 0);
         QTRY_VERIFY(events.size() >= 6);         // the board reports every change
@@ -648,15 +680,13 @@ private slots:
 
     void analogNeedsHelloFlag()
     {
-        SimulatedDevice::Options o;
-        o.helloFlags = 0x0B;                     // firmware before analog inputs
-        Rig r; makeRig(r, o);
+        Rig r; makeRig(r, new NoAnalogDevice);   // firmware before analog inputs
         QVERIFY(!r.link->caps().analogSound);
     }
 
     void soundOutputEvents()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         OutputConfig snd;
         snd.type = SoundEffect;
         snd.pinA = SoundPin;
@@ -685,6 +715,7 @@ private slots:
         r.link->triggerInput(5, 1);              // no custom values: on = track 1
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 1), 2000);
         events.clear();
+        QTest::qWait(550);                       // a toggle input ignores its address for 500 ms (DCC repeats)
         r.link->triggerInput(5, 1);              // off = stop
         QTRY_VERIFY_WITH_TIMEOUT(seen(5, 2, 0), 2000);
         r.link->triggerInput(7, 1);              // the input chooses the track
@@ -766,7 +797,7 @@ private slots:
 
     void simulatorCustomValues()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         OutputConfig servo;
         servo.type = ServoType; servo.pinA = 3;
         servo.data = { { 80, 100, 1, 0 } };
@@ -796,6 +827,7 @@ private slots:
         auto last = [&events]() { return events.isEmpty() ? -1 : events.last().at(2).toInt(); };
         r.link->triggerInput(3, 1);              // toggle 0 -> 1: on = 135 degrees (the servo sweeps there)
         QTRY_COMPARE_WITH_TIMEOUT(last(), 135, 5000);
+        QTest::qWait(550);                       // DCC lockout of a toggle input: 500 ms
         r.link->triggerInput(3, 1);              // 1 -> 0: off = 45 degrees
         QTRY_COMPARE_WITH_TIMEOUT(last(), 45, 5000);
         QTest::qWait(50);
@@ -821,6 +853,7 @@ private slots:
         analog.route[0].value = 70;              // pressed = LOW = state 0
         r.sim->setInput(5, analog);
         events.clear();
+        QTest::qWait(150);                       // released first: the input's first edge only arms it
         r.sim->setAnalogValue(0, 100);
         QTRY_VERIFY_WITH_TIMEOUT(seen(6, 2, 70), 3000);
 
@@ -855,7 +888,7 @@ private slots:
                 if (o.type == Pwm) QCOMPARE(int(o.data[1]), 0);
 
         // the board keeps the fade time; a new brightness is reported as the target at once
-        Rig r; makeRig(r, SimulatedDevice::Options());
+        Rig r; makeRig(r);
         r.link->writeOutput(4, c);
         r.link->readOutput(4);
         waitFinished(r);
@@ -870,6 +903,91 @@ private slots:
                                  && events.last().at(1).toInt() == 2 && events.last().at(2).toInt() == 90, 2000);
         QCOMPARE(int(r.sim->output(4).data[1]), 30);
         QCOMPARE(r.errors, 0);
+    }
+
+    // ── The simulated board is the real firmware ───────────────────────────
+    void firmwareFactoryDefaults()
+    {
+        // the GUI's offline defaults are what a blank board gets from Output / Input::defaults()
+        Rig r; makeRig(r);
+        r.link->readAll();
+        waitFinished(r);
+        QCOMPARE(r.errors, 0);
+        const BoardConfig d = SimulatedDevice::factoryDefaults();
+        for (int i = 0; i < NumOutputs; ++i)
+        {
+            QVERIFY2(r.outputs[i] == d.outputs[i], qPrintable(QStringLiteral("output %1").arg(i)));
+            QVERIFY(r.sim->output(i) == d.outputs[i]);
+        }
+        for (int i = 0; i < NumInputs; ++i)
+        {
+            QVERIFY2(r.inputs[i] == d.inputs[i], qPrintable(QStringLiteral("input %1").arg(i)));
+            QVERIFY(r.sim->input(i) == d.inputs[i]);
+        }
+        QCOMPARE(r.sim->board(), BoardSettings());
+        QCOMPARE(int(r.sim->pin(13).mode), 1);               // D13 = config LED: an output, on
+        QCOMPARE(int(r.sim->pin(13).level), 1);
+        QVERIFY(!r.sim->serialIsIO());                       // HELLO came within the boot window
+    }
+
+    void firmwareDccLockout()
+    {
+        // input.cpp: a toggle input takes the first of the repeated DCC packets, the same address
+        // is ignored for DCC_LOCKOUT_MS (500 ms)
+        Rig r; makeRig(r);
+        InputConfig toggle = r.sim->input(4);                // DCC address 5 -> output 4
+        toggle.type = Momentary;
+        r.sim->setInput(4, toggle);
+        QCOMPARE(int(r.sim->output(4).state), 0);
+        for (int k = 0; k < 4; ++k)
+            r.sim->dccAccessory(5, 1);                       // a command station repeats the packet
+        QTRY_COMPARE(int(r.sim->output(4).state), 1);
+        QTest::qWait(200);
+        QCOMPARE(int(r.sim->output(4).state), 1);            // toggled once, not four times
+        QTest::qWait(400);
+        r.sim->dccAccessory(5, 1);                           // a new command after the lockout
+        QTRY_COMPARE(int(r.sim->output(4).state), 0);
+        QTRY_COMPARE(int(r.sim->pin(r.sim->output(4).pinA).level), 0);
+    }
+
+    void firmwareDrivesPins()
+    {
+        Rig r; makeRig(r);
+        const int pin = r.sim->output(1).pinA;               // single steady on D4
+        QCOMPARE(pin, 4);
+        r.link->triggerInput(1, 1);                          // absolute input 1 -> output 1 on
+        waitFinished(r);
+        QTRY_COMPARE(int(r.sim->pin(pin).level), 1);
+        QCOMPARE(int(r.sim->pin(pin).mode), 1);              // OUTPUT
+        r.link->triggerInput(1, 0);
+        QTRY_COMPARE(int(r.sim->pin(pin).level), 0);
+    }
+
+    void firmwareAnalogNeedsTwoSamples()
+    {
+        // input.cpp readAnalog(): the condition must hold in two samples 50 ms apart, so a resistor
+        // ladder passing other values while a button moves does not count
+        Rig r; makeRig(r);
+        OutputConfig lamp = r.sim->output(6);
+        lamp.state = 1;
+        r.sim->setOutput(6, lamp);
+        InputConfig a;
+        a.type = Latching; a.analog = AnalogBelow; a.pin = 16; a.threshold = 512; a.outputId = 6;   // A2
+        r.sim->setInput(6, a);
+        OutputConfig unused = r.sim->output(12);             // output 12 had A2
+        unused.type = OutputNotInUse; unused.pinA = PinNA;
+        r.sim->setOutput(12, unused);
+        QTest::qWait(150);                                   // 'released' first: arms the input
+        for (int k = 0; k < 3; ++k)                          // short dips, shorter than a sample period
+        {
+            r.sim->setAnalogValue(2, 100);
+            QTest::qWait(5);
+            r.sim->setAnalogValue(2, 1023);
+            QTest::qWait(120);
+        }
+        QCOMPARE(int(r.sim->output(6).state), 1);
+        r.sim->setAnalogValue(2, 100);                       // held: pressed = LOW = off
+        QTRY_COMPARE(int(r.sim->output(6).state), 0);
     }
 };
 

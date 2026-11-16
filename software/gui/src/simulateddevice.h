@@ -1,112 +1,106 @@
 #pragma once
-// Firmware simulator: a QIODevice that behaves like a GPIOcore board on the
-// other end of the serial line. It mirrors src/Transceiver.cpp and
-// messageParser.cpp of the firmware, including its quirks:
-//   - an ACK after every GET reply
-//   - bitfield truncation (6-bit pins, 4-bit outputID, 12-bit address, ...)
-//   - a version message on boot, REQ_VERSION gets no ACK
+// Simulated board: a QIODevice on which the real firmware runs.
+//
+// open() starts gpiocore_fw_host (fwhost/, built from software/GPIOcore with an Arduino shim) and
+// the DeviceLink talks to it like to a serial port. Everything the board does - the protocol, its
+// replies and quirks, routes, interlocking, servo sweeps, frog relays, analog inputs, the DCC
+// lockout, timing - is the firmware's own code. This class only carries the bytes, keeps a copy of
+// the board's state for tests and the GUI, and plays the outside world (voltages on pins, DCC
+// packets). One process per open(): every simulation starts with a fresh board.
+//
+// The state copy (output(), input(), board(), ...) is updated before the serial bytes of the same
+// firmware loop() round arrive, so it is current when the reply / ACK to a request is seen.
 
 #include "gpioconfig.h"
 
-#include <QElapsedTimer>
 #include <QIODevice>
 #include <array>
+#include <optional>
+
+class QProcess;
 
 class SimulatedDevice : public QIODevice
 {
     Q_OBJECT
 public:
-    // Defaults = the firmware in the repo.
-    struct Options
-    {
-        int  maxRouteSteps  = Gpio::MaxRouteSteps;
-        int  stepPool       = 256;    // 16 routes x 16 steps
-        quint8 helloFlags   = 0x1B;   // serial pins, servo live, board settings, analog + sound
-        int  bootDelayMs    = 150;
-        int  replyDelayMs   = 1;
-    };
-
     explicit SimulatedDevice(QObject *parent = nullptr);
-    SimulatedDevice(const Options &options, QObject *parent = nullptr);
+    ~SimulatedDevice() override;
+
+    // gpiocore_fw_host next to the application (or in the build tree); empty if not found
+    static QString hostProgram();
+    // what a factory-fresh board contains (Output::defaults() / Input::defaults(); a test checks
+    // it against the firmware), so the GUI is useful offline
+    static Gpio::BoardConfig factoryDefaults();
 
     bool   isSequential() const override { return true; }
     qint64 bytesAvailable() const override { return m_rx.size() + QIODevice::bytesAvailable(); }
-    bool   open(OpenMode mode) override;
+    bool   open(OpenMode mode) override;   // starts the firmware, returns when setup() is done
     void   close() override;
 
-    // Device state (for tests and the demo)
-    Gpio::OutputConfig output(int i) const { return m_out[i]; }
-    Gpio::InputConfig  input(int i)  const { return m_in[i]; }
-    void setOutput(int i, const Gpio::OutputConfig &c) { m_out[i] = c.normalized(); }
-    void setInput(int i, const Gpio::InputConfig &c)   { m_in[i] = c.normalized(); }
-    int  liveAngle(int output) const { return m_live[output]; }   // last SERVO_LIVE, -1 = none
-    bool configSession() const { return m_session; }                // HELLO received
-    Gpio::BoardSettings board() const { return m_board; }
-    void setBoard(const Gpio::BoardSettings &b) { m_board = b; }
-    // Voltage on A0-A7 as analogRead() sees it (default 1023: nothing pressed). Every analog input
-    // on that channel reacts like the firmware: a press or release of a button to GND.
+    // ── The board's state, as the firmware has it ───────────────────────────
+    Gpio::OutputConfig  output(int i) const { return m_out[i]; }
+    Gpio::InputConfig   input(int i)  const { return m_in[i]; }
+    Gpio::BoardSettings board() const       { return m_board; }
+    int    servoPosition(int output) const  { return m_pos[output]; }   // Output::position()
+    quint8 frogRelays(int output) const     { return m_frog[output]; }  // bit0 A, bit1 B, bit2 C
+    bool   configSession() const { return m_globals[0]; }   // HELLO received
+    bool   serialIsIO() const    { return m_globals[1]; }   // no HELLO within the boot window
+    bool   configMode() const    { return m_globals[2]; }   // config button held 2 s
+    struct Pin { quint8 mode = 0, level = 0, pwm = 0, servo = 0xFF; };   // servo 0xFF = none
+    Pin    pin(int p) const { return m_pins[p]; }            // D0-D13, A0-A7 (14-21)
+
+    // ── Setting the board up (through the firmware's own message handlers) ──
+    // Before open(): applied right after the firmware booted (board settings first).
+    void setOutput(int i, const Gpio::OutputConfig &c);
+    void setInput(int i, const Gpio::InputConfig &c);      // with its route / custom values
+    void setBoard(const Gpio::BoardSettings &b);
+
+    // ── The outside world ───────────────────────────────────────────────────
+    // Voltage on A0-A7 as analogRead() sees it (default 1023: nothing pressed, pull-up).
     void setAnalogValue(int channel, int value);
     int  analogValue(int channel) const { return m_analog[channel & 7]; }
+    void setPinLevel(int pin, bool high);                   // a button to GND: false = pressed
+    void dccAccessory(int address, int direction);          // a DCC accessory packet (output on)
+    void dccExtended(int address, int value);               // a DCC extended accessory packet
+    void dccLocoSpeed(int address, int speed, bool forward);   // 128 speed steps (config mode, loco 9999)
+    void dccFunctions(int address, quint8 f0f4);            // F0-F4: bit4 F0, bit0 F1 ... bit3 F4
 
-    // Reply with NACK(checksum) to the next n complete frames.
+    // Line noise: the checksum of the next n frames from the host is broken (the firmware NACKs them).
     void corruptNextFrames(int n) { m_corrupt = n; }
-    int  framesReceived() const { return m_framesReceived; }
 
-    void factoryDefaults();
+signals:
+    void stateChanged();                                    // output(), input(), board(), pin() ... changed
 
 protected:
     qint64 readData(char *data, qint64 maxSize) override;
     qint64 writeData(const char *data, qint64 size) override;
 
 private:
-    void   receiveByte(quint8 b);
-    void   messageReceived();
-    void   sendMessage(quint8 command, const quint8 *payload);
-    void   sendAck();
-    void   sendNack(quint8 reason);
-    void   sendVersion();
-    void   scheduleFlush();
-    void   reportOutput(int output, int state, int value);   // OUTPUT_EVENT after HELLO
-    void   triggerInput(int index, int direction);           // like the firmware's setDccAddress()
-    void   startRoute(int index);                            // Input::startRoute(), with interlocking
-    void   pinLevel(int index, bool pressed);                // Input::update(): a button edge
-    void   switchOutput(int index, int state);               // Input::switchOutput(): custom value or state
-    void   applyStep(const Gpio::RouteStep &s);              // a route step / custom value on its output
-    void   evaluateAnalog(int index);                        // Input::readAnalog()
-    void   runRouteStep(int input, int step);
-    bool   routeMovesTurnout(int input) const;
-    void   setOutputState(int output, quint8 state);          // state change + report, servos sweep
-    void   sweepServo(int output);
-    void   setFrog(int output, int bit, bool on);
+    void sendFrame(char type, const QByteArray &data);
+    void sendSetup(quint8 command, const QByteArray &payload);   // 'X': one message through messageReceived()
+    void sendOutput(int i, const Gpio::OutputConfig &c);
+    void sendInput(int i, const Gpio::InputConfig &c);
+    void sendBoard(const Gpio::BoardSettings &b);
+    void readHost();
+    bool handleFrame(char type, const QByteArray &data);   // true: serial bytes for the DeviceLink
 
-    Options m_opt;
+    QProcess  *m_proc = nullptr;
+    bool       m_booted = false;
+    QByteArray m_fromHost;            // not yet parsed
+    QByteArray m_rx;                  // serial bytes, readable by the DeviceLink
+    int        m_corrupt = 0;
+
     std::array<Gpio::OutputConfig, Gpio::NumOutputs> m_out;
     std::array<Gpio::InputConfig,  Gpio::NumInputs>  m_in;
-
-    // Transceiver receive state; 'mess' is persistent like in the firmware.
-    quint8 m_command = 0;
-    std::array<quint8, 32> m_payload {};
-    int    m_state   = 0;
-    int    m_len     = 0;
-    int    m_count   = 0;
-    quint8 m_checksum = 0;
-
-    QByteArray m_tx;          // produced, not yet delivered
-    QByteArray m_rx;          // delivered, readable by host
-    bool       m_flushScheduled = false;
-    int        m_corrupt = 0;
-    int        m_framesReceived = 0;
-    std::array<int, Gpio::NumOutputs> m_live;
-    bool       m_session = false;
     Gpio::BoardSettings m_board;
-    QElapsedTimer       m_clock;
-    std::array<bool, Gpio::NumInputs> m_routeBusy {};
-    std::array<int,  Gpio::NumOutputs> m_servoPos;            // -1 = unknown
-    std::array<bool, Gpio::NumOutputs> m_sweeping {};
-    std::array<int,  Gpio::NumOutputs> m_servoTarget;         // -1 = the state's end position
-    void   servoTo(int output, int angle);
+    std::array<int,    Gpio::NumOutputs> m_pos {};
     std::array<quint8, Gpio::NumOutputs> m_frog {};
-    std::array<int,  8> m_analog;                              // analogRead() per channel
-    std::array<bool, Gpio::NumInputs> m_pressed {};            // analog inputs: condition met
-    std::array<quint8, Gpio::NumInputs> m_inState {};          // Input::state (toggle / absolute)
+    std::array<bool, 3> m_globals {};
+    std::array<Pin, Gpio::NumPins> m_pins {};
+    std::array<int, 8> m_analog;
+
+    // set before open(), sent once the firmware runs
+    std::optional<Gpio::BoardSettings> m_setupBoard;
+    std::array<std::optional<Gpio::OutputConfig>, Gpio::NumOutputs> m_setupOut;
+    std::array<std::optional<Gpio::InputConfig>,  Gpio::NumInputs>  m_setupIn;
 };
