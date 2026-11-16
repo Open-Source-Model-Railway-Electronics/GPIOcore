@@ -125,6 +125,8 @@ private:
     QVector<quint8> inputTypes() const;
     QStringList outputWarnings(int index) const;
     QStringList inputWarnings(int index) const;
+    QString     outputNote(int index) const;   // information, not an error (D0/D1)
+    QString     inputNote(int index) const;
 
     DeviceLink       *m_link = nullptr;
     WebRemote        *m_web = nullptr;

@@ -55,8 +55,8 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td><code>31</code> GET_INPUT_STATE</td><td>→</td><td><code>index</code> — <b>reserved</b>, only <code>ACK</code></td></tr>
 <tr><td><code>42</code> SET_OUTPUT_STATE</td><td>→</td><td><code>index state</code> — <b>reserved</b>, only <code>ACK</code></td></tr>
 <tr><td><code>33</code> DCC_EXT</td><td>→</td><td><code>addrH addrL value</code> — acts as if a DCC extended accessory packet (signal aspect) for that address arrives. Only direct inputs respond</td></tr>
-<tr><td><code>41</code> GET_OUTPUT_STATE</td><td>→</td><td><code>index</code> → reply <code>45</code> with the current state</td></tr>
-<tr><td>**<code>45</code> OUTPUT_EVENT**</td><td>←</td><td><code>output state value ms_lo ms_hi</code> — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in <code>value</code>), with the lower 16 bits of <code>millis()</code>. While turning, a servo reports <b>every degree</b> (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal reports its aspect as state 2. <b>State 3</b> = frog relay switched, <code>value</code> bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); <code>GET_OUTPUT_STATE</code> sends this as a second message if the output has relays</td></tr>
+<tr><td><code>41</code> GET_OUTPUT_STATE</td><td>→</td><td><code>index</code> → reply <code>45</code> with the current state. Signals (type 10 and 15) answer <b>state 2 + the current aspect</b>, so the GUI shows them right after connecting; a servo answers its state + the current angle</td></tr>
+<tr><td>**<code>45</code> OUTPUT_EVENT**</td><td>←</td><td><code>output state value ms_lo ms_hi</code> — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in <code>value</code>), with the lower 16 bits of <code>millis()</code>. While turning, a servo reports <b>every degree</b> (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal and a block signal report their aspect as state 2. <b>State 3</b> = frog relay switched, <code>value</code> bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); <code>GET_OUTPUT_STATE</code> sends this as a second message if the output has relays</td></tr>
 <tr><td><code>B1</code> CLEAR_OUTPUT</td><td>–</td><td>is in <code>messageParser.h</code>, but is not used</td></tr>
 <tr><td>**<code>90</code> HELLO**</td><td>→</td><td>– → reply <code>95</code></td></tr>
 <tr><td>**<code>82</code> GET_ROUTE**</td><td>→</td><td><code>route first</code> → reply <code>8F</code></td></tr>
@@ -86,23 +86,26 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>7</td><td>fireplace</td><td>A, B (PWM)</td><td>–</td></tr>
 <tr><td>8</td><td>TL tube</td><td>A (PWM)</td><td>–</td></tr>
 <tr><td>9</td><td>welder</td><td>A</td><td>–</td></tr>
-<tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), <code>data[1]</code> = flashing frequency in 0.1 Hz, <code>data[2]</code>/<code>data[3]</code> = automatic block signal (below; <code>data[3]</code> = 0: a normal signal)</td></tr>
-<tr><td>11</td><td>servo</td><td>A (+ relays)</td><td><code>data[0]</code> angle at state 0, <code>data[1]</code> angle at state 1, <code>data[2]</code> speed in ms/° (≥ 1), <code>data[3]</code> unused</td></tr>
+<tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), <code>data[1]</code> = flashing frequency in 0.1 Hz, <code>data[2]</code>/<code>data[3]</code> unused (0)</td></tr>
+<tr><td>11</td><td>servo</td><td>A (+ relays)</td><td><code>data[0]</code> angle at state 0, <code>data[1]</code> angle at state 1, <code>data[2]</code> speed in ms/° (≥ 1), <code>data[3]</code> = 0, or semaphore arm (below)</td></tr>
 <tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = brightness 0–255, <code>data[1]</code> = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every <code>data[1] × 1000 / 255</code> ms (own values, route step, DCC-ext); at start-up it fades up from 0. <code>OUTPUT_EVENT</code> reports the target value immediately</td></tr>
 <tr><td>13</td><td>not in use</td><td>–</td><td>–</td></tr>
 <tr><td>14</td><td>sound effect</td><td>A = always <b>1 (D1, TX)</b></td><td>– (no tracks of its own). The input chooses the track: own values (§4), a route step (raw) or DCC-ext plays its value as the track number (0 = stop). Without own values: state 1 = track 1, state 0 = stop</td></tr>
+<tr><td>15</td><td>block signal</td><td>A (B–D optional)</td><td><code>data[0]</code> = aspect when its own block is occupied, <code>data[1]</code> = aspect when the next block is occupied, <code>data[2]</code> = aspect when both are free (aspect = same format as type 10), <code>data[3]</code> = own block input (bits 0–3) + next block input (bits 4–7); next = own: no next block (below)</td></tr>
 </tbody></table>
-<p>**Automatic block signal (type 10, <code>data[3]</code> bit7).<b> The firmware sets the aspect itself from two inputs, normally sensors (input type 4), every 50 ms: </b>red<b> if the own block input is occupied, otherwise </b>yellow<b> if bit6 is set and the next block input is occupied, otherwise </b>green**. "Occupied" = the input is in use, has a pin and is pressed (LOW, or the analog condition holds). The aspect is one lamp (<code>1 &lt;&lt; lamp</code>), stored in <code>data[0]</code> and reported as <code>OUTPUT_EVENT</code> state 2 like any aspect; DCC-ext and route steps are overwritten within 50 ms. <code>data[1]</code> (flashing frequency) stays.</p>
+<p><b>Block signal (type 15).</b> The firmware chooses the aspect itself from two inputs, normally sensors (input type 4), every 50 ms (<code>blockSignals()</code> in <code>GPIOcore.ino</code>): <code>data[0]</code> if the own block input is occupied, otherwise <code>data[1]</code> if there is a next block and its input is occupied, otherwise <code>data[2]</code>. "Occupied" = the input is in use, has a pin and is pressed (LOW, or the analog condition holds); one input may serve several signals. The current aspect is only kept in RAM (no EEPROM writes) and reported as <code>OUTPUT_EVENT</code> state 2 when it changes; <code>GET_OUTPUT_STATE</code> answers state 2 + the current aspect. Flashing lamps flash at a fixed 1 Hz. Commands to it are ignored: inputs (toggle / absolute, own values), route steps and DCC-ext.</p>
 <table><thead><tr><th>Byte</th><th>Bits</th><th>Meaning</th></tr></thead><tbody>
-<tr><td><code>data[2]</code></td><td>0–3</td><td>input index (0–15) of the own block detector</td></tr>
-<tr><td><code>data[2]</code></td><td>4–7</td><td>input index of the next block detector</td></tr>
-<tr><td><code>data[3]</code></td><td>7</td><td>1 = automatic block signal on</td></tr>
-<tr><td><code>data[3]</code></td><td>6</td><td>1 = there is a next block (otherwise only red / green)</td></tr>
-<tr><td><code>data[3]</code></td><td>4–5</td><td>lamp for green (0–3 = A–D)</td></tr>
-<tr><td><code>data[3]</code></td><td>2–3</td><td>lamp for yellow</td></tr>
-<tr><td><code>data[3]</code></td><td>0–1</td><td>lamp for red</td></tr>
+<tr><td><code>data[3]</code></td><td>0–3</td><td>input index (0–15) of the own block detector</td></tr>
+<tr><td><code>data[3]</code></td><td>4–7</td><td>input index of the next block detector; the same as the own block = no next block</td></tr>
 </tbody></table>
-<p>Example: own block = input 3, next block = input 9, green A, yellow B, red C: <code>data[2]</code> = <code>0x93</code>, <code>data[3]</code> = <code>0x80 + 0x40 + 0 &lt;&lt; 4 + 1 &lt;&lt; 2 + 2</code> = <code>0xC6</code>. The GUI clears <code>data[2]</code> and <code>data[3]</code> for a manual signal.</p>
+<p>Example: own block = input 3, next block = input 9, occupied = lamp C (<code>0x04</code>), next occupied = lamp B (<code>0x02</code>), free = lamp A (<code>0x01</code>): <code>data</code> = <code>04 02 01 93</code>. Without a next block (own = 5): <code>data[3]</code> = <code>0x55</code>.</p>
+<p>Until 2026-11-16 this was a mode of the 4-aspect signal (type 10, <code>data[3]</code> bit7, with lamp numbers in <code>data[2]</code>/<code>data[3]</code>). That mode is removed: type 10 is a manual signal again, and the GUI loads such a signal from an old board file as a manual signal (<code>data[2]</code> = <code>data[3]</code> = 0).</p>
+<p>**Servo as semaphore arm (type 11, <code>data[3]</code> bit7).** The servo follows input <code>data[3] &amp; 0x0F</code>: occupied → state 0 (curved = arm at stop), free → state 1 (straight = clear); bit6 swaps them. It moves at its own speed through the normal state change (and reports it like any state change); checked every 50 ms.</p>
+<table><thead><tr><th><code>data[3]</code> bits</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>7</td><td>1 = follows a detector input</td></tr>
+<tr><td>6</td><td>1 = swapped: occupied = state 1 (straight)</td></tr>
+<tr><td>0–3</td><td>input index (0–15) of the detector</td></tr>
+</tbody></table>
 <p><b>Sound effect (type 14, HELLO bit4).</b> A DFPlayer Mini has its RX connected to the TX pin D1 of the Nano (through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: <code>7E FF 06 03 00 00 track csH csL EF</code>, <code>16</code> instead of <code>03</code> = stop) only if <b>no PC</b> is connected: in a configuration session D1 is the USB line. Every time a track is started (or stopped), the output reports <code>OUTPUT_EVENT</code> with <b>state 2, value = track</b>, even if it could not play anything. Several sound outputs may share D1 (the GUI does not count that as a conflict); D1 together with another input or output is a conflict.</p>
 <p>PWM pins are D3, D5, D6, D9, D10 and D11. D9/D10 do no PWM as long as a servo output exists (Servo library, timer 1).</p>
 <h3>2.2 Input fields (<code>InputSettings</code> in <code>input.h</code>, 12 bytes in EEPROM)</h3>
@@ -135,7 +138,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 </li><li>
 4 <b>sensor</b> — an occupancy detector or other sensor (digital pin or analog condition). It switches
  nothing itself and has no output, route or DCC address; it only provides its state (pressed = LOW =
- occupied) for automatic block signals (§2.1). Until 2026-11-16 type 4 was the recorder: the GUI loads
+ occupied) for block signals and servos used as semaphore arms (§2.1). Until 2026-11-16 type 4 was the recorder: the GUI loads
  a <code>&quot;recorder&quot;</code> input from an old file as 3; on a board an old recorder input now reads as a sensor (harmless,
  it switches nothing);
 </li><li>
@@ -194,8 +197,11 @@ A heavy load or a low-impedance circuit on <b>D0 (RX)</b> can disturb <b>uploadi
  Preferably use them for LEDs, or for relays through a transistor.
 </li><li>
 They do not work during a configuration session. A "Test state" on an output on D0/D1 then does nothing.
+</li><li>
+In the <b>simulator</b> (the firmware built for the PC, <code>GPIOCORE_HOST</code>, <code>serialPinsFree()</code> in <code>config.h</code>) D0/D1
+ are always normal pins: the GUI does not talk to it over D0/D1.
 </li></ul>
-<p>The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a warning. Without bit0 they are reserved and red.</p>
+<p>The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a note (not an error). Without bit0 they are reserved and red.</p>
 <h2>4. Routes</h2>
 <h3>Step = 4 bytes</h3>
 <pre><code>byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bit 5 STEP_VALUES (custom value) | bits 6-7 reserved (0)

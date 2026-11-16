@@ -24,8 +24,9 @@ namespace Ui {
 
 QColor lampColor(const OutputConfig &o, int lamp)
 {
-    static const QColor defaults[4] = { QColor(0xEF, 0x44, 0x44), QColor(0x22, 0xC5, 0x5E),
-                                        QColor(0xFA, 0xCC, 0x15), QColor(0xF8, 0xFA, 0xFC) };
+    // default: A green, B yellow, C red, D white (the block signal's default aspects use A / B / C)
+    static const QColor defaults[4] = { QColor(0x22, 0xC5, 0x5E), QColor(0xFA, 0xCC, 0x15),
+                                        QColor(0xEF, 0x44, 0x44), QColor(0xF8, 0xFA, 0xFC) };
     const QColor c(o.lampColors.value(lamp));
     return c.isValid() ? c : defaults[qBound(0, lamp, 3)];
 }
@@ -147,6 +148,7 @@ void applyAppStyle(QApplication &app)
         QToolButton#panelClose:hover { color: #0F172A; }
         QLabel#help  { color: #64748B; }
         QLabel#warn  { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; border-radius: 6px; padding: 6px 8px; }
+        QLabel#note  { background: #E0F2FE; color: #075985; border: 1px solid #7DD3FC; border-radius: 6px; padding: 6px 8px; }
         QLabel#error { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; border-radius: 6px; padding: 6px 8px; }
         QLabel#chip     { border-radius: 9px; padding: 2px 10px; background: #E2E8F0; color: #334155; }
         QLabel#chipOk   { border-radius: 9px; padding: 2px 10px; background: #DCFCE7; color: #166534; }
@@ -220,6 +222,7 @@ QColor outputTypeColor(quint8 type)
     case Pwm:            return QColor(0xEC, 0x48, 0x99);
     case OutputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
     case SoundEffect:    return QColor(0x0D, 0x94, 0x88);
+    case BlockSignal:    return QColor(0x65, 0xA3, 0x0D);
     }
     return QColor(0x94, 0xA3, 0xB8);
 }
@@ -503,6 +506,9 @@ QString outputSummaryParams(const OutputConfig &c)
         return QStringLiteral("on %1  blink %2")
             .arg(c.pwmValue() & 0x0F, 4, 2, QLatin1Char('0'))
             .arg(c.pwmValue() >> 4, 4, 2, QLatin1Char('0'));
+    case ParamKind::Block:
+        return c.blockNext() >= 0 ? QStringLiteral("In %1 / In %2").arg(c.blockOwn()).arg(c.blockNext())
+                                  : QStringLiteral("In %1").arg(c.blockOwn());
     case ParamKind::None:
         break;
     }

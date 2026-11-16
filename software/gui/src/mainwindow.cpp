@@ -237,7 +237,7 @@ void MainWindow::buildUi()
         refreshRows();
         markFileDirty();
     });
-    // lamp colours of a 4-aspect signal: only for the GUI, kept in the board file
+    // lamp colours of a 4-aspect / block signal: only for the GUI, kept in the board file
     m_lampRow = new QWidget;
     auto *lampLay = new QHBoxLayout(m_lampRow);
     lampLay->setContentsMargins(0, 0, 0, 0);
@@ -401,6 +401,9 @@ void MainWindow::buildUi()
                                          .arg(routeLimits().pool), 4000);
             break;
         case ConnectResult::NotConnectable:
+            if (out >= 0 && out < NumOutputs && m_edit.outputs[out].type == BlockSignal)
+                statusBar()->showMessage(tr("Output %1 is a block signal: it sets its own aspect from its detectors, "
+                                            "an input cannot switch it.").arg(out), 5000);
             break;
         }
         userEdited();
@@ -1424,7 +1427,7 @@ void MainWindow::selectOutput(int i)
     m_view->selectOutput(i);
     showOutput(i);
     m_outEd->refreshPinMarks();
-    m_outEd->setWarnings(outputWarnings(i));
+    m_outEd->setWarnings(outputWarnings(i), outputNote(i));
     m_outName->setText(m_edit.outputs[i].name);
     refreshLampRow();
     openPanel(OpenOutput);
@@ -1435,7 +1438,7 @@ void MainWindow::selectInput(int i)
     m_view->selectInput(i);
     showInput(i);
     m_inEd->refreshPinMarks();
-    m_inEd->setWarnings(inputWarnings(i));
+    m_inEd->setWarnings(inputWarnings(i), inputNote(i));
     m_inName->setText(m_edit.inputs[i].name);
     updateInputEditorLimits();
     openPanel(OpenInput);
@@ -1443,8 +1446,8 @@ void MainWindow::selectInput(int i)
 
 void MainWindow::refreshWarnings()
 {
-    m_outEd->setWarnings(outputWarnings(m_outEd->index()));
-    m_inEd->setWarnings(inputWarnings(m_inEd->index()));
+    m_outEd->setWarnings(outputWarnings(m_outEd->index()), outputNote(m_outEd->index()));
+    m_inEd->setWarnings(inputWarnings(m_inEd->index()), inputNote(m_inEd->index()));
 }
 
 QStringList MainWindow::outputNames() const
@@ -1498,7 +1501,8 @@ QStringList MainWindow::outputWarnings(int i) const
         const bool active = (s < 4) ? (s < info.pinCount) : info.relays;
         const quint8 p = c.pin(s);
         if (!active) continue;
-        if (s < info.pinCount && p == PinNA)
+        const bool optional = s > 0 && (c.type == FourToneSignal || c.type == BlockSignal);   // fewer lamps
+        if (s < info.pinCount && p == PinNA && !optional)
             w << tr("%1 is not set.").arg(trGpio(roles[s]));
         if (p >= NumPins) continue;
         const QString reserved = pinReservedReason(p);
@@ -1515,18 +1519,13 @@ QStringList MainWindow::outputWarnings(int i) const
             w << tr("%1 (%2) is not PWM capable; %3 needs PWM.")
                      .arg(trGpio(roles[s]), pinName(p), outputTypeName(c.type));
     }
-    if (c.blockSignal())
-        for (int b : { c.blockOwn(), c.blockNext() })
-            if (b >= 0 && m_edit.inputs[b].type == InputNotInUse)
-                w << tr("Block input %1 is not in use: the signal never sees that block occupied.").arg(b);
+    for (int b : c.watchedInputs())             // block signal / semaphore arm: Input::occupied() needs a pin
+        if (m_edit.inputs[b].type == InputNotInUse || m_edit.inputs[b].pin == PinNA)
+            w << tr("Detector input %1 is not in use or has no pin: the board never sees that block occupied.").arg(b);
     if (c.type == ServoType && c.servoMin() > c.servoMax())
         w << tr("Min is larger than max: positions are swapped.");
     if (c.type == SoundEffect && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
         w << tr("The firmware on this board has no sound effect output yet: update the firmware (Board > Flash firmware).");
-    for (int s = 0; s < info.pinCount && c.type != SoundEffect; ++s)   // sound: D1 by design, see the type help
-        if (c.pin(s) < 2 && !pinNote(c.pin(s)).isEmpty())
-            w << tr("%1 (%2) is a serial pin: it only works when no GUI is connected.")
-                     .arg(trGpio(roles[s]), pinName(c.pin(s)));
     if (info.needsPwm || c.type == Pwm)
     {
         bool servo = false;
@@ -1565,18 +1564,51 @@ QStringList MainWindow::inputWarnings(int i) const
         w << tr("The firmware on this board cannot read analog inputs yet: update the firmware (Board > Flash firmware).");
     if (info.usesAddress && c.address == AddrNone && c.pin == PinNA)
         w << tr("Neither a DCC address nor a pin is set: this input never triggers.");
+    if (c.type == Sensor && c.pin == PinNA)
+        w << tr("No pin is set: this sensor never reports its block occupied.");
     if (info.usesRoute)
     {
         for (int s = 0; s < c.route.size(); ++s)
+        {
             if (m_edit.outputs[c.route[s].output].type == OutputNotInUse)
                 w << tr("Route step %1 sets output %2, which is not in use.").arg(s + 1).arg(c.route[s].output);
+            if (m_edit.outputs[c.route[s].output].type == BlockSignal)
+                w << tr("Route step %1 sets output %2, a block signal: it ignores the step.").arg(s + 1).arg(c.route[s].output);
+        }
         const RouteLimits l = routeLimits();
         if (totalRouteSteps(m_edit) > l.pool)
             w << tr("All routes together use %1 steps; the board has room for %2.").arg(totalRouteSteps(m_edit)).arg(l.pool);
     }
     if (info.usesOutput && m_edit.outputs[c.outputId].type == OutputNotInUse)
         w << tr("Output %1 is not in use.").arg(c.outputId);
+    if (info.usesOutput && m_edit.outputs[c.outputId].type == BlockSignal)
+        w << tr("Output %1 is a block signal: it sets its own aspect and ignores this input.").arg(c.outputId);
     return w;
+}
+
+// D0/D1: usable, with a caveat on a real board (shown as a note, not as an error)
+static QString serialPinNote()
+{
+    return QCoreApplication::translate("MainWindow", "D0/D1 are the USB serial pins: on the board they only work when no PC "
+                                                     "is connected (5 s after power-up without the GUI). In the simulator "
+                                                     "they always work.");
+}
+
+QString MainWindow::outputNote(int i) const
+{
+    const OutputConfig &c = m_edit.outputs[i];
+    if (c.type == SoundEffect)               // D1 by design, see the type help
+        return QString();
+    for (int s = 0; s < outputTypeInfo(c.type).pinCount; ++s)
+        if (c.pin(s) < 2)
+            return serialPinNote();
+    return QString();
+}
+
+QString MainWindow::inputNote(int i) const
+{
+    const InputConfig &c = m_edit.inputs[i];
+    return c.type != InputNotInUse && c.pin < 2 ? serialPinNote() : QString();
 }
 
 // ── Log ─────────────────────────────────────────────────────────────────────
@@ -1626,40 +1658,40 @@ void MainWindow::closeEvent(QCloseEvent *e)
 // ── Pins taken over ─────────────────────────────────────────────────────────
 QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int input, int share)
 {
+    // The other input / output keeps its type, settings and links: only that pin becomes 'not used',
+    // so it stays on the canvas with a 'not set' warning.
     QStringList freed;
     for (quint8 p : pins)
     {
         for (int o = 0; o < NumOutputs; ++o)
         {
             if (o == output) continue;
-            const OutputConfig &c = m_edit.outputs[o];
+            OutputConfig &c = m_edit.outputs[o];
             const OutputTypeInfo &info = outputTypeInfo(c.type);
-            bool uses = false;
-            for (int k = 0; k < 7; ++k)
-                uses |= ((k < 4) ? (k < info.pinCount) : info.relays) && c.pin(k) == p;
-            if (!uses || c.type == OutputNotInUse) continue;
+            if (c.type == OutputNotInUse) continue;
             if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several sound outputs on D1
-            OutputConfig off;
-            off.name = c.name;
-            off.lampColors = c.lampColors;
-            m_edit.outputs[o] = off;
-            freed << tr("output %1").arg(o);
+            for (int k = 0; k < 7; ++k)
+                if (((k < 4) ? (k < info.pinCount) : info.relays) && c.pin(k) == p)
+                {
+                    c.setPin(k, PinNA);
+                    freed << tr("output %1").arg(o);
+                }
         }
         for (int j = 0; j < NumInputs; ++j)
         {
             if (j == input) continue;
-            const InputConfig &c = m_edit.inputs[j];
+            InputConfig &c = m_edit.inputs[j];
             if (c.type == InputNotInUse || c.pin != p) continue;
             if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several analog inputs on one channel
-            InputConfig off;
-            off.name = c.name;
-            m_edit.inputs[j] = off;
+            c.pin    = PinNA;
+            c.analog = AnalogNone;
             freed << tr("input %1").arg(j);
         }
     }
     freed.removeDuplicates();
     return freed.isEmpty() ? QString()
-                           : tr("The pin was in use: %1 is now not in use.").arg(freed.join(QStringLiteral(", ")));
+                           : tr("The pin was in use: %1 keeps its settings, but has no pin there now.")
+                                 .arg(freed.join(QStringLiteral(", ")));
 }
 
 // ── Phone remote ────────────────────────────────────────────────────────────
@@ -1893,14 +1925,16 @@ void MainWindow::openAnalogValue(int input)
     auto *spin = new QSpinBox;
     spin->setRange(0, AnalogMaxValue);
     spin->setValue(sim->analogValue(ch));
+    spin->setKeyboardTracking(false);            // typed values count after Enter / leaving the field
     auto *slider = new QSlider(Qt::Horizontal);
     slider->setRange(0, AnalogMaxValue);
     slider->setValue(spin->value());
     connect(slider, &QSlider::valueChanged, spin, &QSpinBox::setValue);
     connect(spin, QOverload<int>::of(&QSpinBox::valueChanged), slider, &QSlider::setValue);
-    connect(spin, QOverload<int>::of(&QSpinBox::valueChanged), d, [sim, ch](int v) {
-        if (sim) sim->setAnalogValue(ch, v);
-    });
+    // the value goes to the board when the slider is released (not while dragging), or on a step / Enter
+    auto send = [sim, ch, slider] { if (sim) sim->setAnalogValue(ch, slider->value()); };
+    connect(slider, &QSlider::valueChanged, d, [slider, send] { if (!slider->isSliderDown()) send(); });
+    connect(slider, &QSlider::sliderReleased, d, send);
     auto *row = new QHBoxLayout;
     row->addWidget(slider, 1);
     row->addWidget(spin);
@@ -1946,7 +1980,7 @@ void MainWindow::pollAnalog()
 void MainWindow::refreshLampRow()
 {
     const OutputConfig &o = m_edit.outputs[m_outEd->index()];
-    m_lampRow->setVisible(o.type == FourToneSignal);
+    m_lampRow->setVisible(o.type == FourToneSignal || o.type == BlockSignal);
     for (int k = 0; k < m_lampButtons.size(); ++k)
         m_lampButtons[k]->setStyleSheet(QStringLiteral("QToolButton { background: %1; border: 1px solid #64748B; border-radius: 4px; }")
                                             .arg(Ui::lampColor(o, k).name()));

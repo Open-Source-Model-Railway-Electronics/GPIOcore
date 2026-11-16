@@ -36,7 +36,7 @@ enum class ConnectResult
     AlreadyConnected,   // nothing changed
     RouteFull,          // route already has the maximum number of steps
     PoolFull,           // decoder has no room for more steps
-    NotConnectable,     // no such input / output
+    NotConnectable,     // no such input / output, a sensor input or a block signal output
 };
 
 // Drag an output onto an input. A 'not in use' input becomes 'absolute'.

@@ -26,10 +26,11 @@ enum OutputType : quint8
     SwingLight, FirePlaceLight, TubeLight, WelderLight,
     FourToneSignal, ServoType, Pwm, OutputNotInUse,
     SoundEffect,    // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
+    BlockSignal,    // 15: automatic signal, the board sets its aspect from two block detectors (inputs)
     OutputTypeCount
 };
 
-enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone };
+enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, Block };
 constexpr quint8 SoundPin = 1;   // a sound effect output always uses TX (D1)
 
 struct OutputTypeInfo
@@ -72,13 +73,17 @@ struct OutputConfig
     quint8  servoPattern() const { return data[3]; }
     quint8  pwmValue()     const { return data[0]; }
     quint8  pwmFade()      const { return data[1]; }   // s for a full 0-255 change, 0 = at once
-    // 4-aspect signal as automatic block signal (data[3] bit7): data[2] = own block input | next << 4,
-    // data[3] = 0x80 | 0x40 (has a next block) | green lamp << 4 | yellow lamp << 2 | red lamp (0-3 = A-D)
-    bool    blockSignal()  const { return type == FourToneSignal && (data[3] & 0x80); }
-    int     blockOwn()     const { return data[2] & 0x0F; }
-    int     blockNext()    const { return (data[3] & 0x40) ? data[2] >> 4 : -1; }   // -1 = none
-    int     blockLamp(int k) const { return (data[3] >> (2 * k)) & 3; }        // k: 0 red, 1 yellow, 2 green
-    void    setBlockSignal(int own, int next, int red, int yellow, int green);    // next -1 = none
+    // Block signal (type 15): data[0] aspect when its own block is occupied, data[1] when the next block
+    // is, data[2] when both are free; data[3] = own block input | next block input << 4 (equal = no next)
+    int     blockOwn()     const { return data[3] & 0x0F; }
+    int     blockNext()    const { return (data[3] >> 4) == (data[3] & 0x0F) ? -1 : data[3] >> 4; }   // -1 = none
+    void    setBlockInputs(int own, int next);    // next -1 = none (stored as next = own)
+    // Servo as semaphore arm (data[3] bit7): follows input data[3] & 0x0F, occupied = curved (stop);
+    // bit6 swaps them (occupied = straight)
+    int     servoFollows() const { return type == ServoType && (data[3] & 0x80) ? data[3] & 0x0F : -1; }   // -1 = no
+    bool    servoFollowSwap() const { return data[3] & 0x40; }
+    // The detector inputs this output reads by itself (block signal, semaphore arm): dotted links, warnings
+    QVector<int> watchedInputs() const;
 
     quint8  pin(int slot) const;           // 0..3 = A..D, 4..6 = relay A..C
     void    setPin(int slot, quint8 pin);

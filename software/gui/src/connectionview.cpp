@@ -59,7 +59,7 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
         {
             const OutputConfig &c = m_board.outputs[o];
             const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.data[0];
-            busy = c.type == FourToneSignal && m_liveState[o] >= 0 && (aspect & 0xF0);
+            busy = (c.type == FourToneSignal || c.type == BlockSignal) && m_liveState[o] >= 0 && (aspect & 0xF0);
         }
         if (!busy) m_liveAnim->stop();
     });
@@ -88,6 +88,7 @@ void ConnectionView::setLiveMode(bool on)
 void ConnectionView::clearLive()
 {
     m_liveState.fill(-1, NumOutputs);
+    m_liveRaw.fill(false, NumOutputs);   // aspects / angles of a previous session are not known
     m_liveFrog.fill(-1, NumOutputs);
     m_analogNow.fill(-1, 8);
     m_sensorHeld.fill(false, NumInputs);
@@ -292,11 +293,12 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
         p.setBrush(kText);
         p.drawEllipse(pivot, 2.5, 2.5);
     }
-    else if (c.type == FourToneSignal)
+    else if (c.type == FourToneSignal || c.type == BlockSignal)
     {
-        const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.data[0];
+        // a block signal's aspect only exists on the board (OUTPUT_EVENT / GET_OUTPUT_STATE state 2)
+        const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.type == BlockSignal ? 0 : c.data[0];
         // like output.cpp: on + blink = flashes in phase, blink only = in opposite phase, 500 ms
-        const int halfMs = c.data[1] ? 5000 / c.data[1] : 500;   // data[1] = Hz x 10
+        const int halfMs = c.type == FourToneSignal && c.data[1] ? 5000 / c.data[1] : 500;   // data[1] = Hz x 10, block: 1 Hz
         const bool phase = (m_liveClock.elapsed() / halfMs) % 2;
         for (int k = 0; k < 4; ++k)
         {
@@ -672,7 +674,7 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     const QRectF r = outputRect(o);
     const QColor col = outputColor(o);
     const bool sel = (o == m_selOutput);
-    const bool hot = (m_dragging && m_drag == Drag::FromInput && outputAt(m_dragPos) == o);
+    const bool hot = (m_dragging && m_drag == Drag::FromInput && outputAt(m_dragPos) == o && c.type != BlockSignal);
 
     QPainterPath node;
     node.addRoundedRect(r, 8, 8);
@@ -810,14 +812,14 @@ void ConnectionView::paintEvent(QPaintEvent *)
         p.setPen(pen);
         p.drawPath(wire.path);
     }
-    // automatic block signals: a thin dotted link from the own / next block detector to the signal
+    // block signals and semaphore arms: a thin dotted link from the detector(s) they read
     for (int o = 0; o < NumOutputs; ++o)
     {
         const OutputConfig &c = m_board.outputs[o];
-        if (!c.blockSignal() || !outputShown(o)) continue;
-        for (int b : { c.blockOwn(), c.blockNext() })
+        if (!outputShown(o)) continue;
+        for (int b : c.watchedInputs())
         {
-            if (b < 0 || !inputShown(b)) continue;
+            if (!inputShown(b)) continue;
             QPen pen(Ui::inputColor(b), o == m_selOutput || b == m_selInput ? 2.2 : 1.4, Qt::DotLine);
             pen.setCapStyle(Qt::RoundCap);
             p.setPen(pen);

@@ -32,7 +32,8 @@ public:
     void setOutputNames(const QStringList &names) { setOutputs(names, m_outputTypes); }
     void setRouteLimits(const Gpio::RouteLimits &limits, int stepsUsedElsewhere);
     void setTimingEnabled(bool on);         // board setting: own wait time per step
-    void setWarnings(const QStringList &warnings);
+    // warnings (red) and a note (blue, information only, e.g. D0/D1)
+    void setWarnings(const QStringList &warnings, const QString &note = QString());
     void refreshPinCombos();
     void refreshPinMarks();                   // pins used elsewhere in red
     // Analog inputs: the live reading of a channel (GET_ANALOG), and whether there is one at all.
@@ -67,6 +68,7 @@ private:
     void updateSteps();
     QString stepSignature() const;
     void fillOutputCombo(QComboBox *combo);
+    void addOutputItems(QComboBox *combo);   // "Out n · type"; block signals disabled (not a target)
     quint8 outputType(int output) const { return m_outputTypes.value(output, Gpio::OutputNotInUse); }
 
     int               m_index = 0;
@@ -82,6 +84,7 @@ private:
     QLabel       *m_title = nullptr;
     QLabel       *m_help  = nullptr;
     QLabel       *m_warn  = nullptr;
+    QLabel       *m_note  = nullptr;
     QComboBox    *m_function = nullptr;
     QGroupBox    *m_modeBox  = nullptr;
     QRadioButton *m_optA     = nullptr;   // toggle

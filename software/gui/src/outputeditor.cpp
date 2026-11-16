@@ -22,7 +22,7 @@
 
 using namespace Gpio;
 
-enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal };
+enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal, PageBlock };
 
 static Page pageFor(ParamKind k)
 {
@@ -33,6 +33,7 @@ static Page pageFor(ParamKind k)
     case ParamKind::Servo:      return PageServo;
     case ParamKind::PwmValue:   return PagePwm;
     case ParamKind::FourTone:   return PageSignal;
+    case ParamKind::Block:      return PageBlock;
     default:                    break;
     }
     return PageNone;
@@ -96,6 +97,11 @@ void OutputEditor::buildUi()
     m_warn->setWordWrap(true);
     m_warn->hide();
     root->addWidget(m_warn);
+    m_note = new QLabel;
+    m_note->setObjectName(QStringLiteral("note"));
+    m_note->setWordWrap(true);
+    m_note->hide();
+    root->addWidget(m_note);
 
     // Pins
     m_pinBox  = new QGroupBox(tr("Pins"));
@@ -208,7 +214,28 @@ void OutputEditor::buildUi()
         m_servoTime->setObjectName(QStringLiteral("help"));
         f->addRow(tr("Speed"), m_servoSpeed);
         f->addRow(QString(), m_servoTime);
+        // semaphore arm: the board moves the servo itself when a detector reports its block occupied / free
+        m_follow = new QCheckBox(tr("Follows a detector (semaphore arm)"));
+        f->addRow(m_follow);
+        m_followBox = new QWidget;
+        auto *ff = new QFormLayout(m_followBox);
+        ff->setContentsMargins(0, 0, 0, 0);
+        m_followInput = new QComboBox;
+        m_followInput->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+        m_followInput->setMinimumContentsLength(14);
+        ff->addRow(tr("Detector"), m_followInput);
+        m_followSwap = new QCheckBox(tr("Swap: occupied = straight"));
+        ff->addRow(m_followSwap);
+        auto *followHint = new QLabel(tr("Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), "
+                                         "at the speed above."));
+        followHint->setWordWrap(true);
+        followHint->setObjectName(QStringLiteral("help"));
+        ff->addRow(followHint);
+        f->addRow(m_followBox);
         m_params->addWidget(w);
+        connect(m_follow, &QCheckBox::toggled, this, [this] { if (!m_loading) collect(); });
+        connect(m_followSwap, &QCheckBox::toggled, this, [this] { if (!m_loading) collect(); });
+        connect(m_followInput, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] { if (!m_loading) collect(); });
     }
     { // pwm
         auto *w = new QWidget;
@@ -251,15 +278,12 @@ void OutputEditor::buildUi()
         hint->setWordWrap(true);
         hint->setObjectName(QStringLiteral("help"));
         f->addRow(hint);
-        // automatic block signal: the firmware sets the aspect from two block detectors (inputs)
-        m_block = new QCheckBox(tr("Automatic block signal"));
-        auto *blockRow = new QHBoxLayout;
-        blockRow->addWidget(m_block, 1);
-        blockRow->addWidget(Info::button(QStringLiteral("output.blocksignal")));
-        f->addRow(blockRow);
-        m_blockBox = new QWidget;
-        auto *bf = new QFormLayout(m_blockBox);
-        bf->setContentsMargins(0, 0, 0, 0);
+        m_params->addWidget(w);
+        connect(m_blinkHz, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
+    }
+    { // block signal: the board sets the aspect itself from two block detectors (inputs)
+        auto *w = new QWidget;
+        auto *f = new QFormLayout(w);
         m_blockOwn  = new QComboBox;
         m_blockNext = new QComboBox;
         for (QComboBox *c : { m_blockOwn, m_blockNext })
@@ -267,32 +291,59 @@ void OutputEditor::buildUi()
             c->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
             c->setMinimumContentsLength(14);
         }
-        bf->addRow(tr("Own block"), m_blockOwn);
-        bf->addRow(tr("Next block"), m_blockNext);
-        const QString lampLabels[3] = { tr("Red lamp"), tr("Yellow lamp"), tr("Green lamp") };
+        auto *ownRow = new QHBoxLayout;
+        ownRow->addWidget(m_blockOwn, 1);
+        ownRow->addWidget(Info::button(QStringLiteral("output.blocksignal")));
+        f->addRow(tr("Own block"), ownRow);
+        f->addRow(tr("Next block"), m_blockNext);
+        const QString aspectLabels[3] = { tr("Own block occupied"), tr("Next block occupied"), tr("Both free") };
         for (int k = 0; k < 3; ++k)
         {
-            m_blockLamp[k] = new QComboBox;
-            for (int l = 0; l < 4; ++l)
-                m_blockLamp[k]->addItem(QString(QChar('A' + l)), l);
-            bf->addRow(lampLabels[k], m_blockLamp[k]);
+            // the aspect picker of route steps / custom values: a value plus 'choose lamp by lamp'
+            m_blockAspect[k] = new QSpinBox;
+            m_blockAspect[k]->setRange(0, 255);
+            m_blockAspect[k]->setPrefix(tr("aspect "));
+            m_blockAspect[k]->setMinimumWidth(90);
+            m_blockAspect[k]->setKeyboardTracking(false);
+            auto *pick = new QToolButton;
+            pick->setText(QStringLiteral("▾"));
+            pick->setToolTip(tr("Choose the aspect lamp by lamp"));
+            m_blockText[k] = new QLabel;
+            m_blockText[k]->setObjectName(QStringLiteral("help"));
+            m_blockText[k]->setWordWrap(true);
+            auto *lay = new QHBoxLayout;
+            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setSpacing(4);
+            lay->addWidget(m_blockAspect[k]);
+            lay->addWidget(pick);
+            lay->addWidget(m_blockText[k], 1);
+            m_blockRow[k] = new QWidget;
+            m_blockRow[k]->setLayout(lay);
+            f->addRow(aspectLabels[k], m_blockRow[k]);
+            connect(pick, &QToolButton::clicked, this, [this, k] {
+                const int v = Ui::pickAspect(this, m_blockAspect[k]->value(), m_index);
+                if (v >= 0) m_blockAspect[k]->setValue(v);
+            });
+            connect(m_blockAspect[k], QOverload<int>::of(&QSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
         }
-        auto *blockHint = new QLabel(tr("Red when its own block is occupied, yellow when the next block is, green when both are free."));
+        auto *blockHint = new QLabel(tr("The board chooses the aspect itself every 50 ms: own block occupied first, then the "
+                                        "next block, otherwise both free. Inputs, routes and DCC cannot set it. "
+                                        "Flashing lamps flash at 1 Hz."));
         blockHint->setWordWrap(true);
         blockHint->setObjectName(QStringLiteral("help"));
-        bf->addRow(blockHint);
-        f->addRow(m_blockBox);
+        f->addRow(blockHint);
+        m_loading = true;                    // the semaphore arm combo is connected already
         fillBlockCombos();
+        m_loading = false;
         m_params->addWidget(w);
-        connect(m_blinkHz, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
-        connect(m_block, &QCheckBox::toggled, this, [this] { if (!m_loading) collect(); });
-        for (QComboBox *c : { m_blockOwn, m_blockNext, m_blockLamp[0], m_blockLamp[1], m_blockLamp[2] })
+        for (QComboBox *c : { m_blockOwn, m_blockNext })
             connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] { if (!m_loading) collect(); });
     }
     root->addWidget(m_paramBox);
 
     // State + test
     auto *stateBox = new QGroupBox(tr("State"));
+    m_stateBox = stateBox;
     auto *stateInner = new QVBoxLayout(stateBox);
     auto *stateLay = new QHBoxLayout;
     auto *testLay  = new QHBoxLayout;
@@ -340,8 +391,12 @@ void OutputEditor::buildUi()
         case SwingLight:     m_cfg.setSwing(50, 50);  break;
         case ServoType:      m_cfg.data = { { 80, 100, 20, 0 } }; break;
         case Pwm:            m_cfg.data = { { 128, 0, 0, 0 } };   break;
-        case FourToneSignal: m_cfg.data[2] = m_cfg.data[3] = 0;  // keep the aspect the board has; manual signal
+        case FourToneSignal: m_cfg.data[2] = m_cfg.data[3] = 0;  // keep the aspect the board has
                              break;
+        case BlockSignal:    // own block = the first sensor input, no next block; red C / yellow B / green A
+            m_cfg.data = { { 0x04, 0x02, 0x01, 0 } };
+            m_cfg.setBlockInputs(qMax(0, int(m_inputTypes.indexOf(quint8(Sensor)))), -1);
+            break;
         case SoundEffect:    m_cfg.data = { { 0, 0, 0, 0 } };     // the input chooses the track
                              m_cfg.pinA = SoundPin;   break;
         default:             m_cfg.data = { { 0, 0, 0, 0 } };     break;
@@ -432,24 +487,28 @@ void OutputEditor::setInputs(const QStringList &names, const QVector<quint8> &ty
 
 void OutputEditor::fillBlockCombos()
 {
-    const bool block = m_cfg.blockSignal();
+    const bool block = m_cfg.type == BlockSignal;
     m_blockOwn->clear();
     m_blockNext->clear();
+    m_followInput->clear();
     m_blockNext->addItem(tr("— none"), -1);
     for (int i = 0; i < NumInputs; ++i)
     {
         const QIcon icon = Ui::swatchIcon(Ui::inputTypeColor(m_inputTypes.value(i, InputNotInUse)));
-        m_blockOwn->addItem(icon, m_inputNames.value(i), i);
-        m_blockNext->addItem(icon, m_inputNames.value(i), i);
+        for (QComboBox *c : { m_blockOwn, m_blockNext, m_followInput })
+            c->addItem(icon, m_inputNames.value(i), i);
     }
     Ui::selectData(m_blockOwn,  block ? m_cfg.blockOwn() : 0);
     Ui::selectData(m_blockNext, block ? m_cfg.blockNext() : -1);
+    Ui::selectData(m_followInput, qMax(0, m_cfg.servoFollows()));
 }
 
-void OutputEditor::setWarnings(const QStringList &warnings)
+void OutputEditor::setWarnings(const QStringList &warnings, const QString &note)
 {
     m_warn->setText(warnings.join(QStringLiteral("\n")));
     m_warn->setVisible(!warnings.isEmpty());
+    m_note->setText(note);
+    m_note->setVisible(!note.isEmpty());
 }
 
 void OutputEditor::setConnected(bool connected)
@@ -492,17 +551,17 @@ void OutputEditor::refresh()
     m_pwm->setValue(m_cfg.pwmValue());
     m_fade->setValue(m_cfg.data[1]);
     m_blinkHz->setValue(m_cfg.data[1] ? m_cfg.data[1] / 10.0 : 1.0);
-    m_block->setChecked(m_cfg.blockSignal());
-    if (m_cfg.blockSignal())
+    if (m_cfg.type == BlockSignal)
     {
         Ui::selectData(m_blockOwn,  m_cfg.blockOwn());
         Ui::selectData(m_blockNext, m_cfg.blockNext());
         for (int k = 0; k < 3; ++k)
-            Ui::selectData(m_blockLamp[k], m_cfg.blockLamp(k));
+            m_blockAspect[k]->setValue(m_cfg.data[k]);
     }
-    for (int k = 0; k < 3; ++k)                // the lamp colours chosen for this signal
-        for (int l = 0; l < 4; ++l)
-            m_blockLamp[k]->setItemIcon(l, Ui::swatchIcon(Ui::lampColor(m_cfg, l)));
+    m_follow->setChecked(m_cfg.servoFollows() >= 0);
+    if (m_cfg.servoFollows() >= 0)
+        Ui::selectData(m_followInput, m_cfg.servoFollows());
+    m_followSwap->setChecked(m_cfg.servoFollowSwap());
     m_state->setCurrentIndex(m_cfg.state ? 1 : 0);
 
     const bool liveOk = m_connected && m_liveAvailable;
@@ -545,7 +604,15 @@ void OutputEditor::updateVisibility()
     const Page page = pageFor(info.params);
     m_params->setCurrentIndex(page);
     m_paramBox->setVisible(page != PageNone);
-    m_blockBox->setVisible(m_cfg.blockSignal());
+    m_followBox->setVisible(m_cfg.servoFollows() >= 0);
+    for (int k = 0; k < 3; ++k)
+        m_blockText[k]->setText(Ui::aspectText(m_cfg.data[k]));
+    const bool next = m_cfg.blockNext() >= 0;  // without a next block that aspect is never shown
+    m_blockRow[1]->setEnabled(next);
+    if (auto *form = qobject_cast<QFormLayout *>(m_blockRow[1]->parentWidget()->layout()))
+        if (QWidget *label = form->labelForField(m_blockRow[1]))
+            label->setEnabled(next);
+    m_stateBox->setVisible(m_cfg.type != BlockSignal);   // no stored state: the aspect is computed
 }
 
 void OutputEditor::updateTimeLabels()
@@ -587,10 +654,24 @@ void OutputEditor::collect()
         m_cfg.setSwing(quint16(m_swingPulse->value()), quint16(m_swingPause->value()));
         break;
     case ParamKind::Servo:
-        // data[3] (servoPattern) is not used by the firmware and is kept as it is
         m_cfg.data[0] = quint8(m_servoMin->value());
         m_cfg.data[1] = quint8(m_servoMax->value());
         m_cfg.data[2] = quint8(m_servoSpeed->value());
+        if (!m_follow->isChecked())
+            m_cfg.data[3] = 0;
+        else
+        {
+            // data[3] = 0x80 | 0x40 (swap) | detector input; just switched on: the first sensor input
+            int in = Ui::currentData(m_followInput);
+            if (m_cfg.servoFollows() < 0)
+            {
+                in = qMax(0, int(m_inputTypes.indexOf(quint8(Sensor))));
+                m_loading = true;
+                Ui::selectData(m_followInput, in);
+                m_loading = false;
+            }
+            m_cfg.data[3] = quint8(0x80 | (m_followSwap->isChecked() ? 0x40 : 0) | (in & 0x0F));
+        }
         break;
     case ParamKind::PwmValue:
         m_cfg.data[0] = quint8(m_pwm->value());
@@ -598,23 +679,11 @@ void OutputEditor::collect()
         break;
     case ParamKind::FourTone:
         m_cfg.data[1] = quint8(qRound(m_blinkHz->value() * 10));   // data[0] (aspect) stays as it is
-        if (!m_block->isChecked())
-            m_cfg.data[2] = m_cfg.data[3] = 0;                      // manual signal
-        else if (!m_cfg.blockSignal())
-        {
-            // just switched on: own block = the first sensor input, no next block, green A, yellow B, red C
-            const int sensor = m_inputTypes.indexOf(quint8(Sensor));
-            m_cfg.setBlockSignal(qMax(0, sensor), -1, 2, 1, 0);
-            m_loading = true;
-            Ui::selectData(m_blockOwn,  m_cfg.blockOwn());
-            Ui::selectData(m_blockNext, -1);
-            for (int k = 0; k < 3; ++k)
-                Ui::selectData(m_blockLamp[k], m_cfg.blockLamp(k));
-            m_loading = false;
-        }
-        else
-            m_cfg.setBlockSignal(Ui::currentData(m_blockOwn), Ui::currentData(m_blockNext), Ui::currentData(m_blockLamp[0]),
-                                 Ui::currentData(m_blockLamp[1]), Ui::currentData(m_blockLamp[2]));
+        break;
+    case ParamKind::Block:
+        for (int k = 0; k < 3; ++k)
+            m_cfg.data[k] = quint8(m_blockAspect[k]->value());
+        m_cfg.setBlockInputs(Ui::currentData(m_blockOwn), Ui::currentData(m_blockNext));
         break;
     default:
         break;

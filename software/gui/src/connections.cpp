@@ -44,6 +44,8 @@ ConnectResult connectOutput(BoardConfig &board, int input, int output, const Rou
 {
     if (input < 0 || input >= NumInputs || output < 0 || output >= NumOutputs)
         return ConnectResult::NotConnectable;
+    if (board.outputs[output].type == BlockSignal)
+        return ConnectResult::NotConnectable;    // it sets its own aspect from its detectors
 
     InputConfig &c = board.inputs[input];
 

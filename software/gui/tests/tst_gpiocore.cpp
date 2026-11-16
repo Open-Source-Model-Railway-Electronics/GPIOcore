@@ -7,6 +7,7 @@
 #include "protocol.h"
 #include "simulateddevice.h"
 
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QSignalSpy>
 #include <QtTest>
@@ -53,6 +54,18 @@ protected:
         return n;
     }
 };
+
+// Three lamps A green, B yellow, C red (lamp D not used), aspects: own block occupied = red,
+// next block occupied = yellow, free = green
+static OutputConfig makeBlockSignal(int own, int next, quint8 a, quint8 b, quint8 c)
+{
+    OutputConfig s;
+    s.type = BlockSignal;
+    s.pinA = a; s.pinB = b; s.pinC = c;
+    s.data = { { 0x04, 0x02, 0x01, 0 } };
+    s.setBlockInputs(own, next);
+    return s;
+}
 
 class TestGpioCore : public QObject
 {
@@ -378,33 +391,60 @@ private slots:
 
     void blockSignalModel()
     {
+        // output type 15: data[0] / data[1] / data[2] = aspect when its own block / the next block is occupied /
+        // both are free, data[3] = own block input | next block input << 4 (equal = no next block)
+        QCOMPARE(int(BlockSignal), 15);
+        QCOMPARE(QString::fromUtf8(outputTypeInfo(BlockSignal).key), QStringLiteral("blockSignal"));
+        QCOMPARE(outputTypeInfo(BlockSignal).pinCount, 4);
         OutputConfig s;
-        s.type = FourToneSignal; s.data = { { 1, 15, 0, 0 } };
-        QVERIFY(!s.blockSignal());
-        s.setBlockSignal(3, 9, 2, 1, 0);                 // own input 3, next 9, red C, yellow B, green A
-        QCOMPARE(int(s.data[2]), 0x93);
-        QCOMPARE(int(s.data[3]), 0x80 | 0x40 | 0 << 4 | 1 << 2 | 2);
-        QVERIFY(s.blockSignal());
+        s.type = BlockSignal; s.data = { { 0x04, 0x02, 0x01, 0 } };
+        s.setBlockInputs(3, 9);
+        QCOMPARE(int(s.data[3]), 0x93);
         QCOMPARE(s.blockOwn(), 3);
         QCOMPARE(s.blockNext(), 9);
-        QCOMPARE(s.blockLamp(0), 2);
-        QCOMPARE(s.blockLamp(1), 1);
-        QCOMPARE(s.blockLamp(2), 0);
-        QCOMPARE(int(s.data[0]), 1);                     // aspect and blink frequency stay
-        QCOMPARE(int(s.data[1]), 15);
+        QCOMPARE(s.watchedInputs(), (QVector<int>{ 3, 9 }));
         const QByteArray p = encodeOutput(6, s);
-        QCOMPARE(Proto::toHex(p.mid(10)), QStringLiteral("01 0F 93 C6"));
+        QCOMPARE(Proto::toHex(p.mid(8)), QStringLiteral("0F 00 04 02 01 93"));   // type, state, data[0-3]
         int idx = -1; OutputConfig d;
         QVERIFY(decodeOutput(p, idx, d));
-        QVERIFY(d == s && d.blockSignal());
+        QVERIFY(d == s);
         QVERIFY(OutputConfig::fromJson(s.toJson()) == s);
-
-        s.setBlockSignal(15, -1, 3, 3, 3);               // no next block: bit6 clear, high nibble 0
-        QCOMPARE(int(s.data[2]), 0x0F);
-        QCOMPARE(int(s.data[3]), 0xBF);
+        QCOMPARE(s.toJson()["type"].toString(), QStringLiteral("blockSignal"));
+        QCOMPARE(int(s.normalized().type), 15);
+        s.setBlockInputs(5, -1);                         // no next block: stored as next = own
+        QCOMPARE(int(s.data[3]), 0x55);
         QCOMPARE(s.blockNext(), -1);
-        s.type = Pwm;                                    // only a 4-aspect signal can be a block signal
-        QVERIFY(!s.blockSignal());
+        QCOMPARE(s.watchedInputs(), QVector<int>{ 5 });
+
+        // not a target: inputs, routes and DCC cannot set it
+        BoardConfig board;
+        board.outputs[2] = s;
+        QCOMPARE(connectOutput(board, 0, 2, RouteLimits()), ConnectResult::NotConnectable);
+        QCOMPARE(int(board.inputs[0].type), int(InputNotInUse));
+        board.inputs[1].type = Route;
+        QCOMPARE(connectOutput(board, 1, 2, RouteLimits()), ConnectResult::NotConnectable);
+        QVERIFY(board.inputs[1].route.isEmpty());
+
+        // a board file with the removed automatic mode of the 4-aspect signal: a manual signal
+        QJsonObject old = OutputConfig().toJson();
+        old["type"] = QStringLiteral("fourToneSignal");
+        old["data"] = QJsonArray{ 1, 10, 0x93, 0xC6 };
+        const OutputConfig manual = OutputConfig::fromJson(old);
+        QCOMPARE(int(manual.type), int(FourToneSignal));
+        QCOMPARE(manual.data, (std::array<quint8, 4>{ { 1, 10, 0, 0 } }));
+        QVERIFY(manual.watchedInputs().isEmpty());
+
+        // servo as semaphore arm: data[3] = 0x80 | 0x40 (swap) | detector input
+        OutputConfig servo;
+        servo.type = ServoType; servo.data = { { 80, 100, 20, 0 } };
+        QCOMPARE(servo.servoFollows(), -1);
+        QVERIFY(servo.watchedInputs().isEmpty());
+        servo.data[3] = 0x80 | 0x40 | 7;
+        QCOMPARE(servo.servoFollows(), 7);
+        QVERIFY(servo.servoFollowSwap());
+        QCOMPARE(servo.watchedInputs(), QVector<int>{ 7 });
+        servo.type = Pwm;                                // only a servo follows a detector
+        QCOMPARE(servo.servoFollows(), -1);
     }
 
     void dccNextPins()
@@ -1024,43 +1064,48 @@ private slots:
 
     void firmwareBlockSignals()
     {
-        // GPIOcore.ino blockSignals(): three blocks in a row, sensor k on its block, signal k protects
-        // block k and looks at block k + 1. Red = own block occupied, yellow = next one, green = free.
+        // GPIOcore.ino blockSignals(): Dutch 3-aspect signals, three blocks in a row; sensor k on block k,
+        // signal k protects block k and looks at block k + 1. Block 1's detector is on D0 (simulator: D0 works).
         Rig r; makeRig(r);
         OutputConfig none;
         for (int o = 3; o < NumOutputs; ++o)
             r.sim->setOutput(o, none);                   // frees the default pins
-        const quint8 pins[3][4] = { { 3, 4, 5, 6 }, { 7, 8, 9, 10 }, { 11, 12, 14, 15 } };
-        const quint8 sensorPin[3] = { 16, 17, 18 };      // A2-A4
+        const quint8 pins[3][3] = { { 3, 4, 5 }, { 6, 7, 8 }, { 9, 10, 11 } };
+        const quint8 sensorPin[3] = { 0, 17, 18 };       // D0, A3, A4
         for (int k = 0; k < 3; ++k)
         {
-            OutputConfig s;
-            s.type = FourToneSignal;
-            for (int l = 0; l < 4; ++l) s.setPin(l, pins[k][l]);
-            s.data = { { 0, 10, 0, 0 } };
-            s.setBlockSignal(k, k < 2 ? k + 1 : -1, 2, 1, 0);   // red C, yellow B, green A
-            r.sim->setOutput(k, s);
+            r.sim->setOutput(k, makeBlockSignal(k, k < 2 ? k + 1 : -1, pins[k][0], pins[k][1], pins[k][2]));
             InputConfig in;
             in.type = Sensor; in.pin = sensorPin[k];
             r.sim->setInput(k, in);
         }
         const int green = 1, yellow = 2, red = 4;
-        auto aspects = [&r] { return QVector<int>{ r.sim->output(0).data[0], r.sim->output(1).data[0], r.sim->output(2).data[0] }; };
+        auto aspects = [&r] { return QVector<int>{ r.sim->servoPosition(0), r.sim->servoPosition(1), r.sim->servoPosition(2) }; };
         QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
         QTest::qWait(150);                               // the inputs see 'free' first: armed
 
+        // shown at once after connecting: GET_OUTPUT_STATE answers state 2 + the current aspect
         QSignalSpy events(r.link, &DeviceLink::outputEvent);
+        for (int k = 0; k < 3; ++k)
+            r.link->readOutputState(k);
+        waitFinished(r);
+        QTRY_COMPARE(events.size(), 3);
+        for (const QList<QVariant> &e : events)
+            QVERIFY(e.at(1).toInt() == 2 && e.at(2).toInt() == green);
+        events.clear();
+
         r.sim->setPinLevel(17, false);                   // a train in block 2
         QTRY_COMPARE(aspects(), (QVector<int>{ yellow, red, green }));
-        QTRY_VERIFY(!events.isEmpty());                  // reported like any aspect: OUTPUT_EVENT state 2
+        QTRY_VERIFY(!events.isEmpty());                  // reported: OUTPUT_EVENT state 2 + aspect
         bool reported = false;
         for (const QList<QVariant> &e : events)
             reported |= e.at(0).toInt() == 1 && e.at(1).toInt() == 2 && e.at(2).toInt() == red;
         QVERIFY(reported);
-        QTRY_COMPARE(int(r.sim->pin(9).level), 1);       // signal 2: red lamp C (D9) on, green A (D7) off
-        QCOMPARE(int(r.sim->pin(7).level), 0);
-        QCOMPARE(int(r.sim->pin(11).level), 1);          // signal 3: green A (D11) on, red C (A0) off
-        QCOMPARE(int(r.sim->pin(14).level), 0);
+        QTRY_COMPARE(int(r.sim->pin(8).level), 1);       // signal 2: red lamp C (D8) on, green A (D6) off
+        QCOMPARE(int(r.sim->pin(6).level), 0);
+        QCOMPARE(int(r.sim->pin(4).level), 1);           // signal 1: yellow lamp B (D4) on
+        QCOMPARE(int(r.sim->pin(9).level), 1);           // signal 3: green A (D9) on, red C (D11) off
+        QCOMPARE(int(r.sim->pin(11).level), 0);
 
         r.sim->setPinLevel(18, false);                   // the train is in blocks 2 and 3
         QTRY_COMPARE(aspects(), (QVector<int>{ yellow, red, red }));
@@ -1068,15 +1113,79 @@ private slots:
         QTRY_COMPARE(aspects(), (QVector<int>{ green, yellow, red }));
         r.sim->setPinLevel(18, true);
         QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
+        r.sim->setPinLevel(0, false);                    // block 1 on D0
+        QTRY_COMPARE(aspects(), (QVector<int>{ red, green, green }));
+        r.sim->setPinLevel(0, true);
+        QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
 
-        OutputConfig manual = r.sim->output(1);          // data[3] = 0: a normal signal, the aspect stays
-        manual.data[2] = manual.data[3] = 0;
-        manual.data[0] = 8;
-        r.sim->setOutput(1, manual);
-        r.sim->setPinLevel(17, false);
-        QTRY_COMPARE(aspects(), (QVector<int>{ yellow, 8, green }));
+        // manual commands are ignored: a DCC extended value for an input on signal 2
+        InputConfig dcc;
+        dcc.type = Latching; dcc.address = 7; dcc.outputId = 1;
+        r.sim->setInput(5, dcc);
+        r.sim->dccExtended(7, 0x08);
+        r.sim->dccAccessory(7, 0);
+        QTest::qWait(200);
+        QCOMPARE(aspects(), (QVector<int>{ green, green, green }));
+        QCOMPARE(int(r.sim->pin(6).level), 1);
+        QCOMPARE(r.errors, 0);
+    }
+
+    void firmwareMainAndDistantSignal()
+    {
+        // One detector drives two signals: an unlinked main signal (no next block: red / green) and its distant
+        // signal further back, whose 'own block' is the block behind the main signal (occupied = yellow).
+        Rig r; makeRig(r);
+        OutputConfig none;
+        for (int o = 2; o < NumOutputs; ++o)
+            r.sim->setOutput(o, none);
+        OutputConfig main = makeBlockSignal(4, -1, 3, PinNA, 5);
+        main.data[1] = 0x02;                             // never shown without a next block
+        r.sim->setOutput(0, main);
+        OutputConfig distant = makeBlockSignal(4, -1, 6, 7, PinNA);
+        distant.data = { { 0x02, 0x02, 0x01, distant.data[3] } };   // occupied: yellow (B), free: green (A)
+        r.sim->setOutput(1, distant);
+        InputConfig in;
+        in.type = Sensor; in.analog = AnalogBelow; in.pin = 16; in.threshold = 512;   // analog detector on A2
+        r.sim->setInput(4, in);
+        auto aspects = [&r] { return QVector<int>{ r.sim->servoPosition(0), r.sim->servoPosition(1) }; };
+        QTRY_COMPARE(aspects(), (QVector<int>{ 0x01, 0x01 }));
         QTest::qWait(150);
-        QCOMPARE(int(r.sim->output(1).data[0]), 8);
+        r.sim->setAnalogValue(2, 100);                   // occupied
+        QTRY_COMPARE(aspects(), (QVector<int>{ 0x04, 0x02 }));
+        QTRY_COMPARE(int(r.sim->pin(5).level), 1);       // main: red lamp C
+        QCOMPARE(int(r.sim->pin(3).level), 0);
+        QCOMPARE(int(r.sim->pin(7).level), 1);           // distant: yellow lamp B
+        r.sim->setAnalogValue(2, 1023);
+        QTRY_COMPARE(aspects(), (QVector<int>{ 0x01, 0x01 }));
+        QCOMPARE(r.errors, 0);
+    }
+
+    void firmwareServoSemaphore()
+    {
+        // GPIOcore.ino blockSignals(): a servo with data[3] bit7 follows a detector: occupied = curved (stop),
+        // free = straight (clear), at its own speed; bit6 swaps them
+        Rig r; makeRig(r);
+        OutputConfig servo;
+        servo.type = ServoType; servo.pinA = 3; servo.state = 0;
+        servo.data = { { 30, 150, 2, quint8(0x80 | 6) } };
+        r.sim->setOutput(0, servo);
+        OutputConfig unused = r.sim->output(13);         // output 13 had A3
+        unused.type = OutputNotInUse; unused.pinA = PinNA;
+        r.sim->setOutput(13, unused);
+        InputConfig in;
+        in.type = Sensor; in.pin = 17;                   // A3
+        r.sim->setInput(6, in);
+        QTRY_COMPARE(int(r.sim->output(0).state), 1);    // free: straight
+        QTRY_COMPARE(r.sim->servoPosition(0), 150);
+        QTest::qWait(150);
+        r.sim->setPinLevel(17, false);                   // occupied: curved = stop
+        QTRY_COMPARE(int(r.sim->output(0).state), 0);
+        QTRY_COMPARE(r.sim->servoPosition(0), 30);
+        servo.data[3] = quint8(0x80 | 0x40 | 6);         // swapped: occupied = straight
+        r.sim->setOutput(0, servo);
+        QTRY_COMPARE(int(r.sim->output(0).state), 1);
+        r.sim->setPinLevel(17, true);
+        QTRY_COMPARE(int(r.sim->output(0).state), 0);
         QCOMPARE(r.errors, 0);
     }
 

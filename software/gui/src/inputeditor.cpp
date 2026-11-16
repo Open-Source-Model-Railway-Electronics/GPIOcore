@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
+#include <QStandardItemModel>
 #include <QStyle>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -57,11 +58,24 @@ void InputEditor::fillOutputCombo(QComboBox *combo)
 {
     const int current = combo->count() ? Ui::currentData(combo) : -1;
     combo->clear();
-    for (int i = 0; i < NumOutputs; ++i)
-        combo->addItem(Ui::swatchIcon(Ui::outputTypeColor(outputType(i))),
-                       tr("Out %1 · %2").arg(i).arg(outputTypeName(outputType(i))), i);
+    addOutputItems(combo);
     if (current >= 0)
         Ui::selectData(combo, current);
+}
+
+void InputEditor::addOutputItems(QComboBox *combo)
+{
+    auto *model = qobject_cast<QStandardItemModel *>(combo->model());
+    for (int i = 0; i < NumOutputs; ++i)
+    {
+        combo->addItem(Ui::swatchIcon(Ui::outputTypeColor(outputType(i))),
+                       tr("Out %1 · %2").arg(i).arg(outputTypeName(outputType(i))), i);
+        if (outputType(i) == BlockSignal && model)        // it sets its own aspect: not a target
+        {
+            model->item(combo->count() - 1)->setEnabled(false);
+            combo->setItemData(combo->count() - 1, tr("A block signal sets its own aspect from its detectors"), Qt::ToolTipRole);
+        }
+    }
 }
 
 void InputEditor::buildUi()
@@ -96,6 +110,11 @@ void InputEditor::buildUi()
     m_warn->setWordWrap(true);
     m_warn->hide();
     root->addWidget(m_warn);
+    m_note = new QLabel;
+    m_note->setObjectName(QStringLiteral("note"));
+    m_note->setWordWrap(true);
+    m_note->hide();
+    root->addWidget(m_note);
 
     // Behaviour of direct control: toggle / absolute. A route has no choice:
     // it starts on a button press (falling edge) or on any DCC command.
@@ -398,10 +417,12 @@ void InputEditor::setInput(int index, const InputConfig &c)
     refresh();
 }
 
-void InputEditor::setWarnings(const QStringList &warnings)
+void InputEditor::setWarnings(const QStringList &warnings, const QString &note)
 {
     m_warn->setText(warnings.join(QStringLiteral("\n")));
     m_warn->setVisible(!warnings.isEmpty());
+    m_note->setText(note);
+    m_note->setVisible(!note.isEmpty());
 }
 
 // ── Route step rows ─────────────────────────────────────────────────────────
@@ -442,9 +463,7 @@ void InputEditor::rebuildSteps()
         auto *pick = new QComboBox;
         pick->setObjectName(QStringLiteral("firstStep"));
         pick->addItem(tr("— choose an output —"), -1);
-        for (int i = 0; i < NumOutputs; ++i)
-            pick->addItem(Ui::swatchIcon(Ui::outputTypeColor(outputType(i))),
-                          tr("Out %1 · %2").arg(i).arg(outputTypeName(outputType(i))), i);
+        addOutputItems(pick);
         auto *hint = new QLabel(tr("or drag an output onto this input"));
         hint->setObjectName(QStringLiteral("help"));
         m_stepGrid->addWidget(number, 1, 0);

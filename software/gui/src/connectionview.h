@@ -32,6 +32,7 @@ public:
     void clearLive();
     int  liveState(int output) const { return m_liveState.value(output, -1); }
     int  liveFrog(int output) const  { return m_liveFrog.value(output, -1); }   // bit0 A, bit1 B, bit2 C
+    int  liveValue(int output) const { return m_liveRaw.value(output) ? m_liveValue.value(output) : -1; }   // last state-2 value (aspect, angle, PWM)
     QRectF liveButtonRect(int input, int direction) const;   // empty if the input has no such button
     bool   liveValueInput(int input) const;   // direct input on a signal / PWM output: sends a value
     bool   analogValueInput(int input) const; // simulation: an analog input gets a voltage, not a press

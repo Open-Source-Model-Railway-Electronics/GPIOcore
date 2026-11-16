@@ -53,8 +53,8 @@ A GET first gets the data reply and then that `ACK`.
 | `31` GET_INPUT_STATE | → | `index` — **reserved**, only `ACK` |
 | `42` SET_OUTPUT_STATE | → | `index state` — **reserved**, only `ACK` |
 | `33` DCC_EXT | → | `addrH addrL value` — acts as if a DCC extended accessory packet (signal aspect) for that address arrives. Only direct inputs respond |
-| `41` GET_OUTPUT_STATE | → | `index` → reply `45` with the current state |
-| **`45` OUTPUT_EVENT** | ← | `output state value ms_lo ms_hi` — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in `value`), with the lower 16 bits of `millis()`. While turning, a servo reports **every degree** (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal reports its aspect as state 2. **State 3** = frog relay switched, `value` bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); `GET_OUTPUT_STATE` sends this as a second message if the output has relays |
+| `41` GET_OUTPUT_STATE | → | `index` → reply `45` with the current state. Signals (type 10 and 15) answer **state 2 + the current aspect**, so the GUI shows them right after connecting; a servo answers its state + the current angle |
+| **`45` OUTPUT_EVENT** | ← | `output state value ms_lo ms_hi` — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in `value`), with the lower 16 bits of `millis()`. While turning, a servo reports **every degree** (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal and a block signal report their aspect as state 2. **State 3** = frog relay switched, `value` bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); `GET_OUTPUT_STATE` sends this as a second message if the output has relays |
 | `B1` CLEAR_OUTPUT | – | is in `messageParser.h`, but is not used |
 | **`90` HELLO** | → | – → reply `95` |
 | **`82` GET_ROUTE** | → | `route first` → reply `8F` |
@@ -90,31 +90,43 @@ Frog relays: `relayA` + `relayB` = **electrofrog** (A at straight, B at curved, 
 | 7 | fireplace | A, B (PWM) | – |
 | 8 | TL tube | A (PWM) | – |
 | 9 | welder | A | – |
-| 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), `data[1]` = flashing frequency in 0.1 Hz, `data[2]`/`data[3]` = automatic block signal (below; `data[3]` = 0: a normal signal) |
-| 11 | servo | A (+ relays) | `data[0]` angle at state 0, `data[1]` angle at state 1, `data[2]` speed in ms/° (≥ 1), `data[3]` unused |
+| 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), `data[1]` = flashing frequency in 0.1 Hz, `data[2]`/`data[3]` unused (0) |
+| 11 | servo | A (+ relays) | `data[0]` angle at state 0, `data[1]` angle at state 1, `data[2]` speed in ms/° (≥ 1), `data[3]` = 0, or semaphore arm (below) |
 | 12 | PWM | A (PWM) | `data[0]` = brightness 0–255, `data[1]` = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every `data[1] × 1000 / 255` ms (own values, route step, DCC-ext); at start-up it fades up from 0. `OUTPUT_EVENT` reports the target value immediately |
 | 13 | not in use | – | – |
 | 14 | sound effect | A = always **1 (D1, TX)** | – (no tracks of its own). The input chooses the track: own values (§4), a route step (raw) or DCC-ext plays its value as the track number (0 = stop). Without own values: state 1 = track 1, state 0 = stop |
+| 15 | block signal | A (B–D optional) | `data[0]` = aspect when its own block is occupied, `data[1]` = aspect when the next block is occupied, `data[2]` = aspect when both are free (aspect = same format as type 10), `data[3]` = own block input (bits 0–3) + next block input (bits 4–7); next = own: no next block (below) |
 
-**Automatic block signal (type 10, `data[3]` bit7).** The firmware sets the aspect itself from two
-inputs, normally sensors (input type 4), every 50 ms: **red** if the own block input is occupied, otherwise
-**yellow** if bit6 is set and the next block input is occupied, otherwise **green**. "Occupied" = the input
-is in use, has a pin and is pressed (LOW, or the analog condition holds). The aspect is one lamp
-(`1 << lamp`), stored in `data[0]` and reported as `OUTPUT_EVENT` state 2 like any aspect; DCC-ext and
-route steps are overwritten within 50 ms. `data[1]` (flashing frequency) stays.
+**Block signal (type 15).** The firmware chooses the aspect itself from two inputs, normally sensors (input
+type 4), every 50 ms (`blockSignals()` in `GPIOcore.ino`): `data[0]` if the own block input is occupied,
+otherwise `data[1]` if there is a next block and its input is occupied, otherwise `data[2]`. "Occupied" =
+the input is in use, has a pin and is pressed (LOW, or the analog condition holds); one input may serve
+several signals. The current aspect is only kept in RAM (no EEPROM writes) and reported as `OUTPUT_EVENT`
+state 2 when it changes; `GET_OUTPUT_STATE` answers state 2 + the current aspect. Flashing lamps flash at a
+fixed 1 Hz. Commands to it are ignored: inputs (toggle / absolute, own values), route steps and DCC-ext.
 
 | Byte | Bits | Meaning |
 |---|---|---|
-| `data[2]` | 0–3 | input index (0–15) of the own block detector |
-| `data[2]` | 4–7 | input index of the next block detector |
-| `data[3]` | 7 | 1 = automatic block signal on |
-| `data[3]` | 6 | 1 = there is a next block (otherwise only red / green) |
-| `data[3]` | 4–5 | lamp for green (0–3 = A–D) |
-| `data[3]` | 2–3 | lamp for yellow |
-| `data[3]` | 0–1 | lamp for red |
+| `data[3]` | 0–3 | input index (0–15) of the own block detector |
+| `data[3]` | 4–7 | input index of the next block detector; the same as the own block = no next block |
 
-Example: own block = input 3, next block = input 9, green A, yellow B, red C: `data[2]` = `0x93`,
-`data[3]` = `0x80 + 0x40 + 0 << 4 + 1 << 2 + 2` = `0xC6`. The GUI clears `data[2]` and `data[3]` for a manual signal.
+Example: own block = input 3, next block = input 9, occupied = lamp C (`0x04`), next occupied = lamp B
+(`0x02`), free = lamp A (`0x01`): `data` = `04 02 01 93`. Without a next block (own = 5): `data[3]` = `0x55`.
+
+Until 2026-11-16 this was a mode of the 4-aspect signal (type 10, `data[3]` bit7, with lamp numbers in
+`data[2]`/`data[3]`). That mode is removed: type 10 is a manual signal again, and the GUI loads such a signal
+from an old board file as a manual signal (`data[2]` = `data[3]` = 0).
+
+**Servo as semaphore arm (type 11, `data[3]` bit7).** The servo follows input `data[3] & 0x0F`: occupied →
+state 0 (curved = arm at stop), free → state 1 (straight = clear); bit6 swaps them. It moves at its own speed
+through the normal state change (and reports it like any state change); checked every 50 ms.
+
+| `data[3]` bits | Meaning |
+|---|---|
+| 7 | 1 = follows a detector input |
+| 6 | 1 = swapped: occupied = state 1 (straight) |
+| 0–3 | input index (0–15) of the detector |
+
 
 **Sound effect (type 14, HELLO bit4).** A DFPlayer Mini has its RX connected to the TX pin D1 of the Nano
 (through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: `7E FF 06 03 00 00 track csH csL EF`,
@@ -167,7 +179,7 @@ Input types:
 - 3 not in use;
 - 4 **sensor** — an occupancy detector or other sensor (digital pin or analog condition). It switches
   nothing itself and has no output, route or DCC address; it only provides its state (pressed = LOW =
-  occupied) for automatic block signals (§2.1). Until 2026-11-16 type 4 was the recorder: the GUI loads
+  occupied) for block signals and servos used as semaphore arms (§2.1). Until 2026-11-16 type 4 was the recorder: the GUI loads
   a `"recorder"` input from an old file as 3; on a board an old recorder input now reads as a sensor (harmless,
   it switches nothing);
 - 5 — reserved (was the recorder's feedback input, removed 2026-11-16); the firmware reads it as 3.
@@ -235,8 +247,10 @@ the port causes through DTR. For boards without auto-reset it sends it after `RE
 - A heavy load or a low-impedance circuit on **D0 (RX)** can disturb **uploading firmware**.
   Preferably use them for LEDs, or for relays through a transistor.
 - They do not work during a configuration session. A "Test state" on an output on D0/D1 then does nothing.
+- In the **simulator** (the firmware built for the PC, `GPIOCORE_HOST`, `serialPinsFree()` in `config.h`) D0/D1
+  are always normal pins: the GUI does not talk to it over D0/D1.
 
-The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a warning.
+The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a note (not an error).
 Without bit0 they are reserved and red.
 
 ## 4. Routes

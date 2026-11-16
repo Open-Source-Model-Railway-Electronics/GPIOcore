@@ -1,18 +1,37 @@
-<h3>Automatic block signal</h3>
-<p>The board sets this signal by itself from occupancy detectors, without a command station:</p>
+<h3>Block signal</h3>
+<p>A block signal sets itself, without a command station or computer. The board looks at two
+<b>block detectors</b> (inputs) every 50 ms and shows one of three aspects:</p>
 <ul>
-<li><b>red</b> when its <b>own block</b> is occupied,</li>
-<li><b>yellow</b> when its own block is free but the <b>next block</b> is occupied,</li>
-<li><b>green</b> when both are free.</li>
+<li><b>Own block occupied</b> — when the detector of its own block reports a train (usually red),</li>
+<li><b>Next block occupied</b> — when its own block is free but the next block is occupied (usually yellow),</li>
+<li><b>Both free</b> — otherwise (usually green).</li>
 </ul>
-<p>A block is “occupied” while its input is active (pressed = LOW): make that input a <b>Sensor (occupancy)</b>,
-for example a current detector, a reed contact or a light barrier, on a digital pin or as an analog condition.
-The board checks it every 50 ms.</p>
-<p>Choose which lamp (A–D) is red, yellow and green. The signal shows one lamp at a time; the flashing
-frequency is not used. Leave <b>Next block</b> at “none” for a signal with only red and green.</p>
-<p><b>Several signals in a row:</b> signal 1 protects block 1 and looks at block 2, signal 2 protects block 2 and
-looks at block 3, and so on. A train in block 2 then gives signal 2 red and signal 1 yellow.</p>
-<p><b>Block on the next board:</b> the next block’s detector may be on another board. Wire its signal through an
-optocoupler to an input here, for example D0 (RX): D0 is free once no PC has connected within 5 s after
-power-up.</p>
-<p>Switched off, the signal is a normal signal again: the aspect comes from DCC or a route.</p>
+<p>Each aspect is chosen lamp by lamp with <b>▾</b>, like a route step: every lamp can be off, on or flashing.
+Flashing lamps flash at 1 Hz. The lamps are on pins A–D; only pin A is required, so a signal with two or three
+lamps simply leaves the other pins at “not used”.</p>
+<p>A detector is any input that is in use and has a pin: best a <b>Sensor (occupancy)</b> input, for example a
+current detector, a reed contact or a light barrier (pressed = LOW = occupied), or an analog condition. One
+detector may drive several signals.</p>
+<p>The aspect is only computed, never stored. Inputs, routes and DCC commands cannot set a block signal, so it
+cannot be chosen as a target in the input panel and an input cannot be dragged onto it.</p>
+
+<h4>Example 1: Dutch 3-aspect signals in a row</h4>
+<p>Lamps: A green, B yellow, C red. Signal 1 protects block 1 (own block = its detector) and looks at block 2
+(next block), signal 2 protects block 2 and looks at block 3, and so on. Aspects: own block occupied = C on,
+next block occupied = B on, both free = A on (the defaults). A train in block 2 gives signal 2 red, signal 1
+yellow and signal 3 green.</p>
+
+<h4>Example 2: a main signal without a linked next block</h4>
+<p>Red / green only: leave <b>Next block</b> at “none”. Own block occupied = red, both free = green; the
+“next block occupied” aspect is not used.</p>
+
+<h4>Example 3: a distant signal</h4>
+<p>A distant signal stands in front of a main signal and announces what that main signal shows. Make it a block
+signal whose <b>own block</b> is the detector of the block behind the main signal ahead (the block that main signal
+protects), next block “none”: occupied = yellow (the main signal shows red), free = green. The main signal uses
+the same detector as its own block, so one detector drives both.</p>
+
+<h4>A block on the next board</h4>
+<p>The next block’s detector may be on another board. Wire its signal through an optocoupler to an input here, for
+example D0 (RX): on the board D0 only works when no PC is connected (5 s after power-up without the GUI); in the
+simulator it always works.</p>

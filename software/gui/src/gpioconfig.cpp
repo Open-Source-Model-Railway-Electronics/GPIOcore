@@ -43,6 +43,9 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
                                 "values, a route step or a DCC extended value (0 = stop); without custom values on = track 1, "
                                 "off = stop. It only plays when no PC is connected: with the GUI connected, D1 is the USB line "
                                 "and the board only reports the track.") },
+    { "blockSignal",     QT_TRANSLATE_NOOP("Gpio", "Block signal"),      4, false, false, ParamKind::Block,      0,
+      QT_TRANSLATE_NOOP("Gpio", "Automatic signal with lamps A-D (B-D optional). The board chooses the aspect itself from two "
+                                "block detectors: its own block and the next one. Inputs, routes and DCC cannot set it.") },
     { "unknown",         QT_TRANSLATE_NOOP("Gpio", "Unknown type"),      4, true,  false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
 };
@@ -90,10 +93,18 @@ void OutputConfig::setSwitchTime(quint32 v)
         data[i] = quint8(v >> (8 * i));
 }
 
-void OutputConfig::setBlockSignal(int own, int next, int red, int yellow, int green)
+void OutputConfig::setBlockInputs(int own, int next)
 {
-    data[2] = quint8((own & 0x0F) | (next >= 0 ? (next & 0x0F) << 4 : 0));
-    data[3] = quint8(0x80 | (next >= 0 ? 0x40 : 0) | (green & 3) << 4 | (yellow & 3) << 2 | (red & 3));
+    data[3] = quint8((own & 0x0F) | ((next >= 0 ? next : own) & 0x0F) << 4);
+}
+
+QVector<int> OutputConfig::watchedInputs() const
+{
+    if (type == BlockSignal)
+        return blockNext() >= 0 ? QVector<int>{ blockOwn(), blockNext() } : QVector<int>{ blockOwn() };
+    if (servoFollows() >= 0)
+        return { servoFollows() };
+    return {};
 }
 
 void OutputConfig::setSwing(quint16 pulse, quint16 pause)
@@ -177,6 +188,8 @@ OutputConfig OutputConfig::fromJson(const QJsonObject &o)
     const QJsonArray d = o["data"].toArray();
     for (int i = 0; i < 4 && i < d.size(); ++i)
         c.data[i] = quint8(d.at(i).toInt());
+    if (c.type == FourToneSignal && (c.data[3] & 0x80))
+        c.data[2] = c.data[3] = 0;       // the removed automatic mode (now the block signal type): a manual signal
     return c;
 }
 
