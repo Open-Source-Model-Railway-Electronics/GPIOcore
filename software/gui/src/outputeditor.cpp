@@ -49,6 +49,11 @@ static QSpinBox *makeSpin(int min, int max, const QString &suffix = QString())
 
 OutputEditor::OutputEditor(QWidget *parent) : QWidget(parent)
 {
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        m_inputNames << tr("Input %1").arg(i);
+        m_inputTypes << InputNotInUse;
+    }
     buildUi();
     setOutput(0, OutputConfig());
 }
@@ -246,8 +251,43 @@ void OutputEditor::buildUi()
         hint->setWordWrap(true);
         hint->setObjectName(QStringLiteral("help"));
         f->addRow(hint);
+        // automatic block signal: the firmware sets the aspect from two block detectors (inputs)
+        m_block = new QCheckBox(tr("Automatic block signal"));
+        auto *blockRow = new QHBoxLayout;
+        blockRow->addWidget(m_block, 1);
+        blockRow->addWidget(Info::button(QStringLiteral("output.blocksignal")));
+        f->addRow(blockRow);
+        m_blockBox = new QWidget;
+        auto *bf = new QFormLayout(m_blockBox);
+        bf->setContentsMargins(0, 0, 0, 0);
+        m_blockOwn  = new QComboBox;
+        m_blockNext = new QComboBox;
+        for (QComboBox *c : { m_blockOwn, m_blockNext })
+        {
+            c->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+            c->setMinimumContentsLength(14);
+        }
+        bf->addRow(tr("Own block"), m_blockOwn);
+        bf->addRow(tr("Next block"), m_blockNext);
+        const QString lampLabels[3] = { tr("Red lamp"), tr("Yellow lamp"), tr("Green lamp") };
+        for (int k = 0; k < 3; ++k)
+        {
+            m_blockLamp[k] = new QComboBox;
+            for (int l = 0; l < 4; ++l)
+                m_blockLamp[k]->addItem(QString(QChar('A' + l)), l);
+            bf->addRow(lampLabels[k], m_blockLamp[k]);
+        }
+        auto *blockHint = new QLabel(tr("Red when its own block is occupied, yellow when the next block is, green when both are free."));
+        blockHint->setWordWrap(true);
+        blockHint->setObjectName(QStringLiteral("help"));
+        bf->addRow(blockHint);
+        f->addRow(m_blockBox);
+        fillBlockCombos();
         m_params->addWidget(w);
         connect(m_blinkHz, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
+        connect(m_block, &QCheckBox::toggled, this, [this] { if (!m_loading) collect(); });
+        for (QComboBox *c : { m_blockOwn, m_blockNext, m_blockLamp[0], m_blockLamp[1], m_blockLamp[2] })
+            connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] { if (!m_loading) collect(); });
     }
     root->addWidget(m_paramBox);
 
@@ -300,7 +340,8 @@ void OutputEditor::buildUi()
         case SwingLight:     m_cfg.setSwing(50, 50);  break;
         case ServoType:      m_cfg.data = { { 80, 100, 20, 0 } }; break;
         case Pwm:            m_cfg.data = { { 128, 0, 0, 0 } };   break;
-        case FourToneSignal: break;                              // keep the aspect the board has
+        case FourToneSignal: m_cfg.data[2] = m_cfg.data[3] = 0;  // keep the aspect the board has; manual signal
+                             break;
         case SoundEffect:    m_cfg.data = { { 0, 0, 0, 0 } };     // the input chooses the track
                              m_cfg.pinA = SoundPin;   break;
         default:             m_cfg.data = { { 0, 0, 0, 0 } };     break;
@@ -378,6 +419,33 @@ void OutputEditor::setOutput(int index, const OutputConfig &c)
     refresh();
 }
 
+void OutputEditor::setInputs(const QStringList &names, const QVector<quint8> &types)
+{
+    if (names == m_inputNames && types == m_inputTypes)
+        return;
+    m_inputNames = names;
+    m_inputTypes = types;
+    m_loading = true;
+    fillBlockCombos();
+    m_loading = false;
+}
+
+void OutputEditor::fillBlockCombos()
+{
+    const bool block = m_cfg.blockSignal();
+    m_blockOwn->clear();
+    m_blockNext->clear();
+    m_blockNext->addItem(tr("— none"), -1);
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        const QIcon icon = Ui::swatchIcon(Ui::inputTypeColor(m_inputTypes.value(i, InputNotInUse)));
+        m_blockOwn->addItem(icon, m_inputNames.value(i), i);
+        m_blockNext->addItem(icon, m_inputNames.value(i), i);
+    }
+    Ui::selectData(m_blockOwn,  block ? m_cfg.blockOwn() : 0);
+    Ui::selectData(m_blockNext, block ? m_cfg.blockNext() : -1);
+}
+
 void OutputEditor::setWarnings(const QStringList &warnings)
 {
     m_warn->setText(warnings.join(QStringLiteral("\n")));
@@ -424,6 +492,17 @@ void OutputEditor::refresh()
     m_pwm->setValue(m_cfg.pwmValue());
     m_fade->setValue(m_cfg.data[1]);
     m_blinkHz->setValue(m_cfg.data[1] ? m_cfg.data[1] / 10.0 : 1.0);
+    m_block->setChecked(m_cfg.blockSignal());
+    if (m_cfg.blockSignal())
+    {
+        Ui::selectData(m_blockOwn,  m_cfg.blockOwn());
+        Ui::selectData(m_blockNext, m_cfg.blockNext());
+        for (int k = 0; k < 3; ++k)
+            Ui::selectData(m_blockLamp[k], m_cfg.blockLamp(k));
+    }
+    for (int k = 0; k < 3; ++k)                // the lamp colours chosen for this signal
+        for (int l = 0; l < 4; ++l)
+            m_blockLamp[k]->setItemIcon(l, Ui::swatchIcon(Ui::lampColor(m_cfg, l)));
     m_state->setCurrentIndex(m_cfg.state ? 1 : 0);
 
     const bool liveOk = m_connected && m_liveAvailable;
@@ -466,6 +545,7 @@ void OutputEditor::updateVisibility()
     const Page page = pageFor(info.params);
     m_params->setCurrentIndex(page);
     m_paramBox->setVisible(page != PageNone);
+    m_blockBox->setVisible(m_cfg.blockSignal());
 }
 
 void OutputEditor::updateTimeLabels()
@@ -518,6 +598,23 @@ void OutputEditor::collect()
         break;
     case ParamKind::FourTone:
         m_cfg.data[1] = quint8(qRound(m_blinkHz->value() * 10));   // data[0] (aspect) stays as it is
+        if (!m_block->isChecked())
+            m_cfg.data[2] = m_cfg.data[3] = 0;                      // manual signal
+        else if (!m_cfg.blockSignal())
+        {
+            // just switched on: own block = the first sensor input, no next block, green A, yellow B, red C
+            const int sensor = m_inputTypes.indexOf(quint8(Sensor));
+            m_cfg.setBlockSignal(qMax(0, sensor), -1, 2, 1, 0);
+            m_loading = true;
+            Ui::selectData(m_blockOwn,  m_cfg.blockOwn());
+            Ui::selectData(m_blockNext, -1);
+            for (int k = 0; k < 3; ++k)
+                Ui::selectData(m_blockLamp[k], m_cfg.blockLamp(k));
+            m_loading = false;
+        }
+        else
+            m_cfg.setBlockSignal(Ui::currentData(m_blockOwn), Ui::currentData(m_blockNext), Ui::currentData(m_blockLamp[0]),
+                                 Ui::currentData(m_blockLamp[1]), Ui::currentData(m_blockLamp[2]));
         break;
     default:
         break;

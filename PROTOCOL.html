@@ -86,12 +86,23 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>7</td><td>fireplace</td><td>A, B (PWM)</td><td>–</td></tr>
 <tr><td>8</td><td>TL tube</td><td>A (PWM)</td><td>–</td></tr>
 <tr><td>9</td><td>welder</td><td>A</td><td>–</td></tr>
-<tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is)</td></tr>
+<tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), <code>data[1]</code> = flashing frequency in 0.1 Hz, <code>data[2]</code>/<code>data[3]</code> = automatic block signal (below; <code>data[3]</code> = 0: a normal signal)</td></tr>
 <tr><td>11</td><td>servo</td><td>A (+ relays)</td><td><code>data[0]</code> angle at state 0, <code>data[1]</code> angle at state 1, <code>data[2]</code> speed in ms/° (≥ 1), <code>data[3]</code> unused</td></tr>
 <tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = brightness 0–255, <code>data[1]</code> = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every <code>data[1] × 1000 / 255</code> ms (own values, route step, DCC-ext); at start-up it fades up from 0. <code>OUTPUT_EVENT</code> reports the target value immediately</td></tr>
 <tr><td>13</td><td>not in use</td><td>–</td><td>–</td></tr>
 <tr><td>14</td><td>sound effect</td><td>A = always <b>1 (D1, TX)</b></td><td>– (no tracks of its own). The input chooses the track: own values (§4), a route step (raw) or DCC-ext plays its value as the track number (0 = stop). Without own values: state 1 = track 1, state 0 = stop</td></tr>
 </tbody></table>
+<p>**Automatic block signal (type 10, <code>data[3]</code> bit7).<b> The firmware sets the aspect itself from two inputs, normally sensors (input type 4), every 50 ms: </b>red<b> if the own block input is occupied, otherwise </b>yellow<b> if bit6 is set and the next block input is occupied, otherwise </b>green**. "Occupied" = the input is in use, has a pin and is pressed (LOW, or the analog condition holds). The aspect is one lamp (<code>1 &lt;&lt; lamp</code>), stored in <code>data[0]</code> and reported as <code>OUTPUT_EVENT</code> state 2 like any aspect; DCC-ext and route steps are overwritten within 50 ms. <code>data[1]</code> (flashing frequency) stays.</p>
+<table><thead><tr><th>Byte</th><th>Bits</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>data[2]</code></td><td>0–3</td><td>input index (0–15) of the own block detector</td></tr>
+<tr><td><code>data[2]</code></td><td>4–7</td><td>input index of the next block detector</td></tr>
+<tr><td><code>data[3]</code></td><td>7</td><td>1 = automatic block signal on</td></tr>
+<tr><td><code>data[3]</code></td><td>6</td><td>1 = there is a next block (otherwise only red / green)</td></tr>
+<tr><td><code>data[3]</code></td><td>4–5</td><td>lamp for green (0–3 = A–D)</td></tr>
+<tr><td><code>data[3]</code></td><td>2–3</td><td>lamp for yellow</td></tr>
+<tr><td><code>data[3]</code></td><td>0–1</td><td>lamp for red</td></tr>
+</tbody></table>
+<p>Example: own block = input 3, next block = input 9, green A, yellow B, red C: <code>data[2]</code> = <code>0x93</code>, <code>data[3]</code> = <code>0x80 + 0x40 + 0 &lt;&lt; 4 + 1 &lt;&lt; 2 + 2</code> = <code>0xC6</code>. The GUI clears <code>data[2]</code> and <code>data[3]</code> for a manual signal.</p>
 <p><b>Sound effect (type 14, HELLO bit4).</b> A DFPlayer Mini has its RX connected to the TX pin D1 of the Nano (through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: <code>7E FF 06 03 00 00 track csH csL EF</code>, <code>16</code> instead of <code>03</code> = stop) only if <b>no PC</b> is connected: in a configuration session D1 is the USB line. Every time a track is started (or stopped), the output reports <code>OUTPUT_EVENT</code> with <b>state 2, value = track</b>, even if it could not play anything. Several sound outputs may share D1 (the GUI does not count that as a conflict); D1 together with another input or output is a conflict.</p>
 <p>PWM pins are D3, D5, D6, D9, D10 and D11. D9/D10 do no PWM as long as a servo output exists (Servo library, timer 1).</p>
 <h3>2.2 Input fields (<code>InputSettings</code> in <code>input.h</code>, 12 bytes in EEPROM)</h3>
@@ -122,7 +133,13 @@ checksum : XOR of command and all payload bytes</code></pre>
 </li><li>
 3 not in use;
 </li><li>
-4, 5 — reserved (were the recorder and its feedback input, removed 2026-11-16); the firmware reads them as 3.
+4 <b>sensor</b> — an occupancy detector or other sensor (digital pin or analog condition). It switches
+ nothing itself and has no output, route or DCC address; it only provides its state (pressed = LOW =
+ occupied) for automatic block signals (§2.1). Until 2026-11-16 type 4 was the recorder: the GUI loads
+ a <code>&quot;recorder&quot;</code> input from an old file as 3; on a board an old recorder input now reads as a sensor (harmless,
+ it switches nothing);
+</li><li>
+5 — reserved (was the recorder's feedback input, removed 2026-11-16); the firmware reads it as 3.
 </li><li>
 6 route <b>straight only</b> — starts when the button is pressed, or only on a DCC command
  'straight' (direction 1) for the address;

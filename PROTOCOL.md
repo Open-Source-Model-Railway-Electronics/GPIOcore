@@ -90,11 +90,31 @@ Frog relays: `relayA` + `relayB` = **electrofrog** (A at straight, B at curved, 
 | 7 | fireplace | A, B (PWM) | – |
 | 8 | TL tube | A (PWM) | – |
 | 9 | welder | A | – |
-| 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is) |
+| 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), `data[1]` = flashing frequency in 0.1 Hz, `data[2]`/`data[3]` = automatic block signal (below; `data[3]` = 0: a normal signal) |
 | 11 | servo | A (+ relays) | `data[0]` angle at state 0, `data[1]` angle at state 1, `data[2]` speed in ms/° (≥ 1), `data[3]` unused |
 | 12 | PWM | A (PWM) | `data[0]` = brightness 0–255, `data[1]` = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every `data[1] × 1000 / 255` ms (own values, route step, DCC-ext); at start-up it fades up from 0. `OUTPUT_EVENT` reports the target value immediately |
 | 13 | not in use | – | – |
 | 14 | sound effect | A = always **1 (D1, TX)** | – (no tracks of its own). The input chooses the track: own values (§4), a route step (raw) or DCC-ext plays its value as the track number (0 = stop). Without own values: state 1 = track 1, state 0 = stop |
+
+**Automatic block signal (type 10, `data[3]` bit7).** The firmware sets the aspect itself from two
+inputs, normally sensors (input type 4), every 50 ms: **red** if the own block input is occupied, otherwise
+**yellow** if bit6 is set and the next block input is occupied, otherwise **green**. "Occupied" = the input
+is in use, has a pin and is pressed (LOW, or the analog condition holds). The aspect is one lamp
+(`1 << lamp`), stored in `data[0]` and reported as `OUTPUT_EVENT` state 2 like any aspect; DCC-ext and
+route steps are overwritten within 50 ms. `data[1]` (flashing frequency) stays.
+
+| Byte | Bits | Meaning |
+|---|---|---|
+| `data[2]` | 0–3 | input index (0–15) of the own block detector |
+| `data[2]` | 4–7 | input index of the next block detector |
+| `data[3]` | 7 | 1 = automatic block signal on |
+| `data[3]` | 6 | 1 = there is a next block (otherwise only red / green) |
+| `data[3]` | 4–5 | lamp for green (0–3 = A–D) |
+| `data[3]` | 2–3 | lamp for yellow |
+| `data[3]` | 0–1 | lamp for red |
+
+Example: own block = input 3, next block = input 9, green A, yellow B, red C: `data[2]` = `0x93`,
+`data[3]` = `0x80 + 0x40 + 0 << 4 + 1 << 2 + 2` = `0xC6`. The GUI clears `data[2]` and `data[3]` for a manual signal.
 
 **Sound effect (type 14, HELLO bit4).** A DFPlayer Mini has its RX connected to the TX pin D1 of the Nano
 (through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: `7E FF 06 03 00 00 track csH csL EF`,
@@ -145,7 +165,12 @@ Input types:
 - 2 route — starts when the button is pressed (falling edge) or on **every** DCC command for the address,
   direction 0 and 1;
 - 3 not in use;
-- 4, 5 — reserved (were the recorder and its feedback input, removed 2026-11-16); the firmware reads them as 3.
+- 4 **sensor** — an occupancy detector or other sensor (digital pin or analog condition). It switches
+  nothing itself and has no output, route or DCC address; it only provides its state (pressed = LOW =
+  occupied) for automatic block signals (§2.1). Until 2026-11-16 type 4 was the recorder: the GUI loads
+  a `"recorder"` input from an old file as 3; on a board an old recorder input now reads as a sensor (harmless,
+  it switches nothing);
+- 5 — reserved (was the recorder's feedback input, removed 2026-11-16); the firmware reads it as 3.
 
 - 6 route **straight only** — starts when the button is pressed, or only on a DCC command
   'straight' (direction 1) for the address;

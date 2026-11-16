@@ -4,118 +4,133 @@
 <context>
     <name>ConnectionView</name>
     <message>
-        <location filename="../src/connectionview.cpp" line="209"/>
-        <location filename="../src/connectionview.cpp" line="214"/>
+        <location filename="../src/connectionview.cpp" line="220"/>
+        <location filename="../src/connectionview.cpp" line="238"/>
         <source>value ▾</source>
         <translation>värde ▾</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="214"/>
+        <location filename="../src/connectionview.cpp" line="233"/>
+        <source>■ occupied</source>
+        <translation>■ belagd</translation>
+    </message>
+    <message>
+        <location filename="../src/connectionview.cpp" line="233"/>
+        <source>□ free</source>
+        <translation>□ fri</translation>
+    </message>
+    <message>
+        <location filename="../src/connectionview.cpp" line="238"/>
         <source>aspect ▾</source>
         <translation>signalbild ▾</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="225"/>
+        <location filename="../src/connectionview.cpp" line="249"/>
         <source>▶ start</source>
         <translation>▶ start</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="225"/>
+        <location filename="../src/connectionview.cpp" line="249"/>
         <source>▶ press</source>
         <translation>▶ tryck</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="606"/>
+        <location filename="../src/connectionview.cpp" line="580"/>
+        <source>Sensor</source>
+        <translation>Sensor</translation>
+    </message>
+    <message>
+        <location filename="../src/connectionview.cpp" line="632"/>
         <source>In %1</source>
         <translation>In %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="631"/>
+        <location filename="../src/connectionview.cpp" line="657"/>
         <source>now %1</source>
         <translation>nu %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="666"/>
+        <location filename="../src/connectionview.cpp" line="692"/>
         <source>Out %1</source>
         <translation>Ut %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="729"/>
+        <location filename="../src/connectionview.cpp" line="755"/>
         <source>Inputs</source>
         <translation>Ingångar</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="730"/>
+        <location filename="../src/connectionview.cpp" line="756"/>
         <source>Outputs</source>
         <translation>Utgångar</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="742"/>
+        <location filename="../src/connectionview.cpp" line="768"/>
         <source>● SIMULATION — click the input buttons</source>
         <translation>● SIMULERING — klicka på ingångarnas knappar</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="742"/>
+        <location filename="../src/connectionview.cpp" line="768"/>
         <source>SIMULATION</source>
         <translation>SIMULERING</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="747"/>
+        <location filename="../src/connectionview.cpp" line="773"/>
         <source>● LIVE TEST</source>
         <translation>● LIVETEST</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="752"/>
+        <location filename="../src/connectionview.cpp" line="778"/>
         <source>CONFIGURING THE BOARD</source>
         <translation>KORTET KONFIGURERAS</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="773"/>
+        <location filename="../src/connectionview.cpp" line="799"/>
         <source>drag an output onto an input</source>
         <translation>dra en utgång till en ingång</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="987"/>
+        <location filename="../src/connectionview.cpp" line="1033"/>
         <source>Remove connection In %1 → Out %2</source>
         <translation>Ta bort anslutning In %1 → Ut %2</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="992"/>
+        <location filename="../src/connectionview.cpp" line="1038"/>
         <source>Set curved (0)</source>
         <translation>Lägg om till avvikande (0)</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="992"/>
+        <location filename="../src/connectionview.cpp" line="1038"/>
         <source>Set straight (1)</source>
         <translation>Lägg om till rakt (1)</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="995"/>
+        <location filename="../src/connectionview.cpp" line="1041"/>
         <source>Edit value in the input panel</source>
         <translation>Ändra värdet i ingångspanelen</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="997"/>
+        <location filename="../src/connectionview.cpp" line="1043"/>
         <source>Move earlier in the route</source>
         <translation>Tidigare i tågvägen</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1000"/>
+        <location filename="../src/connectionview.cpp" line="1046"/>
         <source>Move later in the route</source>
         <translation>Senare i tågvägen</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1007"/>
+        <location filename="../src/connectionview.cpp" line="1053"/>
         <source>Remove all connections of In %1</source>
         <translation>Ta bort alla anslutningar från In %1</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1030"/>
+        <location filename="../src/connectionview.cpp" line="1076"/>
         <source>In %1 → Out %2 (%3)</source>
         <translation>In %1 → Ut %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="1032"/>
+        <location filename="../src/connectionview.cpp" line="1078"/>
         <source>
 step %1: %2, then wait %3</source>
         <translation>
@@ -667,7 +682,6 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
         <location filename="../src/gpioconfig.cpp" line="61"/>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
         <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Not in use</source>
         <translation>Används inte</translation>
@@ -732,10 +746,19 @@ steg %1: %2, vänta sedan %3</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="61"/>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
         <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Input disabled.</source>
         <translation>Ingång avaktiverad.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <source>Sensor (occupancy)</source>
+        <translation>Sensor (beläggning)</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <source>An occupancy detector or other sensor. It switches nothing itself; automatic block signals read it.</source>
+        <translation>En beläggningsdetektor eller annan sensor. Den kopplar inget själv; automatiska blocksignaler läser den.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="65"/>
@@ -753,72 +776,72 @@ steg %1: %2, vänta sedan %3</translation>
         <translation>Okänd</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1463"/>
+        <location filename="../src/mainwindow.cpp" line="1491"/>
         <source>Pin A</source>
         <translation>Pinne A</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1463"/>
+        <location filename="../src/mainwindow.cpp" line="1491"/>
         <source>Pin B</source>
         <translation>Pinne B</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1464"/>
+        <location filename="../src/mainwindow.cpp" line="1492"/>
         <source>Pin C</source>
         <translation>Pinne C</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1464"/>
+        <location filename="../src/mainwindow.cpp" line="1492"/>
         <source>Pin D</source>
         <translation>Pinne D</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1465"/>
+        <location filename="../src/mainwindow.cpp" line="1493"/>
         <source>Electrofrog A</source>
         <translation>Electrofrog A</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1465"/>
+        <location filename="../src/mainwindow.cpp" line="1493"/>
         <source>Electrofrog B</source>
         <translation>Electrofrog B</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1466"/>
+        <location filename="../src/mainwindow.cpp" line="1494"/>
         <source>Unifrog</source>
         <translation>Unifrog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="442"/>
+        <location filename="../src/uihelpers.cpp" line="443"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="442"/>
+        <location filename="../src/uihelpers.cpp" line="443"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="442"/>
+        <location filename="../src/uihelpers.cpp" line="443"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="443"/>
+        <location filename="../src/uihelpers.cpp" line="444"/>
         <source>D</source>
         <translation>D</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="443"/>
+        <location filename="../src/uihelpers.cpp" line="444"/>
         <source>relay A</source>
         <translation>relä A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="444"/>
+        <location filename="../src/uihelpers.cpp" line="445"/>
         <source>relay B</source>
         <translation>relä B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="444"/>
+        <location filename="../src/uihelpers.cpp" line="445"/>
         <source>relay C</source>
         <translation>relä C</translation>
     </message>
@@ -839,330 +862,330 @@ steg %1: %2, vänta sedan %3</translation>
 <context>
     <name>InputEditor</name>
     <message>
-        <location filename="../src/inputeditor.cpp" line="48"/>
+        <location filename="../src/inputeditor.cpp" line="49"/>
         <source>Output %1</source>
         <translation>Utgång %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="61"/>
-        <location filename="../src/inputeditor.cpp" line="445"/>
+        <location filename="../src/inputeditor.cpp" line="62"/>
+        <location filename="../src/inputeditor.cpp" line="447"/>
         <source>Out %1 · %2</source>
         <translation>Ut %1 · %2</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="77"/>
+        <location filename="../src/inputeditor.cpp" line="78"/>
         <source>Direct control</source>
         <translation>Direkt styrning</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="78"/>
+        <location filename="../src/inputeditor.cpp" line="79"/>
         <source>Route</source>
         <translation>Tågväg</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="79"/>
+        <location filename="../src/inputeditor.cpp" line="81"/>
         <source>Not in use</source>
         <translation>Används inte</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="100"/>
+        <location filename="../src/inputeditor.cpp" line="102"/>
         <source>Behaviour</source>
         <translation>Beteende</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="114"/>
+        <location filename="../src/inputeditor.cpp" line="116"/>
         <source>Triggered by</source>
         <translation>Utlöses av</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="116"/>
+        <location filename="../src/inputeditor.cpp" line="118"/>
         <source>DCC accessory address</source>
         <translation>DCC-tillbehörsadress</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="126"/>
+        <location filename="../src/inputeditor.cpp" line="128"/>
         <source>DCC</source>
         <translation>DCC</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="157"/>
+        <location filename="../src/inputeditor.cpp" line="159"/>
         <source>Input pin</source>
         <translation>Ingångspinne</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="188"/>
+        <location filename="../src/inputeditor.cpp" line="190"/>
         <source>Controls</source>
         <translation>Styr</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="193"/>
-        <location filename="../src/inputeditor.cpp" line="428"/>
+        <location filename="../src/inputeditor.cpp" line="195"/>
+        <location filename="../src/inputeditor.cpp" line="430"/>
         <source>Output</source>
         <translation>Utgång</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="233"/>
+        <location filename="../src/inputeditor.cpp" line="235"/>
         <source>Route steps</source>
         <translation>Tågvägens steg</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="129"/>
+        <location filename="../src/inputeditor.cpp" line="131"/>
         <source>any command (straight and curved)</source>
         <translation>alla kommandon (rakt och avvikande)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="82"/>
+        <location filename="../src/inputeditor.cpp" line="84"/>
         <source>Function</source>
         <translation>Funktion</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="130"/>
+        <location filename="../src/inputeditor.cpp" line="132"/>
         <source>straight only</source>
         <translation>bara rakt</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="131"/>
+        <location filename="../src/inputeditor.cpp" line="133"/>
         <source>curved only</source>
         <translation>bara avvikande</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="132"/>
+        <location filename="../src/inputeditor.cpp" line="134"/>
         <source>With &apos;straight only&apos; and &apos;curved only&apos; two routes can share one DCC address, e.g. a level crossing: curved = close, straight = open. A button always starts the route.</source>
         <translation>Med &apos;bara rakt&apos; och &apos;bara avvikande&apos; kan två tågvägar dela en DCC-adress, t.ex. en plankorsning: avvikande = stäng, rakt = öppna. En knapp startar alltid tågvägen.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="138"/>
+        <location filename="../src/inputeditor.cpp" line="140"/>
         <source>Route starts on</source>
         <translation>Tågväg startar vid</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="142"/>
+        <location filename="../src/inputeditor.cpp" line="144"/>
         <source>Digital — button to GND</source>
         <translation>Digital — knapp till GND</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="143"/>
+        <location filename="../src/inputeditor.cpp" line="145"/>
         <source>Analog — below a value</source>
         <translation>Analog — under ett värde</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="144"/>
+        <location filename="../src/inputeditor.cpp" line="146"/>
         <source>Analog — above a value</source>
         <translation>Analog — över ett värde</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="145"/>
+        <location filename="../src/inputeditor.cpp" line="147"/>
         <source>Analog — at a value (resistor ladder)</source>
         <translation>Analog — vid ett värde (motståndsstege)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="146"/>
+        <location filename="../src/inputeditor.cpp" line="148"/>
         <source>Read as</source>
         <translation>Läs som</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="162"/>
+        <location filename="../src/inputeditor.cpp" line="164"/>
         <source>Analog pin</source>
         <translation>Analog pinne</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="168"/>
+        <location filename="../src/inputeditor.cpp" line="170"/>
         <source>0 = 0 V, 1023 = 5 V. Stored in steps of 8.</source>
         <translation>0 = 0 V, 1023 = 5 V. Sparas i steg om 8.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="176"/>
+        <location filename="../src/inputeditor.cpp" line="178"/>
         <source>Threshold</source>
         <translation>Tröskel</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="178"/>
+        <location filename="../src/inputeditor.cpp" line="180"/>
         <source>Use this value</source>
         <translation>Använd detta värde</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="179"/>
+        <location filename="../src/inputeditor.cpp" line="181"/>
         <source>Take the reading as the threshold (rounded to a step of 8)</source>
         <translation>Använd mätningen som tröskel (avrundad till ett steg om 8)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="184"/>
+        <location filename="../src/inputeditor.cpp" line="186"/>
         <source>Live reading</source>
         <translation>Livemätning</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="195"/>
+        <location filename="../src/inputeditor.cpp" line="197"/>
         <source>Custom values</source>
         <translation>Egna värden</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="196"/>
+        <location filename="../src/inputeditor.cpp" line="198"/>
         <source>Off / curved and on / straight each send their own value, like a route step</source>
         <translation>Av / avvikande och på / rakt skickar vart sitt eget värde, som ett tågvägssteg</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="204"/>
+        <location filename="../src/inputeditor.cpp" line="206"/>
         <source>Off / curved</source>
         <translation>Av / avvikande</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="204"/>
+        <location filename="../src/inputeditor.cpp" line="206"/>
         <source>On / straight</source>
         <translation>På / rakt</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="245"/>
+        <location filename="../src/inputeditor.cpp" line="247"/>
         <source>+ Add step</source>
         <translation>+ Lägg till steg</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="246"/>
+        <location filename="../src/inputeditor.cpp" line="248"/>
         <source>Or drag an output onto this input in the canvas</source>
         <translation>Eller dra en utgång till denna ingång på arbetsytan</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="349"/>
+        <location filename="../src/inputeditor.cpp" line="351"/>
         <source>Pressed below %1, released again from %2.</source>
         <translation>Nedtryckt under %1, släppt igen från %2.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="352"/>
+        <location filename="../src/inputeditor.cpp" line="354"/>
         <source>Pressed above %1, released again at %2 or lower.</source>
         <translation>Nedtryckt över %1, släppt igen vid %2 eller lägre.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="355"/>
+        <location filename="../src/inputeditor.cpp" line="357"/>
         <source>Pressed from %1 to %2.</source>
         <translation>Nedtryckt från %1 till %2.</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="360"/>
+        <location filename="../src/inputeditor.cpp" line="362"/>
         <source>Now: —</source>
         <translation>Nu: —</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="361"/>
+        <location filename="../src/inputeditor.cpp" line="363"/>
         <source>Needs a board with analog input support (connected or simulated).</source>
         <translation>Kräver ett kort med analoga ingångar (anslutet eller simulerat).</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="365"/>
+        <location filename="../src/inputeditor.cpp" line="367"/>
         <source>Now: %1</source>
         <translation>Nu: %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="365"/>
+        <location filename="../src/inputeditor.cpp" line="367"/>
         <source>Now: …</source>
         <translation>Nu: …</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="428"/>
+        <location filename="../src/inputeditor.cpp" line="430"/>
         <source>#</source>
         <translation>#</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="428"/>
+        <location filename="../src/inputeditor.cpp" line="430"/>
         <source>Value</source>
         <translation>Värde</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="428"/>
+        <location filename="../src/inputeditor.cpp" line="430"/>
         <source>Wait after</source>
         <translation>Vänta efter</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="442"/>
+        <location filename="../src/inputeditor.cpp" line="444"/>
         <source>— choose an output —</source>
         <translation>— välj en utgång —</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="446"/>
+        <location filename="../src/inputeditor.cpp" line="448"/>
         <source>or drag an output onto this input</source>
         <translation>eller dra en utgång till denna ingång</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="479"/>
+        <location filename="../src/inputeditor.cpp" line="481"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="482"/>
+        <location filename="../src/inputeditor.cpp" line="484"/>
         <source>Earlier</source>
         <translation>Tidigare</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="483"/>
+        <location filename="../src/inputeditor.cpp" line="485"/>
         <source>Later</source>
         <translation>Senare</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="487"/>
+        <location filename="../src/inputeditor.cpp" line="489"/>
         <source>Delete step %1</source>
         <translation>Ta bort steg %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="214"/>
-        <location filename="../src/inputeditor.cpp" line="497"/>
+        <location filename="../src/inputeditor.cpp" line="216"/>
+        <location filename="../src/inputeditor.cpp" line="499"/>
         <source>Choose the aspect lamp by lamp</source>
         <translation>Välj signalbilden lampa för lampa</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="572"/>
+        <location filename="../src/inputeditor.cpp" line="574"/>
         <source>Curved (0)</source>
         <translation>Avvikande (0)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="573"/>
+        <location filename="../src/inputeditor.cpp" line="575"/>
         <source>Straight (1)</source>
         <translation>Rakt (1)</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="575"/>
+        <location filename="../src/inputeditor.cpp" line="577"/>
         <source>Angle</source>
         <translation>Vinkel</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="593"/>
+        <location filename="../src/inputeditor.cpp" line="595"/>
         <source>aspect </source>
         <translation>signalbild </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="601"/>
+        <location filename="../src/inputeditor.cpp" line="603"/>
         <source>PWM </source>
         <translation>PWM </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="608"/>
+        <location filename="../src/inputeditor.cpp" line="610"/>
         <source>track </source>
         <translation>spår </translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="610"/>
+        <location filename="../src/inputeditor.cpp" line="612"/>
         <source>stop</source>
         <translation>stopp</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="611"/>
+        <location filename="../src/inputeditor.cpp" line="613"/>
         <source>MP3 track 1-255 (0001.mp3 …), 0 = stop</source>
         <translation>MP3-spår 1-255 (0001.mp3 …), 0 = stopp</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="559"/>
+        <location filename="../src/inputeditor.cpp" line="561"/>
         <source>%1 / %2 steps  ·  board total %3 / %4</source>
         <translation>%1 / %2 steg  ·  kortet totalt %3 / %4</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="655"/>
+        <location filename="../src/inputeditor.cpp" line="657"/>
         <source>Input %1</source>
         <translation>Ingång %1</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="664"/>
+        <location filename="../src/inputeditor.cpp" line="666"/>
         <source>Toggle — every press switches the output over</source>
         <translation>Växla — varje tryck växlar utgången</translation>
     </message>
     <message>
-        <location filename="../src/inputeditor.cpp" line="665"/>
+        <location filename="../src/inputeditor.cpp" line="667"/>
         <source>Absolute — the output follows the input</source>
         <translation>Absolut — utgången följer ingången</translation>
     </message>
@@ -1171,10 +1194,10 @@ steg %1: %2, vänta sedan %3</translation>
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.cpp" line="79"/>
-        <location filename="../src/mainwindow.cpp" line="1308"/>
-        <location filename="../src/mainwindow.cpp" line="2043"/>
-        <location filename="../src/mainwindow.cpp" line="2096"/>
-        <location filename="../src/mainwindow.cpp" line="2199"/>
+        <location filename="../src/mainwindow.cpp" line="1318"/>
+        <location filename="../src/mainwindow.cpp" line="2075"/>
+        <location filename="../src/mainwindow.cpp" line="2128"/>
+        <location filename="../src/mainwindow.cpp" line="2231"/>
         <source>GPIOcore Configurator</source>
         <translation>GPIOcore Configurator</translation>
     </message>
@@ -1254,181 +1277,181 @@ steg %1: %2, vänta sedan %3</translation>
         <translation>Seriell logg</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="385"/>
+        <location filename="../src/mainwindow.cpp" line="390"/>
         <source>Input %1 → output %2</source>
         <translation>Ingång %1 → utgång %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="388"/>
+        <location filename="../src/mainwindow.cpp" line="393"/>
         <source>Input %1 already drives output %2</source>
         <translation>Ingång %1 styr redan utgång %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="391"/>
+        <location filename="../src/mainwindow.cpp" line="396"/>
         <source>The route of input %1 already has %2 steps (maximum)</source>
         <translation>Tågvägen för ingång %1 har redan %2 steg (max)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="395"/>
+        <location filename="../src/mainwindow.cpp" line="400"/>
         <source>The board has no room for more route steps (%1 in total)</source>
         <translation>Kortet har inte plats för fler tågvägssteg (%1 totalt)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="572"/>
+        <location filename="../src/mainwindow.cpp" line="577"/>
         <source>protocol v%1 · %2 steps/route · %3 in total</source>
         <translation>protokoll v%1 · %2 steg/tågväg · %3 totalt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="602"/>
+        <location filename="../src/mainwindow.cpp" line="607"/>
         <source>Main</source>
         <translation>Huvud</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="609"/>
+        <location filename="../src/mainwindow.cpp" line="614"/>
         <source>Open</source>
         <translation>Öppna</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="610"/>
+        <location filename="../src/mainwindow.cpp" line="615"/>
         <source>Save</source>
         <translation>Spara</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="611"/>
+        <location filename="../src/mainwindow.cpp" line="616"/>
         <source>Open a board file (Ctrl+O)</source>
         <translation>Öppna en kortfil (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="612"/>
-        <location filename="../src/mainwindow.cpp" line="706"/>
+        <location filename="../src/mainwindow.cpp" line="617"/>
+        <location filename="../src/mainwindow.cpp" line="711"/>
         <source>Save to this board&apos;s file (Ctrl+S)</source>
         <translation>Spara i filen för det här kortet (Ctrl+S)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="620"/>
+        <location filename="../src/mainwindow.cpp" line="625"/>
         <source>  Port </source>
         <translation>  Port </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="623"/>
+        <location filename="../src/mainwindow.cpp" line="628"/>
         <source>Refresh port list</source>
         <translation>Uppdatera portlistan</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="624"/>
-        <location filename="../src/mainwindow.cpp" line="975"/>
-        <location filename="../src/mainwindow.cpp" line="990"/>
+        <location filename="../src/mainwindow.cpp" line="629"/>
+        <location filename="../src/mainwindow.cpp" line="985"/>
+        <location filename="../src/mainwindow.cpp" line="1000"/>
         <source>Connect</source>
         <translation>Anslut</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="638"/>
+        <location filename="../src/mainwindow.cpp" line="643"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="641"/>
+        <location filename="../src/mainwindow.cpp" line="646"/>
         <source>Try your configuration without a board: press the buttons on the inputs and watch the outputs. Nothing can be changed here.</source>
         <translation>Prova din konfiguration utan kort: tryck på knapparna vid ingångarna och titta på utgångarna. Här kan inget ändras.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="644"/>
+        <location filename="../src/mainwindow.cpp" line="649"/>
         <source>Press the buttons on the inputs and watch what the real board does. Connects by itself. Blue = straight / on, red = curved / off; servos show their angle.</source>
         <translation>Tryck på knapparna vid ingångarna och se vad det riktiga kortet gör. Ansluter av sig själv. Blå = rakt / på, röd = avvikande / av; servon visar sin vinkel.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="664"/>
+        <location filename="../src/mainwindow.cpp" line="669"/>
         <source>Read board</source>
         <translation>Läs kortet</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="668"/>
-        <location filename="../src/mainwindow.cpp" line="1353"/>
+        <location filename="../src/mainwindow.cpp" line="673"/>
+        <location filename="../src/mainwindow.cpp" line="1363"/>
         <source>Write changes</source>
         <translation>Skriv ändringar</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="670"/>
+        <location filename="../src/mainwindow.cpp" line="675"/>
         <source>Revert</source>
         <translation>Ångra ändringar</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="676"/>
+        <location filename="../src/mainwindow.cpp" line="681"/>
         <source> Preset </source>
         <translation> Preset </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="678"/>
+        <location filename="../src/mainwindow.cpp" line="683"/>
         <source>Apply</source>
         <translation>Tillämpa</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="685"/>
+        <location filename="../src/mainwindow.cpp" line="690"/>
         <source>Which board this is: decides which pins exist</source>
         <translation>Vilket kort det är: avgör vilka pinnar som finns</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="692"/>
+        <location filename="../src/mainwindow.cpp" line="697"/>
         <source> Board </source>
         <translation> Kort </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="658"/>
+        <location filename="../src/mainwindow.cpp" line="663"/>
         <source>Board</source>
         <translation>Kort</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="695"/>
+        <location filename="../src/mainwindow.cpp" line="700"/>
         <source>Board settings…</source>
         <translation>Kortinställningar…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="703"/>
+        <location filename="../src/mainwindow.cpp" line="708"/>
         <source>&amp;Save</source>
         <translation>&amp;Spara</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="707"/>
+        <location filename="../src/mainwindow.cpp" line="712"/>
         <source>Save &amp;as…</source>
         <translation>Spara so&amp;m…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="727"/>
+        <location filename="../src/mainwindow.cpp" line="732"/>
         <source>&amp;Phone remote…</source>
         <translation>&amp;Mobilfjärrkontroll…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="963"/>
+        <location filename="../src/mainwindow.cpp" line="973"/>
         <source>● Simulation</source>
-        <translation type="unfinished"></translation>
+        <translation>● Simulering</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="965"/>
+        <location filename="../src/mainwindow.cpp" line="975"/>
         <source>● Connected: %1 (%2)</source>
         <translation>● Ansluten: %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="965"/>
+        <location filename="../src/mainwindow.cpp" line="975"/>
         <source>board</source>
         <translation>kort</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="968"/>
+        <location filename="../src/mainwindow.cpp" line="978"/>
         <source>◌ Connecting to %1…</source>
         <translation>◌ Ansluter till %1…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="970"/>
+        <location filename="../src/mainwindow.cpp" line="980"/>
         <source>○ Offline</source>
         <translation>○ Offline</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1032"/>
+        <location filename="../src/mainwindow.cpp" line="1042"/>
         <source>Connected. Read board loads its configuration; Write all puts the one on screen on the board. Changes you make now go to the board.</source>
         <translation>Ansluten. Läs kortet laddar dess konfiguration; Skriv allt för över konfigurationen på skärmen till kortet. Ändringar du gör nu går till kortet.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1091"/>
+        <location filename="../src/mainwindow.cpp" line="1101"/>
         <source>Read everything from the board?
 
 What is on screen now is replaced by the board&apos;s configuration. Save it first (Ctrl+S) if you want to keep it.</source>
@@ -1437,12 +1460,12 @@ What is on screen now is replaced by the board&apos;s configuration. Save it fir
 Det som visas på skärmen nu ersätts av kortets konfiguration. Spara det först (Ctrl+S) om du vill behålla det.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1110"/>
+        <location filename="../src/mainwindow.cpp" line="1120"/>
         <source>the board</source>
         <translation>kortet</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1112"/>
+        <location filename="../src/mainwindow.cpp" line="1122"/>
         <source>Write the whole configuration on screen to %1?
 
 Everything on the board is replaced.</source>
@@ -1451,335 +1474,335 @@ Everything on the board is replaced.</source>
 Allt på kortet ersätts.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1161"/>
+        <location filename="../src/mainwindow.cpp" line="1171"/>
         <source>The board keeps a different value for %1; not sending it again.</source>
         <translation>Kortet behåller ett annat värde för %1; det skickas inte igen.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1220"/>
+        <location filename="../src/mainwindow.cpp" line="1230"/>
         <source>Preset applied</source>
         <translation>Preset tillämpat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1262"/>
+        <location filename="../src/mainwindow.cpp" line="1272"/>
         <source>Send this configuration to the connected board now?</source>
         <translation>Skicka den här konfigurationen till det anslutna kortet nu?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1284"/>
+        <location filename="../src/mainwindow.cpp" line="1294"/>
         <source>Loaded %1</source>
         <translation>%1 inläst</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1505"/>
+        <location filename="../src/mainwindow.cpp" line="1537"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on D9 and D10 stops working as soon as at least one servo output exists. Use D3, D5, D6 or D11 for PWM, or remove the servo.</source>
         <translation>%1 (%2): konflikt med servot/servona. Servo-biblioteket använder timer 1, så PWM på D9 och D10 slutar fungera så snart det finns minst en servoutgång. Använd D3, D5, D6 eller D11 för PWM, eller ta bort servot.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1574"/>
+        <location filename="../src/mainwindow.cpp" line="1606"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1630"/>
+        <location filename="../src/mainwindow.cpp" line="1662"/>
         <source>The pin was in use: %1 is now not in use.</source>
         <translation>Pinnen var upptagen: %1 används nu inte.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1668"/>
+        <location filename="../src/mainwindow.cpp" line="1700"/>
         <source>Phone: output %1 %2 = %3°</source>
         <translation>Mobil: utgång %1 %2 = %3°</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1669"/>
+        <location filename="../src/mainwindow.cpp" line="1701"/>
         <source>straight</source>
         <translation>rakt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1669"/>
+        <location filename="../src/mainwindow.cpp" line="1701"/>
         <source>curved</source>
         <translation>avvikande</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1694"/>
+        <location filename="../src/mainwindow.cpp" line="1726"/>
         <source>Phone remote</source>
         <translation>Mobilfjärrkontroll</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1696"/>
+        <location filename="../src/mainwindow.cpp" line="1728"/>
         <source>Adjust servos from your phone: it must be on the same Wi-Fi as this computer. Scan the code with the phone&apos;s camera, or type the address in its browser. Keep this program open; the code changes every time the remote is switched on.</source>
         <translation>Justera servon från mobilen: den måste vara på samma wifi som den här datorn. Skanna koden med mobilens kamera, eller skriv in adressen i dess webbläsare. Låt det här programmet vara öppet; koden ändras varje gång fjärrkontrollen slås på.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1701"/>
+        <location filename="../src/mainwindow.cpp" line="1733"/>
         <source>Allow phones on my network</source>
         <translation>Tillåt mobiler i mitt nätverk</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1715"/>
+        <location filename="../src/mainwindow.cpp" line="1747"/>
         <source>The first time, Windows may ask whether the program may use the network: allow it for private networks.</source>
         <translation>Första gången kan Windows fråga om programmet får använda nätverket: tillåt det för privata nätverk.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1729"/>
+        <location filename="../src/mainwindow.cpp" line="1761"/>
         <source>Off</source>
         <translation>Av</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1748"/>
+        <location filename="../src/mainwindow.cpp" line="1780"/>
         <source>Could not open a network port (8080-8089).</source>
         <translation>Kunde inte öppna en nätverksport (8080-8089).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1774"/>
+        <location filename="../src/mainwindow.cpp" line="1806"/>
         <source>Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and reports back; nothing needs to be connected.</source>
         <translation>Livetest: klicka på ◀ / ▶ eller ▶ start vid en ingång. Kortet slår om sina pinnar och rapporterar tillbaka; inget behöver vara anslutet.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1785"/>
+        <location filename="../src/mainwindow.cpp" line="1817"/>
         <source>Input %1 has no DCC address, so it cannot receive a DCC extended command.</source>
         <translation>Ingång %1 har ingen DCC-adress och kan därför inte ta emot ett DCC extended-kommando.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1792"/>
+        <location filename="../src/mainwindow.cpp" line="1824"/>
         <source>DCC extended — address %1</source>
         <translation>DCC extended — adress %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1796"/>
+        <location filename="../src/mainwindow.cpp" line="1828"/>
         <source>Value sent: %1 (0x%2)</source>
         <translation>Skickat värde: %1 (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1817"/>
+        <location filename="../src/mainwindow.cpp" line="1849"/>
         <source>flashing</source>
         <translation>blinkande</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1817"/>
+        <location filename="../src/mainwindow.cpp" line="1849"/>
         <source>flashing, opposite phase</source>
         <translation>blinkande, i motfas</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1822"/>
+        <location filename="../src/mainwindow.cpp" line="1854"/>
         <source>Lamp %1</source>
         <translation>Lampa %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1832"/>
+        <location filename="../src/mainwindow.cpp" line="1864"/>
         <source>PWM value</source>
         <translation>PWM-värde</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1836"/>
+        <location filename="../src/mainwindow.cpp" line="1868"/>
         <source>Sent as if your command station sent a DCC extended accessory command to address %1. Every change is sent straight away.</source>
         <translation>Skickas som om din kommandostation skickade ett DCC extended-tillbehörskommando till adress %1. Varje ändring skickas direkt.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1841"/>
-        <location filename="../src/mainwindow.cpp" line="1890"/>
+        <location filename="../src/mainwindow.cpp" line="1873"/>
+        <location filename="../src/mainwindow.cpp" line="1922"/>
         <source>Close</source>
         <translation>Stäng</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1962"/>
+        <location filename="../src/mainwindow.cpp" line="1994"/>
         <source>&lt;h2&gt;GPIOcore Configurator&lt;/h2&gt;&lt;p&gt;Plug a GPIOcore board into a USB port, choose its port at the top and press &lt;b&gt;Connect&lt;/b&gt;. Everything you change is sent to the board straight away.&lt;/p&gt;</source>
         <translation>&lt;h2&gt;GPIOcore Configurator&lt;/h2&gt;&lt;p&gt;Anslut ett GPIOcore-kort till en USB-port, välj dess port högst upp och tryck på &lt;b&gt;Anslut&lt;/b&gt;. Allt du ändrar skickas direkt till kortet.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1978"/>
+        <location filename="../src/mainwindow.cpp" line="2010"/>
         <source>Connect to the board</source>
         <translation>Anslut till kortet</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1978"/>
+        <location filename="../src/mainwindow.cpp" line="2010"/>
         <source>Uses the port selected at the top.</source>
         <translation>Använder porten som är vald högst upp.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1981"/>
+        <location filename="../src/mainwindow.cpp" line="2013"/>
         <source>Open a board file…</source>
         <translation>Öppna en kortfil…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1981"/>
+        <location filename="../src/mainwindow.cpp" line="2013"/>
         <source>Look at or prepare the settings of a board without connecting it.</source>
         <translation>Titta på eller förbered inställningarna för ett kort utan att ansluta det.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1982"/>
+        <location filename="../src/mainwindow.cpp" line="2014"/>
         <source>New board (offline)…</source>
         <translation>Nytt kort (offline)…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1982"/>
+        <location filename="../src/mainwindow.cpp" line="2014"/>
         <source>Prepare a new board on this computer and send it later.</source>
         <translation>Förbered ett nytt kort på den här datorn och skicka det senare.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1983"/>
+        <location filename="../src/mainwindow.cpp" line="2015"/>
         <source>Flash firmware…</source>
         <translation>Flasha firmware…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1983"/>
+        <location filename="../src/mainwindow.cpp" line="2015"/>
         <source>Put the GPIOcore firmware on an Arduino.</source>
         <translation>Lägg GPIOcore-firmwaren på en Arduino.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2015"/>
+        <location filename="../src/mainwindow.cpp" line="2047"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2021"/>
+        <location filename="../src/mainwindow.cpp" line="2053"/>
         <source>Connected to &quot;%1&quot;, the screen shows &quot;%2&quot;. Read board or Write all.</source>
         <translation>Ansluten till &quot;%1&quot;, skärmen visar &quot;%2&quot;. Läs kortet eller Skriv allt.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2038"/>
+        <location filename="../src/mainwindow.cpp" line="2070"/>
         <source>Names loaded from %1</source>
         <translation>Namn inlästa från %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1309"/>
-        <location filename="../src/mainwindow.cpp" line="2043"/>
-        <location filename="../src/mainwindow.cpp" line="2097"/>
-        <location filename="../src/mainwindow.cpp" line="2199"/>
+        <location filename="../src/mainwindow.cpp" line="1319"/>
+        <location filename="../src/mainwindow.cpp" line="2075"/>
+        <location filename="../src/mainwindow.cpp" line="2129"/>
+        <location filename="../src/mainwindow.cpp" line="2231"/>
         <source>%1 — GPIOcore Configurator</source>
         <translation>%1 — GPIOcore Configurator</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2211"/>
+        <location filename="../src/mainwindow.cpp" line="2243"/>
         <source>max. 16 letters, e.g. Station-left</source>
         <translation>max. 16 tecken, t.ex. Station-vänster</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2214"/>
+        <location filename="../src/mainwindow.cpp" line="2246"/>
         <source>Empty (1 input, 1 output)</source>
         <translation>Tomt (1 ingång, 1 utgång)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2216"/>
+        <location filename="../src/mainwindow.cpp" line="2248"/>
         <source>Preset: %1</source>
         <translation>Preset: %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2218"/>
+        <location filename="../src/mainwindow.cpp" line="2250"/>
         <source>Start with</source>
         <translation>Börja med</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2219"/>
+        <location filename="../src/mainwindow.cpp" line="2251"/>
         <source>When you later connect a board and give it this name, these settings belong to it. Use Write all to put them on the board.</source>
         <translation>När du senare ansluter ett kort och ger det det här namnet hör de här inställningarna till det. Använd Skriv allt för att föra över dem till kortet.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2300"/>
+        <location filename="../src/mainwindow.cpp" line="2332"/>
         <source>Output %1 removed; %2 drove it and is now not in use as well.</source>
         <translation>Utgång %1 borttagen; %2 styrde den och används nu inte heller.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2005"/>
+        <location filename="../src/mainwindow.cpp" line="2037"/>
         <source>● %1 — %2</source>
         <translation>● %1 — %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2005"/>
+        <location filename="../src/mainwindow.cpp" line="2037"/>
         <source>board without a name</source>
         <translation>kort utan namn</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2119"/>
+        <location filename="../src/mainwindow.cpp" line="2151"/>
         <source>Name this board</source>
         <translation>Namnge det här kortet</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2120"/>
+        <location filename="../src/mainwindow.cpp" line="2152"/>
         <source>This board has no name yet. Give it a short, unique name (max. 16 letters, e.g. &quot;Station-left&quot;).
 The name is stored on the board; your names for inputs and outputs are kept in a file with this name.</source>
         <translation>Det här kortet har inget namn ännu. Ge det ett kort, unikt namn (max. 16 tecken, t.ex. &quot;Station-vanster&quot;).
 Namnet sparas på kortet; dina namn på ingångar och utgångar sparas i en fil med det här namnet.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="806"/>
-        <location filename="../src/mainwindow.cpp" line="2135"/>
+        <location filename="../src/mainwindow.cpp" line="811"/>
+        <location filename="../src/mainwindow.cpp" line="2167"/>
         <source>Board settings</source>
         <translation>Kortinställningar</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2143"/>
+        <location filename="../src/mainwindow.cpp" line="2175"/>
         <source>Own wait time per route step</source>
         <translation>Egen väntetid för varje tågvägssteg</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2145"/>
+        <location filename="../src/mainwindow.cpp" line="2177"/>
         <source>Off: every step waits the same time and routes need half the memory</source>
         <translation>Av: varje steg väntar lika länge och tågvägar använder hälften så mycket minne</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2150"/>
+        <location filename="../src/mainwindow.cpp" line="2182"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2153"/>
+        <location filename="../src/mainwindow.cpp" line="2185"/>
         <source>Off — routes may run at the same time</source>
         <translation>Av — tågvägar får köras samtidigt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2154"/>
+        <location filename="../src/mainwindow.cpp" line="2186"/>
         <source>On — one route at a time</source>
         <translation>På — en tågväg i taget</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2155"/>
+        <location filename="../src/mainwindow.cpp" line="2187"/>
         <source>Automatic — turnout routes one at a time, lights in parallel</source>
         <translation>Automatiskt — tågvägar med växlar en i taget, belysning samtidigt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2157"/>
-        <location filename="../src/mainwindow.cpp" line="2217"/>
+        <location filename="../src/mainwindow.cpp" line="2189"/>
+        <location filename="../src/mainwindow.cpp" line="2249"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2158"/>
+        <location filename="../src/mainwindow.cpp" line="2190"/>
         <source>Board type</source>
         <translation>Korttyp</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2160"/>
+        <location filename="../src/mainwindow.cpp" line="2192"/>
         <source>Wait time per step</source>
         <translation>Väntetid per steg</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2161"/>
+        <location filename="../src/mainwindow.cpp" line="2193"/>
         <source>Route interlocking</source>
         <translation>Tågvägsförregling</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2163"/>
+        <location filename="../src/mainwindow.cpp" line="2195"/>
         <source>This board&apos;s firmware cannot store these settings yet; they are only kept in the file.</source>
         <translation>Firmwaren på det här kortet kan inte spara dessa inställningar ännu; de sparas bara i filen.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2207"/>
+        <location filename="../src/mainwindow.cpp" line="2239"/>
         <source>New board</source>
         <translation>Nytt kort</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2256"/>
+        <location filename="../src/mainwindow.cpp" line="2288"/>
         <source>All 16 outputs are in use.</source>
         <translation>Alla 16 utgångar används.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="2268"/>
+        <location filename="../src/mainwindow.cpp" line="2300"/>
         <source>All 16 inputs are in use.</source>
         <translation>Alla 16 ingångar används.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="698"/>
+        <location filename="../src/mainwindow.cpp" line="703"/>
         <source>&amp;File</source>
         <translation>&amp;Arkiv</translation>
     </message>
@@ -1796,14 +1819,14 @@ Namnet sparas på kortet; dina namn på ingångar och utgångar sparas i en fil 
     <message>
         <location filename="../src/mainwindow.cpp" line="120"/>
         <location filename="../src/mainwindow.cpp" line="121"/>
-        <location filename="../src/mainwindow.cpp" line="1817"/>
+        <location filename="../src/mainwindow.cpp" line="1849"/>
         <source>on</source>
         <translation>på</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="120"/>
         <location filename="../src/mainwindow.cpp" line="121"/>
-        <location filename="../src/mainwindow.cpp" line="1817"/>
+        <location filename="../src/mainwindow.cpp" line="1849"/>
         <source>off</source>
         <translation>av</translation>
     </message>
@@ -1849,228 +1872,228 @@ Namnet sparas på kortet; dina namn på ingångar och utgångar sparas i en fil 
         <translation>Färg på lampa %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="637"/>
+        <location filename="../src/mainwindow.cpp" line="642"/>
         <source>● Configure</source>
         <translation>● Konfigurera</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="640"/>
+        <location filename="../src/mainwindow.cpp" line="645"/>
         <source>● Simulate</source>
         <translation>● Simulera</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="643"/>
+        <location filename="../src/mainwindow.cpp" line="648"/>
         <source>● Live test</source>
         <translation>● Livetest</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="699"/>
+        <location filename="../src/mainwindow.cpp" line="704"/>
         <source>&amp;New board (offline)…</source>
         <translation>&amp;Nytt kort (offline)…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="700"/>
+        <location filename="../src/mainwindow.cpp" line="705"/>
         <source>&amp;Open configuration…</source>
         <translation>&amp;Öppna konfiguration…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="709"/>
+        <location filename="../src/mainwindow.cpp" line="714"/>
         <source>Open the boards folder</source>
         <translation>Öppna mappen med kort</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="714"/>
+        <location filename="../src/mainwindow.cpp" line="719"/>
         <source>&amp;Quit</source>
         <translation>A&amp;vsluta</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="716"/>
+        <location filename="../src/mainwindow.cpp" line="721"/>
         <source>&amp;Board</source>
         <translation>&amp;Kort</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="724"/>
+        <location filename="../src/mainwindow.cpp" line="729"/>
         <source>Apply a preset…</source>
         <translation>Tillämpa ett preset…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="726"/>
+        <location filename="../src/mainwindow.cpp" line="731"/>
         <source>&amp;Flash firmware…</source>
         <translation>&amp;Flasha firmware…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="731"/>
+        <location filename="../src/mainwindow.cpp" line="736"/>
         <source>&amp;View</source>
         <translation>&amp;Visa</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="732"/>
+        <location filename="../src/mainwindow.cpp" line="737"/>
         <source>&amp;Expert mode</source>
         <translation>&amp;Expertläge</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="734"/>
+        <location filename="../src/mainwindow.cpp" line="739"/>
         <source>Show bytes, the serial log and protocol details</source>
         <translation>Visa byte, den seriella loggen och protokolldetaljer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="736"/>
+        <location filename="../src/mainwindow.cpp" line="741"/>
         <source>Show unused inputs and outputs</source>
         <translation>Visa oanvända ingångar och utgångar</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="745"/>
+        <location filename="../src/mainwindow.cpp" line="750"/>
         <source>Show TX/RX bytes in log</source>
         <translation>Visa TX/RX-byte i loggen</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="748"/>
+        <location filename="../src/mainwindow.cpp" line="753"/>
         <source>Clear log</source>
         <translation>Rensa loggen</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="754"/>
+        <location filename="../src/mainwindow.cpp" line="759"/>
         <source>Theme</source>
         <translation>Tema</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="756"/>
+        <location filename="../src/mainwindow.cpp" line="761"/>
         <source>Automatic (Windows)</source>
         <translation>Automatiskt (Windows)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="757"/>
+        <location filename="../src/mainwindow.cpp" line="762"/>
         <source>Light</source>
         <translation>Ljust</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="758"/>
+        <location filename="../src/mainwindow.cpp" line="763"/>
         <source>Dark</source>
         <translation>Mörkt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="775"/>
+        <location filename="../src/mainwindow.cpp" line="780"/>
         <source>Language</source>
         <translation>Språk</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="785"/>
+        <location filename="../src/mainwindow.cpp" line="790"/>
         <source>The language changes the next time you start the program.</source>
         <translation>Språket ändras nästa gång programmet startas.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="788"/>
+        <location filename="../src/mainwindow.cpp" line="793"/>
         <source>Automatic (system language)</source>
         <translation>Automatiskt (systemspråk)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="797"/>
+        <location filename="../src/mainwindow.cpp" line="802"/>
         <source>&amp;Help</source>
         <translation>&amp;Hjälp</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="798"/>
+        <location filename="../src/mainwindow.cpp" line="803"/>
         <source>&amp;Getting started</source>
         <translation>&amp;Kom igång</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="799"/>
+        <location filename="../src/mainwindow.cpp" line="804"/>
         <source>Getting started</source>
         <translation>Kom igång</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="802"/>
+        <location filename="../src/mainwindow.cpp" line="807"/>
         <source>&amp;Configure, simulate and live test</source>
         <translation>Konfigurera, simulera och &amp;livetest</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="803"/>
+        <location filename="../src/mainwindow.cpp" line="808"/>
         <source>Configure, simulate and live test</source>
         <translation>Konfigurera, simulera och livetest</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="805"/>
+        <location filename="../src/mainwindow.cpp" line="810"/>
         <source>&amp;Board settings</source>
         <translation>Kort&amp;inställningar</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="808"/>
+        <location filename="../src/mainwindow.cpp" line="813"/>
         <source>Config &amp;button and teaching servos (9999)</source>
         <translation>Config-kn&amp;app och inlärning av servon (9999)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="809"/>
+        <location filename="../src/mainwindow.cpp" line="814"/>
         <source>Config button and teaching servos</source>
         <translation>Config-knapp och inlärning av servon</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="812"/>
+        <location filename="../src/mainwindow.cpp" line="817"/>
         <source>&amp;About</source>
         <translation>&amp;Om</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="814"/>
+        <location filename="../src/mainwindow.cpp" line="819"/>
         <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano / Uno, DCCnext) for model railways.&lt;br&gt;Language: %2</source>
         <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Konfigurerar GPIOcore-kort (Arduino Nano / Uno, DCCnext) för modelljärnvägar.&lt;br&gt;Språk: %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="838"/>
+        <location filename="../src/mainwindow.cpp" line="843"/>
         <source>no serial ports found</source>
         <translation>inga serieportar hittades</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="861"/>
+        <location filename="../src/mainwindow.cpp" line="866"/>
         <source>Select a serial port first, or use Demo.</source>
         <translation>Välj en serieport först, eller använd Demo.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="874"/>
+        <location filename="../src/mainwindow.cpp" line="879"/>
         <source>Could not open %1:
 %2</source>
         <translation>Kunde inte öppna %1:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="975"/>
-        <location filename="../src/mainwindow.cpp" line="990"/>
+        <location filename="../src/mainwindow.cpp" line="985"/>
+        <location filename="../src/mainwindow.cpp" line="1000"/>
         <source>Disconnect</source>
         <translation>Koppla från</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="994"/>
+        <location filename="../src/mainwindow.cpp" line="1004"/>
         <source>● %1 — waiting for board…</source>
         <translation>● %1 — väntar på kortet…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="999"/>
+        <location filename="../src/mainwindow.cpp" line="1009"/>
         <source>○ Not connected</source>
         <translation>○ Inte ansluten</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1017"/>
+        <location filename="../src/mainwindow.cpp" line="1027"/>
         <source>● %1 — GPIOcore %2</source>
         <translation>● %1 — GPIOcore %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1140"/>
-        <location filename="../src/mainwindow.cpp" line="1625"/>
-        <location filename="../src/mainwindow.cpp" line="2295"/>
+        <location filename="../src/mainwindow.cpp" line="1150"/>
+        <location filename="../src/mainwindow.cpp" line="1657"/>
+        <location filename="../src/mainwindow.cpp" line="2327"/>
         <source>input %1</source>
         <translation>ingång %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1150"/>
-        <location filename="../src/mainwindow.cpp" line="1614"/>
+        <location filename="../src/mainwindow.cpp" line="1160"/>
+        <location filename="../src/mainwindow.cpp" line="1646"/>
         <source>output %1</source>
         <translation>utgång %1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1157"/>
+        <location filename="../src/mainwindow.cpp" line="1167"/>
         <source>Writing %1 item(s), each is read back for verification</source>
         <translation>Skriver %1 objekt, vart och ett läses tillbaka för kontroll</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1180"/>
+        <location filename="../src/mainwindow.cpp" line="1190"/>
         <source>Apply preset &quot;%1&quot;?
 
 This replaces all outputs and inputs (and their routes).</source>
@@ -2079,184 +2102,194 @@ This replaces all outputs and inputs (and their routes).</source>
 Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1182"/>
+        <location filename="../src/mainwindow.cpp" line="1192"/>
         <source>Also clear the names of inputs and outputs (recommended)</source>
         <translation>Rensa även namnen på ingångar och utgångar (rekommenderas)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1493"/>
+        <location filename="../src/mainwindow.cpp" line="1472"/>
+        <source>Input %1 · %2</source>
+        <translation>Ingång %1 · %2</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="1521"/>
+        <source>Block input %1 is not in use: the signal never sees that block occupied.</source>
+        <translation>Blockingång %1 används inte: signalen ser aldrig det blocket som belagt.</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="1525"/>
         <source>The firmware on this board has no sound effect output yet: update the firmware (Board &gt; Flash firmware).</source>
         <translation>Firmwaren på det här kortet har ännu ingen ljudeffektutgång: uppdatera firmwaren (Kort &gt; Flasha firmware).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1533"/>
+        <location filename="../src/mainwindow.cpp" line="1565"/>
         <source>The firmware on this board cannot read analog inputs yet: update the firmware (Board &gt; Flash firmware).</source>
         <translation>Firmwaren på det här kortet kan ännu inte läsa analoga ingångar: uppdatera firmwaren (Kort &gt; Flasha firmware).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1859"/>
+        <location filename="../src/mainwindow.cpp" line="1891"/>
         <source>Value on A%1 (0–1023)</source>
         <translation>Värde på A%1 (0–1023)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1875"/>
+        <location filename="../src/mainwindow.cpp" line="1907"/>
         <source>A%1</source>
         <translation>A%1</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1881"/>
+        <location filename="../src/mainwindow.cpp" line="1913"/>
         <source>In %1: %2 %3</source>
         <translation>In %1: %2 %3</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1886"/>
+        <location filename="../src/mainwindow.cpp" line="1918"/>
         <source>1023 = 5 V, nothing pressed. Every input on A%1 reacts: %2</source>
         <translation>1023 = 5 V, inget nedtryckt. Varje ingång på A%1 reagerar: %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1979"/>
+        <location filename="../src/mainwindow.cpp" line="2011"/>
         <source>Simulate</source>
         <translation>Simulera</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1979"/>
+        <location filename="../src/mainwindow.cpp" line="2011"/>
         <source>Try a configuration without a board: open a board file or start a new one, then simulate it. Nothing can break.</source>
         <translation>Prova en konfiguration utan kort: öppna en kortfil eller börja på en ny och simulera den. Inget kan gå sönder.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1235"/>
+        <location filename="../src/mainwindow.cpp" line="1245"/>
         <source>Open configuration</source>
         <translation>Öppna konfiguration</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="665"/>
+        <location filename="../src/mainwindow.cpp" line="670"/>
         <source>Load the configuration from the board (replaces what is on screen)</source>
         <translation>Läs in konfigurationen från kortet (ersätter det som visas på skärmen)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="666"/>
+        <location filename="../src/mainwindow.cpp" line="671"/>
         <source>Write all</source>
         <translation>Skriv allt</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="667"/>
+        <location filename="../src/mainwindow.cpp" line="672"/>
         <source>Put the whole configuration on screen on the board</source>
         <translation>För över hela konfigurationen på skärmen till kortet</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1236"/>
-        <location filename="../src/mainwindow.cpp" line="1295"/>
+        <location filename="../src/mainwindow.cpp" line="1246"/>
+        <location filename="../src/mainwindow.cpp" line="1305"/>
         <source>GPIOcore configuration (*.json)</source>
         <translation>GPIOcore-konfiguration (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1293"/>
+        <location filename="../src/mainwindow.cpp" line="1303"/>
         <source>Save configuration</source>
         <translation>Spara konfiguration</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1310"/>
+        <location filename="../src/mainwindow.cpp" line="1320"/>
         <source>Saved %1</source>
         <translation>%1 sparad</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1353"/>
+        <location filename="../src/mainwindow.cpp" line="1363"/>
         <source>Write %1 change(s)</source>
         <translation>Skriv %1 ändring(ar)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1359"/>
+        <location filename="../src/mainwindow.cpp" line="1369"/>
         <source>Saving on the board…</source>
         <translation>Sparar på kortet…</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1359"/>
+        <location filename="../src/mainwindow.cpp" line="1369"/>
         <source>%1 change(s) waiting</source>
         <translation>%1 ändring(ar) väntar</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1361"/>
+        <location filename="../src/mainwindow.cpp" line="1371"/>
         <source>%1 unsent change(s)</source>
         <translation>%1 oskickade ändring(ar)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1444"/>
-        <location filename="../src/mainwindow.cpp" line="1445"/>
+        <location filename="../src/mainwindow.cpp" line="1455"/>
+        <location filename="../src/mainwindow.cpp" line="1456"/>
         <source>Output %1 · %2</source>
         <translation>Utgång %1 · %2</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1474"/>
+        <location filename="../src/mainwindow.cpp" line="1502"/>
         <source>%1 is not set.</source>
         <translation>%1 är inte inställd.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1478"/>
+        <location filename="../src/mainwindow.cpp" line="1506"/>
         <source>%1 uses %2, which is the %3.</source>
         <translation>%1 använder %2 (%3).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1483"/>
+        <location filename="../src/mainwindow.cpp" line="1511"/>
         <source>%1 (%2) is also used by output %3 (%4).</source>
         <translation>%1 (%2) används också av utgång %3 (%4).</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1484"/>
+        <location filename="../src/mainwindow.cpp" line="1512"/>
         <source>%1 (%2) is also used by input %3.</source>
         <translation>%1 (%2) används också av ingång %3.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1487"/>
+        <location filename="../src/mainwindow.cpp" line="1515"/>
         <source>%1 (%2) is not PWM capable; %3 needs PWM.</source>
         <translation>%1 (%2) klarar inte PWM; %3 behöver PWM.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1491"/>
+        <location filename="../src/mainwindow.cpp" line="1523"/>
         <source>Min is larger than max: positions are swapped.</source>
         <translation>Min är större än max: lägena är omkastade.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1496"/>
+        <location filename="../src/mainwindow.cpp" line="1528"/>
         <source>%1 (%2) is a serial pin: it only works when no GUI is connected.</source>
         <translation>%1 (%2) är en seriell pinne: den fungerar bara när inget program är anslutet.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1525"/>
+        <location filename="../src/mainwindow.cpp" line="1557"/>
         <source>Pin %1 is the %2.</source>
         <translation>Pinne %1 är reserverad: %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1529"/>
+        <location filename="../src/mainwindow.cpp" line="1561"/>
         <source>Pin %1 is also used by output %2.</source>
         <translation>Pinne %1 används också av utgång %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1530"/>
+        <location filename="../src/mainwindow.cpp" line="1562"/>
         <source>Pin %1 is also used by input %2.</source>
         <translation>Pinne %1 används också av ingång %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1535"/>
+        <location filename="../src/mainwindow.cpp" line="1567"/>
         <source>Neither a DCC address nor a pin is set: this input never triggers.</source>
         <translation>Varken DCC-adress eller pinne är inställd: denna ingång utlöses aldrig.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1540"/>
+        <location filename="../src/mainwindow.cpp" line="1572"/>
         <source>Route step %1 sets output %2, which is not in use.</source>
         <translation>Tågvägssteg %1 ställer utgång %2, som inte används.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1543"/>
+        <location filename="../src/mainwindow.cpp" line="1575"/>
         <source>All routes together use %1 steps; the board has room for %2.</source>
         <translation>Alla tågvägar använder tillsammans %1 steg; kortet har plats för %2.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1546"/>
+        <location filename="../src/mainwindow.cpp" line="1578"/>
         <source>Output %1 is not in use.</source>
         <translation>Utgång %1 används inte.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1585"/>
+        <location filename="../src/mainwindow.cpp" line="1617"/>
         <source>%1 change(s) have not been written to the board. Quit anyway?</source>
         <translation>%1 ändring(ar) har inte skrivits till kortet. Avsluta ändå?</translation>
     </message>
@@ -2264,238 +2297,283 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
 <context>
     <name>OutputEditor</name>
     <message>
-        <location filename="../src/outputeditor.cpp" line="79"/>
+        <location filename="../src/outputeditor.cpp" line="84"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="96"/>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="101"/>
+        <location filename="../src/outputeditor.cpp" line="534"/>
         <source>Pins</source>
         <translation>Pinnar</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="98"/>
+        <location filename="../src/outputeditor.cpp" line="103"/>
         <source>Pin A</source>
         <translation>Pinne A</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="98"/>
+        <location filename="../src/outputeditor.cpp" line="103"/>
         <source>Pin B</source>
         <translation>Pinne B</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="98"/>
+        <location filename="../src/outputeditor.cpp" line="103"/>
         <source>Pin C</source>
         <translation>Pinne C</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="98"/>
+        <location filename="../src/outputeditor.cpp" line="103"/>
         <source>Pin D</source>
         <translation>Pinne D</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="117"/>
+        <location filename="../src/outputeditor.cpp" line="122"/>
         <source>Frog polarity</source>
         <translation>Polarisering av hjärtstycke</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="123"/>
+        <location filename="../src/outputeditor.cpp" line="128"/>
         <source>None (dead frog)</source>
         <translation>Ingen (isolerat hjärtstycke)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="124"/>
+        <location filename="../src/outputeditor.cpp" line="129"/>
         <source>Electrofrog — 2 relays</source>
         <translation>Electrofrog — 2 reläer</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="125"/>
+        <location filename="../src/outputeditor.cpp" line="130"/>
         <source>Unifrog — 1 change-over relay</source>
         <translation>Unifrog — 1 växlande relä</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="129"/>
+        <location filename="../src/outputeditor.cpp" line="134"/>
         <source>Frog</source>
         <translation>Hjärtstycke</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="130"/>
+        <location filename="../src/outputeditor.cpp" line="135"/>
         <source>Relay straight (A)</source>
         <translation>Relä rakt (A)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="130"/>
+        <location filename="../src/outputeditor.cpp" line="135"/>
         <source>Relay curved (B)</source>
         <translation>Relä avvikande (B)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="130"/>
+        <location filename="../src/outputeditor.cpp" line="135"/>
         <source>Unifrog relay</source>
         <translation>Unifrog-relä</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="144"/>
+        <location filename="../src/outputeditor.cpp" line="149"/>
         <source>Parameters</source>
         <translation>Parametrar</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="150"/>
+        <location filename="../src/outputeditor.cpp" line="155"/>
         <source>This type has no parameters.</source>
         <translation>Denna typ har inga parametrar.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="164"/>
+        <location filename="../src/outputeditor.cpp" line="169"/>
         <source>Switch time</source>
         <translation>Omläggningstid</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="174"/>
+        <location filename="../src/outputeditor.cpp" line="179"/>
         <source>LED on time</source>
         <translation>LED-tid på</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="175"/>
+        <location filename="../src/outputeditor.cpp" line="180"/>
         <source>Pause</source>
         <translation>Paus</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="194"/>
+        <location filename="../src/outputeditor.cpp" line="199"/>
         <source>Live: move the servo while adjusting</source>
         <translation>Live: flytta servot under justering</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="199"/>
+        <location filename="../src/outputeditor.cpp" line="204"/>
         <source>Position 0 (curved)</source>
         <translation>Läge 0 (avvikande)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="200"/>
+        <location filename="../src/outputeditor.cpp" line="205"/>
         <source>Position 1 (straight)</source>
         <translation>Läge 1 (rakt)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="201"/>
+        <location filename="../src/outputeditor.cpp" line="206"/>
         <source> ms/°</source>
         <translation> ms/°</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="204"/>
+        <location filename="../src/outputeditor.cpp" line="209"/>
         <source>Speed</source>
         <translation>Hastighet</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="219"/>
+        <location filename="../src/outputeditor.cpp" line="224"/>
         <source>Duty cycle</source>
         <translation>Pulskvot</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="221"/>
+        <location filename="../src/outputeditor.cpp" line="226"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="222"/>
+        <location filename="../src/outputeditor.cpp" line="227"/>
         <source>at once</source>
         <translation>direkt</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="231"/>
+        <location filename="../src/outputeditor.cpp" line="236"/>
         <source>Fade time</source>
         <translation>Övergångstid</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="241"/>
+        <location filename="../src/outputeditor.cpp" line="246"/>
         <source> Hz</source>
-        <translation type="unfinished"></translation>
+        <translation> Hz</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="243"/>
+        <location filename="../src/outputeditor.cpp" line="248"/>
         <source>Flashing</source>
         <translation>Blinkning</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="244"/>
+        <location filename="../src/outputeditor.cpp" line="249"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Hur snabbt blinkande lampor blinkar (1 Hz = en gång per sekund). Själva signalbilden väljs med DCC extended eller i en tågväg.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="432"/>
+        <location filename="../src/outputeditor.cpp" line="255"/>
+        <source>Automatic block signal</source>
+        <translation>Automatisk blocksignal</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="270"/>
+        <source>Own block</source>
+        <translation>Eget block</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="271"/>
+        <source>Next block</source>
+        <translation>Nästa block</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="272"/>
+        <source>Red lamp</source>
+        <translation>Röd lampa</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="272"/>
+        <source>Yellow lamp</source>
+        <translation>Gul lampa</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="272"/>
+        <source>Green lamp</source>
+        <translation>Grön lampa</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="280"/>
+        <source>Red when its own block is occupied, yellow when the next block is, green when both are free.</source>
+        <translation>Rött när det egna blocket är belagt, gult när nästa block är det, grönt när båda är fria.</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="438"/>
+        <source>— none</source>
+        <translation>— inget</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="511"/>
         <source>Needs a connected board</source>
         <translation>Kräver ett anslutet kort</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="255"/>
+        <location filename="../src/outputeditor.cpp" line="295"/>
         <source>State</source>
         <translation>Läge</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="262"/>
+        <location filename="../src/outputeditor.cpp" line="54"/>
+        <source>Input %1</source>
+        <translation>Ingång %1</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="302"/>
         <source>0  (off / curved)</source>
         <translation>0  (av / avvikande)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="263"/>
+        <location filename="../src/outputeditor.cpp" line="303"/>
         <source>1  (on / straight)</source>
         <translation>1  (på / rakt)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="264"/>
+        <location filename="../src/outputeditor.cpp" line="304"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Test: avvikande / av</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="265"/>
+        <location filename="../src/outputeditor.cpp" line="305"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Test: rakt / på</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="268"/>
+        <location filename="../src/outputeditor.cpp" line="308"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>Skriver denna utgång till kortet med valt läge (sparas även i EEPROM)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="271"/>
+        <location filename="../src/outputeditor.cpp" line="311"/>
         <source>Stored state</source>
         <translation>Sparat läge</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="406"/>
+        <location filename="../src/outputeditor.cpp" line="474"/>
         <source>Output %1</source>
         <translation>Utgång %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="414"/>
+        <location filename="../src/outputeditor.cpp" line="482"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Både Electrofrog- och Unifrog-reläer är inställda. Endast ett hjärtstyckesläge är tillåtet: Unifrog-reläet tas bort när du ändrar denna utgång.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="455"/>
+        <location filename="../src/outputeditor.cpp" line="534"/>
         <source>Pins (PWM capable: D3 D5 D6 D9 D10 D11)</source>
         <translation>Pinnar (PWM-kapabla: D3 D5 D6 D9 D10 D11)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="475"/>
+        <location filename="../src/outputeditor.cpp" line="555"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="476"/>
+        <location filename="../src/outputeditor.cpp" line="556"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  på %2 ms, paus %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="479"/>
+        <location filename="../src/outputeditor.cpp" line="559"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Hel rörelse ≈ %1 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="481"/>
+        <location filename="../src/outputeditor.cpp" line="561"/>
         <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
         <translation>En full ändring (0 → 255) tar %1 s, en halv %2 s.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="482"/>
+        <location filename="../src/outputeditor.cpp" line="562"/>
         <source>A new brightness is set at once.</source>
         <translation>En ny ljusstyrka ställs in direkt.</translation>
     </message>
@@ -2531,99 +2609,117 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/connectionview.cpp" line="562"/>
+        <location filename="../src/connectionview.cpp" line="588"/>
         <source>DCC %1 straight</source>
         <translation>DCC %1 rakt</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="563"/>
+        <location filename="../src/connectionview.cpp" line="589"/>
         <source>DCC %1 curved</source>
         <translation>DCC %1 avvikande</translation>
     </message>
     <message>
-        <location filename="../src/connectionview.cpp" line="572"/>
+        <location filename="../src/connectionview.cpp" line="598"/>
         <source>no trigger</source>
         <translation>ingen utlösare</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="323"/>
+        <location filename="../src/uihelpers.cpp" line="324"/>
         <source>lamp %1 flashing</source>
-        <translation type="unfinished"></translation>
+        <translation>lampa %1 blinkar</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="324"/>
+        <location filename="../src/uihelpers.cpp" line="325"/>
         <source>lamp %1 flashing, opposite phase</source>
         <translation>lampa %1 blinkar i motfas</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="325"/>
+        <location filename="../src/uihelpers.cpp" line="326"/>
         <source>lamp %1 on</source>
         <translation>lampa %1 tänd</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="327"/>
+        <location filename="../src/uihelpers.cpp" line="328"/>
         <source>all lamps off</source>
         <translation>alla lampor släckta</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="333"/>
+        <location filename="../src/uihelpers.cpp" line="334"/>
         <source>Signal aspect</source>
         <translation>Signalbild</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="335"/>
+        <location filename="../src/uihelpers.cpp" line="336"/>
         <source>Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
         <translation>Välj per lampa. Lampa 1 är stift A, lampa 2 stift B osv.</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="355"/>
+        <location filename="../src/uihelpers.cpp" line="356"/>
         <source>Value: %1  (0x%2)</source>
         <translation>Värde: %1  (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="361"/>
+        <location filename="../src/uihelpers.cpp" line="362"/>
         <source>off</source>
         <translation>av</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="361"/>
+        <location filename="../src/uihelpers.cpp" line="362"/>
         <source>on</source>
         <translation>på</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="361"/>
+        <location filename="../src/uihelpers.cpp" line="362"/>
         <source>flashing</source>
         <translation>blinkande</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="362"/>
+        <location filename="../src/uihelpers.cpp" line="363"/>
         <source>flashing, opposite phase</source>
         <translation>blinkande, i motfas</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="371"/>
+        <location filename="../src/uihelpers.cpp" line="372"/>
         <source>Lamp %1</source>
         <translation>Lampa %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="407"/>
+        <location filename="../src/uihelpers.cpp" line="408"/>
         <source>Out %1</source>
         <translation>Ut %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="407"/>
+        <location filename="../src/uihelpers.cpp" line="408"/>
         <source>In %1</source>
         <translation>In %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="414"/>
+        <location filename="../src/uihelpers.cpp" line="415"/>
         <source>shared with: %1</source>
         <translation>delad med: %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="421"/>
+        <location filename="../src/uihelpers.cpp" line="422"/>
         <source>in use: %1</source>
         <translation>används: %1</translation>
+    </message>
+</context>
+<context>
+    <name>SimulatedDevice</name>
+    <message>
+        <location filename="../src/simulateddevice.cpp" line="90"/>
+        <source>The firmware simulator (gpiocore_fw_host) is missing next to the program.</source>
+        <translation>Firmwaresimulatorn (gpiocore_fw_host) saknas bredvid programmet.</translation>
+    </message>
+    <message>
+        <location filename="../src/simulateddevice.cpp" line="109"/>
+        <source>Could not start the firmware simulator: %1</source>
+        <translation>Kunde inte starta firmwaresimulatorn: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/simulateddevice.cpp" line="127"/>
+        <source>The firmware simulator did not start up.</source>
+        <translation>Firmwaresimulatorn startade inte.</translation>
     </message>
 </context>
 </TS>

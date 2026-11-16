@@ -327,8 +327,8 @@ private slots:
 
     void removedRecorderAndFeedback()
     {
-        // input types 4 (recorder) and 5 (feedback) are reserved: from the wire or an old file = not in use
-        for (quint8 type : { quint8(4), quint8(5) })
+        // input type 5 (feedback) is reserved: from the wire or an old file = not in use
+        for (quint8 type : { quint8(5) })
         {
             InputConfig c;
             c.type = Momentary; c.pin = 8; c.outputId = 2;
@@ -339,13 +339,72 @@ private slots:
             QVERIFY(decodeInput(p, index, d));
             QCOMPARE(int(d.type), int(InputNotInUse));
         }
-        QCOMPARE(int(InputConfig::fromJson(QJsonObject{ { "type", "recorder" }, { "pin", 20 } }).type), int(InputNotInUse));
+        QCOMPARE(int(InputConfig::fromJson(QJsonObject{ { "type", "recorder" }, { "pin", 20 } }).type), int(InputNotInUse));   // 4 was the recorder
         QCOMPARE(int(InputConfig::fromJson(QJsonObject{ { "type", "feedback" }, { "pin", 8 } }).type), int(InputNotInUse));
         BoardSettings b;
         const char board[3] = { 1, 1, 3 };               // Nano, flags bit0 set, delay 3
         QVERIFY(decodeBoard(QByteArray(board, 3), b));   // flags bit0 (was 'recorder on') is ignored
         QCOMPARE(int(quint8(encodeBoard(b).at(1))), 0);
         QVERIFY(pinReservedReason(18).isEmpty() && pinReservedReason(19).isEmpty());   // A4/A5 always usable
+    }
+
+    void sensorInputModel()
+    {
+        // input type 4 = sensor (occupancy detector): no address, output or route
+        QCOMPARE(int(Sensor), 4);
+        QVERIFY(!inputTypeInfo(Sensor).usesAddress && !inputTypeInfo(Sensor).usesOutput && !inputTypeInfo(Sensor).usesRoute);
+        QCOMPARE(inputTypeName(Sensor), QStringLiteral("Sensor (occupancy)"));
+        InputConfig c;
+        c.type = Sensor; c.pin = 0;                      // D0: e.g. the next board's block via an optocoupler
+        const QByteArray p = encodeInput(5, c);
+        QCOMPARE(int(quint8(p.at(3))), 0);
+        QCOMPARE(int(quint8(p.at(4))), 4);
+        int index = -1;
+        InputConfig d;
+        QVERIFY(decodeInput(p, index, d));
+        QCOMPARE(int(d.type), int(Sensor));
+        QCOMPARE(c.normalized().type, quint8(Sensor));
+        QCOMPARE(c.toJson()["type"].toString(), QStringLiteral("sensor"));
+        QVERIFY(InputConfig::fromJson(c.toJson()) == c);
+        InputConfig a;                                   // analog sensor: a condition on A1
+        a.type = Sensor; a.analog = AnalogAbove; a.pin = 15; a.threshold = 600;
+        QVERIFY(InputConfig::fromJson(a.toJson()) == a);
+        QVERIFY(!inputConnected(c));                     // no wire of its own
+        BoardConfig board;
+        board.inputs[2] = c;
+        QCOMPARE(connectOutput(board, 2, 4, RouteLimits()), ConnectResult::NotConnectable);
+        QVERIFY(board.inputs[2] == c);
+    }
+
+    void blockSignalModel()
+    {
+        OutputConfig s;
+        s.type = FourToneSignal; s.data = { { 1, 15, 0, 0 } };
+        QVERIFY(!s.blockSignal());
+        s.setBlockSignal(3, 9, 2, 1, 0);                 // own input 3, next 9, red C, yellow B, green A
+        QCOMPARE(int(s.data[2]), 0x93);
+        QCOMPARE(int(s.data[3]), 0x80 | 0x40 | 0 << 4 | 1 << 2 | 2);
+        QVERIFY(s.blockSignal());
+        QCOMPARE(s.blockOwn(), 3);
+        QCOMPARE(s.blockNext(), 9);
+        QCOMPARE(s.blockLamp(0), 2);
+        QCOMPARE(s.blockLamp(1), 1);
+        QCOMPARE(s.blockLamp(2), 0);
+        QCOMPARE(int(s.data[0]), 1);                     // aspect and blink frequency stay
+        QCOMPARE(int(s.data[1]), 15);
+        const QByteArray p = encodeOutput(6, s);
+        QCOMPARE(Proto::toHex(p.mid(10)), QStringLiteral("01 0F 93 C6"));
+        int idx = -1; OutputConfig d;
+        QVERIFY(decodeOutput(p, idx, d));
+        QVERIFY(d == s && d.blockSignal());
+        QVERIFY(OutputConfig::fromJson(s.toJson()) == s);
+
+        s.setBlockSignal(15, -1, 3, 3, 3);               // no next block: bit6 clear, high nibble 0
+        QCOMPARE(int(s.data[2]), 0x0F);
+        QCOMPARE(int(s.data[3]), 0xBF);
+        QCOMPARE(s.blockNext(), -1);
+        s.type = Pwm;                                    // only a 4-aspect signal can be a block signal
+        QVERIFY(!s.blockSignal());
     }
 
     void dccNextPins()
@@ -961,6 +1020,64 @@ private slots:
         QCOMPARE(int(r.sim->pin(pin).mode), 1);              // OUTPUT
         r.link->triggerInput(1, 0);
         QTRY_COMPARE(int(r.sim->pin(pin).level), 0);
+    }
+
+    void firmwareBlockSignals()
+    {
+        // GPIOcore.ino blockSignals(): three blocks in a row, sensor k on its block, signal k protects
+        // block k and looks at block k + 1. Red = own block occupied, yellow = next one, green = free.
+        Rig r; makeRig(r);
+        OutputConfig none;
+        for (int o = 3; o < NumOutputs; ++o)
+            r.sim->setOutput(o, none);                   // frees the default pins
+        const quint8 pins[3][4] = { { 3, 4, 5, 6 }, { 7, 8, 9, 10 }, { 11, 12, 14, 15 } };
+        const quint8 sensorPin[3] = { 16, 17, 18 };      // A2-A4
+        for (int k = 0; k < 3; ++k)
+        {
+            OutputConfig s;
+            s.type = FourToneSignal;
+            for (int l = 0; l < 4; ++l) s.setPin(l, pins[k][l]);
+            s.data = { { 0, 10, 0, 0 } };
+            s.setBlockSignal(k, k < 2 ? k + 1 : -1, 2, 1, 0);   // red C, yellow B, green A
+            r.sim->setOutput(k, s);
+            InputConfig in;
+            in.type = Sensor; in.pin = sensorPin[k];
+            r.sim->setInput(k, in);
+        }
+        const int green = 1, yellow = 2, red = 4;
+        auto aspects = [&r] { return QVector<int>{ r.sim->output(0).data[0], r.sim->output(1).data[0], r.sim->output(2).data[0] }; };
+        QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
+        QTest::qWait(150);                               // the inputs see 'free' first: armed
+
+        QSignalSpy events(r.link, &DeviceLink::outputEvent);
+        r.sim->setPinLevel(17, false);                   // a train in block 2
+        QTRY_COMPARE(aspects(), (QVector<int>{ yellow, red, green }));
+        QTRY_VERIFY(!events.isEmpty());                  // reported like any aspect: OUTPUT_EVENT state 2
+        bool reported = false;
+        for (const QList<QVariant> &e : events)
+            reported |= e.at(0).toInt() == 1 && e.at(1).toInt() == 2 && e.at(2).toInt() == red;
+        QVERIFY(reported);
+        QTRY_COMPARE(int(r.sim->pin(9).level), 1);       // signal 2: red lamp C (D9) on, green A (D7) off
+        QCOMPARE(int(r.sim->pin(7).level), 0);
+        QCOMPARE(int(r.sim->pin(11).level), 1);          // signal 3: green A (D11) on, red C (A0) off
+        QCOMPARE(int(r.sim->pin(14).level), 0);
+
+        r.sim->setPinLevel(18, false);                   // the train is in blocks 2 and 3
+        QTRY_COMPARE(aspects(), (QVector<int>{ yellow, red, red }));
+        r.sim->setPinLevel(17, true);                    // block 2 free again, block 3 still occupied
+        QTRY_COMPARE(aspects(), (QVector<int>{ green, yellow, red }));
+        r.sim->setPinLevel(18, true);
+        QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
+
+        OutputConfig manual = r.sim->output(1);          // data[3] = 0: a normal signal, the aspect stays
+        manual.data[2] = manual.data[3] = 0;
+        manual.data[0] = 8;
+        r.sim->setOutput(1, manual);
+        r.sim->setPinLevel(17, false);
+        QTRY_COMPARE(aspects(), (QVector<int>{ yellow, 8, green }));
+        QTest::qWait(150);
+        QCOMPARE(int(r.sim->output(1).data[0]), 8);
+        QCOMPARE(r.errors, 0);
     }
 
     void firmwareAnalogNeedsTwoSamples()

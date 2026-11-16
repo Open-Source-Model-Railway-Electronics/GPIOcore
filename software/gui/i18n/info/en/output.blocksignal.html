@@ -1,0 +1,18 @@
+<h3>Automatic block signal</h3>
+<p>The board sets this signal by itself from occupancy detectors, without a command station:</p>
+<ul>
+<li><b>red</b> when its <b>own block</b> is occupied,</li>
+<li><b>yellow</b> when its own block is free but the <b>next block</b> is occupied,</li>
+<li><b>green</b> when both are free.</li>
+</ul>
+<p>A block is “occupied” while its input is active (pressed = LOW): make that input a <b>Sensor (occupancy)</b>,
+for example a current detector, a reed contact or a light barrier, on a digital pin or as an analog condition.
+The board checks it every 50 ms.</p>
+<p>Choose which lamp (A–D) is red, yellow and green. The signal shows one lamp at a time; the flashing
+frequency is not used. Leave <b>Next block</b> at “none” for a signal with only red and green.</p>
+<p><b>Several signals in a row:</b> signal 1 protects block 1 and looks at block 2, signal 2 protects block 2 and
+looks at block 3, and so on. A train in block 2 then gives signal 2 red and signal 1 yellow.</p>
+<p><b>Block on the next board:</b> the next block’s detector may be on another board. Wire its signal through an
+optocoupler to an input here, for example D0 (RX): D0 is free once no PC has connected within 5 s after
+power-up.</p>
+<p>Switched off, the signal is a normal signal again: the aspect comes from DCC or a route.</p>

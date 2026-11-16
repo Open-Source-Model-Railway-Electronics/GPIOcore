@@ -75,6 +75,9 @@ ConnectResult connectOutput(BoardConfig &board, int input, int output, const Rou
         return ConnectResult::Replaced;
     }
 
+    if (c.type == Sensor)
+        return ConnectResult::NotConnectable;    // a sensor switches nothing (block signals choose it themselves)
+
     // route: the same output may appear more than once (e.g. a servo moving
     // through several positions), so every drop adds a step
     const int maxSteps = qMin(limits.maxSteps, MaxRouteSteps);

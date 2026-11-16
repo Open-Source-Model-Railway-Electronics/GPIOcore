@@ -371,6 +371,11 @@ void MainWindow::buildUi()
     });
     connect(m_view, &ConnectionView::liveValueRequested, this, &MainWindow::openLiveValue);
     connect(m_view, &ConnectionView::analogValueRequested, this, &MainWindow::openAnalogValue);
+    connect(m_view, &ConnectionView::sensorRequested, this, [this](int in, bool occupied) {
+        // simulation: the detector pulls its pin low while the block is occupied
+        if (auto *sim = m_link->findChild<SimulatedDevice *>())
+            sim->setPinLevel(m_edit.inputs[in].pin, !occupied);
+    });
     connect(m_view, &ConnectionView::removeRequested, this, [this](bool output, int index) {
         if (output) { selectOutput(index); m_open = OpenOutput; }
         else        { selectInput(index);  m_open = OpenInput; }
@@ -1396,6 +1401,7 @@ void MainWindow::refreshRows()
     Ui::setPinBoard(m_edit);                 // pin lists: used pins in red
     m_outEd->refreshPinMarks();
     m_inEd->refreshPinMarks();
+    m_outEd->setInputs(inputNames(), inputTypes());   // block detectors of a signal
     // all nodes: pin conflicts and colours depend on the other inputs and outputs
     QVector<bool> inDirty(NumInputs), outDirty(NumOutputs), inConflict(NumInputs), outConflict(NumOutputs);
     for (int i = 0; i < NumInputs; ++i)  { inDirty[i]  = inputDirty(i);  inConflict[i]  = inputHasConflict(i);  }
@@ -1459,6 +1465,23 @@ QVector<quint8> MainWindow::outputTypes() const
     return t;
 }
 
+QStringList MainWindow::inputNames() const
+{
+    QStringList names;
+    for (int i = 0; i < NumInputs; ++i)
+        names << tr("Input %1 · %2").arg(i).arg(m_edit.inputs[i].name.isEmpty() ? inputTypeName(m_edit.inputs[i].type)
+                                                                               : m_edit.inputs[i].name);
+    return names;
+}
+
+QVector<quint8> MainWindow::inputTypes() const
+{
+    QVector<quint8> t;
+    for (const InputConfig &c : m_edit.inputs)
+        t << c.type;
+    return t;
+}
+
 QStringList MainWindow::outputWarnings(int i) const
 {
     QStringList w;
@@ -1492,6 +1515,10 @@ QStringList MainWindow::outputWarnings(int i) const
             w << tr("%1 (%2) is not PWM capable; %3 needs PWM.")
                      .arg(trGpio(roles[s]), pinName(p), outputTypeName(c.type));
     }
+    if (c.blockSignal())
+        for (int b : { c.blockOwn(), c.blockNext() })
+            if (b >= 0 && m_edit.inputs[b].type == InputNotInUse)
+                w << tr("Block input %1 is not in use: the signal never sees that block occupied.").arg(b);
     if (c.type == ServoType && c.servoMin() > c.servoMax())
         w << tr("Min is larger than max: positions are swapped.");
     if (c.type == SoundEffect && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)

@@ -6,6 +6,7 @@
 #include "uihelpers.h"
 
 #include <QApplication>
+#include <QCoreApplication>
 #include <QContextMenuEvent>
 #include <QHelpEvent>
 #include <QKeyEvent>
@@ -43,6 +44,7 @@ ConnectionView::ConnectionView(QWidget *parent) : QWidget(parent)
     m_liveRaw.fill(false, NumOutputs);
     m_liveFrog.fill(-1, NumOutputs);
     m_analogNow.fill(-1, 8);
+    m_sensorHeld.fill(false, NumInputs);
     m_liveFlashOut.fill(-100000, NumOutputs);
     m_liveFlashIn.fill(-100000, NumInputs);
     m_liveClock.start();
@@ -75,6 +77,8 @@ QSize ConnectionView::minimumSizeHint() const
 // ── Live test ───────────────────────────────────────────────────────────────
 void ConnectionView::setLiveMode(bool on)
 {
+    if (on != m_live)
+        m_sensorHeld.fill(false, NumInputs);   // a new simulation starts with every pin released
     m_live = on;
     m_drag = Drag::None;
     m_dragging = false;
@@ -86,6 +90,7 @@ void ConnectionView::clearLive()
     m_liveState.fill(-1, NumOutputs);
     m_liveFrog.fill(-1, NumOutputs);
     m_analogNow.fill(-1, 8);
+    m_sensorHeld.fill(false, NumInputs);
     update();
 }
 
@@ -101,6 +106,12 @@ bool ConnectionView::analogValueInput(int i) const
 {
     const InputConfig &c = m_board.inputs[i];
     return m_frame == Frame::Simulate && c.isAnalog() && c.type != InputNotInUse;
+}
+
+bool ConnectionView::sensorInput(int i) const
+{
+    const InputConfig &c = m_board.inputs[i];
+    return m_frame == Frame::Simulate && c.type == Sensor && !c.isAnalog() && c.pin < NumPins;
 }
 
 void ConnectionView::setOutputLive(int o, int state, int value)
@@ -157,7 +168,7 @@ QRectF ConnectionView::liveButtonRect(int i, int direction) const
     const InputConfig &c = m_board.inputs[i];
     const QRectF r = inputRect(i);
     const qreal h = 20, y = r.top() + 22;
-    if (analogValueInput(i) || liveValueInput(i))
+    if (analogValueInput(i) || liveValueInput(i) || sensorInput(i))
         return direction ? QRectF(r.right() - 88, y, 80, h) : QRectF();
     if (c.type == Latching)
         return direction ? QRectF(r.right() - 46, y, 38, h) : QRectF(r.right() - 88, y, 38, h);
@@ -207,6 +218,19 @@ void ConnectionView::drawInputLive(QPainter &p, int i)
             const int now = m_analogNow.value(c.analogChannel(), -1);   // the simulated value, once read back
             p.setPen(kText);
             p.drawText(b, Qt::AlignCenter, now >= 0 ? QStringLiteral("%1 ▾").arg(now) : tr("value ▾"));
+        }
+        else if (sensorInput(i))
+        {
+            // click = occupied, click again = free
+            const bool held = m_sensorHeld[i];
+            if (held)
+            {
+                QPainterPath fill;
+                fill.addRoundedRect(b, 6, 6);
+                p.fillPath(fill, QColor(0xDC, 0x26, 0x26));
+            }
+            p.setPen(held ? QColor(Qt::white) : kText);
+            p.drawText(b, Qt::AlignCenter, held ? tr("■ occupied") : tr("□ free"));
         }
         else if (liveValueInput(i))
         {
@@ -552,6 +576,8 @@ int ConnectionView::wireAt(const QPointF &p) const
 // ── Painting ────────────────────────────────────────────────────────────────
 static QString inputModeText(const InputConfig &c)
 {
+    if (c.type == Sensor)                // the full name does not fit on the badge
+        return QCoreApplication::translate("ConnectionView", "Sensor");
     return inputTypeName(c.type);
 }
 
@@ -784,6 +810,20 @@ void ConnectionView::paintEvent(QPaintEvent *)
         p.setPen(pen);
         p.drawPath(wire.path);
     }
+    // automatic block signals: a thin dotted link from the own / next block detector to the signal
+    for (int o = 0; o < NumOutputs; ++o)
+    {
+        const OutputConfig &c = m_board.outputs[o];
+        if (!c.blockSignal() || !outputShown(o)) continue;
+        for (int b : { c.blockOwn(), c.blockNext() })
+        {
+            if (b < 0 || !inputShown(b)) continue;
+            QPen pen(Ui::inputColor(b), o == m_selOutput || b == m_selInput ? 2.2 : 1.4, Qt::DotLine);
+            pen.setCapStyle(Qt::RoundCap);
+            p.setPen(pen);
+            p.drawPath(curve(inputPort(b), outputPort(o)));
+        }
+    }
     // route step labels on top of wires
     for (const Wire &wire : m_wires)
     {
@@ -858,6 +898,12 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                     m_liveFlashIn[i] = m_liveClock.elapsed();
                     m_liveAnim->start();
                     if (analogValueInput(i))    emit analogValueRequested(i);
+                    else if (sensorInput(i))
+                    {
+                        m_sensorHeld[i] = !m_sensorHeld[i];
+                        emit sensorRequested(i, m_sensorHeld[i]);
+                        update();
+                    }
                     else if (liveValueInput(i)) emit liveValueRequested(i);
                     else                        emit liveTriggerRequested(i, dir);
                     return;

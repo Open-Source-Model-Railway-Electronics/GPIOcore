@@ -22,13 +22,14 @@
 
 using namespace Gpio;
 
-enum Function { FnDirect, FnRoute, FnUnused };
+enum Function { FnDirect, FnRoute, FnUnused, FnSensor };
 enum StepMode { ModeCurved, ModeStraight, ModeAngle };
 
 static Function functionOf(quint8 type)
 {
     if (isDirectType(type))    return FnDirect;
     if (isRouteType(type))     return FnRoute;
+    if (type == Sensor)        return FnSensor;
     return FnUnused;
 }
 
@@ -76,6 +77,7 @@ void InputEditor::buildUi()
     m_function->setMinimumWidth(130);
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(Latching)),      tr("Direct control"), int(FnDirect));
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(Route)),         tr("Route"),          int(FnRoute));
+    m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(Sensor)),        inputTypeName(Sensor), int(FnSensor));
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(InputNotInUse)), tr("Not in use"),     int(FnUnused));
     head->addWidget(m_title);
     head->addStretch();
@@ -722,6 +724,7 @@ void InputEditor::collect()
     case FnDirect:   m_cfg.type = a ? Momentary : Latching;  break;
     case FnRoute:    m_cfg.type = quint8(Ui::currentData(m_routeTrigger));   break;
     case FnUnused:   m_cfg.type = InputNotInUse;             break;
+    case FnSensor:   m_cfg.type = Sensor;                    break;
     }
     m_cfg.address  = m_useAddr->isChecked() ? quint16(m_addr->value()) : AddrNone;
     const quint8 analog = quint8(Ui::currentData(m_readAs));
@@ -770,6 +773,11 @@ void InputEditor::collect()
             m_cfg.setCustomValues(true, t);                           // a sound output plays the input's tracks
     }
     m_cfg.syncCustomValues();
+    if (fn == FnSensor)
+    {
+        m_cfg.address = AddrNone;                                     // a sensor has no DCC address
+        m_cfg.route.clear();                                          // nor a route
+    }
 
     refresh();
     emit changed(m_index, m_cfg);

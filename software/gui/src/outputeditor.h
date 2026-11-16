@@ -1,6 +1,7 @@
 #pragma once
 #include "gpioconfig.h"
 
+#include <QVector>
 #include <QWidget>
 
 class QCheckBox;
@@ -30,6 +31,8 @@ public:
     void setLiveAvailable(bool available);   // board supports SERVO_LIVE
     void refreshPinCombos();                  // board profile changed (DCCnext, D0/D1)
     void refreshPinMarks();                   // pins used elsewhere in red
+    // Input names ("Input 3 · Sensor (occupancy)") and types, for the block detectors of a signal
+    void setInputs(const QStringList &names, const QVector<quint8> &types);
 
     enum Frog { FrogNone, FrogElectro, FrogUni };
 
@@ -44,6 +47,7 @@ private:
     void collect();            // widgets -> config, emits changed
     void updateVisibility();
     void updateTimeLabels();
+    void fillBlockCombos();
     static Frog frogOf(const Gpio::OutputConfig &c);
 
     int                m_index = 0;
@@ -89,6 +93,13 @@ private:
     QSpinBox       *m_fade = nullptr;        // PWM: data[1] = fade time in s for a full 0-255 change
     QLabel         *m_fadeNote = nullptr;
     QDoubleSpinBox *m_blinkHz = nullptr;     // signal: blink frequency (data[1] = Hz x 10)
+    QCheckBox      *m_block = nullptr;       // signal: automatic block signal (data[3] bit7)
+    QWidget        *m_blockBox = nullptr;
+    QComboBox      *m_blockOwn = nullptr;    // input of its own block detector
+    QComboBox      *m_blockNext = nullptr;   // input of the next block detector, or none
+    QComboBox      *m_blockLamp[3] {};       // red, yellow, green: lamp A-D
+    QStringList     m_inputNames;
+    QVector<quint8> m_inputTypes;
     QWidget        *m_soundInfo = nullptr;   // sound effect: wiring and SD card help
 
     QComboBox      *m_state = nullptr;

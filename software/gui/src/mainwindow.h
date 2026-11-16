@@ -121,6 +121,8 @@ private:
     bool inputHasConflict(int index) const;
     QStringList outputNames() const;
     QVector<quint8> outputTypes() const;
+    QStringList inputNames() const;
+    QVector<quint8> inputTypes() const;
     QStringList outputWarnings(int index) const;
     QStringList inputWarnings(int index) const;
 

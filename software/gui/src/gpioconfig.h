@@ -72,6 +72,13 @@ struct OutputConfig
     quint8  servoPattern() const { return data[3]; }
     quint8  pwmValue()     const { return data[0]; }
     quint8  pwmFade()      const { return data[1]; }   // s for a full 0-255 change, 0 = at once
+    // 4-aspect signal as automatic block signal (data[3] bit7): data[2] = own block input | next << 4,
+    // data[3] = 0x80 | 0x40 (has a next block) | green lamp << 4 | yellow lamp << 2 | red lamp (0-3 = A-D)
+    bool    blockSignal()  const { return type == FourToneSignal && (data[3] & 0x80); }
+    int     blockOwn()     const { return data[2] & 0x0F; }
+    int     blockNext()    const { return (data[3] & 0x40) ? data[2] >> 4 : -1; }   // -1 = none
+    int     blockLamp(int k) const { return (data[3] >> (2 * k)) & 3; }        // k: 0 red, 1 yellow, 2 green
+    void    setBlockSignal(int own, int next, int red, int yellow, int green);    // next -1 = none
 
     quint8  pin(int slot) const;           // 0..3 = A..D, 4..6 = relay A..C
     void    setPin(int slot, quint8 pin);
@@ -96,8 +103,8 @@ enum InputType : quint8
     Latching,       // "absolute": output follows the input level / DCC direction
     Route,          // route on a button press (falling edge) / any DCC command (0 and 1)
     InputNotInUse,
-    ReservedRecorder,   // 4: was the recorder, the firmware reads it as not in use
-    ReservedFeedback,   // 5: was the recorder's feedback sensor, read as not in use too
+    Sensor,         // 4: occupancy detector, only reports its state (automatic block signals)
+    ReservedFeedback,   // 5: was the recorder's feedback sensor, the firmware reads it as not in use
     RouteStraight,  // route on a button press / a DCC 'straight' (1) command only
     RouteCurved,    // route on a button press / a DCC 'curved' (0) command only
     InputTypeCount

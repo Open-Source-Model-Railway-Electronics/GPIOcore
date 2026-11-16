@@ -59,8 +59,8 @@ static const InputTypeInfo kInputTypes[InputTypeCount + 1] =
     { "latching",   QT_TRANSLATE_NOOP("Gpio", "Absolute"),     true,  true,  false, QT_TRANSLATE_NOOP("Gpio", "The output follows the input level or the DCC direction.") },
     { "route",      QT_TRANSLATE_NOOP("Gpio", "Route"),        true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).") },
     { "notInUse",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
-    // 4 / 5: reserved (were recorder / feedback); old files and boards load them as not in use
-    { "recorder",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
+    { "sensor",     QT_TRANSLATE_NOOP("Gpio", "Sensor (occupancy)"), false, false, false, QT_TRANSLATE_NOOP("Gpio", "An occupancy detector or other sensor. It switches nothing itself; automatic block signals read it.") },
+    // 5: reserved (was the recorder's feedback input); old files ("feedback", also "recorder") and boards load it as not in use
     { "feedback",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
     { "routeStraight", QT_TRANSLATE_NOOP("Gpio", "Route"),     true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Route that starts on a button press, or only on a DCC 'straight' command for its address.") },
     { "routeCurved",   QT_TRANSLATE_NOOP("Gpio", "Route"),     true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Route that starts on a button press, or only on a DCC 'curved' command for its address.") },
@@ -88,6 +88,12 @@ void OutputConfig::setSwitchTime(quint32 v)
 {
     for (int i = 0; i < 4; ++i)
         data[i] = quint8(v >> (8 * i));
+}
+
+void OutputConfig::setBlockSignal(int own, int next, int red, int yellow, int green)
+{
+    data[2] = quint8((own & 0x0F) | (next >= 0 ? (next & 0x0F) << 4 : 0));
+    data[3] = quint8(0x80 | (next >= 0 ? 0x40 : 0) | (green & 3) << 4 | (yellow & 3) << 2 | (red & 3));
 }
 
 void OutputConfig::setSwing(quint16 pulse, quint16 pause)
@@ -332,8 +338,8 @@ InputConfig InputConfig::normalized() const
     c.address  &= 0x0FFF;   // 12 bits
     c.pin      &= 0x3F;     //  6 bits
     c.type     &= 0x07;     //  3 bits
-    if (c.type == ReservedRecorder || c.type == ReservedFeedback)
-        c.type = InputNotInUse;          // recorder / feedback were removed, like in the firmware
+    if (c.type == ReservedFeedback)
+        c.type = InputNotInUse;          // the feedback input was removed, like in the firmware
     c.outputId &= 0x0F;     //  4 bits
     if (c.analog > AnalogAt || c.pin < 14 || c.pin >= 22)
         c.analog = AnalogNone;
@@ -471,7 +477,7 @@ bool decodeInput(const QByteArray &p, int &index, InputConfig &c)
     index      = at(0);
     c.address  = quint16(at(1) << 8 | at(2));
     c.setPinByte(at(3));
-    c.type     = at(4) == ReservedRecorder || at(4) == ReservedFeedback ? quint8(InputNotInUse) : at(4);
+    c.type     = at(4) == ReservedFeedback ? quint8(InputNotInUse) : at(4);
     c.outputId = at(5);
     if (c.isAnalog())
         c.threshold = quint16(InputConfig::roundThreshold(at(6) * 4));   // payload 6 = threshold / 4

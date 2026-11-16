@@ -35,6 +35,8 @@ public:
     QRectF liveButtonRect(int input, int direction) const;   // empty if the input has no such button
     bool   liveValueInput(int input) const;   // direct input on a signal / PWM output: sends a value
     bool   analogValueInput(int input) const; // simulation: an analog input gets a voltage, not a press
+    bool   sensorInput(int input) const;      // simulation: a digital sensor is held occupied / free
+    bool   sensorOccupied(int input) const { return m_sensorHeld.value(input); }
     void   setAnalogValue(int channel, int value);   // live reading of A0-A7, shown on analog inputs
     bool hideUnused() const { return m_hideUnused; }
     bool inputShown(int index) const  { return m_inRow.value(index, -1) >= 0; }
@@ -67,6 +69,7 @@ signals:
     void removeRequested(bool output, int index);   // trash on a hovered block
     void liveValueRequested(int input);             // signal aspect / PWM value (DCC extended)
     void analogValueRequested(int input);           // simulation: value on the analog pin of this input
+    void sensorRequested(int input, bool occupied); // simulation: hold the pin of a sensor low (occupied) or release it
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -113,6 +116,7 @@ private:
     Frame   m_frame = Frame::None;
     QVector<int>    m_liveState, m_liveValue;
     QVector<int>    m_analogNow;          // live reading per channel A0-A7, -1 = unknown
+    QVector<bool>   m_sensorHeld;         // simulation: sensor inputs held occupied
     QVector<bool>   m_liveRaw;
     QVector<int>    m_liveFrog;           // frog relays reported by the board, -1 = unknown            // last report was a raw value (angle / aspect / PWM)
     QVector<qint64> m_liveFlashOut, m_liveFlashIn;

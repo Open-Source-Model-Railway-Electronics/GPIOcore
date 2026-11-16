@@ -14,6 +14,7 @@
 
 #include <QCheckBox>
 #include <QDialog>
+#include <QGroupBox>
 #include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
@@ -794,7 +795,8 @@ private slots:
         auto *ied = w.findChild<InputEditor *>();
         QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
         QVERIFY(fn);
-        QCOMPARE(fn->count(), 3);                 // direct control, route, not in use
+        QCOMPARE(fn->count(), 4);                 // direct control, route, sensor, not in use
+        QVERIFY(fn->findText(QStringLiteral("Sensor (occupancy)")) >= 0);
         QCOMPARE(fn->findText(QStringLiteral("Recorder")), -1);
         QCOMPARE(fn->findText(QStringLiteral("Feedback")), -1);
     }
@@ -863,6 +865,120 @@ private slots:
         QVERIFY(view->board().inputs[6].route.isEmpty());
         QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
         QVERIFY(ied->findChild<QComboBox *>(QStringLiteral("firstStep")));
+    }
+
+    void blockSignalEditor()
+    {
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+        InputConfig sensor = view->board().inputs[4];
+        sensor.type = Sensor; sensor.pin = 19; sensor.address = AddrNone;
+        emit ied->changed(4, sensor);
+
+        QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
+        QVERIFY(type);
+        type->setCurrentIndex(type->findData(int(FourToneSignal)));
+        QCOMPARE(int(view->board().outputs[0].type), int(FourToneSignal));
+        QCheckBox *block = nullptr;
+        for (QCheckBox *b : oed->findChildren<QCheckBox *>())
+            if (b->text() == QLatin1String("Automatic block signal")) block = b;
+        QVERIFY(block);
+        QVERIFY(block->isVisibleTo(oed) && !block->isChecked());
+        QCOMPARE(int(view->board().outputs[0].data[3]), 0);
+        auto comboStarting = [oed](const QString &first) -> QComboBox * {
+            for (QComboBox *c : oed->findChildren<QComboBox *>())
+                if (c->count() && c->itemText(0) == first) return c;
+            return nullptr;
+        };
+        QComboBox *own = comboStarting(QStringLiteral("Input 0 · Absolute"));
+        QComboBox *next = comboStarting(QStringLiteral("— none"));
+        QVERIFY(own && next);
+        QVERIFY(!own->isVisibleTo(oed));
+
+        // ticked: own block = the first sensor input, no next block, green A, yellow B, red C
+        block->setChecked(true);
+        const OutputConfig sig = view->board().outputs[0];
+        QVERIFY(sig.blockSignal());
+        QCOMPARE(sig.blockOwn(), 4);
+        QCOMPARE(sig.blockNext(), -1);
+        QCOMPARE(int(sig.data[2]), 0x04);
+        QCOMPARE(int(sig.data[3]), 0x80 | 0 << 4 | 1 << 2 | 2);
+        QVERIFY(own->isVisibleTo(oed) && next->isVisibleTo(oed));
+        QCOMPARE(own->currentText(), QStringLiteral("Input 4 · Sensor (occupancy)"));
+        QCOMPARE(Ui::currentData(next), -1);
+        bool hint = false;
+        for (QLabel *l : oed->findChildren<QLabel *>())
+            hint |= l->isVisibleTo(oed) && l->text().startsWith(QLatin1String("Red when its own block is occupied"));
+        QVERIFY(hint);
+        maybeScreenshot(w, "block-signal.png");
+
+        InputConfig unused = view->board().inputs[6];
+        unused.type = InputNotInUse;
+        emit ied->changed(6, unused);
+        next->setCurrentIndex(next->findData(6));
+        QCOMPARE(int(view->board().outputs[0].data[2]), 0x64);
+        QCOMPARE(int(view->board().outputs[0].data[3]), 0xC6);
+        bool warned = false;                     // input 6 is not in use: never occupied
+        for (QLabel *l : oed->findChildren<QLabel *>())
+            warned |= l->isVisibleTo(oed) && l->text().contains(QLatin1String("Block input 6 is not in use"));
+        QVERIFY(warned);
+        block->setChecked(false);
+        QCOMPARE(int(view->board().outputs[0].data[2]), 0);
+        QCOMPARE(int(view->board().outputs[0].data[3]), 0);
+        QVERIFY(!own->isVisibleTo(oed));
+
+        // the input editor offers 'Sensor': no output, behaviour, custom values or route
+        QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
+        QVERIFY(fn);
+        fn->setCurrentIndex(fn->findText(QStringLiteral("Sensor (occupancy)")));
+        QCOMPARE(int(view->board().inputs[0].type), int(Sensor));
+        QCOMPARE(view->board().inputs[0].address, AddrNone);
+        for (QGroupBox *g : ied->findChildren<QGroupBox *>())
+            QVERIFY2(!g->isVisibleTo(ied) || g->title() == QLatin1String("Triggered by"), qPrintable(g->title()));
+        QVERIFY(comboWith(ied, QStringLiteral("Digital"))->isVisibleTo(ied));   // 'Read as' stays
+    }
+
+    void simulateSensorAndBlockSignal()
+    {
+        // Simulate: a sensor input gets a button that holds the block occupied until clicked again
+        MainWindow w;
+        auto *link = w.findChild<DeviceLink *>();
+        link->drainMs = 3;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        OutputConfig unused = view->board().outputs[15];
+        unused.type = OutputNotInUse; unused.pinA = PinNA;       // frees A5
+        emit oed->changed(15, unused);
+        OutputConfig sig = view->board().outputs[0];
+        sig.type = FourToneSignal; sig.data = { { 0, 10, 0, 0 } };
+        sig.setBlockSignal(5, -1, 2, 1, 0);
+        emit oed->changed(0, sig);
+        InputConfig sensor = view->board().inputs[5];
+        sensor.type = Sensor; sensor.pin = 19; sensor.address = AddrNone;
+        emit w.findChild<InputEditor *>()->changed(5, sensor);
+        QVERIFY(!view->sensorInput(5));                          // only in the simulation
+
+        w.setMode(MainWindow::ModeSimulate);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
+        auto *sim = w.findChild<SimulatedDevice *>();
+        QVERIFY(sim);
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim->output(0).data[0]), 1, 3000);   // free: green (A)
+        QVERIFY(view->sensorInput(5));
+        QTest::qWait(150);
+        click(view, view->liveButtonRect(5, 1).center());
+        QVERIFY(view->sensorOccupied(5));
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim->output(0).data[0]), 4, 2000);   // occupied: red (C)
+        maybeScreenshot(w, "sensor-simulate.png");
+        click(view, view->liveButtonRect(5, 1).center());
+        QVERIFY(!view->sensorOccupied(5));
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim->output(0).data[0]), 1, 2000);
+        w.setMode(MainWindow::ModeConfigure);
     }
 };
 
