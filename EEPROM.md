@@ -1,8 +1,7 @@
 # GPIOcore — EEPROM usage
 
 Date: 2026-11-12 · ATmega328P (Uno, Nano, DCCnext): **1024 B internal EEPROM**.
-The recorder is **not** in the internal EEPROM but in an **external I2C EEPROM** (24LC256, 32 KB,
-address 0x50, on A4 = SDA and A5 = SCL).
+There is no external EEPROM (the recorder that used one was removed on 2026-11-16).
 
 ## 1. Internal EEPROM map (firmware v2, layout 1)
 
@@ -12,7 +11,7 @@ Source: `software/GPIOcore/routes.h` (`EE_*` constants).
 |---|---|---|---|
 | 0 – 2 | 0x000 – 0x002 | 3 | Magic `'G'` `'2'`, layout version `1`. If this is missing, a v1 board is converted or an empty board gets default values |
 | 3 | 0x003 | 1 | Board type: 0 Uno, 1 Nano, 2 DCCnext, 3 Jack of all trades |
-| 4 | 0x004 | 1 | Board flags: bit0 recorder, bit1 timing per step, bit2-3 interlocking (0 off, 1 on, 2 auto) |
+| 4 | 0x004 | 1 | Board flags: bit0 reserved (was recorder), bit1 timing per step, bit2-3 interlocking (0 off, 1 on, 2 auto) |
 | 5 | 0x005 | 1 | Fixed wait time after a route step when timing is off, × 0.1 s |
 | 6 – 21 | 0x006 – 0x015 | 16 | Board name, ASCII, padded with 0 |
 | 22 – 181 | 0x016 – 0x0B5 | 160 | **16 outputs × 10 B** — output *n* at `22 + 10·n` |
@@ -55,22 +54,7 @@ used for an analog input. A `static_assert` keeps the record at 4 B.
 
 **Total in use without routes:** 262 B fixed + 0 B routes. Everything above address 261 is for routes.
 
-## 2. External I2C EEPROM (recorder)
-
-| Address | Contents |
-|---|---|
-| 0 – 32767 | Recorder events of 8 B (`data1`, `data2` 16 bit, `data3`, `time2nextEvent` 32 bit): ±4096 events |
-
-- The recorder works **only** if the board flag *recorder* is on. Then the firmware starts I2C on
-  A4/A5; if the flag is off, A4/A5 are normal pins.
-- **Recorder on ⇒ A4 and A5 are forbidden** for inputs and outputs. The firmware answers `NACK 5` to an
-  input or output with A4/A5, and refuses to switch the recorder on (`NACK 5`) as long as A4 or A5 is in use.
-  The GUI then shows A4/A5 as reserved and warns when you switch it on.
-- An event of 8 B at a multiple of 8 never crosses a page boundary (64 B) of the 24LC256.
-- Without an EEPROM on the bus the recorder plays nothing and records nothing; a timeout of 3 ms
-  prevents the decoder from hanging.
-
-## 3. Old (firmware v1), for comparison
+## 2. Old (firmware v1), for comparison
 
 | Address | Contents | Bytes |
 |---|---|---|
@@ -82,16 +66,16 @@ used for an analog input. A `static_assert` keeps the record at 4 B.
 A v1 board is converted at the first start with v2: outputs, inputs, and `linked[]` as 2-byte
 route steps. The recorder recording is lost.
 
-## 4. What else can be compressed
+## 3. What else can be compressed
 
 | Idea | Gain | Cost / risk | Advice |
 |---|---|---|---|
 | `linked[8]` out of the input | 128 B | none | ✓ done |
 | Timing as a board setting | 2 B per step | less flexible | ✓ done |
-| Recorder to I2C EEPROM | 580 B internal | Wire library: ±2.6 KB flash, ±220 B RAM | ✓ done |
+| Recorder removed (it was in an I2C EEPROM) | 580 B internal | – | ✓ done (2026-11-16): −4.6 KB flash, +254 B free RAM |
 | **Variable step**: 2 B, plus 2 B only if the wait time differs (flag bit in byte 0) | almost always 2 B per step, also with timing on | read the route sequentially (the decoder does that anyway) | good idea for later; then the timing setting can go |
 | Wait time 14 → 8 bit with scale | 1 B per step | max ±2 min | only if needed |
 | Board name 16 → 12 characters | 4 B | – | not needed |
 | `malloc` / heap | – | fragmentation on 2 KB RAM | do not; the pool is already dynamic |
 
-**RAM** (Nano, with I2C): 1589 B of 2048 B in use, 459 B free. Flash: 26948 B of 30720 B (87 %).
+**RAM** (Nano, 2026-11-16): 1412 B of 2048 B in use, 636 B free. Flash: 24234 B of 30720 B (78 %).

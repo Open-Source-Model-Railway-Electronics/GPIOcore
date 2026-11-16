@@ -107,7 +107,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td><code>address</code></td><td>12</td><td>DCC accessory address 1–4094, <b>0xFFF = none</b></td></tr>
 <tr><td><code>pin</code></td><td>6</td><td>as for outputs; the firmware sets <code>INPUT_PULLUP</code> (button to GND). <b>Or an analog comparison</b>: <code>0x20 + 8 × mode + channel</code>, see below</td></tr>
 <tr><td><code>type</code></td><td>3</td><td>see below</td></tr>
-<tr><td><code>outputID</code></td><td>4</td><td>0–15: the output (direct), or the sensor number (feedback)</td></tr>
+<tr><td><code>outputID</code></td><td>4</td><td>0–15: the output (direct)</td></tr>
 <tr><td><code>linked[8]</code></td><td>8 × 8</td><td>v1 route: bit 7 = state, bits 0–6 = output id; 0x7F/0xFF = end. **<code>linked[0]</code> for an analog input = threshold / 4**</td></tr>
 </tbody></table>
 <p><b>Analog inputs (HELLO bit4).</b> Instead of a pin number, <code>pin</code> then contains <code>0x20 | mode &lt;&lt; 3 | channel</code>: channel 0–7 = A0–A7 (the real pin is 14 + channel), mode 0 = <b>below</b> the threshold, 1 = <b>above</b> the threshold, 2 = <b>at</b> the threshold (one button of a resistor ladder). Mode 3 (so also <code>0x3F</code> = not used) is never analog. The threshold (0–1016, steps of 8) is in <code>linked[0]</code> as <b>threshold / 4</b>: <code>SET_INPUT_DATA</code> takes it from there, <code>GET_INPUT_DATA</code> puts it back there (only for an analog input; otherwise <code>linked[]</code> remains the v1 route). The firmware stores threshold / 8 (7 bits, <code>EEPROM.md</code>).</p>
@@ -116,7 +116,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>1 above</td><td>value &gt; threshold</td><td>value ≤ threshold − 20</td></tr>
 <tr><td>2 at</td><td>value − threshold between −10 and +10</td><td>outside that</td></tr>
 </tbody></table>
-<p>The firmware reads every 50 ms and counts a change only after two equal readings. "Pressed" works exactly like a button to GND (LOW): toggle switches when pressed, absolute follows (pressed = 0), all three route types start when pressed, recorder and feedback work the same. The rules of the real pin apply to the channel (A7 = config button, A6 only on the Nano, A4/A5 not with the recorder) and an analog code as an output gives <code>NACK 5</code>. Several analog inputs may share one channel (resistor ladder); a digital input or an output on that pin is a conflict.</p>
+<p>The firmware reads every 50 ms and counts a change only after two equal readings. "Pressed" works exactly like a button to GND (LOW): toggle switches when pressed, absolute follows (pressed = 0), all three route types start when pressed. The rules of the real pin apply to the channel (A7 = config button, A6 only on the Nano) and an analog code as an output gives <code>NACK 5</code>. Several analog inputs may share one channel (resistor ladder); a digital input or an output on that pin is a conflict.</p>
 <p>Input types:</p>
 <ul><li>
 0 toggle — switches when the button is pressed (falling edge) or on every DCC command;
@@ -128,9 +128,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 </li><li>
 3 not in use;
 </li><li>
-4 recorder — long press (1.5 s) = recording on/off, short press = playback on/off;
-</li><li>
-5 feedback — sensor that a recording waits for during playback.
+4, 5 — reserved (were the recorder and its feedback input, removed 2026-11-16); the firmware reads them as 3.
 </li><li>
 6 route <b>straight only</b> — starts when the button is pressed, or only on a DCC command
  'straight' (direction 1) for the address;
@@ -157,11 +155,11 @@ checksum : XOR of command and all payload bytes</code></pre>
 device -&gt; 95 &lt;protocol&gt; &lt;max steps per route&gt; &lt;step pool lo&gt; &lt;step pool hi&gt; &lt;flags&gt;
 flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit1 = SERVO_LIVE supported
-         bit2 = routes / recorder in external EEPROM
+         bit2 = (no longer sent; was: recorder in external EEPROM)
          bit3 = BOARD settings (C0 / CF) supported, see section 10
          bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
 step pool: number of route steps that still fit with the current board settings
-           (timing on/off, recorder on/off), all routes together</code></pre>
+           (timing on/off), all routes together</code></pre>
 <p>The GUI sends <code>HELLO</code> right after the boot message (version). That is about 1.5 s after the reset that opening the port causes through DTR. For boards without auto-reset it sends it after <code>REQ_VERSION</code>.</p>
 <p><b>What the decoder does (proposal, so that D0/D1 become usable):</b></p>
 <ol><li>
@@ -246,7 +244,7 @@ The GUI sends this while you drag a servo slider, if the <i>Live</i> checkbox is
  <code>SERVO_LIVE</code>.
 </li></ul>
 <h2>6. EEPROM budget</h2>
-<p>See **<code>EEPROM.md</code>**: the layout of v2, what fits in 1024 B, and what can still be compressed. In short: without <code>linked[8]</code> an input is 4 B, the routes have a pool of 762 B to themselves, and with timing off 16 × 16 steps fit internally (512 B). The recorder is always in the external I2C EEPROM.</p>
+<p>See **<code>EEPROM.md</code>**: the layout of v2, what fits in 1024 B, and what can still be compressed. In short: without <code>linked[8]</code> an input is 4 B, the routes have a pool of 762 B to themselves, and with timing off 16 × 16 steps fit internally (512 B).</p>
 <h2>7. What the GUI does with v1 firmware (current state)</h2>
 <ul><li>
 **No <code>HELLO</code> reply** → protocol v1. That does not count as an error.
@@ -282,7 +280,7 @@ In the GUI you tick the <i>DCCnext board</i> checkbox. The pin choices then show
 device -&gt; CF &lt;len&gt; &lt;type&gt; &lt;flags&gt; &lt;delay&gt; &lt;name ...&gt; (also SET_BOARD from host -&gt; ACK)
 len    : 4 + name length (name 0..16 ASCII bytes, no terminator)
 type   : 0 = Arduino Uno, 1 = Arduino Nano, 2 = DCCnext, 3 = Jack of all trades
-flags  : bit0   = recorder enabled
+flags  : bit0   = reserved (was: recorder enabled), ignored and cleared
          bit1   = route step timing (per-step wait times stored)
          bit2-3 = route interlocking: 0 = off (all routes may run in parallel)
                                       1 = on  (one route at a time)
@@ -300,9 +298,8 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
  needs an external 10 kΩ pull-up. The type is set by the GUI; the firmware only uses it
  to check pins.
 </li><li>
-<b>Recorder.</b> <b>Always</b> needs an external I2C EEPROM (24LC256) on A4 (SDA) / A5 (SCL). Recorder on ⇒
- A4/A5 may not be used as input or output (<code>NACK 5</code>), and switching it on is refused (<code>NACK 5</code>) as long as A4/A5 are in
- use. Recorder off ⇒ a recorder input does nothing and A4/A5 are free. HELLO bit2 = recorder on.
+<b>Recorder.</b> Removed on 2026-11-16 (it needed an external I2C EEPROM on A4/A5, ±4.6 KB flash and ±250 B RAM).
+ A4/A5 are always normal pins.
 </li><li>
 <b>Switching timing on/off.</b> The decoder converts the stored routes (2 ↔ 4 B per step). If it does not fit
  (timing on with too many steps), the answer is <code>NACK 4</code> and the old setting stays.
@@ -315,15 +312,12 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 </li></ul>
 <h3>10.1 How the firmware does it (2026-11-12, deviations and choices)</h3>
 <ul><li>
-<b>Default values</b> new board: Nano, recorder <b>off</b>, timing <b>off</b>, interlocking auto, delay 0.3 s.
+<b>Default values</b> new board: Nano, timing <b>off</b>, interlocking auto, delay 0.3 s.
  A migrated v1 board gets a delay of 0.5 s, so that routes stay equally fast. The old recording is erased.
 </li><li>
 <b>SET_ROUTE writes immediately.</b> <code>first = 0</code> makes the route its new length at once (the routes behind it
  shift up, <code>NACK 4</code> if it does not fit); every following piece is written directly. An interrupted
  transfer therefore leaves a half-written route behind. The GUI always reads the route back afterwards.
-</li><li>
-<b>Recorder</b> (since the I2C change): events of 8 B in the external EEPROM from address 0. I2C only runs
- if the recorder is on; without an EEPROM on the bus nothing happens (Wire timeout 3 ms).
 </li><li>
 <b>Switching timing on</b> gives every existing step the board delay as wait time. The first step starts immediately
  (v1 waited 0.5 s first). Wait times run down on the 50 ms tick of the inputs.

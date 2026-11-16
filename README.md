@@ -162,8 +162,6 @@ The **Function** decides what happens:
 | **Direct control**, behaviour **Toggle** | every press switches the output over (straight ↔ curved, on ↔ off) |
 | **Direct control**, behaviour **Absolute** | the output follows: button pressed = curved / off, released = straight / on. With DCC: "straight" = straight, "curved" = curved |
 | **Route** | does a list of steps, see chapter 7 |
-| **Recorder** | long press = start/stop recording, short press = play back (needs an extra memory chip) |
-| **Feedback** | a sensor for the recorder: during playback the recorder waits for it (e.g. until a train reaches a point) |
 
 If your command station sends the same command a few times in a row, the decoder only reacts to the
 first one, so a toggle doesn't switch back and forth.
