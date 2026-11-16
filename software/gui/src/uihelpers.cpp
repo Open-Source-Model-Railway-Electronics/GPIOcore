@@ -234,8 +234,6 @@ QColor inputTypeColor(quint8 type)
     case RouteStraight:
     case RouteCurved:   return QColor(0x8B, 0x5C, 0xF6);
     case InputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
-    case Recorder:      return QColor(0xEF, 0x44, 0x44);
-    case FeedbackInput: return QColor(0xF5, 0x9E, 0x0B);
     }
     return QColor(0x94, 0xA3, 0xB8);
 }
@@ -516,8 +514,6 @@ QString inputSummaryTarget(const InputConfig &c)
     if (info.usesRoute)
         return c.route.isEmpty() ? trGpio("(empty route)")
                                  : trGpio("%1 steps").arg(c.route.size());
-    if (c.type == FeedbackInput)
-        return trGpio("feedback id %1").arg(c.outputId);
     if (info.usesOutput)
         return trGpio("Output %1").arg(c.outputId);
     return QString();

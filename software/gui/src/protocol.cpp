@@ -48,14 +48,12 @@ QString commandName(quint8 command)
     case SET_INPUT_DATA:         return QStringLiteral("SET_INPUT_DATA");
     case GET_INPUT_DATA:         return QStringLiteral("GET_INPUT_DATA");
     case SET_OUTPUT_DATA:        return QStringLiteral("SET_OUTPUT_DATA");
-    case SET_OUTPUT_DATA_LEGACY: return QStringLiteral("SET_OUTPUT_DATA (legacy 13 B)");
     case GET_OUTPUT_DATA:        return QStringLiteral("GET_OUTPUT_DATA");
     case SET_INPUT_STATE:        return QStringLiteral("SET_INPUT_STATE");
     case GET_INPUT_STATE:        return QStringLiteral("GET_INPUT_STATE");
     case SET_OUTPUT_STATE:       return QStringLiteral("SET_OUTPUT_STATE");
     case GET_OUTPUT_STATE:       return QStringLiteral("GET_OUTPUT_STATE");
     case REQ_VERSION:            return QStringLiteral("REQ_VERSION");
-    case SET_PRESET:             return QStringLiteral("SET_PRESET");
     case ACK:                    return QStringLiteral("ACK");
     case NACK:                   return QStringLiteral("NACK");
     case HELLO:                  return QStringLiteral("HELLO");

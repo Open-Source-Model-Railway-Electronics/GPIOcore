@@ -2,11 +2,8 @@
 // Firmware simulator: a QIODevice that behaves like a GPIOcore board on the
 // other end of the serial line. It mirrors src/Transceiver.cpp and
 // messageParser.cpp of the firmware, including its quirks:
-//   - two ACKs after every SET_*_DATA (handler + transceiver)
 //   - an ACK after every GET reply
-//   - legacy output opcode 0x2D (13 bytes): data[3] comes from a stale buffer
 //   - bitfield truncation (6-bit pins, 4-bit outputID, 12-bit address, ...)
-//   - preset broadcasts in the old 12-byte output layout
 //   - a version message on boot, REQ_VERSION gets no ACK
 
 #include "gpioconfig.h"
@@ -19,21 +16,14 @@ class SimulatedDevice : public QIODevice
 {
     Q_OBJECT
 public:
-    // Defaults = fixed firmware (review F1–F16 applied, 2026-11-09).
+    // Defaults = the firmware in the repo.
     struct Options
     {
-        bool legacyFirmware = false;  // true: OPCODE_SET_OUTPUT_DATA = 0x2D, 13 bytes (old firmware)
-        bool doubleAck      = false;  // true: handlers call sendAck() too (old firmware)
-        bool oldDefaults    = false;  // true: pins from D0, linked = NA, old preset layout, version "12345678"
-        int  protocol       = 2;      // 1 = current firmware (no HELLO / routes / live servo)
         int  maxRouteSteps  = Gpio::MaxRouteSteps;
-        int  stepPool       = 256;    // external EEPROM: 16 routes x 16 steps
-        quint8 helloFlags   = 0x1F;   // serial pins, servo live, external EEPROM, board settings, analog + sound
+        int  stepPool       = 256;    // 16 routes x 16 steps
+        quint8 helloFlags   = 0x1B;   // serial pins, servo live, board settings, analog + sound
         int  bootDelayMs    = 150;
         int  replyDelayMs   = 1;
-
-        static Options currentFirmware(); // firmware as in the repo now (protocol v1)
-        static Options oldFirmware();     // firmware before the review fixes
     };
 
     explicit SimulatedDevice(QObject *parent = nullptr);
@@ -48,7 +38,7 @@ public:
     Gpio::OutputConfig output(int i) const { return m_out[i]; }
     Gpio::InputConfig  input(int i)  const { return m_in[i]; }
     void setOutput(int i, const Gpio::OutputConfig &c) { m_out[i] = c.normalized(); }
-    void setInput(int i, const Gpio::InputConfig &c)   { m_in[i] = c.normalized(); m_in[i].syncLinkedFromRoute(); }
+    void setInput(int i, const Gpio::InputConfig &c)   { m_in[i] = c.normalized(); }
     int  liveAngle(int output) const { return m_live[output]; }   // last SERVO_LIVE, -1 = none
     bool configSession() const { return m_session; }                // HELLO received
     Gpio::BoardSettings board() const { return m_board; }
@@ -88,14 +78,6 @@ private:
     void   setOutputState(int output, quint8 state);          // state change + report, servos sweep
     void   sweepServo(int output);
     void   setFrog(int output, int bit, bool on);
-
-    quint8 outCmd() const;
-    quint8 firstPin() const { return m_opt.oldDefaults ? 0 : 3; }
-    void   presetOutput(int i, quint8 pinA, quint8 pinB, quint8 rA, quint8 rB, quint8 rC,
-                        quint8 type, std::array<quint8, 4> data, quint32 switchTime, bool isTime);
-    void   setupInputs(int used);
-    void   clearUnusedOutputs(int from);
-    void   applyPreset(quint8 preset);
 
     Options m_opt;
     std::array<Gpio::OutputConfig, Gpio::NumOutputs> m_out;

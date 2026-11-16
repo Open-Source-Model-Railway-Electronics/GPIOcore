@@ -25,7 +25,6 @@ public:
     Gpio::OutputConfig config() const { return m_cfg; }
     int  index() const { return m_index; }
 
-    void setLegacyFormat(bool legacy);
     void setWarnings(const QStringList &warnings);
     void setConnected(bool connected);
     void setLiveAvailable(bool available);   // board supports SERVO_LIVE
@@ -50,7 +49,6 @@ private:
     int                m_index = 0;
     Gpio::OutputConfig m_cfg;
     bool               m_loading = false;
-    bool               m_legacy  = false;
     bool               m_connected = false;
     bool               m_liveAvailable = false;
     Frog               m_frog = FrogNone;
@@ -58,7 +56,6 @@ private:
     QLabel         *m_title = nullptr;
     QLabel         *m_help = nullptr;
     QLabel         *m_warn = nullptr;
-    QLabel         *m_legacyNote = nullptr;
     QComboBox      *m_type = nullptr;
 
     QGroupBox      *m_pinBox = nullptr;

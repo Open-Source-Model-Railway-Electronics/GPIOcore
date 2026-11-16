@@ -20,35 +20,19 @@ SimulatedDevice::SimulatedDevice(const Options &options, QObject *parent)
     factoryDefaults();
 }
 
-SimulatedDevice::Options SimulatedDevice::Options::currentFirmware()
-{
-    Options o;
-    o.protocol = 1;
-    return o;
-}
-
-SimulatedDevice::Options SimulatedDevice::Options::oldFirmware()
-{
-    Options o = currentFirmware();
-    o.legacyFirmware = true;
-    o.doubleAck      = true;
-    o.oldDefaults    = true;
-    return o;
-}
-
 void SimulatedDevice::factoryDefaults()
 {
-    // Output::defaults(): defaultSettings with pinA = 3 + index (old: index), singleSteady, switchTime 50
+    // Output::defaults(): defaultSettings with pinA = 3 + index, singleSteady, switchTime 50
     for (int i = 0; i < NumOutputs; ++i)
     {
         OutputConfig c;
-        c.pinA = quint8(firstPin() + i);
-        if (!m_opt.oldDefaults && c.pinA >= 13) ++c.pinA;   // D13 = config LED
+        c.pinA = quint8(3 + i);
+        if (c.pinA >= 13) ++c.pinA;      // D13 = config LED
         c.type = SingleSteady;
         c.setSwitchTime(50);
         m_out[i] = c.normalized();
     }
-    // Input::defaults(): outputID = i, address = i + 1, latching, linked = 0xFF (old: NA = 0x3F)
+    // Input::defaults(): outputID = i, address = i + 1, latching
     for (int i = 0; i < NumInputs; ++i)
     {
         InputConfig c;
@@ -56,7 +40,6 @@ void SimulatedDevice::factoryDefaults()
         c.address  = quint16(i + 1);
         c.pin      = PinNA;
         c.type     = Latching;
-        c.linked.fill(m_opt.oldDefaults ? PinNA : LinkNone);
         m_in[i] = c.normalized();
     }
 }
@@ -140,8 +123,8 @@ void SimulatedDevice::sendNack(quint8 reason)
 
 void SimulatedDevice::sendVersion()
 {
-    // old firmware sent a placeholder, fixed firmware sends src/version.h
-    const QByteArray v = m_opt.oldDefaults ? QByteArrayLiteral("12345678") : QByteArrayLiteral("v0.0.0");
+    // the firmware sends src/version.h
+    const QByteArray v = QByteArrayLiteral("v0.0.0");
     sendMessage(quint8(0x50 | v.size()), reinterpret_cast<const quint8 *>(v.constData()));
 }
 
@@ -195,11 +178,6 @@ void SimulatedDevice::receiveByte(quint8 b)
     }
 }
 
-quint8 SimulatedDevice::outCmd() const
-{
-    return m_opt.legacyFirmware ? Proto::SET_OUTPUT_DATA_LEGACY : Proto::SET_OUTPUT_DATA;
-}
-
 // ── messageParser.cpp (firmware side) ───────────────────────────────────────
 void SimulatedDevice::messageReceived()
 {
@@ -211,20 +189,18 @@ void SimulatedDevice::messageReceived()
         if (index >= NumInputs) return;                 // firmware: out of bounds write
         int idx; InputConfig c;
         decodeInput(QByteArray(reinterpret_cast<const char *>(p), 14), idx, c);
-        if (m_opt.protocol >= 2)
-            c.route = m_in[index].route;                // v2: routes come with SET_ROUTE
+        c.route = m_in[index].route;                    // routes come with SET_ROUTE
         m_in[index] = c.normalized();
-        if (m_opt.doubleAck) sendAck();
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::HELLO)
+    else if (m_command == Proto::HELLO)
     {
         m_session = true;                               // keep D0/D1 as serial
-        const quint8 reply[5] = { quint8(m_opt.protocol), quint8(m_opt.maxRouteSteps),
+        const quint8 reply[5] = { 2 /* PROTOCOL_VERSION */, quint8(m_opt.maxRouteSteps),
                                   quint8(m_opt.stepPool & 0xFF), quint8(m_opt.stepPool >> 8),
                                   m_opt.helloFlags };
         sendMessage(quint8(Proto::HELLO_GROUP << 4 | 5), reply);
     }
-    else if (m_opt.protocol >= 2 && (m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::GET_BOARD)
+    else if ((m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::GET_BOARD)
     {
         const QByteArray body = encodeBoard(m_board);
         quint8 msg[32] = {};
@@ -232,21 +208,21 @@ void SimulatedDevice::messageReceived()
         memcpy(msg + 1, body.constData(), size_t(body.size()));
         sendMessage(Proto::SET_BOARD, msg);
     }
-    else if (m_opt.protocol >= 2 && (m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::SET_BOARD)
+    else if ((m_opt.helloFlags & Proto::HELLO_FLAG_BOARD) && m_command == Proto::SET_BOARD)
     {
         decodeBoard(QByteArray(reinterpret_cast<const char *>(p + 1), m_len - 1), m_board);
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::SET_INPUT_STATE)
+    else if (m_command == Proto::SET_INPUT_STATE)
     {
         if (index < NumInputs) triggerInput(index, p[1]);
     }
-    else if (m_opt.protocol >= 2 && (m_opt.helloFlags & Proto::HELLO_FLAG_ANALOG_SOUND) && m_command == Proto::GET_ANALOG)
+    else if ((m_opt.helloFlags & Proto::HELLO_FLAG_ANALOG_SOUND) && m_command == Proto::GET_ANALOG)
     {
         const quint8 ch = p[0] & 7;
         const quint8 msg[3] = { ch, quint8(m_analog[ch] >> 8), quint8(m_analog[ch] & 0xFF) };
         sendMessage(Proto::ANALOG_VALUE, msg);
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::DCC_EXT)
+    else if (m_command == Proto::DCC_EXT)
     {
         const int address = p[0] << 8 | p[1];
         for (int i = 0; i < NumInputs; ++i)          // input.cpp setDccAddressExt(): direct inputs only
@@ -260,7 +236,7 @@ void SimulatedDevice::messageReceived()
                 else                          setOutputState(m_in[i].outputId, 0);
             }
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::GET_OUTPUT_STATE)
+    else if (m_command == Proto::GET_OUTPUT_STATE)
     {
         if (index >= NumOutputs) return;
         const quint32 now = quint32(m_clock.isValid() ? m_clock.elapsed() : 0);
@@ -273,7 +249,7 @@ void SimulatedDevice::messageReceived()
             sendMessage(Proto::OUTPUT_EVENT, frog);
         }
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::GET_ROUTE)
+    else if (m_command == Proto::GET_ROUTE)
     {
         if (index >= NumInputs) return;
         const QVector<RouteStep> &r = m_in[index].route;
@@ -293,7 +269,7 @@ void SimulatedDevice::messageReceived()
         }
         sendMessage(Proto::SET_ROUTE, msg);
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::SET_ROUTE)
+    else if (m_command == Proto::SET_ROUTE)
     {
         // p[0] = length, p[1] = route, p[2] = total steps, p[3] = first step
         const int route = p[1], total = qMin(int(p[2]), m_opt.maxRouteSteps), first = p[3];
@@ -303,9 +279,8 @@ void SimulatedDevice::messageReceived()
         const int n = (m_len - 4) / 4;
         for (int i = 0; i < n && r.size() < total; ++i)
             r.append(decodeStep(reinterpret_cast<const char *>(p + 4 + 4 * i)));
-        m_in[route].syncLinkedFromRoute();
     }
-    else if (m_opt.protocol >= 2 && m_command == Proto::SERVO_LIVE)
+    else if (m_command == Proto::SERVO_LIVE)
     {
         if (index < NumOutputs) m_live[index] = p[1];
     }
@@ -314,125 +289,27 @@ void SimulatedDevice::messageReceived()
         if (index >= NumInputs) return;
         const QByteArray enc = encodeInput(index, m_in[index]);
         memcpy(p, enc.constData(), 14);
-        if (m_opt.protocol < 2)                           // v1: the stored linkedOutput[] bytes as they are
-            for (int i = 0; i < MaxLinked; ++i) p[6 + i] = m_in[index].linked[i];
         sendMessage(Proto::SET_INPUT_DATA, p);
     }
-    else if (m_command == outCmd())
+    else if (m_command == Proto::SET_OUTPUT_DATA)
     {
         if (index >= NumOutputs) return;
-        // Firmware always reads payload[1..13]; with the legacy 13-byte opcode
-        // payload[13] is whatever the previous message left in the buffer.
         int idx; OutputConfig c;
-        decodeOutput(QByteArray(reinterpret_cast<const char *>(p), 14), idx, c, false);
+        decodeOutput(QByteArray(reinterpret_cast<const char *>(p), 14), idx, c);
         m_out[index] = c.normalized();
-        if (m_opt.doubleAck) sendAck();
     }
     else if (m_command == Proto::GET_OUTPUT_DATA)
     {
         if (index >= NumOutputs) return;
-        const QByteArray enc = encodeOutput(index, m_out[index], false);
+        const QByteArray enc = encodeOutput(index, m_out[index]);
         memcpy(p, enc.constData(), 14);
-        sendMessage(outCmd(), p);
+        sendMessage(Proto::SET_OUTPUT_DATA, p);
     }
     else if (m_command == Proto::REQ_VERSION)
     {
         sendVersion();
     }
-    else if (m_command == Proto::SET_PRESET)
-    {
-        applyPreset(index);
-    }
     // SET/GET_*_STATE: empty handlers in the firmware
-}
-
-// ── Presets, mirroring OPCODE_SET_PRESET ────────────────────────────────────
-void SimulatedDevice::presetOutput(int i, quint8 pinA, quint8 pinB, quint8 rA, quint8 rB, quint8 rC,
-                                   quint8 type, std::array<quint8, 4> data, quint32 switchTime, bool isTime)
-{
-    OutputConfig c = m_out[i];
-    c.pinA = pinA; c.pinB = pinB;
-    if (!m_opt.oldDefaults) { c.pinC = 0xFF; c.pinD = 0xFF; }   // old firmware left pinC / pinD untouched
-    c.relayA = rA; c.relayB = rB; c.relayC = rC;
-    c.type = type; c.state = 0;
-    if (isTime) c.setSwitchTime(switchTime);
-    else        c.data = data;
-    c = c.normalized();
-    m_out[i] = c;
-
-    // 'payload = bitfield = 0xFF' yields the truncated bitfield value (0x3F).
-    if (!m_opt.oldDefaults)
-    {
-        // Fixed firmware: same layout as GET_OUTPUT_DATA (little endian union)
-        const QByteArray enc = encodeOutput(i, c, false);
-        sendMessage(outCmd(), reinterpret_cast<const quint8 *>(enc.constData()));
-        return;
-    }
-
-    // Old firmware: index pinA pinB rA rB rC type state d0..d3, switch time big endian
-    quint8 msg[32] = {};
-    int n = 0;
-    msg[n++] = quint8(i);
-    msg[n++] = c.pinA; msg[n++] = c.pinB; msg[n++] = c.relayA; msg[n++] = c.relayB; msg[n++] = c.relayC;
-    msg[n++] = c.type; msg[n++] = 0;
-    if (isTime)
-    {
-        msg[n++] = quint8(switchTime >> 24); msg[n++] = quint8(switchTime >> 16);
-        msg[n++] = quint8(switchTime >> 8);  msg[n++] = quint8(switchTime);
-    }
-    else
-    {
-        for (quint8 b : data) msg[n++] = b;
-    }
-    sendMessage(outCmd(), msg);
-}
-
-void SimulatedDevice::setupInputs(int used)
-{
-    for (int i = 0; i < NumInputs; ++i)
-    {
-        InputConfig c = m_in[i];
-        c.address  = (i < used) ? quint16(m_in[0].address + i) : 0xFFFF;
-        c.pin      = 0xFF;
-        // old firmware left unused inputs on latching -> output 15 (0xFF in a 4-bit field)
-        c.type     = (i < used || m_opt.oldDefaults) ? Latching : InputNotInUse;
-        c.outputId = (i < used) ? quint8(i) : 0xFF;
-        c.linked.fill(0xFF);
-        c.route.clear();
-        m_in[i] = c.normalized();
-
-        const QByteArray enc = encodeInput(i, m_in[i]);
-        sendMessage(Proto::SET_INPUT_DATA, reinterpret_cast<const quint8 *>(enc.constData()));
-    }
-}
-
-void SimulatedDevice::clearUnusedOutputs(int from)
-{
-    for (int i = from; i < NumOutputs; ++i)
-        presetOutput(i, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, OutputNotInUse, { { 0, 0, 0, 0 } }, 0, false);
-}
-
-void SimulatedDevice::applyPreset(quint8 preset)
-{
-    const std::array<quint8, 4> servo { { 80, 100, 20, 1 } };
-    const quint8 X = 0xFF;
-    quint8 pin = firstPin();
-    int count = 0;
-    auto next = [&pin, this]() -> quint8 { if (!m_opt.oldDefaults && pin == 13) ++pin; return pin++; };   // D13 = config LED
-
-    switch (preset)
-    {
-    case 0: count = 16; for (int i = 0; i < count; ++i) { quint8 a = next(); presetOutput(i, a, X, X, X, X, ServoType, servo, 0, false); } setupInputs(16); break;
-    case 1: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = next(), c = next(); presetOutput(i, a, X, X, X, c, ServoType, servo, 0, false); } setupInputs(8); break;
-    case 2: count = 5;  for (int i = 0; i < count; ++i) { quint8 a = next(), ra = next(), rb = next(); presetOutput(i, a, X, ra, rb, X, ServoType, servo, 0, false); } setupInputs(5); break;
-    case 3: count = 16; for (int i = 0; i < count; ++i) { quint8 a = next(); presetOutput(i, a, X, X, X, X, SingleSteady, {}, 0, true); } setupInputs(16); break;
-    case 4: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(); presetOutput(i, a, b, X, X, X, DoublePulse, {}, 50, true); } if (!m_opt.oldDefaults) setupInputs(8); break;   // old firmware: no setupInputs, clearUnusedOutputs(uninitialised i)
-    case 5: count = 5;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(), c = next(); presetOutput(i, a, b, X, X, c, DoublePulse, {}, 50, true); } setupInputs(5); break;
-    case 6: count = 4;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(), ra = next(), rb = next(); presetOutput(i, a, b, ra, rb, X, DoublePulse, {}, 50, true); } setupInputs(4); break;
-    case 7: count = 8;  for (int i = 0; i < count; ++i) { quint8 a = next(), b = next(); presetOutput(i, a, b, X, X, X, DoubleSteady, {}, 0, true); } setupInputs(8); break;
-    default: return;
-    }
-    clearUnusedOutputs(count);
 }
 
 // ── Live test (SET_INPUT_STATE / OUTPUT_EVENT), mirrors GPIOcore.ino + input.cpp ──
@@ -477,7 +354,7 @@ void SimulatedDevice::triggerInput(int index, int direction)
 }
 
 // A button edge (input.cpp, normal inputs): a press starts any route and toggles, absolute follows
-// the level (pressed = LOW = 0). Recorder and feedback are not simulated.
+// the level (pressed = LOW = 0).
 void SimulatedDevice::pinLevel(int index, bool pressed)
 {
     const InputConfig &in = m_in[index];

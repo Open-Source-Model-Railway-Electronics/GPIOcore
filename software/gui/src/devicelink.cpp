@@ -84,9 +84,6 @@ bool DeviceLink::openDevice(QIODevice *device, bool bootsOnOpen, QString *error)
     m_lastByte.start();
     m_ready        = false;
     m_version.clear();
-    m_legacyOutput = false;
-    m_legacyWarned = false;
-    m_v2Warned     = false;
     m_caps         = DeviceCaps();
     m_batchTotal = m_batchDone = m_failures = 0;
 
@@ -156,7 +153,7 @@ void DeviceLink::readAll()
 void DeviceLink::readInput(int index)
 {
     enqueue(Kind::GetInput, GET_INPUT_DATA, QByteArray(1, char(index)), index, timeoutMs);
-    readRoute(index);                    // v2 only, skipped on v1 boards
+    readRoute(index);
 }
 
 void DeviceLink::readRoute(int route)
@@ -261,20 +258,7 @@ void DeviceLink::writeInput(int index, const Gpio::InputConfig &c)
 
 void DeviceLink::writeOutput(int index, const Gpio::OutputConfig &c)
 {
-    if (m_legacyOutput && !m_legacyWarned)
-    {
-        m_legacyWarned = true;
-        emit logMessage(QStringLiteral("WARN"),
-                        tr("Firmware uses legacy SET_OUTPUT_DATA (0x2D, 13 bytes): the 4th data byte "
-                           "(servo pattern / high byte of times) is not transmitted."));
-    }
-    const quint8 cmd = m_legacyOutput ? SET_OUTPUT_DATA_LEGACY : SET_OUTPUT_DATA;
-    enqueue(Kind::SetOutput, cmd, Gpio::encodeOutput(index, c, m_legacyOutput), index, timeoutMs);
-}
-
-void DeviceLink::applyPreset(int preset)
-{
-    enqueue(Kind::Preset, SET_PRESET, QByteArray(1, char(preset)), preset, presetMs);
+    enqueue(Kind::SetOutput, SET_OUTPUT_DATA, Gpio::encodeOutput(index, c), index, timeoutMs);
 }
 
 // ── Queue ───────────────────────────────────────────────────────────────────
@@ -322,23 +306,6 @@ void DeviceLink::sendNext()
     }
 
     m_current = m_queue.dequeue();
-    if (needsV2(m_current.kind) && m_caps.protocol < 2)
-    {
-        if (m_current.kind == Kind::SetRoute && !m_v2Warned)
-        {
-            m_v2Warned = true;
-            emit logMessage(QStringLiteral("WARN"),
-                            tr("This firmware speaks protocol v1: routes are stored in the 8 linked bytes "
-                               "of SET_INPUT_DATA (state only, fixed 0.5 s per step)."));
-        }
-        if (!isBackground(m_current.kind))
-        {
-            ++m_batchDone;               // nothing to send on a v1 board
-            emit progress(m_batchDone, m_batchTotal);
-        }
-        sendNext();
-        return;
-    }
     m_current.active = true;
     transmit();
 }
@@ -386,11 +353,10 @@ void DeviceLink::onTimeout()
     }
     if (m_current.kind == Kind::Hello)
     {
-        emit logMessage(QStringLiteral("INFO"), tr("No HELLO reply: firmware speaks protocol v1"));
-        DeviceCaps v1;
-        v1.known = true;
-        setCaps(v1);
-        complete(true);
+        // every GPIOcore firmware answers HELLO: this is another device or very old firmware
+        emit errorOccurred(tr("No answer to HELLO: this is no GPIOcore board, or its firmware is too old. "
+                              "Flash the firmware (Board > Flash firmware)."));
+        close();
         return;
     }
     if (m_current.kind == Kind::ServoLive || m_current.kind == Kind::GetAnalog)
@@ -508,17 +474,11 @@ void DeviceLink::handleFrame(const Frame &f)
         break;
 
     case Kind::GetOutput:
-        if ((f.command == SET_OUTPUT_DATA || f.command == SET_OUTPUT_DATA_LEGACY) && f.byte(0) == m_current.index)
+        if (f.command == SET_OUTPUT_DATA && f.byte(0) == m_current.index)
         {
-            const bool legacy = (f.command == SET_OUTPUT_DATA_LEGACY);
-            if (legacy != m_legacyOutput)
-            {
-                m_legacyOutput = legacy;
-                emit legacyOutputFormatChanged(legacy);
-            }
             int idx = -1;
             Gpio::OutputConfig c;
-            if (Gpio::decodeOutput(f.payload, idx, c, legacy))
+            if (Gpio::decodeOutput(f.payload, idx, c))
                 emit outputReceived(idx, c);
             complete(true);
             return;
@@ -543,13 +503,11 @@ void DeviceLink::handleFrame(const Frame &f)
             c.stepPool      = f.byte(2) | f.byte(3) << 8;
             c.serialPins    = f.byte(4) & HELLO_FLAG_SERIAL_PINS;
             c.servoLive     = f.byte(4) & HELLO_FLAG_SERVO_LIVE;
-            c.extEeprom     = f.byte(4) & HELLO_FLAG_EXT_EEPROM;
             c.boardSettings = f.byte(4) & HELLO_FLAG_BOARD;
             c.analogSound   = f.byte(4) & HELLO_FLAG_ANALOG_SOUND;
             emit logMessage(QStringLiteral("INFO"),
-                            tr("Protocol v%1: %2 steps per route, %3 steps in total%4")
-                                .arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool)
-                                .arg(c.extEeprom ? tr(", external EEPROM") : QString()));
+                            tr("Protocol v%1: %2 steps per route, %3 steps in total")
+                                .arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool));
             setCaps(c);
             complete(true);
             if (c.boardSettings)
@@ -613,21 +571,6 @@ void DeviceLink::handleFrame(const Frame &f)
     case Kind::GetAnalog:
         break;                           // ANALOG_VALUE is handled above
 
-    case Kind::Preset:
-        if (f.isAck())
-        {
-            const int preset = m_current.index;
-            complete(true);
-            emit presetApplied(preset);
-            readAll();     // preset broadcasts use an old layout, read back properly
-            return;
-        }
-        if (f.group() != VERSION_GROUP)
-        {
-            emit logMessage(QStringLiteral("INFO"), tr("Preset broadcast ignored (old payload layout)"));
-            return;
-        }
-        break;
     }
 
     if (f.group() == VERSION_GROUP)
@@ -658,7 +601,7 @@ void DeviceLink::setReady(const QString &version)
     m_ready   = true;
     emit logMessage(QStringLiteral("INFO"), tr("GPIOcore version '%1'").arg(version));
     // Sign on: starts a configuration session (the decoder keeps D0/D1 as serial)
-    // and tells us what it can do. No reply = protocol v1.
+    // and tells us what it can do. No reply = no GPIOcore board.
     enqueue(Kind::Hello, HELLO, QByteArray(), -1, 300, true);
     emit ready(version);
 }
@@ -672,7 +615,6 @@ QString DeviceLink::describe(const Txn &t) const
     case Kind::GetOutput: return tr("read output %1").arg(t.index);
     case Kind::SetInput:  return tr("write input %1").arg(t.index);
     case Kind::SetOutput: return tr("write output %1").arg(t.index);
-    case Kind::Preset:    return tr("preset %1").arg(t.index);
     case Kind::Hello:     return tr("hello");
     case Kind::GetRoute:  return tr("read route %1").arg(t.index);
     case Kind::SetRoute:  return tr("write route %1").arg(t.index);

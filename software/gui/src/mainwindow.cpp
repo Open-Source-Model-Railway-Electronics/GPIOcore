@@ -74,15 +74,6 @@
 using namespace Gpio;
 
 
-static bool sameOutput(const OutputConfig &a, const OutputConfig &b, bool ignoreLastByte)
-{
-    if (!ignoreLastByte)
-        return a == b;
-    OutputConfig x = a, y = b;
-    x.data[3] = y.data[3] = 0;
-    return x == y;
-}
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowTitle(tr("GPIOcore Configurator"));
@@ -145,11 +136,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         appendLog(QStringLiteral("ERR"), m);
         statusBar()->showMessage(m, 6000);
     });
-    connect(m_link, &DeviceLink::legacyOutputFormatChanged, this, [this](bool legacy) {
-        m_outEd->setLegacyFormat(legacy);
-        m_legacyChip->setVisible(legacy && m_link->isOpen());
-        refreshAll();
-    });
     connect(m_link, &DeviceLink::progress, this, [this](int done, int total) {
         m_progress->setVisible(total > 0);
         m_progress->setMaximum(qMax(1, total));
@@ -172,11 +158,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
             m_liveTimer->start();        // edits made while the board was busy (sendLive skips refused items)
         if (!m_nameAsked && m_link->caps().boardSettings && m_dev.board.name.isEmpty())
             QTimer::singleShot(0, this, &MainWindow::askBoardName);
-    });
-    connect(m_link, &DeviceLink::presetApplied, this, [this](int preset) {
-        m_outKnown.fill(false);         // board content replaced: take everything from the board
-        m_inKnown.fill(false);
-        appendLog(QStringLiteral("INFO"), tr("Preset %1 applied, reading back").arg(preset));
     });
 
     applyCapabilities();
@@ -369,10 +350,6 @@ void MainWindow::buildUi()
 
     // Status bar
     m_connChip   = new QLabel;
-    m_legacyChip = new QLabel(tr("Legacy output format 0x2D"));
-    m_legacyChip->setObjectName(QStringLiteral("chipWarn"));
-    m_legacyChip->setToolTip(tr("The firmware sends/receives output data with 13 bytes; the 4th data byte "
-                                "(servo pattern, high bytes of times) is lost. See review: OPCODE_SET_OUTPUT_DATA."));
     m_dirtyChip = new QLabel;
     m_dirtyChip->setObjectName(QStringLiteral("chipWarn"));
     m_progress = new QProgressBar;
@@ -384,7 +361,6 @@ void MainWindow::buildUi()
     m_protoChip->hide();
     statusBar()->addPermanentWidget(m_dirtyChip);
     statusBar()->addPermanentWidget(m_protoChip);
-    statusBar()->addPermanentWidget(m_legacyChip);
     statusBar()->addPermanentWidget(m_progress);
     statusBar()->addPermanentWidget(m_connChip);
 
@@ -420,7 +396,6 @@ void MainWindow::buildUi()
                                          .arg(routeLimits().pool), 4000);
             break;
         case ConnectResult::NotConnectable:
-            statusBar()->showMessage(tr("Input %1 is a recorder / feedback input and cannot drive outputs").arg(in), 4000);
             break;
         }
         userEdited();
@@ -577,30 +552,24 @@ RouteLimits MainWindow::routeLimits() const
     const DeviceCaps &c = m_link->caps();
     if (m_link->isOpen() && c.known)
     {
-        l.v1       = c.protocol < 2;
-        l.maxSteps = l.v1 ? MaxRouteStepsV1 : qBound(1, c.maxRouteSteps, MaxRouteSteps);
-        l.pool     = l.v1 ? NumInputs * MaxRouteStepsV1 : qMax(1, c.stepPool);
+        l.maxSteps = qBound(1, c.maxRouteSteps, MaxRouteSteps);
+        l.pool     = qMax(1, c.stepPool);
     }
-    return l;                            // offline: what a v2 decoder with external EEPROM can do
+    return l;                            // offline: what a decoder can do
 }
 
 void MainWindow::applyCapabilities()
 {
     const DeviceCaps &c = m_link->caps();
     const bool known = m_link->isOpen() && c.known;
-    boardOptions().serialPinsUsable = known ? (c.protocol >= 2 && c.serialPins) : true;
-    m_outEd->setLiveAvailable(known && c.protocol >= 2 && c.servoLive);
+    boardOptions().serialPinsUsable = known ? c.serialPins : true;
+    m_outEd->setLiveAvailable(known && c.servoLive);
     m_inEd->setLiveReadingAvailable(m_link->isReady() && c.analogSound);
     m_outEd->refreshPinCombos();
     m_inEd->refreshPinCombos();
     if (known)
     {
-        m_protoChip->setText(c.protocol >= 2
-                                 ? tr("protocol v%1 · %2 steps/route · %3 in total").arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool)
-                                 : tr("protocol v1 · routes: 8 steps, no times"));
-        m_protoChip->setObjectName(c.protocol >= 2 ? QStringLiteral("chip") : QStringLiteral("chipWarn"));
-        m_protoChip->style()->unpolish(m_protoChip);
-        m_protoChip->style()->polish(m_protoChip);
+        m_protoChip->setText(tr("protocol v%1 · %2 steps/route · %3 in total").arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool));
     }
     m_protoChip->setVisible(known && m_expert);
     updateInputEditorLimits();
@@ -613,14 +582,12 @@ void MainWindow::updateInputEditorLimits()
     const int mine = isRouteType(m_edit.inputs[i].type) || m_edit.inputs[i].hasCustomValues()
                          ? m_edit.inputs[i].route.size() : 0;
     m_inEd->setRouteLimits(routeLimits(), totalRouteSteps(m_edit) - mine);
-    m_inEd->setRecorderTaken(recorderInput(m_edit, i) >= 0);
 }
 
 void MainWindow::setBoardType(int type)
 {
     m_edit.board.type = quint8(type);
     Gpio::setBoardType(m_edit.board.type);
-    boardOptions().recorder = m_edit.board.recorder;
     QSettings().setValue(QStringLiteral("board/type"), type);
     m_inEd->setTimingEnabled(m_edit.board.timing);
     if (m_boardType && m_boardType->currentIndex() != type)
@@ -1030,7 +997,6 @@ void MainWindow::onConnectionChanged()
     {
         m_connChip->setObjectName(QStringLiteral("chip"));
         m_connChip->setText(tr("○ Not connected"));
-        m_legacyChip->hide();
     }
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
@@ -1051,7 +1017,6 @@ void MainWindow::onReady(const QString &version)
     m_connChip->setText(tr("● %1 — GPIOcore %2").arg(m_link->portName(), version));
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
-    m_legacyChip->setVisible(m_link->legacyOutputFormat());
     updateConnState();
     if (m_mode == ModeLive && !m_simulating)
     {
@@ -1091,8 +1056,7 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
 void MainWindow::onInputReceived(int i, const InputConfig &received)
 {
     InputConfig c = received;
-    if (m_link->caps().protocol >= 2)
-        c.route = m_dev.inputs[i].route;   // the real route follows with GET_ROUTE
+    c.route = m_dev.inputs[i].route;     // the real route follows with GET_ROUTE
     const bool keep = m_keepEdits || (m_inKnown[i] && inputDirty(i));
     c.name = m_edit.inputs[i].name;
     m_dev.inputs[i] = c;
@@ -1176,7 +1140,7 @@ void MainWindow::writeDirty(bool live)
             if (live && m_liveTried.contains(i)) { refused << tr("input %1").arg(i); continue; }
             m_liveTried.insert(i);
             m_link->writeInput(i, m_edit.inputs[i]);
-            m_link->writeRoute(i, m_edit.inputs[i].route);   // skipped on v1 boards (linked bytes)
+            m_link->writeRoute(i, m_edit.inputs[i].route);
             m_link->readInput(i);                             // also reads the route back
             ++n;
         }
@@ -1351,7 +1315,7 @@ bool MainWindow::outputDirty(int i) const
 {
     if (!m_outKnown[i])
         return m_link->isReady() && m_outTouched[i];     // board state unknown: send what the user changed
-    return !sameOutput(m_edit.outputs[i], m_dev.outputs[i], m_link->legacyOutputFormat());
+    return m_edit.outputs[i] != m_dev.outputs[i];
 }
 
 InputConfig MainWindow::asStored(const InputConfig &c) const
@@ -1367,8 +1331,6 @@ bool MainWindow::inputDirty(int i) const
 {
     if (!m_inKnown[i])
         return m_link->isReady() && m_inTouched[i];
-    if (m_link->isOpen() && m_link->caps().known && m_link->caps().protocol < 2)
-        return m_edit.inputs[i].asV1() != m_dev.inputs[i];   // v1 stores only what fits in linked[]
     return asStored(m_edit.inputs[i]) != asStored(m_dev.inputs[i]);
 }
 
@@ -1525,9 +1487,6 @@ QStringList MainWindow::outputWarnings(int i) const
             w << tr("%1 (%2) is not PWM capable; %3 needs PWM.")
                      .arg(trGpio(roles[s]), pinName(p), outputTypeName(c.type));
     }
-    if ((c.type == SinglePulse || c.type == DoublePulse) && m_link->legacyOutputFormat())
-        w << tr("This board runs old firmware, which never ends the pulse — "
-                "a coil can stay energised. Update the firmware (review F9).");
     if (c.type == ServoType && c.servoMin() > c.servoMax())
         w << tr("Min is larger than max: positions are swapped.");
     if (c.type == SoundEffect && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
@@ -1572,10 +1531,6 @@ QStringList MainWindow::inputWarnings(int i) const
     }
     if (c.isAnalog() && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
         w << tr("The firmware on this board cannot read analog inputs yet: update the firmware (Board > Flash firmware).");
-    if ((c.type == Recorder || c.type == FeedbackInput) && c.pin == PinNA)
-        w << tr("This type needs an input pin.");
-    if (c.type == Recorder && recorderInput(m_edit, i) >= 0)
-        w << tr("Input %1 is a recorder too. Only one recorder per board is allowed.").arg(recorderInput(m_edit, i));
     if (info.usesAddress && c.address == AddrNone && c.pin == PinNA)
         w << tr("Neither a DCC address nor a pin is set: this input never triggers.");
     if (info.usesRoute)
@@ -1584,13 +1539,10 @@ QStringList MainWindow::inputWarnings(int i) const
             if (m_edit.outputs[c.route[s].output].type == OutputNotInUse)
                 w << tr("Route step %1 sets output %2, which is not in use.").arg(s + 1).arg(c.route[s].output);
         const RouteLimits l = routeLimits();
-        if (l.v1 && c.route.size() > MaxRouteStepsV1)
-            w << tr("This board stores only %1 route steps (protocol v1); steps %2 and later are lost.")
-                     .arg(MaxRouteStepsV1).arg(MaxRouteStepsV1 + 1);
         if (totalRouteSteps(m_edit) > l.pool)
             w << tr("All routes together use %1 steps; the board has room for %2.").arg(totalRouteSteps(m_edit)).arg(l.pool);
     }
-    if (info.usesOutput && c.type != FeedbackInput && m_edit.outputs[c.outputId].type == OutputNotInUse)
+    if (info.usesOutput && m_edit.outputs[c.outputId].type == OutputNotInUse)
         w << tr("Output %1 is not in use.").arg(c.outputId);
     return w;
 }
@@ -1805,9 +1757,8 @@ void MainWindow::openPhoneRemote()
 // ── Live test ───────────────────────────────────────────────────────────────
 void MainWindow::setLiveTest(bool on)
 {
-    if (on && !(m_link->isReady() && m_link->caps().protocol >= 2))
+    if (on && !m_link->isReady())
     {
-        QMessageBox::information(this, windowTitle(), tr("Live test needs a connected board with firmware v2."));
         setMode(ModeConfigure);
         return;
     }
@@ -2189,10 +2140,6 @@ void MainWindow::editBoardSettings()
     auto *type = new QComboBox;
     for (int t = 0; t < BoardTypeCount; ++t) type->addItem(boardTypeName(quint8(t)));
     type->setCurrentIndex(m_edit.board.type);
-    auto *recorder = new QCheckBox(tr("Use the recorder (needs an I2C EEPROM on A4/A5)"));
-    recorder->setChecked(m_edit.board.recorder);
-    recorder->setToolTip(tr("The recorder stores its recording in an external 24LC256 EEPROM. "
-                            "While it is on, A4 and A5 cannot be used as inputs or outputs."));
     auto *timing = new QCheckBox(tr("Own wait time per route step"));
     timing->setChecked(m_edit.board.timing);
     timing->setToolTip(tr("Off: every step waits the same time and routes need half the memory"));
@@ -2209,7 +2156,6 @@ void MainWindow::editBoardSettings()
     interlock->setCurrentIndex(m_edit.board.interlock);
     form->addRow(tr("Name"), name);
     form->addRow(tr("Board type"), type);
-    form->addRow(QString(), recorder);
     form->addRow(QString(), timing);
     form->addRow(tr("Wait time per step"), delay);
     form->addRow(tr("Route interlocking"), interlock);
@@ -2229,21 +2175,9 @@ void MainWindow::editBoardSettings()
     if (d.exec() != QDialog::Accepted)
         return;
 
-    if (recorder->isChecked() && !m_edit.board.recorder)
-    {
-        const auto usage = Ui::pinUsage(m_edit);
-        if (!usage[18].isEmpty() || !usage[19].isEmpty())
-        {
-            QMessageBox::warning(this, tr("Board settings"),
-                                 tr("The recorder needs an I2C EEPROM on A4 (SDA) and A5 (SCL), but A4 or A5 is in use "
-                                    "by an input or output. Move that first, then switch the recorder on."));
-            return;
-        }
-    }
     BoardSettings b = m_edit.board;
     b.name      = cleanBoardName(name->text());
     b.type      = quint8(type->currentIndex());
-    b.recorder  = recorder->isChecked();
     b.timing    = timing->isChecked();
     b.delay     = quint8(qRound(delay->value() * 10));
     b.interlock = quint8(interlock->currentIndex());

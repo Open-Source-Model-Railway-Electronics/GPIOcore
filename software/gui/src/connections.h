@@ -23,13 +23,10 @@ QVector<int> outputSources(const BoardConfig &board, int output);
 // Total number of route steps on the board (decoders may have a shared pool).
 int totalRouteSteps(const BoardConfig &board);
 
-int recorderInput(const BoardConfig &board, int except = -1);   // -1 if none
-
 struct RouteLimits
 {
     int maxSteps = MaxRouteSteps;            // per route
     int pool     = NumInputs * MaxRouteSteps; // all routes together
-    bool v1      = false;                    // current firmware: state only, fixed 0.5 s
 };
 
 enum class ConnectResult
@@ -39,7 +36,7 @@ enum class ConnectResult
     AlreadyConnected,   // nothing changed
     RouteFull,          // route already has the maximum number of steps
     PoolFull,           // decoder has no room for more steps
-    NotConnectable,     // recorder / feedback inputs
+    NotConnectable,     // no such input / output
 };
 
 // Drag an output onto an input. A 'not in use' input becomes 'absolute'.

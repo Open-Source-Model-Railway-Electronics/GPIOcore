@@ -59,8 +59,9 @@ static const InputTypeInfo kInputTypes[InputTypeCount + 1] =
     { "latching",   QT_TRANSLATE_NOOP("Gpio", "Absolute"),     true,  true,  false, QT_TRANSLATE_NOOP("Gpio", "The output follows the input level or the DCC direction.") },
     { "route",      QT_TRANSLATE_NOOP("Gpio", "Route"),        true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).") },
     { "notInUse",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
-    { "recorder",   QT_TRANSLATE_NOOP("Gpio", "Recorder"),     false, false, false, QT_TRANSLATE_NOOP("Gpio", "Long press = record on/off, short press = play on/off.") },
-    { "feedback",   QT_TRANSLATE_NOOP("Gpio", "Feedback"),     false, true,  false, QT_TRANSLATE_NOOP("Gpio", "Sensor for the recorder; 'output' is used as feedback id.") },
+    // 4 / 5: reserved (were recorder / feedback); old files and boards load them as not in use
+    { "recorder",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
+    { "feedback",   QT_TRANSLATE_NOOP("Gpio", "Not in use"),   false, false, false, QT_TRANSLATE_NOOP("Gpio", "Input disabled.") },
     { "routeStraight", QT_TRANSLATE_NOOP("Gpio", "Route"),     true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Route that starts on a button press, or only on a DCC 'straight' command for its address.") },
     { "routeCurved",   QT_TRANSLATE_NOOP("Gpio", "Route"),     true,  false, true,  QT_TRANSLATE_NOOP("Gpio", "Route that starts on a button press, or only on a DCC 'curved' command for its address.") },
     { "unknown",    QT_TRANSLATE_NOOP("Gpio", "Unknown"),      true,  true,  true,  QT_TRANSLATE_NOOP("Gpio", "Type value not known by this GUI.") },
@@ -173,7 +174,7 @@ OutputConfig OutputConfig::fromJson(const QJsonObject &o)
     return c;
 }
 
-QByteArray encodeOutput(int index, const OutputConfig &c, bool legacy)
+QByteArray encodeOutput(int index, const OutputConfig &c)
 {
     QByteArray p;
     p.append(char(index));
@@ -183,13 +184,12 @@ QByteArray encodeOutput(int index, const OutputConfig &c, bool legacy)
     p.append(char(c.state));
     for (quint8 b : c.data)
         p.append(char(b));
-    return legacy ? p.left(13) : p;   // 14 bytes
+    return p;   // 14 bytes
 }
 
-bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c, bool legacy)
+bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c)
 {
-    const int need = legacy ? 13 : 14;
-    if (p.size() < need)
+    if (p.size() < 14)
         return false;
     auto at = [&](int i) { return quint8(p.at(i)); };
     index = at(0);
@@ -198,7 +198,7 @@ bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c, bool legacy)
     c.type  = at(8);
     c.state = at(9);
     for (int i = 0; i < 4; ++i)
-        c.data[i] = (10 + i < need) ? at(10 + i) : 0;
+        c.data[i] = at(10 + i);
     return index >= 0 && index < NumOutputs;
 }
 
@@ -302,7 +302,6 @@ void InputConfig::setCustomValues(bool on, quint8 outputType)
         s.values = true;
         route.append(s);
     }
-    syncLinkedFromRoute();
 }
 
 void InputConfig::syncCustomValues()
@@ -325,45 +324,6 @@ void InputConfig::syncCustomValues()
         for (RouteStep &s : route)
             s.values = false;
     }
-    syncLinkedFromRoute();
-}
-
-void InputConfig::syncLinkedFromRoute()
-{
-    linked.fill(LinkNone);
-    if (!route.isEmpty() && route[0].values)
-        return;                          // custom values are no v1 route
-    for (int i = 0; i < route.size() && i < MaxLinked; ++i)
-    {
-        const RouteStep &s = route[i];
-        const quint8 state = s.raw ? quint8(s.value != 0) : quint8(s.value & 1);
-        linked[i] = makeLink(quint8(s.output), state);
-    }
-}
-
-void InputConfig::routeFromLinked()
-{
-    route.clear();
-    for (quint8 v : linked)
-    {
-        const quint8 id = linkId(v);
-        if (id >= NumOutputs)
-            break;                       // 0x7F = end, anything else ends the route too (firmware)
-        RouteStep s;
-        s.output = id;
-        s.value  = linkState(v);
-        s.raw    = false;
-        s.delay  = V1StepDelay;
-        route.append(s);
-    }
-}
-
-InputConfig InputConfig::asV1() const
-{
-    InputConfig c = *this;
-    c.syncLinkedFromRoute();
-    c.routeFromLinked();
-    return c;
 }
 
 InputConfig InputConfig::normalized() const
@@ -372,6 +332,8 @@ InputConfig InputConfig::normalized() const
     c.address  &= 0x0FFF;   // 12 bits
     c.pin      &= 0x3F;     //  6 bits
     c.type     &= 0x07;     //  3 bits
+    if (c.type == ReservedRecorder || c.type == ReservedFeedback)
+        c.type = InputNotInUse;          // recorder / feedback were removed, like in the firmware
     c.outputId &= 0x0F;     //  4 bits
     if (c.analog > AnalogAt || c.pin < 14 || c.pin >= 22)
         c.analog = AnalogNone;
@@ -465,7 +427,7 @@ InputConfig InputConfig::fromJson(const QJsonObject &o)
         s.output = step["output"].toInt() & 0x0F;
         s.value  = quint8(step.contains("value") ? step["value"].toInt() : step["state"].toInt());  // "state": older files
         s.raw    = step["raw"].toBool(false);
-        s.delay  = quint16(step.contains("delay") ? step["delay"].toInt() : V1StepDelay);
+        s.delay  = quint16(step.contains("delay") ? step["delay"].toInt() : DefaultStepDelay);
         c.route.append(s);
     }
     const QJsonArray values = o["values"].toArray();
@@ -483,14 +445,11 @@ InputConfig InputConfig::fromJson(const QJsonObject &o)
             c.route.append(s);
         }
     }
-    c.syncLinkedFromRoute();
     return c.normalized();
 }
 
 QByteArray encodeInput(int index, const InputConfig &c)
 {
-    InputConfig v1 = c;
-    v1.syncLinkedFromRoute();            // v2 firmware ignores these bytes, v1 uses them
     QByteArray p;
     p.append(char(index));
     p.append(char(c.address >> 8));
@@ -498,10 +457,9 @@ QByteArray encodeInput(int index, const InputConfig &c)
     p.append(char(c.pinByte()));
     p.append(char(c.type));
     p.append(char(c.outputId));
-    for (quint8 v : v1.linked)
-        p.append(char(v));
-    if (c.isAnalog())
-        p[6] = char(InputConfig::roundThreshold(c.threshold) / 4);   // linked[0] = threshold / 4
+    // payload 6 = analog threshold / 4 (0xFF for a digital input), 7-13 unused (0xFF)
+    p.append(c.isAnalog() ? char(InputConfig::roundThreshold(c.threshold) / 4) : char(0xFF));
+    p.append(7, char(0xFF));
     return p;   // 14 bytes
 }
 
@@ -513,16 +471,11 @@ bool decodeInput(const QByteArray &p, int &index, InputConfig &c)
     index      = at(0);
     c.address  = quint16(at(1) << 8 | at(2));
     c.setPinByte(at(3));
-    c.type     = at(4);
+    c.type     = at(4) == ReservedRecorder || at(4) == ReservedFeedback ? quint8(InputNotInUse) : at(4);
     c.outputId = at(5);
-    for (int i = 0; i < MaxLinked; ++i)
-        c.linked[i] = at(6 + i);
     if (c.isAnalog())
-    {
-        c.threshold = quint16(InputConfig::roundThreshold(at(6) * 4));   // linked[0] = threshold / 4
-        c.linked[0] = LinkNone;          // not a route step (v2: the route follows with GET_ROUTE)
-    }
-    c.routeFromLinked();                 // v2: replaced by GET_ROUTE afterwards
+        c.threshold = quint16(InputConfig::roundThreshold(at(6) * 4));   // payload 6 = threshold / 4
+    c.route.clear();                     // the route follows with GET_ROUTE; payload 7-13 are unused
     return index >= 0 && index < NumInputs;
 }
 
@@ -599,7 +552,6 @@ QJsonObject BoardSettings::toJson() const
     QJsonObject o;
     o["name"]      = name;
     o["type"]      = QString::fromLatin1(kBoardKeys[type < BoardTypeCount ? type : BoardNano]);
-    o["recorder"]  = recorder;
     o["timing"]    = timing;
     o["interlock"] = QString::fromLatin1(kInterlockKeys[interlock < 3 ? interlock : InterlockAuto]);
     o["delay"]     = int(delay);
@@ -613,7 +565,6 @@ BoardSettings BoardSettings::fromJson(const QJsonObject &o)
     const QString t = o["type"].toString();
     for (quint8 i = 0; i < BoardTypeCount; ++i)
         if (t == QLatin1String(kBoardKeys[i])) b.type = i;
-    b.recorder = o["recorder"].toBool(false);
     b.timing   = o["timing"].toBool(false);
     const QString il = o["interlock"].toString();
     for (quint8 i = 0; i < 3; ++i)
@@ -626,7 +577,7 @@ QByteArray encodeBoard(const BoardSettings &b)
 {
     QByteArray p;
     p.append(char(b.type));
-    p.append(char((b.recorder ? 0x01 : 0) | (b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2)));
+    p.append(char((b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2)));
     p.append(char(b.delay));
     p.append(cleanBoardName(b.name).toLatin1());
     return p;
@@ -637,7 +588,7 @@ bool decodeBoard(const QByteArray &p, BoardSettings &b)
     if (p.size() < 3)
         return false;
     b.type      = quint8(p.at(0)) < BoardTypeCount ? quint8(p.at(0)) : quint8(BoardNano);
-    b.recorder  = p.at(1) & 0x01;
+    // bit 0 (was 'recorder on') is ignored
     b.timing    = p.at(1) & 0x02;
     b.interlock = quint8((p.at(1) >> 2) & 0x03);
     if (b.interlock > InterlockAuto) b.interlock = InterlockAuto;
@@ -689,8 +640,6 @@ QString pinReservedReason(quint8 pin)
     case 1:  return b.serialPinsUsable ? QString() : trGpio("Serial TX (GUI link)");
     case 2:  return trGpio("DCC input");
     case 13: return trGpio("config LED");
-    case 18: return b.recorder ? trGpio("I2C SDA for the recorder EEPROM") : QString();
-    case 19: return b.recorder ? trGpio("I2C SCL for the recorder EEPROM") : QString();
     case 20: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
     case 21: return trGpio("config button");
     }

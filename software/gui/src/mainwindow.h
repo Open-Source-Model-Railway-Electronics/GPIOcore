@@ -194,7 +194,6 @@ private:
     QAction        *m_actSave = nullptr;
     QAction        *m_actRaw = nullptr;
     QLabel         *m_connChip = nullptr;
-    QLabel         *m_legacyChip = nullptr;
     QLabel         *m_dirtyChip = nullptr;
     QLabel         *m_protoChip = nullptr;
     QProgressBar   *m_progress = nullptr;

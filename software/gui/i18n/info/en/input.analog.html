@@ -1,7 +1,7 @@
 <h3>Analog inputs: a resistor ladder or a sensor</h3>
 <p>Instead of a button to GND, an analog pin (A0–A6) can measure a voltage: <b>0 = 0 V, 1023 = 5 V</b>.
 The input counts as <i>pressed</i> while the value meets the condition, and then works exactly like a pressed
-button: toggle, absolute, routes, recorder and feedback all work.</p>
+button: toggle, absolute and routes all work.</p>
 <ul>
 <li><b>Below a value</b> — pressed below the threshold, released again 20 higher. For example a light sensor (LDR)
 that gets dark, or a single button.</li>
@@ -22,7 +22,6 @@ theory. Connect the board, choose the input and watch <b>Now:</b> while you hold
 takes it as the threshold. Keep at least about 40 between two buttons.</p>
 <ul>
 <li>The threshold is stored in steps of 8. The board reads the pin every 50 ms and only reacts when two readings agree.</li>
-<li><b>A7</b> is the config button and cannot be used; <b>A6</b> exists on an Arduino Nano only;
-<b>A4/A5</b> are taken when the recorder is on.</li>
+<li><b>A7</b> is the config button and cannot be used; <b>A6</b> exists on an Arduino Nano only.</li>
 <li>In <b>Simulate</b>, click <i>value ▾</i> on the input to type a value for its pin: every input on that pin reacts.</li>
 </ul>

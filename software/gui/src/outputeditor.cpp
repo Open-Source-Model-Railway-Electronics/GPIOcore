@@ -251,12 +251,6 @@ void OutputEditor::buildUi()
     }
     root->addWidget(m_paramBox);
 
-    m_legacyNote = new QLabel(tr("This board runs old firmware (output opcode 0x2D, 13 bytes): "
-                                 "the 4th data byte is not transferred. Update the firmware (review F1)."));
-    m_legacyNote->setObjectName(QStringLiteral("warn"));
-    m_legacyNote->setWordWrap(true);
-    root->addWidget(m_legacyNote);
-
     // State + test
     auto *stateBox = new QGroupBox(tr("State"));
     auto *stateInner = new QVBoxLayout(stateBox);
@@ -384,12 +378,6 @@ void OutputEditor::setOutput(int index, const OutputConfig &c)
     refresh();
 }
 
-void OutputEditor::setLegacyFormat(bool legacy)
-{
-    m_legacy = legacy;
-    refresh();
-}
-
 void OutputEditor::setWarnings(const QStringList &warnings)
 {
     m_warn->setText(warnings.join(QStringLiteral("\n")));
@@ -429,7 +417,6 @@ void OutputEditor::refresh()
 
     m_switchTime->setValue(int(qMin<quint32>(m_cfg.switchTime(), 65535)));
     m_swingPulse->setValue(m_cfg.swingPulse());
-    m_swingPause->setMaximum(m_legacy ? 255 : 65535);
     m_swingPause->setValue(m_cfg.swingPause());
     m_servoMin->setValue(m_cfg.servoMin());
     m_servoMax->setValue(m_cfg.servoMax());
@@ -442,13 +429,13 @@ void OutputEditor::refresh()
     const bool liveOk = m_connected && m_liveAvailable;
     m_live->setEnabled(liveOk);
     m_live->setToolTip(liveOk ? QString()
-                              : tr("Needs a connected board that speaks protocol v2 (SERVO_LIVE)"));
+                              : tr("Needs a connected board"));
     if (!liveOk) m_live->setChecked(false);
 
     updateVisibility();
     updateTimeLabels();
     m_raw->setText(QStringLiteral("payload  %1")
-                       .arg(Proto::toHex(encodeOutput(m_index, m_cfg, m_legacy))));
+                       .arg(Proto::toHex(encodeOutput(m_index, m_cfg))));
     m_loading = false;
 }
 
@@ -479,18 +466,6 @@ void OutputEditor::updateVisibility()
     const Page page = pageFor(info.params);
     m_params->setCurrentIndex(page);
     m_paramBox->setVisible(page != PageNone);
-
-    bool legacyMatters = false;
-    if (m_legacy)
-    {
-        switch (info.params)
-        {
-        case ParamKind::Swing:      legacyMatters = true; break;
-        case ParamKind::SwitchTime: legacyMatters = m_cfg.switchTime() > 0xFFFFFF; break;
-        default: break;
-        }
-    }
-    m_legacyNote->setVisible(legacyMatters);
 }
 
 void OutputEditor::updateTimeLabels()
@@ -553,7 +528,7 @@ void OutputEditor::collect()
     m_frogNote->setVisible(false);
     updateVisibility();
     updateTimeLabels();
-    m_raw->setText(QStringLiteral("payload  %1").arg(Proto::toHex(encodeOutput(m_index, m_cfg, m_legacy))));
+    m_raw->setText(QStringLiteral("payload  %1").arg(Proto::toHex(encodeOutput(m_index, m_cfg))));
     m_loading = false;
 
     emit changed(m_index, m_cfg);

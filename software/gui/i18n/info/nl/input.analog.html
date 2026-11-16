@@ -1,7 +1,7 @@
 <h3>Analoge ingangen: een weerstandsladder of een sensor</h3>
 <p>In plaats van een knop naar GND kan een analoge pin (A0–A6) een spanning meten: <b>0 = 0 V, 1023 = 5 V</b>.
 De ingang telt als <i>ingedrukt</i> zolang de waarde aan de voorwaarde voldoet, en werkt dan precies als een
-ingedrukte knop: omschakelen, absoluut, rijwegen, recorder en terugmelding werken allemaal.</p>
+ingedrukte knop: omschakelen, absoluut en rijwegen werken allemaal.</p>
 <ul>
 <li><b>Onder een waarde</b> — ingedrukt onder de drempel, weer los 20 hoger. Bijvoorbeeld een lichtsensor (LDR)
 die donker wordt, of één enkele knop.</li>
@@ -23,8 +23,7 @@ wijkt af van de theorie. Verbind het board, kies de ingang en kijk naar <b>Nu:</
 <ul>
 <li>De drempel wordt opgeslagen in stappen van 8. Het board leest de pin elke 50 ms en reageert pas als twee
 metingen overeenkomen.</li>
-<li><b>A7</b> is de config-knop en kan niet gebruikt worden; <b>A6</b> bestaat alleen op een Arduino Nano;
-<b>A4/A5</b> zijn bezet als de recorder aan staat.</li>
+<li><b>A7</b> is de config-knop en kan niet gebruikt worden; <b>A6</b> bestaat alleen op een Arduino Nano.</li>
 <li>In <b>Simuleren</b> klik je op <i>waarde ▾</i> bij de ingang om een waarde voor zijn pin in te typen: elke
 ingang op die pin reageert.</li>
 </ul>

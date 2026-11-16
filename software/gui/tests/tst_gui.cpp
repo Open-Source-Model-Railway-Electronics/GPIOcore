@@ -25,7 +25,6 @@
 #include <QAction>
 #include <QComboBox>
 #include <QMouseEvent>
-#include <QStandardItemModel>
 #include <QToolButton>
 #include <QSignalSpy>
 #include <QtTest>
@@ -742,7 +741,6 @@ private slots:
         InputConfig c = view->board().inputs[4];
         c.type = Route;
         c.route.clear();
-        c.linked.fill(LinkNone);
         emit ied->changed(4, c);
         QVERIFY(!inputConnected(view->board().inputs[4]));
         QVERIFY(view->inputColor(4) != Ui::inputColor(4));        // grey while the route is empty
@@ -788,29 +786,16 @@ private slots:
         QCOMPARE(o.relayB, PinNA);
     }
 
-    void onlyOneRecorder()
+    void noRecorderOrFeedback()
     {
         MainWindow w;
-        ConnectionView *view = startDemo(w);
+        startDemo(w);
         auto *ied = w.findChild<InputEditor *>();
-
-        click(view, view->inputRect(3).center());
-        InputConfig c = view->board().inputs[3];
-        c.type = Recorder;
-        c.pin = 8;
-        emit ied->changed(3, c);
-
-        click(view, view->inputRect(5).center());
-        QCOMPARE(ied->index(), 5);
-        QComboBox *fn = comboWith(ied, QStringLiteral("Recorder"));
+        QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
         QVERIFY(fn);
-        auto *model = qobject_cast<QStandardItemModel *>(fn->model());
-        QVERIFY(model);
-        const int row = fn->findText(QStringLiteral("Recorder"));
-        QVERIFY(!model->item(row)->isEnabled());  // input 3 already is the recorder
-
-        click(view, view->inputRect(3).center());
-        QVERIFY(model->item(row)->isEnabled());   // the recorder itself may stay one
+        QCOMPARE(fn->count(), 3);                 // direct control, route, not in use
+        QCOMPARE(fn->findText(QStringLiteral("Recorder")), -1);
+        QCOMPARE(fn->findText(QStringLiteral("Feedback")), -1);
     }
 
     void servoAngleStep()

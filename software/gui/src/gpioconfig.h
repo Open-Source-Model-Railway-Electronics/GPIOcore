@@ -14,11 +14,9 @@ namespace Gpio {
 
 constexpr int     NumOutputs = 16;
 constexpr int     NumInputs  = 16;
-constexpr int     MaxLinked  = 8;      // MAX_OUTPUTS in config.h
 constexpr int     NumPins    = 22;     // D0..D13, A0..A5 (= 14..19), A6/A7 (= 20/21, Nano only, analog input only)
 constexpr quint8  PinNA      = 0x3F;   // NA in config.h (6-bit pin fields)
 constexpr quint16 AddrNone   = 0x0FFF; // 12-bit address field, 0xFFFF truncates to this
-constexpr quint8  LinkNone   = 0xFF;   // linkedOutput: bits 6-0 = 0x7F means "end of route"
 
 // ── Outputs ─────────────────────────────────────────────────────────────────
 enum OutputType : quint8
@@ -86,10 +84,9 @@ struct OutputConfig
     static OutputConfig fromJson(const QJsonObject &o);
 };
 
-// Payload incl. index byte. Legacy (firmware 0x2D) carries only 13 bytes:
-// data[3] is not transmitted.
-QByteArray encodeOutput(int index, const OutputConfig &c, bool legacy);
-bool       decodeOutput(const QByteArray &payload, int &index, OutputConfig &c, bool legacy);
+// Payload incl. index byte, 14 bytes.
+QByteArray encodeOutput(int index, const OutputConfig &c);
+bool       decodeOutput(const QByteArray &payload, int &index, OutputConfig &c);
 
 // ── Inputs ──────────────────────────────────────────────────────────────────
 // Values as in config.h. Pins use INPUT_PULLUP: pressed = LOW = falling edge.
@@ -99,8 +96,8 @@ enum InputType : quint8
     Latching,       // "absolute": output follows the input level / DCC direction
     Route,          // route on a button press (falling edge) / any DCC command (0 and 1)
     InputNotInUse,
-    Recorder,
-    FeedbackInput,
+    ReservedRecorder,   // 4: was the recorder, the firmware reads it as not in use
+    ReservedFeedback,   // 5: was the recorder's feedback sensor, read as not in use too
     RouteStraight,  // route on a button press / a DCC 'straight' (1) command only
     RouteCurved,    // route on a button press / a DCC 'curved' (0) command only
     InputTypeCount
@@ -123,12 +120,10 @@ const InputTypeInfo &inputTypeInfo(quint8 type);
 QString inputTypeName(quint8 type);
 QString inputTypeHelp(quint8 type);
 
-// ── Route steps (protocol v2, 4 bytes each, see PROTOCOL.md) ───────────────
+// ── Route steps (4 bytes each, see PROTOCOL.md) ────────────────────────────
 constexpr int     MaxRouteSteps    = 16;      // per route (protocol limit)
-constexpr int     MaxRouteStepsV1  = 8;       // linkedOutput[] of the current firmware
 constexpr quint16 MaxStepDelay     = 0x3FFF;  // 14 bits of 0.1 s = 1638.3 s
 constexpr quint16 DefaultStepDelay = 3;       // 0.3 s
-constexpr quint16 V1StepDelay      = 5;       // current firmware: fixed 500 ms
 
 struct RouteStep
 {
@@ -153,7 +148,7 @@ RouteStep  defaultStep(int output, quint8 outputType);
 constexpr quint8 ServoAngleMin = 10, ServoAngleMax = 170;
 
 // Analog inputs (firmware config.h ANALOG_*): the pin byte holds 0x20 | mode << 3 | channel
-// instead of a pin number; the threshold is stored as value / 8 and sent as value / 4 in linked[0].
+// instead of a pin number; the threshold is stored as value / 8 and sent as value / 4 in payload byte 6.
 enum AnalogMode : quint8 { AnalogNone, AnalogBelow, AnalogAbove, AnalogAt };
 constexpr int AnalogMaxThreshold = 1016;   // 7 bits x 8
 constexpr int AnalogHysteresis   = 20;     // below / above: released 20 counts past the threshold
@@ -170,9 +165,6 @@ struct InputConfig
     quint16 threshold = 512;                  // analog: 0-1016 in steps of 8
     QVector<RouteStep> route;                 // source of truth for routes
     QString name;                             // GUI only (board file), not stored on the board
-    std::array<quint8, MaxLinked> linked;     // v1 wire format: bit7 = state, bits 6-0 = output id
-
-    InputConfig() { linked.fill(LinkNone); }
 
     bool   isAnalog() const      { return analog != AnalogNone; }
     int    analogChannel() const { return pin - 14; }    // 0-7 = A0-A7
@@ -189,15 +181,6 @@ struct InputConfig
     // empty route, so the board's slot is cleared; other inputs drop a pair of value steps.
     void syncCustomValues();
 
-    void syncLinkedFromRoute();               // route -> linked (first 8 steps, state only)
-    void routeFromLinked();                   // linked -> route (v1 firmware)
-
-    static bool   linkUsed(quint8 v)  { return (v & 0x7F) != 0x7F; }
-    static quint8 linkId(quint8 v)    { return v & 0x7F; }
-    static quint8 linkState(quint8 v) { return v >> 7; }
-    static quint8 makeLink(quint8 id, quint8 state) { return quint8((id & 0x7F) | (state ? 0x80 : 0)); }
-
-    InputConfig asV1() const;                 // what a v1 board stores of this input
     InputConfig normalized() const;
     bool operator==(const InputConfig &o) const;
     bool operator!=(const InputConfig &o) const { return !(*this == o); }
@@ -209,7 +192,7 @@ struct InputConfig
 QByteArray encodeInput(int index, const InputConfig &c);
 bool       decodeInput(const QByteArray &payload, int &index, InputConfig &c);
 
-// ── Board settings (protocol v2: GET_BOARD 0xC0 / SET_BOARD 0xCF) ───────────
+// ── Board settings (GET_BOARD 0xC0 / SET_BOARD 0xCF) ────────────────────────
 enum BoardType : quint8 { BoardUno, BoardNano, BoardDccNext, BoardJackOfAllTrades, BoardTypeCount };
 enum Interlock : quint8 { InterlockOff, InterlockOn, InterlockAuto };
 constexpr int MaxBoardName = 16;
@@ -218,13 +201,12 @@ struct BoardSettings
 {
     QString name;                       // identifies the board, max 16 ASCII characters
     quint8  type      = BoardNano;
-    bool    recorder  = false;          // recorder enabled (needs the I2C EEPROM on A4/A5)
     bool    timing    = false;          // per-step wait times in routes (off: fixed delay), firmware default
     quint8  interlock = InterlockAuto;
     quint8  delay     = DefaultStepDelay; // 0.1 s units, used when timing is off
 
     bool operator==(const BoardSettings &o) const
-    { return name == o.name && type == o.type && recorder == o.recorder && timing == o.timing
+    { return name == o.name && type == o.type && timing == o.timing
           && interlock == o.interlock && delay == o.delay; }
     bool operator!=(const BoardSettings &o) const { return !(*this == o); }
 
@@ -251,9 +233,8 @@ struct BoardConfig
 struct BoardOptions
 {
     quint8 type           = BoardNano;
-    bool recorder         = false;   // A4/A5 are I2C for the recorder EEPROM
     bool dccNext          = false;   // ArCoMoRa DCCnext: ports 1-10 = D3-D12, 11-16 = A0-A5, no D13
-    bool serialPinsUsable = true;    // decoder releases D0/D1 after its boot window (protocol v2)
+    bool serialPinsUsable = true;    // decoder releases D0/D1 after its boot window
 };
 BoardOptions &boardOptions();
 void          setBoardType(quint8 type);   // also sets dccNext
@@ -267,7 +248,7 @@ QString pinNote(quint8 pin);            // non-empty: usable, but with a caveat 
 QString pinOutputReason(quint8 pin);    // non-empty: the pin cannot be an output (A6/A7)
 bool    isServoTimerPin(quint8 pin);    // D9/D10: no PWM while a servo exists (Servo library, timer 1)
 
-// ── Presets (OPCODE_SET_PRESET in messageParser.cpp) ───────────────────────
+// ── Presets ─────────────────────────────────────────────────────────────────
 QStringList presetNames();
 // A preset as a complete set of outputs and inputs (computed by the GUI, written as normal data).
 // Pins from D3 upwards, skipping D13 (config LED); used inputs: absolute, DCC 1.., input n -> output n.

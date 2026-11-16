@@ -32,7 +32,6 @@ public:
     void setOutputNames(const QStringList &names) { setOutputs(names, m_outputTypes); }
     void setRouteLimits(const Gpio::RouteLimits &limits, int stepsUsedElsewhere);
     void setTimingEnabled(bool on);         // board setting: own wait time per step
-    void setRecorderTaken(bool taken);        // another input already is the recorder
     void setWarnings(const QStringList &warnings);
     void refreshPinCombos();
     void refreshPinMarks();                   // pins used elsewhere in red
@@ -78,7 +77,6 @@ private:
     Gpio::RouteLimits m_limits;
     bool              m_timing = true;
     int               m_stepsElsewhere = 0;
-    bool              m_recorderTaken = false;
     QString           m_signature;
 
     QLabel       *m_title = nullptr;
@@ -107,22 +105,18 @@ private:
     bool          m_liveReading = false;
     void          updateAnalog();
     QGroupBox    *m_targetBox = nullptr;
-    QLabel       *m_targetLabel = nullptr;
     QComboBox    *m_output = nullptr;
-    QToolButton  *m_infoFeedback = nullptr;
     QCheckBox    *m_custom = nullptr;      // custom values of a toggle / absolute input
     QWidget      *m_customRow = nullptr;
     QWidget      *m_valueRow[2] {};        // off / curved, on / straight
     QComboBox    *m_valueMode[2] {};
     QSpinBox     *m_value[2] {};
     QToolButton  *m_valuePick[2] {};
-    QGroupBox    *m_recorderBox = nullptr;
     QGroupBox    *m_routeBox = nullptr;
     QComboBox    *m_routeTrigger = nullptr;   // any / straight only / curved only
     QWidget      *m_routeTriggerRow = nullptr;
     QLabel       *m_routeTriggerLabel = nullptr;
     QLabel       *m_routeCount = nullptr;
-    QLabel       *m_routeV1 = nullptr;
     QGridLayout  *m_stepGrid = nullptr;
     QPushButton  *m_addStep = nullptr;
     QVector<StepRow> m_rows;

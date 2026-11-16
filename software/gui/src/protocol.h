@@ -20,8 +20,7 @@ namespace Proto {
 
 constexpr quint8 SET_INPUT_DATA         = 0x1E;  // 14 bytes
 constexpr quint8 GET_INPUT_DATA         = 0x11;  //  1 byte  (index)
-constexpr quint8 SET_OUTPUT_DATA        = 0x2E;  // 14 bytes (fixed firmware)
-constexpr quint8 SET_OUTPUT_DATA_LEGACY = 0x2D;  // 13 bytes (current firmware, data[3] is lost)
+constexpr quint8 SET_OUTPUT_DATA        = 0x2E;  // 14 bytes
 constexpr quint8 GET_OUTPUT_DATA        = 0x21;  //  1 byte  (index)
 constexpr quint8 SET_INPUT_STATE        = 0x32;
 constexpr quint8 GET_INPUT_STATE        = 0x31;
@@ -32,7 +31,6 @@ constexpr quint8 GET_OUTPUT_STATE       = 0x41;  // v2: <output> -> OUTPUT_EVENT
 constexpr quint8 OUTPUT_EVENT           = 0x45;
 constexpr quint8 REQ_VERSION            = 0x50;  //  0 bytes
 constexpr quint8 VERSION_GROUP          = 0x5;   // reply: 0x5n, n = string length
-constexpr quint8 SET_PRESET             = 0x61;  //  1 byte  (preset number)
 constexpr quint8 ACK                    = 0x70;
 constexpr quint8 NACK                   = 0x71;
 
@@ -44,7 +42,7 @@ constexpr quint8 HELLO                  = 0x90;
 constexpr quint8 HELLO_GROUP            = 0x9;
 constexpr quint8 HELLO_FLAG_SERIAL_PINS = 0x01;  // D0/D1 usable as I/O outside a config session
 constexpr quint8 HELLO_FLAG_SERVO_LIVE  = 0x02;  // SERVO_LIVE supported
-constexpr quint8 HELLO_FLAG_EXT_EEPROM  = 0x04;  // routes / recorder in external EEPROM
+// 0x04 is reserved (was: external EEPROM for the recorder)
 constexpr quint8 HELLO_FLAG_BOARD       = 0x08;  // GET_BOARD / SET_BOARD supported
 constexpr quint8 HELLO_FLAG_ANALOG_SOUND = 0x10; // analog inputs (GET_ANALOG) and the sound effect output
 

@@ -5,7 +5,6 @@ namespace Gpio {
 void setRouteSteps(InputConfig &c, const QVector<RouteStep> &steps)
 {
     c.route = steps.mid(0, MaxRouteSteps);
-    c.syncLinkedFromRoute();
 }
 
 bool inputConnected(const InputConfig &c)
@@ -41,22 +40,12 @@ int totalRouteSteps(const BoardConfig &board)
     return n;
 }
 
-int recorderInput(const BoardConfig &board, int except)
-{
-    for (int i = 0; i < NumInputs; ++i)
-        if (i != except && board.inputs[i].type == Recorder)
-            return i;
-    return -1;
-}
-
 ConnectResult connectOutput(BoardConfig &board, int input, int output, const RouteLimits &limits)
 {
     if (input < 0 || input >= NumInputs || output < 0 || output >= NumOutputs)
         return ConnectResult::NotConnectable;
 
     InputConfig &c = board.inputs[input];
-    if (c.type == Recorder || c.type == FeedbackInput)
-        return ConnectResult::NotConnectable;
 
     // a sound output plays a track chosen by the input: custom values on (off = stop, on = track 1)
     auto values = [&c, &board](quint8 before) {
@@ -88,19 +77,13 @@ ConnectResult connectOutput(BoardConfig &board, int input, int output, const Rou
 
     // route: the same output may appear more than once (e.g. a servo moving
     // through several positions), so every drop adds a step
-    const int maxSteps = qMin(limits.maxSteps, limits.v1 ? MaxRouteStepsV1 : MaxRouteSteps);
+    const int maxSteps = qMin(limits.maxSteps, MaxRouteSteps);
     if (c.route.size() >= maxSteps)
         return ConnectResult::RouteFull;
     if (totalRouteSteps(board) >= limits.pool)
         return ConnectResult::PoolFull;
 
-    RouteStep s = defaultStep(output, board.outputs[output].type);
-    if (limits.v1)
-    {
-        s.raw   = false;
-        s.value = 1;
-        s.delay = V1StepDelay;
-    }
+    const RouteStep s = defaultStep(output, board.outputs[output].type);
     QVector<RouteStep> steps = c.route;
     steps.append(s);
     setRouteSteps(c, steps);

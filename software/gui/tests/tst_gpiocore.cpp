@@ -16,6 +16,21 @@ using namespace Gpio;
 Q_DECLARE_METATYPE(Gpio::InputConfig)
 Q_DECLARE_METATYPE(Gpio::OutputConfig)
 
+// A device that answers everything except HELLO: no GPIOcore board (or very old firmware)
+class NoHelloDevice : public SimulatedDevice
+{
+public:
+    using SimulatedDevice::SimulatedDevice;
+
+protected:
+    qint64 writeData(const char *data, qint64 size) override
+    {
+        if (size == 1 && quint8(data[0]) == Proto::HELLO)
+            return size;
+        return SimulatedDevice::writeData(data, size);
+    }
+};
+
 class TestGpioCore : public QObject
 {
     Q_OBJECT
@@ -52,9 +67,8 @@ private:
         QString err;
         QVERIFY(r.link->openDevice(r.sim, true, &err));
         QVERIFY(ready.wait(1000));
-        QCOMPARE(ready.first().first().toString(),
-                 opt.oldDefaults ? QStringLiteral("12345678") : QStringLiteral("v0.0.0"));
-        waitFinished(r);                 // HELLO (or its timeout on v1 boards)
+        QCOMPARE(ready.first().first().toString(), QStringLiteral("v0.0.0"));
+        waitFinished(r);                 // HELLO
         QVERIFY(r.link->caps().known);
     }
 
@@ -144,17 +158,12 @@ private slots:
         OutputConfig c;
         c.type = ServoType; c.pinA = 9; c.relayC = 4; c.state = 1;
         c.data = { { 70, 110, 15, 2 } };
-        const QByteArray p = encodeOutput(3, c, false);
+        const QByteArray p = encodeOutput(3, c);
         QCOMPARE(p.size(), 14);
         int idx = -1; OutputConfig d;
-        QVERIFY(decodeOutput(p, idx, d, false));
+        QVERIFY(decodeOutput(p, idx, d));
         QCOMPARE(idx, 3);
         QVERIFY(d == c);
-
-        const QByteArray legacy = encodeOutput(3, c, true);
-        QCOMPARE(legacy.size(), 13);
-        QVERIFY(decodeOutput(legacy, idx, d, true));
-        QCOMPARE(d.data[3], quint8(0));            // not transmitted
     }
 
     void inputBitfieldsTruncate()
@@ -192,68 +201,14 @@ private slots:
         QCOMPARE(r.errors, 0);
         QCOMPARE(r.inputsSeen, 16);
         QCOMPARE(r.outputsSeen, 16);
-        QVERIFY(!r.link->legacyOutputFormat());
         QCOMPARE(r.outputs[0].pinA, quint8(3));     // F7: D0..D2 are skipped
         QCOMPARE(r.outputs[15].pinA, quint8(19));          // D3-D12, A0-A5: D13 is the config LED
         QCOMPARE(r.outputs[7].switchTime(), quint32(50));
-        QCOMPARE(r.inputs[4].linked[0], LinkNone);  // F16: end of route, not NA
-    }
-
-    void presetBroadcastMatchesGetLayout()
-    {
-        // F5: preset broadcasts use the same 14-byte layout as GET_OUTPUT_DATA
-        SimulatedDevice::Options opt; opt.bootDelayMs = 100000; opt.replyDelayMs = 0;
-        SimulatedDevice sim(opt);
-        QVERIFY(sim.open(QIODevice::ReadWrite));
-        sim.write(Proto::encode(Proto::SET_PRESET, QByteArray(1, 4)));   // 8 double pulse
-        QTRY_VERIFY(sim.bytesAvailable() > 0);
-        Proto::FrameParser parser;
-        Proto::FrameParser::Result res;
-        parser.feed(sim.readAll(), res);
-        QCOMPARE(res.errors.size(), 0);
-        int outputs = 0, inputs = 0;
-        for (const Proto::Frame &f : res.frames)
-        {
-            int idx = -1;
-            if (f.command == Proto::SET_OUTPUT_DATA)
-            {
-                OutputConfig c;
-                QVERIFY(decodeOutput(f.payload, idx, c, false));
-                QVERIFY(c == sim.output(idx));
-                ++outputs;
-            }
-            if (f.command == Proto::SET_INPUT_DATA) ++inputs;
-        }
-        QCOMPARE(outputs, 16);
-        QCOMPARE(inputs, 16);                       // F4: preset 4 now sets up the inputs
-        QCOMPARE(sim.output(0).switchTime(), quint32(50));
-        QCOMPARE(sim.output(0).pinC, PinNA);
-        QCOMPARE(sim.input(7).outputId, quint8(7));
-        QVERIFY(res.frames.last().isAck());
-    }
-
-    void readAllFromOldFirmware()
-    {
-        Rig r; makeRig(r, SimulatedDevice::Options::oldFirmware());
-        r.link->readAll();
-        waitFinished(r);
-        QCOMPARE(r.errors, 0);
-        QCOMPARE(r.inputsSeen, 16);
-        QCOMPARE(r.outputsSeen, 16);
-        QVERIFY(r.link->legacyOutputFormat());
-        QCOMPARE(r.outputs[7].pinA, quint8(7));
-        QCOMPARE(int(r.outputs[7].type), int(SingleSteady));
-        QCOMPARE(r.inputs[4].address, quint16(5));
-        QCOMPARE(r.inputs[4].linked[0], PinNA);    // firmware default NA (0x3F), see review
     }
 
     void writeAndReadBackFixedFirmware()
     {
         Rig r; makeRig(r, SimulatedDevice::Options());
-        r.link->readOutput(0);
-        waitFinished(r);
-        QVERIFY(!r.link->legacyOutputFormat());
-
         OutputConfig c;
         c.type = ServoType; c.pinA = 10; c.relayA = 11; c.relayB = 12;
         c.data = { { 60, 120, 25, 3 } };
@@ -265,37 +220,6 @@ private slots:
         QVERIFY(r.sim->output(5) == c);
     }
 
-    void legacyFirmwareLosesFourthDataByte()
-    {
-        Rig r; makeRig(r, SimulatedDevice::Options::oldFirmware());
-        r.link->readOutput(0);
-        waitFinished(r);
-        OutputConfig c;
-        c.type = ServoType; c.pinA = 9;
-        c.data = { { 60, 120, 25, 3 } };
-        r.link->writeOutput(1, c);
-        waitFinished(r);
-        QCOMPARE(r.sim->output(1).data[2], quint8(25));
-        QVERIFY(r.sim->output(1).data[3] != 3);    // stale buffer byte instead of 3
-    }
-
-    void doubleAckDoesNotDesync()
-    {
-        Rig r; makeRig(r, SimulatedDevice::Options::oldFirmware());
-        InputConfig in;
-        in.type = Momentary; in.address = 100; in.pin = 4; in.outputId = 3;
-        for (int i = 0; i < 4; ++i)
-        {
-            r.link->writeInput(i, in);
-            r.link->readInput(i);
-        }
-        waitFinished(r);
-        QCOMPARE(r.errors, 0);
-        QCOMPARE(r.inputsSeen, 4);
-        for (int i = 0; i < 4; ++i)
-            QVERIFY(r.inputs[i] == in);
-    }
-
     void nackIsRetried()
     {
         Rig r; makeRig(r, SimulatedDevice::Options());
@@ -304,25 +228,6 @@ private slots:
         waitFinished(r);
         QCOMPARE(r.errors, 0);
         QCOMPARE(r.inputsSeen, 1);
-    }
-
-    void presetThenReadBack()
-    {
-        Rig r; makeRig(r, SimulatedDevice::Options());
-        QSignalSpy applied(r.link, &DeviceLink::presetApplied);
-        r.link->applyPreset(2);           // 5 servos + electrofrog relays
-        QVERIFY(applied.wait(2000));
-        waitFinished(r);
-        QCOMPARE(r.errors, 0);
-        QCOMPARE(r.outputsSeen, 16);
-        QCOMPARE(int(r.outputs[4].type), int(ServoType));
-        QCOMPARE(r.outputs[0].pinA,   quint8(3));   // F7: presets start at D3
-        QCOMPARE(r.outputs[4].pinA,   quint8(16));          // D13 (config LED) is skipped
-        QCOMPARE(r.outputs[4].relayA, quint8(17));
-        QCOMPARE(r.outputs[4].relayB, quint8(18));
-        QCOMPARE(int(r.outputs[5].type), int(OutputNotInUse));
-        QCOMPARE(r.inputs[4].outputId, quint8(4));
-        QCOMPARE(r.inputs[5].address, AddrNone);
     }
 
     // ── Connections ─────────────────────────────────────────────────────────
@@ -362,15 +267,14 @@ private slots:
         QCOMPARE(int(routeSteps(b.inputs[1])[1].value), 0);
     }
 
-    void routeLimitsV1AndPool()
+    void routeLimitsAndPool()
     {
         BoardConfig b;
         b.inputs[1].type = Route;
-        RouteLimits v1; v1.v1 = true; v1.maxSteps = MaxRouteStepsV1;
+        RouteLimits eight; eight.maxSteps = 8;              // a board with 8 steps per route
         for (int o = 0; o < 8; ++o)
-            QCOMPARE(connectOutput(b, 1, o, v1), ConnectResult::Connected);
-        QCOMPARE(connectOutput(b, 1, 9, v1), ConnectResult::RouteFull);
-        QCOMPARE(int(b.inputs[1].route[0].delay), int(V1StepDelay));
+            QCOMPARE(connectOutput(b, 1, o, eight), ConnectResult::Connected);
+        QCOMPARE(connectOutput(b, 1, 9, eight), ConnectResult::RouteFull);
 
         RouteLimits pool; pool.pool = 9;
         b.inputs[2].type = Route;
@@ -399,12 +303,27 @@ private slots:
         QVERIFY(decodeStep(b.constData()) == s);
     }
 
-    void recorderOnlyOnce()
+    void removedRecorderAndFeedback()
     {
-        BoardConfig b;
-        b.inputs[3].type = Recorder;
-        QCOMPARE(recorderInput(b), 3);
-        QCOMPARE(recorderInput(b, 3), -1);                  // ignoring itself: no other recorder
+        // input types 4 (recorder) and 5 (feedback) are reserved: from the wire or an old file = not in use
+        for (quint8 type : { quint8(4), quint8(5) })
+        {
+            InputConfig c;
+            c.type = Momentary; c.pin = 8; c.outputId = 2;
+            QByteArray p = encodeInput(7, c);
+            p[4] = char(type);
+            int index = -1;
+            InputConfig d;
+            QVERIFY(decodeInput(p, index, d));
+            QCOMPARE(int(d.type), int(InputNotInUse));
+        }
+        QCOMPARE(int(InputConfig::fromJson(QJsonObject{ { "type", "recorder" }, { "pin", 20 } }).type), int(InputNotInUse));
+        QCOMPARE(int(InputConfig::fromJson(QJsonObject{ { "type", "feedback" }, { "pin", 8 } }).type), int(InputNotInUse));
+        BoardSettings b;
+        const char board[3] = { 1, 1, 3 };               // Nano, flags bit0 set, delay 3
+        QVERIFY(decodeBoard(QByteArray(board, 3), b));   // flags bit0 (was 'recorder on') is ignored
+        QCOMPARE(int(quint8(encodeBoard(b).at(1))), 0);
+        QVERIFY(pinReservedReason(18).isEmpty() && pinReservedReason(19).isEmpty());   // A4/A5 always usable
     }
 
     void dccNextPins()
@@ -441,12 +360,12 @@ private slots:
     {
         BoardSettings b;
         b.name = QStringLiteral("Station/left:1234567890");   // path characters dropped, max 16
-        b.type = BoardDccNext; b.recorder = false; b.timing = false; b.interlock = InterlockOn; b.delay = 7;
+        b.type = BoardDccNext; b.timing = false; b.interlock = InterlockOn; b.delay = 7;
         BoardSettings d;
         QVERIFY(decodeBoard(encodeBoard(b), d));
         QCOMPARE(d.name, QStringLiteral("Stationleft12345"));
         QCOMPARE(int(d.type), int(BoardDccNext));
-        QVERIFY(!d.recorder && !d.timing);
+        QVERIFY(!d.timing);
         QCOMPARE(int(d.interlock), int(InterlockOn));
         QCOMPARE(int(d.delay), 7);
         QCOMPARE(BoardSettings::fromJson(d.toJson()), d);
@@ -498,11 +417,22 @@ private slots:
         QCOMPARE(int(e.outputs[0].switchTime()), 50);
     }
 
-    void helloTimeoutIsV1()
+    void helloTimeoutIsNoBoard()
     {
-        Rig r; makeRig(r, SimulatedDevice::Options::currentFirmware());
-        QCOMPARE(r.link->caps().protocol, 1);
-        QCOMPARE(r.errors, 0);                              // no HELLO reply is not an error
+        DeviceLink link;
+        link.bootWaitMs = 200;
+        link.timeoutMs  = 100;
+        link.drainMs    = 3;
+        SimulatedDevice::Options o;
+        o.bootDelayMs = 5;
+        QSignalSpy closed(&link, &DeviceLink::closed);
+        QSignalSpy errors(&link, &DeviceLink::errorOccurred);
+        QString err;
+        QVERIFY(link.openDevice(new NoHelloDevice(o), true, &err));
+        QVERIFY(closed.wait(3000));                         // no HELLO reply: not a GPIOcore board, link closed
+        QCOMPARE(errors.size(), 1);
+        QVERIFY(!link.isOpen());
+        QVERIFY(!link.caps().known);
     }
 
     void routeRoundTripV2()
@@ -530,24 +460,6 @@ private slots:
         QCOMPARE(r.routes[3], in.route);
     }
 
-    void routeOnV1UsesLinkedBytes()
-    {
-        Rig r; makeRig(r, SimulatedDevice::Options::currentFirmware());
-        InputConfig in;
-        in.type = Route;
-        RouteStep a; a.output = 5; a.value = 1; a.delay = V1StepDelay;
-        RouteStep b; b.output = 6; b.value = 0; b.delay = V1StepDelay;
-        in.route = { a, b };
-        r.link->writeInput(2, in);
-        r.link->writeRoute(2, in.route);                    // skipped: v1 board
-        r.link->readInput(2);
-        waitFinished(r);
-        QCOMPARE(r.errors, 0);
-        QCOMPARE(r.routesSeen, 0);
-        QCOMPARE(r.inputs[2].route, in.route);              // from the 8 linked bytes
-        QCOMPARE(r.sim->input(2).linked[0], InputConfig::makeLink(5, 1));
-    }
-
     void servoLiveV2()
     {
         Rig r; makeRig(r, SimulatedDevice::Options());
@@ -556,17 +468,6 @@ private slots:
         waitFinished(r);
         QCOMPARE(r.sim->liveAngle(2), 120);
         QCOMPARE(r.errors, 0);
-    }
-
-    void routeEndsAtInvalidStep()
-    {
-        InputConfig c;
-        c.type = Route;
-        c.linked[0] = InputConfig::makeLink(4, 1);
-        c.linked[1] = PinNA;                                   // 0x3F: old firmware default
-        c.linked[2] = InputConfig::makeLink(6, 1);
-        c.routeFromLinked();
-        QCOMPARE(routeSteps(c).size(), 1);                     // like Input::triggerOutputs()
     }
 
     void directInputsColourFirst()
@@ -579,8 +480,7 @@ private slots:
         connectOutput(b, 9, 3);
         QCOMPARE(outputSources(b, 3), QVector<int>({ 9, 4 })); // direct before route
         QCOMPARE(connectOutput(b, 9, 3), ConnectResult::AlreadyConnected);
-        b.inputs[5].type = Recorder;
-        QCOMPARE(connectOutput(b, 5, 3), ConnectResult::NotConnectable);
+        QCOMPARE(connectOutput(b, NumInputs, 3), ConnectResult::NotConnectable);   // no such input
     }
 
     // ── Analog inputs and the sound effect output ──────────────────────────
@@ -602,7 +502,7 @@ private slots:
         QCOMPARE(int(d.analog), int(AnalogAt));
         QCOMPARE(int(d.pin), 17);
         QCOMPARE(int(d.threshold), 512);
-        QVERIFY(d.route.isEmpty());                             // linked[0] is not a route step
+        QVERIFY(d.route.isEmpty());                             // the route comes with GET_ROUTE
         QVERIFY(d == c.normalized());
 
         c.analog = AnalogBelow; c.pin = 14;
@@ -625,12 +525,17 @@ private slots:
         QVERIFY(!d.isAnalog());
         QCOMPARE(int(d.pin), 7);
 
-        // a digital input keeps linked[0] for v1 routes; its threshold does not matter
+        // a digital input sends 0xFF in payload 6, payload 7-13 are always 0xFF; its threshold does not matter
         InputConfig e;
         e.type  = Route;
         e.pin   = 5;
         e.route = { RouteStep{ 4, 1, false, 3 } };
-        QCOMPARE(int(quint8(encodeInput(0, e).at(6))), int(InputConfig::makeLink(4, 1)));
+        const QByteArray ep = encodeInput(0, e);
+        QCOMPARE(ep.size(), 14);
+        for (int i = 6; i < 14; ++i)
+            QCOMPARE(int(quint8(ep.at(i))), 0xFF);
+        for (int i = 7; i < 14; ++i)
+            QCOMPARE(int(quint8(p.at(i))), 0xFF);
         InputConfig f = e;
         f.threshold = 100;
         QVERIFY(f == e);
@@ -744,7 +649,7 @@ private slots:
     void analogNeedsHelloFlag()
     {
         SimulatedDevice::Options o;
-        o.helloFlags = 0x0F;                     // firmware before analog inputs
+        o.helloFlags = 0x0B;                     // firmware before analog inputs
         Rig r; makeRig(r, o);
         QVERIFY(!r.link->caps().analogSound);
     }
@@ -811,9 +716,6 @@ private slots:
         const QByteArray step = encodeStep(c.route[0]);
         QCOMPARE(int(quint8(step.at(0))), 0x03 | 0x10 | 0x20);  // id | raw | STEP_VALUES
         QVERIFY(decodeStep(step.constData()) == c.route[0]);
-        c.syncLinkedFromRoute();
-        for (quint8 l : c.linked)
-            QCOMPARE(int(l), int(LinkNone));                     // no v1 route
 
         BoardConfig b;
         b.inputs[2] = c;
@@ -944,7 +846,7 @@ private slots:
         QCOMPARE(int(c.pwmFade()), 30);
         int idx = -1;
         OutputConfig d;
-        QVERIFY(decodeOutput(encodeOutput(4, c, false), idx, d, false));
+        QVERIFY(decodeOutput(encodeOutput(4, c), idx, d));
         QCOMPARE(int(d.data[1]), 30);
         QVERIFY(d == c);
         QVERIFY(OutputConfig::fromJson(c.toJson()) == c);

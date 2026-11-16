@@ -14,7 +14,6 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
-#include <QStandardItemModel>
 #include <QStyle>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -23,15 +22,13 @@
 
 using namespace Gpio;
 
-enum Function { FnDirect, FnRoute, FnUnused, FnRecorder, FnFeedback };
+enum Function { FnDirect, FnRoute, FnUnused };
 enum StepMode { ModeCurved, ModeStraight, ModeAngle };
 
 static Function functionOf(quint8 type)
 {
     if (isDirectType(type))    return FnDirect;
     if (isRouteType(type))     return FnRoute;
-    if (type == Recorder)      return FnRecorder;
-    if (type == FeedbackInput) return FnFeedback;
     return FnUnused;
 }
 
@@ -80,8 +77,6 @@ void InputEditor::buildUi()
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(Latching)),      tr("Direct control"), int(FnDirect));
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(Route)),         tr("Route"),          int(FnRoute));
     m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(InputNotInUse)), tr("Not in use"),     int(FnUnused));
-    m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(Recorder)),      tr("Recorder"),       int(FnRecorder));
-    m_function->addItem(Ui::swatchIcon(Ui::inputTypeColor(FeedbackInput)), tr("Feedback"),       int(FnFeedback));
     head->addWidget(m_title);
     head->addStretch();
     head->addWidget(new QLabel(tr("Function")));
@@ -189,18 +184,13 @@ void InputEditor::buildUi()
     srcForm->addRow(tr("Live reading"), m_nowRow);
     root->addWidget(m_srcBox);
 
-    // Direct target / feedback id
+    // Direct target
     m_targetBox = new QGroupBox(tr("Controls"));
     auto *tf = new QFormLayout(m_targetBox);
     m_output = new QComboBox;
     m_output->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_output->setMinimumContentsLength(10);
-    m_targetLabel = new QLabel(tr("Output"));
-    auto *targetRow = new QHBoxLayout;
-    targetRow->addWidget(m_output, 1);
-    m_infoFeedback = Info::button(QStringLiteral("input.feedback"));
-    targetRow->addWidget(m_infoFeedback);
-    tf->addRow(m_targetLabel, targetRow);
+    tf->addRow(tr("Output"), m_output);
     // custom values: per state a value like a route step (angle, aspect, PWM, sound track) instead of 0 / 1
     m_custom = new QCheckBox(tr("Custom values"));
     m_custom->setToolTip(tr("Off / curved and on / straight each send their own value, like a route step"));
@@ -239,16 +229,6 @@ void InputEditor::buildUi()
     }
     root->addWidget(m_targetBox);
 
-    // Recorder explanation
-    m_recorderBox = new QGroupBox(tr("Recorder"));
-    auto *recLay = new QHBoxLayout(m_recorderBox);
-    auto *recText = new QLabel(tr("Long press: record on / off.  Short press: play on / off."));
-    recText->setObjectName(QStringLiteral("help"));
-    recText->setWordWrap(true);
-    recLay->addWidget(recText, 1);
-    recLay->addWidget(Info::button(QStringLiteral("input.recorder")));
-    root->addWidget(m_recorderBox);
-
     // Route steps
     m_routeBox = new QGroupBox(tr("Route steps"));
     auto *routeLay = new QVBoxLayout(m_routeBox);
@@ -258,11 +238,6 @@ void InputEditor::buildUi()
     routeHead->addWidget(m_routeCount, 1);
     routeHead->addWidget(Info::button(QStringLiteral("route.steps")));
     routeLay->addLayout(routeHead);
-    m_routeV1 = new QLabel(tr("This board speaks protocol v1: max. 8 steps, curved / straight only, "
-                              "fixed 0.5 s per step."));
-    m_routeV1->setObjectName(QStringLiteral("warn"));
-    m_routeV1->setWordWrap(true);
-    routeLay->addWidget(m_routeV1);
     m_stepGrid = new QGridLayout;
     m_stepGrid->setHorizontalSpacing(6);
     m_stepGrid->setVerticalSpacing(4);
@@ -308,10 +283,7 @@ void InputEditor::buildUi()
     }
     connect(m_addStep, &QPushButton::clicked, this, [this] {
         const int out = m_cfg.route.isEmpty() ? 0 : m_cfg.route.last().output;
-        RouteStep s = defaultStep(out, outputType(out));
-        if (m_limits.v1) { s.raw = false; s.value = 1; s.delay = V1StepDelay; }
-        m_cfg.route.append(s);
-        m_cfg.syncLinkedFromRoute();
+        m_cfg.route.append(defaultStep(out, outputType(out)));
         refresh();
         emit changed(m_index, m_cfg);
     });
@@ -415,17 +387,6 @@ void InputEditor::setRouteLimits(const RouteLimits &limits, int stepsUsedElsewhe
     refresh();
 }
 
-void InputEditor::setRecorderTaken(bool taken)
-{
-    m_recorderTaken = taken;
-    if (auto *model = qobject_cast<QStandardItemModel *>(m_function->model()))
-    {
-        QStandardItem *item = model->item(FnRecorder);
-        item->setEnabled(!taken);
-        item->setToolTip(taken ? tr("There already is a recorder input; only one is allowed") : QString());
-    }
-}
-
 void InputEditor::setInput(int index, const InputConfig &c)
 {
     m_index = index;
@@ -445,7 +406,6 @@ void InputEditor::setWarnings(const QStringList &warnings)
 QString InputEditor::stepSignature() const
 {
     QStringList parts;
-    parts << QString::number(m_limits.v1);
     for (const RouteStep &s : m_cfg.route)
         parts << QStringLiteral("%1:%2").arg(s.output).arg(int(stepKind(outputType(s.output))));
     return parts.join(QLatin1Char(','));
@@ -491,10 +451,7 @@ void InputEditor::rebuildSteps()
         connect(pick, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, pick] {
             const int out = pick->currentData().toInt();
             if (m_loading || out < 0) return;
-            RouteStep s = defaultStep(out, outputType(out));
-            if (m_limits.v1) { s.raw = false; s.value = 1; s.delay = V1StepDelay; }
-            m_cfg.route.append(s);
-            m_cfg.syncLinkedFromRoute();
+            m_cfg.route.append(defaultStep(out, outputType(out)));
             refresh();
             emit changed(m_index, m_cfg);
         });
@@ -563,17 +520,17 @@ void InputEditor::rebuildSteps()
         connect(r.up, &QToolButton::clicked, this, [this, i] {
             if (i == 0) return;
             std::swap(m_cfg.route[i], m_cfg.route[i - 1]);
-            m_cfg.syncLinkedFromRoute(); refresh(); emit changed(m_index, m_cfg);
+            refresh(); emit changed(m_index, m_cfg);
         });
         connect(r.down, &QToolButton::clicked, this, [this, i] {
             if (i + 1 >= m_cfg.route.size()) return;
             std::swap(m_cfg.route[i], m_cfg.route[i + 1]);
-            m_cfg.syncLinkedFromRoute(); refresh(); emit changed(m_index, m_cfg);
+            refresh(); emit changed(m_index, m_cfg);
         });
         connect(r.remove, &QToolButton::clicked, this, [this, i] {
             if (i >= m_cfg.route.size()) return;
             m_cfg.route.remove(i);
-            m_cfg.syncLinkedFromRoute(); refresh(); emit changed(m_index, m_cfg);
+            refresh(); emit changed(m_index, m_cfg);
         });
     }
     m_stepGrid->setColumnStretch(1, 3);
@@ -587,23 +544,21 @@ void InputEditor::updateSteps()
     {
         const RouteStep &s = m_cfg.route[i];
         StepRow &r = m_rows[i];
-        const StepKind kind = m_limits.v1 ? StepKind::State : stepKind(outputType(s.output));
+        const StepKind kind = stepKind(outputType(s.output));
 
         Ui::selectData(r.output, s.output);
         showStepValue(r.mode, r.value, r.pick, s, kind);
         r.wait->setValue(s.delay / 10.0);
-        r.wait->setEnabled(!m_limits.v1);
         r.wait->setVisible(m_timing);
         r.up->setEnabled(i > 0);
         r.down->setEnabled(i + 1 < n);
     }
 
-    const int maxSteps = qMin(m_limits.maxSteps, m_limits.v1 ? MaxRouteStepsV1 : MaxRouteSteps);
+    const int maxSteps = qMin(m_limits.maxSteps, MaxRouteSteps);
     const int total = m_stepsElsewhere + n;
     m_routeCount->setText(tr("%1 / %2 steps  ·  board total %3 / %4")
                               .arg(n).arg(maxSteps).arg(total).arg(m_limits.pool));
     m_addStep->setEnabled(n < maxSteps && total < m_limits.pool);
-    m_routeV1->setVisible(m_limits.v1);
 }
 
 void InputEditor::showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *pick, const RouteStep &s, StepKind kind)
@@ -729,9 +684,6 @@ void InputEditor::refresh()
     const bool values = m_cfg.hasCustomValues();
     m_customRow->setVisible(fn == FnDirect);
     m_custom->setChecked(values);
-    m_custom->setEnabled(!m_limits.v1 || values);
-    m_custom->setToolTip(m_limits.v1 ? tr("Needs a board with protocol v2")
-                                     : tr("Off / curved and on / straight each send their own value, like a route step"));
     for (int k = 0; k < 2; ++k)
     {
         const bool show = fn == FnDirect && values;
@@ -742,9 +694,6 @@ void InputEditor::refresh()
         if (show)
             showStepValue(m_valueMode[k], m_value[k], m_valuePick[k], m_cfg.route[k], stepKind(outputType(m_cfg.outputId)));
     }
-    m_targetLabel->setText(m_cfg.type == FeedbackInput ? tr("Feedback id") : tr("Output"));
-    m_infoFeedback->setVisible(m_cfg.type == FeedbackInput);
-    m_recorderBox->setVisible(fn == FnRecorder);
     m_routeBox->setVisible(fn == FnRoute);
     m_routeTriggerRow->setVisible(fn == FnRoute);
     m_routeTriggerLabel->setVisible(fn == FnRoute);
@@ -767,16 +716,12 @@ void InputEditor::collect()
     const quint8 oldType = m_cfg.type, oldOutput = m_cfg.outputId;
     const bool hadValues = m_cfg.hasCustomValues();
     const bool a = m_optA->isChecked();
-    Function fn = Function(Ui::currentData(m_function));
-    if (fn == FnRecorder && m_recorderTaken)
-        fn = functionOf(m_cfg.type);         // only one recorder per board
+    const Function fn = Function(Ui::currentData(m_function));
     switch (fn)
     {
     case FnDirect:   m_cfg.type = a ? Momentary : Latching;  break;
     case FnRoute:    m_cfg.type = quint8(Ui::currentData(m_routeTrigger));   break;
     case FnUnused:   m_cfg.type = InputNotInUse;             break;
-    case FnRecorder: m_cfg.type = Recorder;                  break;
-    case FnFeedback: m_cfg.type = FeedbackInput;             break;
     }
     m_cfg.address  = m_useAddr->isChecked() ? quint16(m_addr->value()) : AddrNone;
     const quint8 analog = quint8(Ui::currentData(m_readAs));
@@ -803,12 +748,10 @@ void InputEditor::collect()
             const quint16 delay = s.delay;
             s = defaultStep(out, outputType(out));
             s.delay = delay;
-            if (m_limits.v1) { s.raw = false; s.value = 1; }
             continue;
         }
-        const StepKind kind = m_limits.v1 ? StepKind::State : stepKind(outputType(s.output));
-        readStepValue(r.mode, r.value, kind, s);
-        s.delay = m_limits.v1 ? V1StepDelay : quint16(std::lround(r.wait->value() * 10.0));
+        readStepValue(r.mode, r.value, stepKind(outputType(s.output)), s);
+        s.delay = quint16(std::lround(r.wait->value() * 10.0));
     }
     if (fn == FnDirect)
     {

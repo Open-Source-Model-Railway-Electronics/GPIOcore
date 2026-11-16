@@ -361,17 +361,22 @@
       ]
     },
     {
-      "type": "recorder",
+      "type": "latching",
       "address": null,
-      "pin": 20,
-      "output": 0,
+      "pin": null,
+      "analog": {
+        "mode": "below",
+        "channel": 6,
+        "threshold": 400
+      },
+      "output": 5,
       "route": []
     },
     {
-      "type": "feedback",
+      "type": "momentary",
       "address": null,
       "pin": 19,
-      "output": 2,
+      "output": 6,
       "route": []
     },
     {
