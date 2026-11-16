@@ -22,6 +22,8 @@ uint8_t         configSession  = 0 ;        // 1 after HELLO
 uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the boot window
 const uint16_t  BOOT_WINDOW_MS = 5000 ;
 
+void blockSignals() ;                       // defined below; also for the PC build of the simulator
+
 
 
 /* TODO
@@ -240,6 +242,7 @@ void loop()
         {
             input[i].update() ;
         }
+        blockSignals() ;
         configUpdate() ;
     }
 
@@ -335,6 +338,27 @@ void callbackInputExt( uint8_t index, uint8_t value )
     if( output[index].eedata.type == servoType ) { if( value <= 180 ) output[index].moveTo( value ) ; return ; }
     if( output[index].eedata.type == soundEffect ) { playSound( index, value ) ; return ; }   // value = track, 0 = stop
     callbackInput( index, 0, value ) ;
+}
+
+// ── Automatic block signal (4-aspect signal with data[3] bit7): red when its own block is occupied,
+// yellow when the next block is, green otherwise; recalculated every 50 ms from the detector levels.
+// data[2] = own block input | next block input << 4
+// data[3] = 0x80 | 0x40 (has a next block) | green lamp << 4 | yellow lamp << 2 | red lamp   (lamp 0-3 = A-D)
+void blockSignals()
+{
+    for( uint8_t o = 0 ; o < 16 ; o ++ )
+    {
+        const Settings &s = output[o].eedata ;
+        if( s.type != fourToneSignal || !( s.data[3] & 0x80 ) ) continue ;
+
+        uint8_t lamp ;
+        if(      input[ s.data[2] & 0x0F ].occupied()                            ) lamp =   s.data[3]        & 3 ;
+        else if( ( s.data[3] & 0x40 ) && input[ s.data[2] >> 4 ].occupied()      ) lamp = ( s.data[3] >> 2 ) & 3 ;
+        else                                                                       lamp = ( s.data[3] >> 4 ) & 3 ;
+
+        uint8_t aspect = 1 << lamp ;
+        if( aspect != s.data[0] ) callbackRouteValue( o, aspect ) ;   // reports it and keeps it
+    }
 }
 
 // ── Interlocking: a turnout is an output of type servo, single pulse or double pulse

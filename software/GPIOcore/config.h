@@ -9,7 +9,8 @@ const int  MOMENTARY        = 0 ;   // toggle the output on the falling edge (or
 const int  LATCHING         = 1 ;   // output follows the input level (or the DCC direction)
 const int  ROUTE            = 2 ;   // set the route on the falling edge (press) or on any DCC command (0 and 1)
 const int  NOT_IN_USE       = 3 ;
-//              4, 5                  were the recorder and its feedback input (removed): read as not in use
+const int  SENSOR           = 4 ;   // occupancy detector: only reports its state (automatic block signals)
+//              5                     was the recorder's feedback input (removed): read as not in use
 const int  ROUTE_STRAIGHT   = 6 ;   // route on a button press, or on a DCC 'straight' (1) command only
 const int  ROUTE_CURVED     = 7 ;   // route on a button press, or on a DCC 'curved' (0) command only
 

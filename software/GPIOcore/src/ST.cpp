@@ -151,15 +151,16 @@ void Trigger::update( uint8_t IN )
     _rose    = 0 ;
     _fell    = 0 ;
 
+    if( !armed )                // the first sample is the starting level, not an edge
+    {
+        armed = 1 ;
+        state = IN ;
+        return ;
+    }
+
     if( IN != state )
     {
         state = IN ;
-
-        if ( !armed )
-        {
-            armed = 1 ;
-            return ;
-        }
 
         _toggled = 1 ;
         if ( IN ) _rose = 1 ;

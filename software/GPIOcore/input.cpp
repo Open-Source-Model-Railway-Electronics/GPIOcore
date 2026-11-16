@@ -25,7 +25,7 @@ void Input::loadEEPROM()
     EEPROM.get(eeAddress, eedata) ;
     setPinMode() ;
 
-    if( eedata.type == 4 || eedata.type == 5 ) eedata.type = NOT_IN_USE ;   // old recorder / feedback input
+    if( eedata.type == 5 ) eedata.type = NOT_IN_USE ;   // old feedback input
 }
 
 void Input::defaults()
