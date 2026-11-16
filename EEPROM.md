@@ -3,13 +3,13 @@
 Date: 2026-11-12 · ATmega328P (Uno, Nano, DCCnext): **1024 B internal EEPROM**.
 There is no external EEPROM (the recorder that used one was removed on 2026-11-16).
 
-## 1. Internal EEPROM map (firmware v2, layout 1)
+## 1. Internal EEPROM map (layout 1)
 
 Source: `software/GPIOcore/routes.h` (`EE_*` constants).
 
 | Address (dec) | Address (hex) | Bytes | Contents |
 |---|---|---|---|
-| 0 – 2 | 0x000 – 0x002 | 3 | Magic `'G'` `'2'`, layout version `1`. If this is missing, a v1 board is converted or an empty board gets default values |
+| 0 – 2 | 0x000 – 0x002 | 3 | Magic `'G'` `'2'`, layout version `1`. If this is missing, the board gets default values (delay 0.3 s, Nano, timing off, interlocking auto) |
 | 3 | 0x003 | 1 | Board type: 0 Uno, 1 Nano, 2 DCCnext, 3 Jack of all trades |
 | 4 | 0x004 | 1 | Board flags: bit0 reserved (was recorder), bit1 timing per step, bit2-3 interlocking (0 off, 1 on, 2 auto) |
 | 5 | 0x005 | 1 | Fixed wait time after a route step when timing is off, × 0.1 s |
@@ -54,23 +54,10 @@ used for an analog input. A `static_assert` keeps the record at 4 B.
 
 **Total in use without routes:** 262 B fixed + 0 B routes. Everything above address 261 is for routes.
 
-## 2. Old (firmware v1), for comparison
-
-| Address | Contents | Bytes |
-|---|---|---|
-| 0–351 | 16 × (output 10 B + input 12 B, of which 8 B `linked`), alternating | 352 |
-| 352–419 | unused | 68 |
-| 420–999 | recorder, 8 B per event | 580 |
-| 1000–1003 | `DEADBEEF` | 4 |
-
-A v1 board is converted at the first start with v2: outputs, inputs, and `linked[]` as 2-byte
-route steps. The recorder recording is lost.
-
-## 3. What else can be compressed
+## 2. What else can be compressed
 
 | Idea | Gain | Cost / risk | Advice |
 |---|---|---|---|
-| `linked[8]` out of the input | 128 B | none | ✓ done |
 | Timing as a board setting | 2 B per step | less flexible | ✓ done |
 | Recorder removed (it was in an I2C EEPROM) | 580 B internal | – | ✓ done (2026-11-16): −4.6 KB flash, +254 B free RAM |
 | **Variable step**: 2 B, plus 2 B only if the wait time differs (flag bit in byte 0) | almost always 2 B per step, also with timing on | read the route sequentially (the decoder does that anyway) | good idea for later; then the timing setting can go |

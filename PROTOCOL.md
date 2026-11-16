@@ -1,13 +1,12 @@
-# GPIOcore serial protocol — v1 and v2
+# GPIOcore serial protocol
 
-Date: 2026-11-11 (updated) · Status: **v1** is the current firmware. **v2** is the specification for the new decoder;
-the Qt GUI and the simulator (`software/gui/src/simulateddevice.cpp`) already implement v2.
+Date: 2026-11-16 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by
+the firmware (`software/GPIOcore`), the Qt GUI and the simulator (`software/gui/src/simulateddevice.cpp`).
 
-The GUI works with both versions. After opening the port it sends `HELLO`:
-- A v2 decoder answers with its capabilities.
-- The current firmware does not answer; the GUI then falls back to v1.
+After opening the port the GUI sends `HELLO`. A board that answers is a GPIOcore decoder and reports its
+capabilities. If a board does not answer `HELLO`, the GUI asks you to flash the GPIOcore firmware.
 
-## 1. Framing (v1 and v2)
+## 1. Framing
 
 ```text
 <command> <payload ...> <checksum>
@@ -23,7 +22,7 @@ checksum : XOR of command and all payload bytes
 | Host → device with length 0 | `<cmd>` | Executed immediately and gets **no** checksum and no ACK (`REQ_VERSION`, `HELLO`) |
 
 The protocol is binary with full 8-bit bytes. So there is no 7-bit limit as in LocoNet. The
-"bit 7 = state, bits 0–6 = id" layout only belongs to the old `linkedOutput[]` bytes (v1).
+"bit 7 = state, bits 0–6 = id" layout is not used anywhere.
 
 Every complete frame with a valid checksum gets one `ACK` from `Transceiver::receive()` after it has been processed.
 A GET first gets the data reply and then that `ACK`.
@@ -43,33 +42,29 @@ A GET first gets the data reply and then that `ACK`.
 
 ## 2. Opcodes
 
-| Opcode | Direction | Payload | Version |
-|---|---|---|---|
-| `1E` SET_INPUT_DATA | ↔ | `index addrH addrL pin type outputID linked[8]` (14 B), see §2.2 | v1, v2* |
-| `11` GET_INPUT_DATA | → | `index` → reply `1E` | v1, v2 |
-| `2E` SET_OUTPUT_DATA | ↔ | `index pinA pinB pinC pinD relayA relayB relayC type state data[4]` (14 B), see §2.1 | v1, v2 |
-| `21` GET_OUTPUT_DATA | → | `index` → reply `2E` | v1, v2 |
-| `50` REQ_VERSION | → | – → reply `5n` + version text (`src/version.h`, now `v0.0.0`) | v1, v2 |
-| `61` SET_PRESET | → | `preset` (0–7). **No longer in the firmware since 2026-11-13**: only an `ACK`. The GUI calculates presets itself, see §2.3 | v1 |
-| `32` SET_INPUT_STATE | → | `index direction` — acts as if a DCC command for the address of this input arrives (toggle, absolute, route). For testing and simulation | v2 |
-| `31` GET_INPUT_STATE | → | `index` — **reserved**, only `ACK` | – |
-| `42` SET_OUTPUT_STATE | → | `index state` — **reserved**, only `ACK` | – |
-| `33` DCC_EXT | → | `addrH addrL value` — acts as if a DCC extended accessory packet (signal aspect) for that address arrives. Only direct inputs respond | v2 |
-| `41` GET_OUTPUT_STATE | → | `index` → reply `45` with the current state | v2 |
-| **`45` OUTPUT_EVENT** | ← | `output state value ms_lo ms_hi` — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in `value`), with the lower 16 bits of `millis()`. While turning, a servo reports **every degree** (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal reports its aspect as state 2. **State 3** = frog relay switched, `value` bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); `GET_OUTPUT_STATE` sends this as a second message if the output has relays | **v2** |
-| `B1` CLEAR_OUTPUT | – | is in `messageParser.h`, but is not used | – |
-| `2D` (old) | ↔ | `SET_OUTPUT_DATA` of firmware before 2026-11-09: 13 bytes, `data[3]` is lost. The GUI recognises this from the reply to `GET_OUTPUT_DATA` and adapts. | old |
-| **`90` HELLO** | → | – → reply `95` | **v2** |
-| **`82` GET_ROUTE** | → | `route first` → reply `8F` | **v2** |
-| **`8F` SET_ROUTE** | ↔ | `len route total first step[n]` (n ≤ 7) | **v2** |
-| **`A2` SERVO_LIVE** | → | `output angle` | **v2** |
-| **`C0` GET_BOARD** | → | – → reply `CF` | **v2** |
-| **`CF` SET_BOARD** | ↔ | `len type flags delay name[0..16]`, see §10 | **v2** |
-| **`D1` GET_ANALOG** | → | `channel` (0–7 = A0–A7) → reply `D3`, then the normal `ACK`. Live measurement for setting up analog inputs; the GUI asks for it about every 250 ms while an analog input is on screen | **v2**, HELLO bit4 |
-| **`D3` ANALOG_VALUE** | ← | `channel valueH valueL` — `analogRead()` of A0–A7, 0–1023 | **v2**, HELLO bit4 |
+| Opcode | Direction | Payload |
+|---|---|---|
+| `1E` SET_INPUT_DATA | ↔ | `index addrH addrL pin type outputID b6 b7..b13` (14 B), see §2.2 |
+| `11` GET_INPUT_DATA | → | `index` → reply `1E` |
+| `2E` SET_OUTPUT_DATA | ↔ | `index pinA pinB pinC pinD relayA relayB relayC type state data[4]` (14 B), see §2.1 |
+| `21` GET_OUTPUT_DATA | → | `index` → reply `2E` |
+| `50` REQ_VERSION | → | – → reply `5n` + version text (`src/version.h`, now `v0.0.0`) |
+| `32` SET_INPUT_STATE | → | `index direction` — acts as if a DCC command for the address of this input arrives (toggle, absolute, route). For testing and simulation |
+| `31` GET_INPUT_STATE | → | `index` — **reserved**, only `ACK` |
+| `42` SET_OUTPUT_STATE | → | `index state` — **reserved**, only `ACK` |
+| `33` DCC_EXT | → | `addrH addrL value` — acts as if a DCC extended accessory packet (signal aspect) for that address arrives. Only direct inputs respond |
+| `41` GET_OUTPUT_STATE | → | `index` → reply `45` with the current state |
+| **`45` OUTPUT_EVENT** | ← | `output state value ms_lo ms_hi` — unsolicited, only after HELLO: every time an output switches (state 0/1, or 2 = raw value in `value`), with the lower 16 bits of `millis()`. While turning, a servo reports **every degree** (state 2, value = angle); an intermediate step is dropped if the serial buffer is full, the end position never is. A 4-aspect signal reports its aspect as state 2. **State 3** = frog relay switched, `value` bit0 relay A, bit1 relay B (electrofrog), bit2 relay C (unifrog); `GET_OUTPUT_STATE` sends this as a second message if the output has relays |
+| `B1` CLEAR_OUTPUT | – | is in `messageParser.h`, but is not used |
+| **`90` HELLO** | → | – → reply `95` |
+| **`82` GET_ROUTE** | → | `route first` → reply `8F` |
+| **`8F` SET_ROUTE** | ↔ | `len route total first step[n]` (n ≤ 7) |
+| **`A2` SERVO_LIVE** | → | `output angle` |
+| **`C0` GET_BOARD** | → | – → reply `CF` |
+| **`CF` SET_BOARD** | ↔ | `len type flags delay name[0..16]`, see §9 |
+| **`D1` GET_ANALOG** | → | `channel` (0–7 = A0–A7) → reply `D3`, then the normal `ACK`. Live measurement for setting up analog inputs; the GUI asks for it about every 250 ms while an analog input is on screen. HELLO bit4 |
+| **`D3` ANALOG_VALUE** | ← | `channel valueH valueL` — `analogRead()` of A0–A7, 0–1023. HELLO bit4 |
 
-\* In v2 the GUI still sends the 8 `linked` bytes, derived from the route: first 8 steps, state only.
-A v2 decoder may ignore them; the real route arrives through `SET_ROUTE`.
 
 ### 2.1 Output fields (`Settings` in `output.h`, 10 bytes in EEPROM)
 
@@ -119,14 +114,17 @@ PWM pins are D3, D5, D6, D9, D10 and D11. D9/D10 do no PWM as long as a servo ou
 | `pin` | 6 | as for outputs; the firmware sets `INPUT_PULLUP` (button to GND). **Or an analog comparison**: `0x20 + 8 × mode + channel`, see below |
 | `type` | 3 | see below |
 | `outputID` | 4 | 0–15: the output (direct) |
-| `linked[8]` | 8 × 8 | v1 route: bit 7 = state, bits 0–6 = output id; 0x7F/0xFF = end. **`linked[0]` for an analog input = threshold / 4** |
+| `b6` (byte 6 of `1E`) | 8 | **analog threshold / 4** for an analog `pin` code, otherwise 0xFF |
+| `b7`–`b13` | 7 × 8 | unused (0xFF) |
+
+Routes are not part of `SET_INPUT_DATA`; they only travel through `GET_ROUTE` / `SET_ROUTE` (§4). `GET_INPUT_DATA`
+returns the same 14-byte layout.
 
 **Analog inputs (HELLO bit4).** Instead of a pin number, `pin` then contains `0x20 | mode << 3 | channel`:
 channel 0–7 = A0–A7 (the real pin is 14 + channel), mode 0 = **below** the threshold, 1 = **above** the threshold,
 2 = **at** the threshold (one button of a resistor ladder). Mode 3 (so also `0x3F` = not used) is never
-analog. The threshold (0–1016, steps of 8) is in `linked[0]` as **threshold / 4**: `SET_INPUT_DATA` takes
-it from there, `GET_INPUT_DATA` puts it back there (only for an analog input; otherwise `linked[]` remains the
-v1 route). The firmware stores threshold / 8 (7 bits, `EEPROM.md`).
+analog. The threshold (0–1016, steps of 8) is in `b6` as **threshold / 4**: `SET_INPUT_DATA` takes
+it from there, `GET_INPUT_DATA` puts it back there (only for an analog input; otherwise `b6` is 0xFF). The firmware stores threshold / 8 (7 bits, `EEPROM.md`).
 
 | Mode | Pressed when | Released again when |
 |---|---|---|
@@ -180,15 +178,16 @@ absolute, DCC address 1, 2, …, input *n* → output *n*; the rest become *not 
 | 6 | 4 × double pulse + electrofrog relay |
 | 7 | 8 × double steady |
 
-## 3. HELLO — logging in and configuration session (v2)
+## 3. HELLO — logging in and configuration session
 
 ```text
 host   -> 90
 device -> 95 <protocol> <max steps per route> <step pool lo> <step pool hi> <flags>
+protocol: protocol number, currently 2
 flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit1 = SERVO_LIVE supported
          bit2 = (no longer sent; was: recorder in external EEPROM)
-         bit3 = BOARD settings (C0 / CF) supported, see section 10
+         bit3 = BOARD settings (C0 / CF) supported, see section 9
          bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
 step pool: number of route steps that still fit with the current board settings
            (timing on/off), all routes together
@@ -213,9 +212,9 @@ the port causes through DTR. For boards without auto-reset it sends it after `RE
 - They do not work during a configuration session. A "Test state" on an output on D0/D1 then does nothing.
 
 The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a warning.
-With v1 firmware they are reserved and red.
+Without bit0 they are reserved and red.
 
-## 4. Routes (v2)
+## 4. Routes
 
 ### Step = 4 bytes
 
@@ -234,7 +233,7 @@ Example: output 13, aspect 200, wait time 1638.3 s → `1D C8 FF 3F`.
   A 4-aspect signal gets an aspect number. A servo gets curved/straight **or** an angle, and may
   occur several times in one route (intermediate positions). PWM gets a value.
 - **New steps** get a 0.3 s wait time.
-- **Timing off** (board setting, §10): on the wire a step stays 4 bytes, but the decoder stores
+- **Timing off** (board setting, §9): on the wire a step stays 4 bytes, but the decoder stores
   only byte 0 and 1 (2 B per step) and after each step waits the fixed `delay` from the board settings.
   When read back, byte 2 and 3 are 0. The GUI hides the wait time column.
 - **The decoder executes a step like this:**
@@ -256,7 +255,7 @@ of the input there); the wait time does not count.
 
 - This applies to the button, the analog condition and normal DCC accessory commands on the address of the input.
   DCC-extended still passes its value straight through.
-- Without those 2 marked steps (another number, or steps without 0x20 that remained from an old route),
+- Without those 2 marked steps (another number, or steps without 0x20),
   the input works as always: the state goes to the output.
 - For a direct input without own values the GUI sends an **empty route**, so that the slot is empty. The 2
   steps count towards the route pool. In the board file they are stored as `"values": [ {value, raw}, {value, raw} ]`.
@@ -274,7 +273,7 @@ SET_ROUTE  8F <len = 4 + 4n> <route> <total> <first> <step ...>     (also the re
   have arrived.
 - Per input the GUI writes: `SET_INPUT_DATA`, then `SET_ROUTE`(s), and then reads back the input and route.
 
-## 5. SERVO_LIVE (v2)
+## 5. SERVO_LIVE
 
 `A2 <output> <angle>` moves the servo to `angle` immediately. **Nothing** is saved and the
 state machine does not change.
@@ -285,19 +284,11 @@ state machine does not change.
 
 ## 6. EEPROM budget
 
-See **`EEPROM.md`**: the layout of v2, what fits in 1024 B, and what can still be compressed.
-In short: without `linked[8]` an input is 4 B, the routes have a pool of 762 B to themselves, and with
+See **`EEPROM.md`**: the layout, what fits in 1024 B, and what can still be compressed.
+In short: an input is 4 B, the routes have a pool of 762 B to themselves, and with
 timing off 16 × 16 steps fit internally (512 B).
 
-## 7. What the GUI does with v1 firmware (current state)
-
-- **No `HELLO` reply** → protocol v1. That does not count as an error.
-- **Routes:** at most 8 steps, only curved/straight, fixed 0.5 s per step. They are stored in the
-  `linked` bytes of `SET_INPUT_DATA`. `GET/SET_ROUTE` are not sent.
-- **No live servo**, and D0/D1 are reserved.
-- **Status bar:** "protocol v1 · routes: 8 steps, no times".
-
-## 8. DCCnext (ArCoMoRa)
+## 7. DCCnext (ArCoMoRa)
 
 | Port | 1–10 | 11–16 | n/a |
 |---|---|---|---|
@@ -311,17 +302,17 @@ timing off 16 × 16 steps fit internally (512 B).
   ArCoMoRa calls the schematic "not complete", so check it on your own board.
 - In the GUI you tick the *DCCnext board* checkbox. The pin choices then show "D3 · port 1", and D13 turns red.
 
-## 9. Decoder firmware v2
+## 8. Decoder firmware
 
-The tasks are in `EEPROM.md` §4 and in the commits of `software/GPIOcore`. In short: HELLO with
-boot window, board settings (§10), route pool with dynamic allocation, per-step timing,
+The details are in `EEPROM.md` and in the commits of `software/GPIOcore`. In short: HELLO with
+boot window, board settings (§9), route pool with dynamic allocation, per-step timing,
 interlocking, SERVO_LIVE and `setPosition()`, A6/A7 as analog input, and protecting pin 2.
 
 **Pin 2 (DCC input), D13 (config LED) and A7 (config button)** must never be used as input or output. A `SET_INPUT_DATA` or `SET_OUTPUT_DATA` with
 pin 2 gets `NACK 5` (invalid pin) and is not saved. The same applies to D0/D1 as long as the
 decoder does not report bit0 in HELLO, and to A6/A7 as output or on a board other than the Nano.
 
-## 10. Board settings and name (v2)
+## 9. Board settings and name
 
 ```text
 host   -> C0                                        (GET_BOARD, no payload)
@@ -352,23 +343,22 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 - **Interlocking.** A route that is refused by interlocking is ignored (not put in a
   queue): this protects against a wrong button press. "Moving a turnout" = the route
   contains an output of type servo, single pulse or double pulse.
-- **NACK reasons** in v2: 1 checksum, 2 too long, 3 timeout, 4 full (pool or route), 5 invalid pin.
+- **NACK reasons:** 1 checksum, 2 too long, 3 timeout, 4 full (pool or route), 5 invalid pin.
 
-### 10.1 How the firmware does it (2026-11-12, deviations and choices)
+### 9.1 How the firmware does it (2026-11-12, deviations and choices)
 
 - **Default values** new board: Nano, timing **off**, interlocking auto, delay 0.3 s.
-  A migrated v1 board gets a delay of 0.5 s, so that routes stay equally fast. The old recording is erased.
+  A board without the magic `'G'`, `'2'` (`EEPROM.md`) gets these values.
 - **SET_ROUTE writes immediately.** `first = 0` makes the route its new length at once (the routes behind it
   shift up, `NACK 4` if it does not fit); every following piece is written directly. An interrupted
   transfer therefore leaves a half-written route behind. The GUI always reads the route back afterwards.
-- **Switching timing on** gives every existing step the board delay as wait time. The first step starts immediately
-  (v1 waited 0.5 s first). Wait times run down on the 50 ms tick of the inputs.
+- **Switching timing on** gives every existing step the board delay as wait time. The first step starts immediately. Wait times run down on the 50 ms tick of the inputs.
 - **Interlocking:** a route counts as running until the wait time after the last step has passed.
 - **Still open:** `setPosition()`/`SERVO_LIVE` do not switch the unifrog relay; `SET_OUTPUT_DATA` does not set
-  `pinMode` for newly configured pins (this was also so in v1); an output on D0/D1 is not stopped during the
+  `pinMode` for newly configured pins; an output on D0/D1 is not stopped during the
   boot window.
 
-## 11. Config button (A7), config LED (D13) and teaching servos (firmware, 2026-11-13)
+## 10. Config button (A7), config LED (D13) and teaching servos (firmware, 2026-11-13)
 
 - **A7** = config button: push button to GND, with an **external** 10 kΩ pull-up to 5 V (A7 has no internal
   pull-up). The firmware reads it with `analogRead()` with hysteresis: pressed below 200, released above 800.
