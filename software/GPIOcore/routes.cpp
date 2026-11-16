@@ -1,9 +1,7 @@
 #include "routes.h"
-#include "src/event.h"
 #include "output.h"
 #include "input.h"
 
-extern EventHandler recorder ;
 extern Output       output[16] ;
 extern Input        input[16] ;
 
@@ -17,7 +15,6 @@ void routesBegin()
         routeCount[i] = EEPROM.read( EE_COUNTS + i ) ;
         if( routeCount[i] > MAX_STEPS_PER_ROUTE ) routeCount[i] = 0 ;
     }
-    updateRecorderRange() ;
 }
 
 uint8_t stepSize()
@@ -65,7 +62,6 @@ uint8_t resizeRoute( uint8_t route, uint8_t total )
 
     routeCount[route] = total ;
     EEPROM.update( EE_COUNTS + route, total ) ;
-    updateRecorderRange() ;
     return 1 ;
 }
 
@@ -112,33 +108,5 @@ uint8_t setTiming( uint8_t on )
         board.flags &= ~BOARD_TIMING ;
     }
 
-    updateRecorderRange() ;
     return 1 ;
-}
-
-// the recorder uses the external I2C EEPROM; I2C (A4/A5) only runs while the recorder is enabled
-void updateRecorderRange()
-{
-    if( board.flags & BOARD_RECORDER )
-    {
-        recorder.begin() ;
-        recorder.setRange( 0, EXT_EEPROM_SIZE ) ;
-    }
-    else
-    {
-        recorder.end() ;
-        recorder.setRange( 0, 0 ) ;
-    }
-}
-
-uint8_t pinInUse( uint8_t pin )
-{
-    for( uint8_t i = 0 ; i < 16 ; i ++ )
-    {
-        const Settings &o = output[i].eedata ;
-        if( o.pinA == pin || o.pinB == pin || o.pinC == pin || o.pinD == pin
-        ||  o.relayPinA == pin || o.relayPinB == pin || o.relayPinC == pin ) return 1 ;
-        if( inputPinNumber( input[i].eedata.pin ) == pin && input[i].eedata.type != NOT_IN_USE ) return 1 ;
-    }
-    return 0 ;
 }

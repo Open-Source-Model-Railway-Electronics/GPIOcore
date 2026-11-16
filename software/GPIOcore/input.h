@@ -56,8 +56,6 @@ private:
 } ;
 
 void callbackInput(    uint8_t outputID, uint8_t state, uint8_t value ) __attribute__((weak)) ;
-void callbackRecorder( uint8_t action                                 ) __attribute__((weak)) ;
-void callbackFeedback( uint8_t id,       uint8_t state                ) __attribute__((weak)) ;
 void callbackRouteValue( uint8_t outputID, uint8_t value              ) __attribute__((weak)) ;   // raw route step
 void callbackInputExt(   uint8_t outputID, uint8_t value              ) __attribute__((weak)) ;   // DCC extended
 uint8_t callbackIsTurnout( uint8_t outputID                           ) __attribute__((weak)) ;

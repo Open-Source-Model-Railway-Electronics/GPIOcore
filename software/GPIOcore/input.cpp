@@ -25,11 +25,7 @@ void Input::loadEEPROM()
     EEPROM.get(eeAddress, eedata) ;
     setPinMode() ;
 
-    if( eedata.type == RECORDER )       // configure timer for long/short press detection
-    {
-        outputTimer.type = TIMER_ON ;
-        outputTimer.PT   = LONG_PRESS_MS ;
-    }
+    if( eedata.type == 4 || eedata.type == 5 ) eedata.type = NOT_IN_USE ;   // old recorder / feedback input
 }
 
 void Input::defaults()
@@ -108,31 +104,6 @@ void Input::setDccAddressExt( uint16_t address, uint8_t val )
 
 void Input::update()
 {
-    // ── FEEDBACK input ────────────────────────────────────────────────────────
-    if( eedata.type == FEEDBACK_INPUT && eedata.pin != NA )
-    {
-        trigger.update( readPin() ) ;
-        if( trigger.toggled() )
-        {
-            if( callbackFeedback ) callbackFeedback( eedata.outputID, trigger.state ) ;
-        }
-        return ;
-    }
-
-    // ── RECORDER input (long press = record toggle, short press = play toggle) ─
-    if( eedata.type == RECORDER && eedata.pin != NA )
-    {
-        trigger.update( readPin() ) ;
-        outputTimer.update( !trigger.state ) ;  // count while button is held (active low)
-
-        if( trigger.rose() )    // button released → determine press duration
-        {
-            if( outputTimer.Q ) { if( callbackRecorder ) callbackRecorder( RECORD_TOGGLE ) ; }
-            else                { if( callbackRecorder ) callbackRecorder( PLAY_TOGGLE   ) ; }
-        }
-        return ;
-    }
-
     // ── Normal inputs ─────────────────────────────────────────────────────────
     if( eedata.type != NOT_IN_USE && eedata.pin != NA )
     {

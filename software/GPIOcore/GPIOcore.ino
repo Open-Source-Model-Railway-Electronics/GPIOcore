@@ -6,7 +6,6 @@
 #include "servoManager.h"
 #include "src/NmraDcc.h"
 #include "src/Transceiver.h"
-#include "src/event.h"
 #include "messageParser.h"
 #include "routes.h"
 
@@ -23,15 +22,10 @@ uint8_t         configSession  = 0 ;        // 1 after HELLO
 uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the boot window
 const uint16_t  BOOT_WINDOW_MS = 5000 ;
 
-// Recorder — in the external I2C EEPROM (A4/A5), started by updateRecorderRange() when enabled
-const uint8_t   OUTPUT_EVENT      =   1 ;   // custom event type for output state changes
-
-EventHandler    recorder( 0, 0 ) ;
 
 
 /* TODO
     * servo bouncing
-    * pwm fading/ramping — RAMP_GEN available in ST.h
     * combination FLASHING + FADING
     * random toggling of digital IO
     * Roco offset
@@ -79,7 +73,7 @@ void eepromBegin()
     }
 
     board.type  = BOARD_NANO ;
-    board.flags = INTERLOCK_AUTO << 2 ;     // recorder off (needs the I2C EEPROM), timing off: 2 B per step
+    board.flags = INTERLOCK_AUTO << 2 ;     // timing off: 2 B per step
     board.delay = v1 ? 5 : 3 ;          // v1 routes waited 0.5 s per step
     EEPROM.put( boardEEAddress, board ) ;
     for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ ) EEPROM.update( boardEEAddress + sizeof( board ) + i, 0 ) ;
@@ -263,7 +257,6 @@ void loop()
              input[i].setPinMode() ;
         }
     }
-    recorder.update() ;
 
     static uint8_t index ;
     if( ++ index == 16 ) index = 0 ;
@@ -337,7 +330,6 @@ void callbackInput( uint8_t index, uint8_t state, uint8_t val )
     else              output[index].setState( state ) ;      // turnouts, relays, lamps, signals: kept
     if( output[index].eedata.type == PWM || output[index].eedata.type == fourToneSignal ) output[index].setVal( val ) ;   // val shares the union with servo / time settings
 
-    recorder.storeEvent( OUTPUT_EVENT, index, state ) ; // logged when recording
 }
 
 // ── Servo sweep: every degree is reported (skipped when the serial buffer is full, never the last one)
@@ -382,39 +374,6 @@ uint8_t callbackIsTurnout( uint8_t index )
     return type == servoType || type == singlePulse || type == doublePulse ;
 }
 
-// ── Recorder playback — fires for each stored event ───────────────────────────
-void notifyEvent( uint8_t data1, uint16_t data2, uint8_t data3 )
-{
-    if( data1 == OUTPUT_EVENT )
-    {
-        output[data2].setState( data3 ) ;
-    }
-}
-
-// ── Recorder control — called by Input with RECORDER type ─────────────────────
-void callbackRecorder( uint8_t action )
-{
-    if( !( board.flags & BOARD_RECORDER ) ) return ;   // recorder disabled: the input does nothing
-
-    if( action == RECORD_TOGGLE )
-    {
-        if( recorder.getState() == evRecording ) recorder.stopRecording() ;
-        else                                     recorder.startRecording() ;
-    }
-    else if( action == PLAY_TOGGLE )
-    {
-        if( recorder.getState() == evPlaying  ||
-            recorder.getState() == evFinishing ) recorder.stopPlaying() ;
-        else                                     recorder.startPlaying() ;
-    }
-}
-
-// ── Feedback input — pauses playback until sensor fires ───────────────────────
-void callbackFeedback( uint8_t id, uint8_t state )
-{
-    recorder.storeEvent(       FEEDBACK_EVENT, id, state ) ; // log tijdens opname
-    recorder.sendFeedbackEvent( id, state ) ;                 // trigger tijdens playback
-}
 
 
 // ── DCC callbacks ─────────────────────────────────────────────────────────────

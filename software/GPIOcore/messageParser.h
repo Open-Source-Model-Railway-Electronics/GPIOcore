@@ -42,7 +42,7 @@ const uint8_t PROTOCOL_VERSION     = 2 ;
 const uint8_t MAX_ROUTE_STEPS      = 16 ;
 const uint8_t HELLO_IO_ON_SERIAL   = 0x01 ;   // D0/D1 usable as I/O outside a config session
 const uint8_t HELLO_SERVO_LIVE     = 0x02 ;
-const uint8_t HELLO_EXT_EEPROM     = 0x04 ;
+const uint8_t HELLO_EXT_EEPROM     = 0x04 ;   // no longer sent (the recorder is removed)
 const uint8_t HELLO_BOARD          = 0x08 ;
 const uint8_t HELLO_ANALOG_SOUND   = 0x10 ;   // analog inputs (GET_ANALOG) and the sound effect output
 

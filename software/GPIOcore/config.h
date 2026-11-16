@@ -9,8 +9,7 @@ const int  MOMENTARY        = 0 ;   // toggle the output on the falling edge (or
 const int  LATCHING         = 1 ;   // output follows the input level (or the DCC direction)
 const int  ROUTE            = 2 ;   // set the route on the falling edge (press) or on any DCC command (0 and 1)
 const int  NOT_IN_USE       = 3 ;
-const int  RECORDER         = 4 ;   // long press = record toggle, short press = play toggle
-const int  FEEDBACK_INPUT   = 5 ;   // feeds back into EventHandler (pause / step)
+//              4, 5                  were the recorder and its feedback input (removed): read as not in use
 const int  ROUTE_STRAIGHT   = 6 ;   // route on a button press, or on a DCC 'straight' (1) command only
 const int  ROUTE_CURVED     = 7 ;   // route on a button press, or on a DCC 'curved' (0) command only
 
@@ -19,7 +18,7 @@ inline bool isRoute( uint8_t type ) { return type == ROUTE || type == ROUTE_STRA
 // ── Analog inputs (resistor ladder, sensor) ───────────────────────────────────
 // The input pin field holds 0x20 | mode << 3 | channel (A0-A7) instead of a pin number.
 // The threshold is stored in 7 bits as value / 8 (0-1016). The condition counts as a pressed
-// button (LOW), so toggle, absolute, route, recorder and feedback work as with a digital pin.
+// button (LOW), so toggle, absolute and route work as with a digital pin.
 const uint8_t ANALOG_INPUT      = 0x20 ;
 const uint8_t ANALOG_BELOW      = 0 ;    // pressed below the threshold, released at threshold + 20
 const uint8_t ANALOG_ABOVE      = 1 ;    // pressed above the threshold, released at threshold - 20
@@ -37,12 +36,6 @@ const uint8_t  CONFIG_LED_PIN    = 13 ;  // D13: on = normal, blinking = config 
 const uint8_t  CONFIG_BUTTON_PIN = 21 ;  // A7: config button, analog input with an external pull-up
 inline bool isReservedPin( uint8_t pin ) { return pin == 2 || pin == CONFIG_LED_PIN || pin == CONFIG_BUTTON_PIN ; }
 
-// ── Recorder callback actions ─────────────────────────────────────────────────
-const int  RECORD_TOGGLE    = 0 ;
-const int  PLAY_TOGGLE      = 1 ;
-
-// ── Timing ────────────────────────────────────────────────────────────────────
-const uint16_t LONG_PRESS_MS = 1500 ;   // threshold between short and long press
 
 // ── Sizes ─────────────────────────────────────────────────────────────────────
 const int  MAX_OUTPUTS      = 8 ;
@@ -51,7 +44,7 @@ const int  OUTPUT_DATA_BYTES = 4 ;
 // ── Board settings (PROTOCOL.md section 10) ───────────────────────────────────
 enum boardTypes { BOARD_UNO, BOARD_NANO, BOARD_DCCNEXT, BOARD_JACK } ;
 
-const uint8_t  BOARD_RECORDER     = 0x01 ;  // flags bit0: recorder enabled
+const uint8_t  BOARD_RESERVED     = 0x01 ;  // flags bit0: was 'recorder enabled', ignored
 const uint8_t  BOARD_TIMING       = 0x02 ;  // flags bit1: per-step wait times stored
 const uint8_t  BOARD_INTERLOCK    = 0x0C ;  // flags bit2-3: 0 = off, 1 = on, 2 = auto
 const uint8_t  INTERLOCK_OFF      = 0 ;

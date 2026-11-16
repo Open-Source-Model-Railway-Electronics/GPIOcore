@@ -27,7 +27,6 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
     }
     if( isReservedPin( pin ) ) return false ;       // D2 = DCC, D13 = config LED, A7 = config button
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type == BOARD_NANO ;   // A6/A7: analog inputs, Nano only
-    if( ( pin == 18 || pin == 19 ) && ( board.flags & BOARD_RECORDER ) ) return false ;  // A4/A5 = I2C for the recorder
     return true ;
 }
 
@@ -224,8 +223,7 @@ OPCODE( OPCODE_HELLO )
     msg->payload[1] = MAX_ROUTE_STEPS ;
     msg->payload[2] = pool & 0xFF ;
     msg->payload[3] = pool >> 8 ;
-    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL | HELLO_ANALOG_SOUND
-                    | ( ( board.flags & BOARD_RECORDER ) ? HELLO_EXT_EEPROM : 0 ) ;
+    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL | HELLO_ANALOG_SOUND ;
     transceiver.sendMessage( msg ) ;
 }
 
@@ -256,14 +254,8 @@ OPCODE( OPCODE_SET_BOARD )
     uint8_t oldFlags = board.flags ;
     uint8_t flags    = msg->payload[2] ;
 
-    if( ( flags & BOARD_RECORDER ) && !( oldFlags & BOARD_RECORDER )      // recorder needs A4/A5 for I2C
-    &&  ( pinInUse( 18 ) || pinInUse( 19 ) ) )
-    {
-        transceiver.nack = NACK_INVALID_PIN ;
-        return ;
-    }
-
-    board.flags = ( flags & ~BOARD_TIMING ) | ( oldFlags & BOARD_TIMING ) ;   // recorder first, then convert the pool
+    flags &= ~BOARD_RESERVED ;
+    board.flags = ( flags & ~BOARD_TIMING ) | ( oldFlags & BOARD_TIMING ) ;   // other flags first, then convert the pool
     if( usedRouteSteps() * stepSize() > maxRouteBytes()
     ||  !setTiming( ( flags & BOARD_TIMING ) ? 1 : 0 ) )
     {
@@ -275,7 +267,6 @@ OPCODE( OPCODE_SET_BOARD )
     board.type  = msg->payload[1] ;
     board.flags = flags ;
     board.delay = msg->payload[3] ;
-    updateRecorderRange() ;
     EEPROM.put( boardEEAddress, board ) ;
 
     for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ )
