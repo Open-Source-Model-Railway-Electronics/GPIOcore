@@ -40,7 +40,7 @@ void callbackSetServo( uint8_t pin, uint8_t pos ) { servoManager.setServo( pin, 
 static_assert( sizeof( Settings      ) == 10, "EEPROM layout v2: output = 10 B" ) ;
 static_assert( sizeof( InputSettings ) ==  4, "EEPROM layout v2: input = 4 B"   ) ;
 
-// EEPROM layout v2 (EEPROM.md). A v1 board (DEADBEEF at 1000) is migrated, an empty one gets defaults.
+// EEPROM layout (EEPROM.md). A board without the magic gets defaults.
 void eepromBegin()
 {
     if( EEPROM.read( EE_MAGIC ) == 'G' && EEPROM.read( EE_MAGIC + 1 ) == '2' )
@@ -49,49 +49,19 @@ void eepromBegin()
         return ;
     }
 
-    // v1: output i at i * 22, input i at i * 22 + 10 (4 B settings + linked[8])
-    const uint8_t V1_RECORD = 22 ;
-    uint32_t marker ;
-    uint8_t  linked[16][MAX_OUTPUTS] ;
-    EEPROM.get( 1000, marker ) ;
-    uint8_t  v1 = marker == 0xDEADBEEF ;
-
-    for( uint8_t i = 0 ; i < 16 ; i ++ )
-    {
-        linked[i][0] = 0xFF ;
-        if( v1 )
-        {
-            EEPROM.get( i * V1_RECORD,      output[i].eedata ) ;
-            EEPROM.get( i * V1_RECORD + 10,  input[i].eedata ) ;
-            for( uint8_t j = 0 ; j < MAX_OUTPUTS ; j ++ ) linked[i][j] = EEPROM.read( i * V1_RECORD + 14 + j ) ;
-        }
-        else
-        {
-            output[i].defaults() ;
-             input[i].defaults() ;
-        }
-    }
-
     board.type  = BOARD_NANO ;
     board.flags = INTERLOCK_AUTO << 2 ;     // timing off: 2 B per step
-    board.delay = v1 ? 5 : 3 ;          // v1 routes waited 0.5 s per step
+    board.delay = 3 ;                       // 0.3 s after each route step
     EEPROM.put( boardEEAddress, board ) ;
     for( uint8_t i = 0 ; i < BOARD_NAME_LEN ; i ++ ) EEPROM.update( boardEEAddress + sizeof( board ) + i, 0 ) ;
 
-    uint16_t address = EE_POOL ;
     for( uint8_t i = 0 ; i < 16 ; i ++ )
     {
+        output[i].defaults() ;
+         input[i].defaults() ;
         output[i].saveEEPROM() ;
          input[i].saveEEPROM() ;
-
-        uint8_t n = 0 ;                 // linked[]: bit 7 = state, bits 0-6 = output id, 0x7F = end
-        while( n < MAX_OUTPUTS && ( linked[i][n] & 0x7F ) < 16 )
-        {
-            EEPROM.update( address ++, linked[i][n] & 0x7F ) ;
-            EEPROM.update( address ++, linked[i][n] >> 7   ) ;
-            n ++ ;
-        }
-        EEPROM.update( EE_COUNTS + i, n ) ;
+        EEPROM.update( EE_COUNTS + i, 0 ) ;   // no routes
     }
 
     EEPROM.update( EE_MAGIC,     'G'       ) ;

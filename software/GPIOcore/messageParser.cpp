@@ -45,8 +45,8 @@ OPCODE( OPCODE_SET_INPUT_DATA )
     data.pin        = msg->payload[ p++ ] ;
     data.type       = msg->payload[ p++ ] ;
     data.outputID   = msg->payload[ p++ ] ;
-    data.level      = msg->payload[ p   ] >> 1 ;   // linked[0]: analog threshold (0-1016) / 4, see PROTOCOL.md
-    // linked[1-7] (payload 7-13) are ignored, the route comes with SET_ROUTE
+    data.level      = msg->payload[ p   ] >> 1 ;   // payload 6: analog threshold (0-1016) / 4, see PROTOCOL.md
+    // payload 7-13 are unused, the route comes with SET_ROUTE
 
     input[index].set( &data ) ;
 
@@ -69,13 +69,8 @@ OPCODE( OPCODE_GET_INPUT_DATA )
     msg->payload[p++] = data->type ;
     msg->payload[p++] = data->outputID ;
 
-    for( uint8_t i = 0 ; i < MAX_OUTPUTS ; i++ )   // v1 linked[8]: first 8 steps of the route, state only
-    {
-        uint8_t step[4] = { 0xFF, 0, 0, 0 } ;
-        if( i < routeCount[ index ] ) readStep( index, i, step ) ;
-        msg->payload[p++] = step[0] == 0xFF ? 0xFF : ( step[0] & STEP_ID ) | ( step[1] ? 0x80 : 0 ) ;
-    }
-    if( isAnalogInput( data->pin ) ) msg->payload[6] = data->level << 1 ;   // linked[0] = analog threshold / 4
+    for( uint8_t i = 0 ; i < 8 ; i++ ) msg->payload[p++] = 0xFF ;          // payload 6-13: unused, the route comes with GET_ROUTE
+    if( isAnalogInput( data->pin ) ) msg->payload[6] = data->level << 1 ;   // payload 6 = analog threshold / 4
     msg->command = OPCODE_SET_INPUT_DATA ;
     transceiver.sendMessage( msg ) ;
 }
@@ -207,9 +202,6 @@ OPCODE( OPCODE_REQ_VERSION )
     sendMyVersion() ;
 }
 
-
-// OPCODE_SET_PRESET (0x61) moved to the GUI (2026-11-13): the GUI writes the preset as normal
-// SET_OUTPUT_DATA / SET_INPUT_DATA messages. An old GUI still gets an ACK, nothing changes.
 
 
 OPCODE( OPCODE_HELLO )

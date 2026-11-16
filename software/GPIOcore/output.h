@@ -5,7 +5,7 @@
 #include <EEPROM.h>
 
 // <OPCODE_SET_INPUT_DATA> <pinA> <pinB> <relayPinA> <relayPinB> <relayPinC> <type> <state> <union byte1> <union byte2> <union byte3> <union byte4>
-// <OPCODE_SET_INPUT_DATA> <index> <addr H> <addr L> <pin> <type> <output> <linked 0> <linked 1> <linked 2> <linked 3> <linked 4> <linked 5> <linked 6> <linked 7>
+// <OPCODE_SET_INPUT_DATA> <index> <addr H> <addr L> <pin> <type> <output> <threshold/4> <unused x7 7>
 
 typedef struct eeOutputSettings 
 {

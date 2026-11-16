@@ -38,7 +38,6 @@ inline bool isReservedPin( uint8_t pin ) { return pin == 2 || pin == CONFIG_LED_
 
 
 // ── Sizes ─────────────────────────────────────────────────────────────────────
-const int  MAX_OUTPUTS      = 8 ;
 const int  OUTPUT_DATA_BYTES = 4 ;
 
 // ── Board settings (PROTOCOL.md section 10) ───────────────────────────────────
