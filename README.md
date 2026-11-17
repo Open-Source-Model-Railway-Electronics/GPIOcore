@@ -305,7 +305,8 @@ once, and the slider in the program moves along too.
 3. On your throttle, select **loco address 9999**:
    - the **speed knob** moves the servo;
    - **F1** saves the curved position, **F2** the straight position;
-   - **F3** moves the servo over, **F4** selects the next servo.
+   - **F3** moves the servo over, **F4** inverts its frog relays (for relay modules that switch on LOW),
+     **F5** selects the next servo.
 4. **Hold the button 2 seconds** again to stop.
 
 ---

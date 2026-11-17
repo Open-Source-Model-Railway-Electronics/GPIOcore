@@ -127,13 +127,14 @@ void setup()
 // ── Config mode ───────────────────────────────────────────────────────────────
 // Hold A7 for 2 s: config mode on (D13 blinks). A short press selects the next servo and toggles it,
 // so you can see which one it is. With loco address 9999 on the throttle the selected servo is taught:
-// speed knob + direction = move it, F1 = store as curved, F2 = store as straight, F3 = toggle, F4 = next.
+// speed knob + direction = move it, F1 = store as curved, F2 = store as straight, F3 = toggle, F4 = invert frog relays, F5 = next.
 // Hold A7 for 2 s again: back to normal (D13 on).
 uint8_t  configMode ;
 int8_t   selServo = -1 ;
 uint8_t  learnAngle = 90 ;
 int8_t   learnStep ;            // degrees per 100 ms from the throttle, signed
-uint8_t  fnPrev ;               // F1-F4 of loco 9999, for edge detection
+uint8_t  fnPrev ;               // F0-F4 of loco 9999, for edge detection
+uint8_t  fnPrev5 ;              // F5-F8 of loco 9999
 
 void selectNextServo()
 {
@@ -196,22 +197,29 @@ void notifyDccSpeed( uint16_t Addr, DCC_ADDR_TYPE AddrType, uint8_t Speed, DCC_D
 
 void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uint8_t FuncState )
 {
-    if( Addr != 9999 || FuncGrp != FN_0_4 || !configMode ) return ;
+    if( Addr != 9999 || !configMode ) return ;
+    if( FuncGrp == FN_5_8 )                         // F5: next servo
+    {
+        uint8_t rose5 = FuncState & ~fnPrev5 ;
+        fnPrev5 = FuncState ;
+        if( rose5 & FN_BIT_05 ) selectNextServo() ;
+        return ;
+    }
+    if( FuncGrp != FN_0_4 ) return ;
     uint8_t rose    = FuncState & ~fnPrev ;
     uint8_t changed = FuncState ^ fnPrev ;
     fnPrev = FuncState ;
-    if( rose & FN_BIT_04 ) { selectNextServo() ; return ; }
     if( selServo < 0 ) return ;
     Output &o = output[selServo] ;
-    if( changed & FN_BIT_00 )                       // F0, every press: frog relays inverted / normal
+    if( rose & FN_BIT_01 ) { o.eedata.servo.servoMin = learnAngle ; o.saveEEPROM() ; }   // curved
+    if( rose & FN_BIT_02 ) { o.eedata.servo.servoMax = learnAngle ; o.saveEEPROM() ; }   // straight
+    if( rose & FN_BIT_03 ) callbackInput( selServo, !o.eedata.state, 0 ) ;               // toggle
+    if( changed & FN_BIT_04 )                       // F4, every press: frog relays inverted / normal
     {
         o.eedata.invertFrog ^= 1 ;
         o.saveEEPROM() ;
         o.refreshRelays() ;
     }
-    if( rose & FN_BIT_01 ) { o.eedata.servo.servoMin = learnAngle ; o.saveEEPROM() ; }   // curved
-    if( rose & FN_BIT_02 ) { o.eedata.servo.servoMax = learnAngle ; o.saveEEPROM() ; }   // straight
-    if( rose & FN_BIT_03 ) callbackInput( selServo, !o.eedata.state, 0 ) ;               // toggle
 }
 
 void loop()
