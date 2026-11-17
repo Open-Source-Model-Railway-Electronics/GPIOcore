@@ -1,0 +1,442 @@
+{
+  "format": "GPIOcore-config",
+  "version": 2,
+  "about": "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. See PROTOCOL.md for data[] per type and README.md for how to use the program.",
+  "board": {
+    "name": "",
+    "type": "nano",
+    "timing": false,
+    "interlock": "auto",
+    "delay": 3
+  },
+  "outputs": [
+    {
+      "type": "servo",
+      "pinA": 3,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": 4,
+      "relayB": 5,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        80,
+        100,
+        20,
+        0
+      ],
+      "name": "Turnout 1",
+      "index": 0
+    },
+    {
+      "type": "servo",
+      "pinA": 6,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": 7,
+      "relayB": 8,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        80,
+        100,
+        20,
+        0
+      ],
+      "name": "Turnout 2",
+      "index": 1
+    },
+    {
+      "type": "servo",
+      "pinA": 9,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": 10,
+      "relayB": 11,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        80,
+        100,
+        20,
+        0
+      ],
+      "name": "Turnout 3",
+      "index": 2
+    },
+    {
+      "type": "servo",
+      "pinA": 12,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": 14,
+      "relayB": 15,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        80,
+        100,
+        20,
+        0
+      ],
+      "name": "Turnout 4",
+      "index": 3
+    },
+    {
+      "type": "servo",
+      "pinA": 16,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": 17,
+      "relayB": 18,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        80,
+        100,
+        20,
+        0
+      ],
+      "name": "Turnout 5",
+      "index": 4
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 5
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 6
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 7
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 8
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 9
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 10
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 11
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 12
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 13
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 14
+    },
+    {
+      "type": "notInUse",
+      "pinA": null,
+      "pinB": null,
+      "pinC": null,
+      "pinD": null,
+      "relayA": null,
+      "relayB": null,
+      "relayC": null,
+      "state": 0,
+      "data": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "index": 15
+    }
+  ],
+  "inputs": [
+    {
+      "type": "latching",
+      "address": 1,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "name": "Turnout 1 (DCC 1)",
+      "index": 0
+    },
+    {
+      "type": "latching",
+      "address": 2,
+      "pin": null,
+      "output": 1,
+      "route": [],
+      "name": "Turnout 2 (DCC 2)",
+      "index": 1
+    },
+    {
+      "type": "latching",
+      "address": 3,
+      "pin": null,
+      "output": 2,
+      "route": [],
+      "name": "Turnout 3 (DCC 3)",
+      "index": 2
+    },
+    {
+      "type": "latching",
+      "address": 4,
+      "pin": null,
+      "output": 3,
+      "route": [],
+      "name": "Turnout 4 (DCC 4)",
+      "index": 3
+    },
+    {
+      "type": "latching",
+      "address": 5,
+      "pin": null,
+      "output": 4,
+      "route": [],
+      "name": "Turnout 5 (DCC 5)",
+      "index": 4
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 5
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 6
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 7
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 8
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 9
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 10
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 11
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 12
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 13
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 14
+    },
+    {
+      "type": "notInUse",
+      "address": null,
+      "pin": null,
+      "output": 0,
+      "route": [],
+      "index": 15
+    }
+  ]
+}
