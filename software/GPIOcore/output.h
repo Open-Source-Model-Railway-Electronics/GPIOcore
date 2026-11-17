@@ -75,6 +75,7 @@ const Settings defaultSettings = {
     NA,     // relayPinC
     singleSteady, // type
     0,      // state
+    0,      // invertFrog
     50      // switchTime
 };
 
