@@ -243,9 +243,11 @@ StateFunction( pwm )
     timer.update( 1 ) ;                                // a BLEEP timer only runs with its input on
     if( timer.Q )
     {
+        uint8_t before = pos ;
         if(      !eedata.data[1]          ) pos = eedata.pwmVal ;
         else if( pos < eedata.pwmVal      ) pos ++ ;
         else if( pos > eedata.pwmVal      ) pos -- ;
+        if( pos != before && callbackServoPos ) callbackServoPos( this, pos, pos == eedata.pwmVal ) ;   // every fade step
         if( isPwmPin( eedata.pinA ) ) { analogWrite( eedata.pinA, pos ) ; }
     }
 

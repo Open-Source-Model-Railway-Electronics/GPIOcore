@@ -322,7 +322,7 @@ void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 }
 
 // ── Servo sweep: every degree is reported (skipped when the serial buffer is full, never the last one)
-void callbackServoPos( Output *o, uint8_t pos, uint8_t done )
+void callbackServoPos( Output *o, uint8_t pos, uint8_t done )   // servo degrees and PWM fade steps
 {
     if( !configSession || serialIsIO ) return ;
     if( !done && Serial.availableForWrite() < 8 ) return ;
@@ -345,7 +345,7 @@ void callbackRouteValue( uint8_t index, uint8_t value )
         if( value <= 180 ) output[index].moveTo( value ) ;   // at its speed; the degrees are reported
         return ;
     }
-    reportOutput( index, 2, value ) ;   // state 2 = raw value (aspect / PWM)
+    if( output[index].eedata.type != PWM ) reportOutput( index, 2, value ) ;   // state 2 = raw value (aspect); PWM reports its fade steps
     output[index].setVal( value ) ;
 }
 
