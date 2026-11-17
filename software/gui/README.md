@@ -1,12 +1,13 @@
 # GPIOcore Configurator (Qt)
 
-A desktop GUI to configure a GPIOcore board (Arduino Uno/Nano) over the serial port: outputs,
-inputs, routes and presets. It also has a pin map with conflict checking and a serial log.
+A desktop program to configure a GPIOcore board (Arduino Nano / Uno, or an ArCoMoRa DCCnext) for a model
+railway: outputs, inputs, routes, board settings, with a canvas to link inputs to outputs, a pin map with
+conflict checking, a simulator that runs the real firmware, a live test on the real board and a phone remote
+for servos.
 
 ## Opening and building
 
-**Qt Creator**: *File → Open File or Project* → `CMakeLists.txt` → kit *Desktop Qt 6.10.1 MinGW 64-bit*
-→ Run.
+**Qt Creator**: *File → Open File or Project* → `CMakeLists.txt` → kit *Desktop Qt 6.10.1 MinGW 64-bit* → Run.
 
 **Command line** (Git Bash):
 
@@ -15,109 +16,110 @@ export PATH="/c/Qt/Tools/mingw1310_64/bin:/c/Qt/Tools/CMake_64/bin:/c/Qt/Tools/N
 cmake -S . -B build -G Ninja -DCMAKE_PREFIX_PATH=C:/Qt/6.10.1/mingw_64 && cmake --build build && (cd build && ctest)
 ```
 
-Required Qt modules: Widgets, SerialPort, Test. The code is also written for Qt 5.12+, but has not
-been tested with it yet.
+Required Qt modules: Widgets, SerialPort, Network, Test (LinguistTools for the translations). The build also
+makes `gpiocore_fw_host`: the firmware in `../GPIOcore` compiled for the PC (with a small Arduino shim in
+`fwhost/`). The simulator runs it, so *Simulate* and the tests use the real firmware.
 
-## Usage
+`build.py` makes a release for end users in `<repo>/release/` (the root `build.py` also builds the firmware).
 
-1. Choose the port and click **Connect**. The GUI waits for the boot message and then logs in with
-   `HELLO` (see `../../PROTOCOL.md`). A v2 decoder answers with what it can do; the current firmware
-   does not answer, and then the GUI works in v1 mode. The status bar shows which of the two it is.
-   After that the GUI reads all inputs, outputs and routes.
-2. Tab **Configuration**: in the middle are the inputs (left) and outputs (right) with the connections.
-   - **Click an input**: the input settings slide in from the **left**.
-   - **Click an output**: the output settings slide in from the **right**.
-   - One panel is open at a time; **Esc** or ✕ closes it.
-   - **Drag an output onto an input** to link them.
-   - Every linked input has its own colour. An output takes over the colour of the input that
-     controls it; direct inputs take priority over routes. Extra dots show the other inputs.
-   - **Direct control**: one output per input, *Toggle* or *Absolute*. Dragging replaces the output.
-   - **Route**: every dragged output becomes the next step, up to 16 per route and within the
-     pool of the board. The same output may occur more than once, for example a servo with intermediate positions.
-     A route starts when the button is **pressed**, or on **every** DCC command for the address
-     (straight and curved). There is nothing to choose there. Per step you set in the panel:
-     - the value: curved/straight, an aspect (signal), an angle of 10°–170° (servo) or a PWM value;
-     - the **wait time** in steps of 0.1 s (default 0.3 s, maximum 1638.3 s).
+## The window
 
-     There is a label on the wire, for example "1 S", "3 A2" or "5 45°".
-   - Deleting: click a wire and press **Delete**, or use the right-click menu.
-   - There can be only **one recorder**.
-   - At least one step row is always open. For an empty route you choose an output there straight away.
-     Delete a step with the **trash can** behind the row.
-   - The **(i) buttons** explain everything in detail, for beginners: recorder, feedback,
-     electrofrog/unifrog, servo, pins, …. *Help → Getting started* (F1) is a step-by-step guide for new
-     users.
-   - *View → Language* chooses the language. How to add a translation is described in `i18n/README.md`.
-3. For an output:
-   - **Frog**: choose *none*, *electrofrog* (2 relays) **or** *unifrog* (1 relay). They exclude each other.
-   - **Servo**: switch *Live* on, and the servo moves along while you drag the slider. That needs a
-     v2 decoder.
-   - **4-aspect signal**: the aspect comes from DCC or from a route. The board remembers the last aspect in
-     EEPROM, so there is no start aspect.
-4. **Live saving.** Every change goes to the board by itself after 0.35 s and is read back.
-   *Write changes* now only exists in the *Board* menu.
-5. **Board** in the toolbar: Arduino Uno, Arduino Nano (A6/A7 as analog input), DCCnext (port numbers,
-   no D13) or Jack of all trades. *Board settings…*: name, recorder on/off, wait time per step on/off
-   (off = fixed wait time, half the memory space), route interlocking (off / on / automatic).
-6. **Board files.** Every board has a name (on the board itself). The GUI keeps a file per board
-   `Documents/GPIOcore/boards/<name>.json` with all settings plus the names of inputs and outputs.
-   When connecting: read the name → load the file (names) → read everything from the board (the board wins).
-   Offline: *File → New board* or *Open*; that file is readable JSON with an explanation in the field `about`, so that
-   you can also fill it in by hand or let an AI do it.
-7. **Simple / expert.** Simple by default: no bytes, no serial log, no protocol details.
-   *View → Expert mode* brings them back. The presets are always on the second toolbar row. *View → Show unused inputs and outputs*
-   also shows the unused blocks; otherwise you add them with **+ Add input / + Add output** and remove them
-   with **Remove** in the panel.
-8. **Flashing firmware:** *Board → Flash firmware…* (avrdude is in `tools/avrdude`). Default file:
-   `release/GPIOcore.hex`.
-   `examples/routes-demo.json` is an example with routes, a signal and servos.
+The program opens straight into the workspace with two tabs, **Configuration** and **Pin map**.
 
-With **Demo** you connect to a built-in simulation of a **v2 decoder** (16 steps, pool 256,
-live servo). This way you can try the GUI without hardware.
+- **Configuration**: the input settings on the left, the canvas in the middle (inputs | wires | outputs), the
+  output settings on the right; drag the splitter handles to resize. **+ Add input / + Add output** take the
+  next free one; **Remove** in a panel sets it to *not in use*. Unused blocks are hidden unless
+  *View → Show unused inputs and outputs* is on.
+- **Drag an output onto an input** to link them. *Direct control* (toggle or absolute) drives one output; a
+  *Route* gets a step per dragged output (up to 16 per route, within the board's step pool), each with a value
+  (curved / straight, aspect, servo angle, PWM value, sound track) and, when the board setting is on, its own
+  wait time. Every input has its own wire colour; an output takes the colour of the input that drives it.
+- **Pin map**: one card per pin with what uses it; red = conflict. Click a card to edit its user.
+- Every **(i)** button explains the thing next to it; *Help → Getting started* (F1) is a guide for beginners.
+
+### Three modes (toolbar)
+
+- **● Configure** (red frame when connected): change things, offline or on a connected board. Every change
+  goes to the board by itself after 0.35 s and is read back. *Read board* loads the board, *Write all* puts
+  the screen on it; connecting changes nothing on screen.
+- **● Simulate** (yellow frame): your configuration on a simulated board (the real firmware). Press the
+  buttons on the inputs and watch the outputs. An input with a digital pin is pressed on that pin (a push
+  button goes low and high again, a switch holds ◀ low / ▶ high), so detectors that read the pin (block
+  signals, semaphore arms) react too; inputs without a pin imitate a DCC command. Sensor inputs get an
+  occupied / free button, analog inputs a voltage.
+- **● Live test** (green frame): the same buttons on the real board. Connects by itself.
+
+### User levels (View menu)
+
+*Beginner* (servos, steady / pulse outputs, buttons, DCC addresses, simple routes), *Advanced* (+ light effects,
+4-aspect signal, PWM, sound, frog relays, analog inputs, custom values, route start choice, D0 / D1, wait time
+per step) and *Expert* (+ block signals, sensor inputs, semaphore arms). Features above the level are not shown.
+Opening a file or an example, importing or reading a board that needs a higher level raises the level (with a
+message); the level is never lowered by itself and never changes the configuration.
+
+### Board types
+
+*Arduino Nano* (A6 as analog input), *Arduino Uno* (no A6 / A7), *DCCnext* and *Jack of all trades*. On a DCCnext
+the program uses the board's own port names **P1–P16** everywhere (pin lists show "P1 (D3)", the pin map shows P1
+large with D3 small) and only offers those 16 ports. D2 (DCC) and D13 (config LED) are never offered; the config
+button (A7) only exists on the Nano. A file with a pin the board type does not have keeps it, with a warning.
+
+## Files (File menu)
+
+- **Board files**: every board has a name (stored on the board); its file is
+  `Documents/GPIOcore/boards/<name>.json` (readable JSON, explained in its `about` field). *Save* always asks
+  for the file name; the previous version goes to `boards/backup/`. *Read board* takes the names of inputs and
+  outputs from the board's file, the board wins for the settings.
+- **New board (offline)…**: an empty board or a preset. **New board wizard…**: five short pages (board type;
+  how many servo / coil / stall motor turnouts, lights and uncouplers; DCC addresses and buttons; pins in order or
+  empty; summary) build a Beginner configuration and a **Next steps** list (a tick list above the canvas, kept in
+  the board file as `nextSteps`; *File → Show next steps* reopens it).
+- **Open example…**: the files in `examples/` (next to the exe, or in the source tree for a development build)
+  with a short description. An example opens without a file name, so *Save* asks for a new one.
+- **Export…**: the in-use outputs, inputs and / or board settings in a board file of their own (other slots
+  *not in use*), e.g. to make your own example. **Import…**: adds the in-use items of the ticked parts of a board
+  file, either at the **same numbers** (the items replaced are listed first) or **into free slots** (links between
+  the imported items — input → output, route steps, custom values, block signal and semaphore arm detectors — are
+  renumbered). A pin already in use goes to the imported item; your own item keeps its function, loses the pin,
+  and is listed afterwards. The import is one edit: written live when connected, the file becomes unsaved.
+
+## Board menu and more
+
+*Connect / Disconnect*, *Read board*, *Write changes*, *Revert*, *Board settings…* (name, board type, wait time
+per step, route interlocking), *Apply a preset…*, *Flash firmware…* (avrdude in `tools/avrdude`, default
+`release/GPIOcore.hex`) and *Phone remote…* (a web page with a QR code to adjust servos from a phone on the same
+Wi-Fi). *View → Theme* (automatic, light, dark) and *View → Language* (see `i18n/README.md`).
 
 Start options (handy for tests and documentation):
 
 ```text
-GPIOcoreGUI --demo                      start connected to the simulator (protocol v2)
+GPIOcoreGUI --demo                      start in Simulate
 GPIOcoreGUI --port COM5                 connect at start
 GPIOcoreGUI --open examples/routes-demo.json --demo
 GPIOcoreGUI --demo --preset 2 --screenshot out.png --tab outputs --select 1   (tab: outputs, inputs, pins)
+GPIOcoreGUI --size 1680x900 --theme dark --lang nl
 ```
 
-**Hardware convention for inputs:** the pins are set to `INPUT_PULLUP`, so a button or contact goes to
-GND. Pressing gives a falling edge, releasing a rising edge.
-- *Toggle* switches when pressed (falling edge).
-- *Absolute* follows the level: pressed = 0.
-- *Route* starts when pressed, or on every DCC command (direction 0 and 1).
+**Inputs and pins:** the pins are `INPUT_PULLUP`, a button or contact goes to GND (pressed = low).
+*Toggle* switches when pressed, *Absolute* follows the level, a *Route* starts when pressed or on a DCC
+command (any, or straight / curved only).
 
 ## Structure
 
-| File                       | Role                                                                                      |
-|----------------------------|-------------------------------------------------------------------------------------------|
-| `src/protocol.*`           | framing (opcode/length nibble, checksum, ACK/NACK without checksum)                       |
-| `src/gpioconfig.*`         | output/input model, union fields (little endian), bitfield truncation, JSON, pins         |
-| `src/connections.*`        | linking logic input → output(s): direct/route, steps, colour source per output            |
-| `src/connectionview.*`     | the canvas: blocks, wires, dragging, Delete and the right-click menu                      |
-| `src/infotexts.*`          | texts of the (i) buttons and the popup                                                    |
-| `src/devicelink.*`         | request/response queue, timeouts, retries, draining of extra ACKs, legacy 0x2D detection  |
-| `src/simulateddevice.*`    | firmware simulator (mirror of `Transceiver.cpp` + `messageParser.cpp`)                    |
-| `src/mainwindow.*`         | main window, dirty tracking, warnings                                                     |
-| `src/outputeditor.*`, `src/inputeditor.*`, `src/pinmapview.*` | editors and pin map                                    |
-| `tests/`                   | unit tests (protocol, model, link ↔ simulator) and GUI tests                              |
-
-See `../../REVIEW_GPIOcore.md` for the firmware findings. Since the fixes (2026-11-09) the firmware uses
-`OPCODE_SET_OUTPUT_DATA` = 0x2E (14 bytes). Old firmware (0x2D, 13 bytes, `data[3]` is lost)
-is recognised automatically; the GUI then shows a legacy message. Demo imitates the fixed firmware;
-`SimulatedDevice::Options::oldFirmware()` imitates the old one (used in the tests).
-
-## Updated 2026-11-13
-
-- **Mode buttons** at the top: ● Configure (red frame, real board, live saving), ● Simulate (yellow, your own
-  configuration on a simulated board, with input buttons), ● Live test (green, input buttons on a real board).
-- **Panels** input on the left and output on the right are always in view (splitter, width is remembered).
-- **Pins**: occupied pins are red in the list with who uses them. If you choose one, the previous
-  user becomes *not in use*. D2, D13 (config LED) and A7 (config button) are never available.
-- **Presets** are calculated by the GUI itself (*Board → Apply a preset*, Expert mode); they also work offline.
-- **Routes**: *Starts on DCC* = any command / straight only / curved only.
-- **Theme**: *View → Theme* (automatic, light, dark). Lamp colours of a signal in the board file.
-- **Help**: *Help → Getting started*, *Configure, simulate and live test*, *Board settings*, *Config button*.
+| File                         | Role                                                                                 |
+|------------------------------|--------------------------------------------------------------------------------------|
+| `src/protocol.*`             | framing (opcode / length nibble, checksum, ACK / NACK)                               |
+| `src/gpioconfig.*`           | output / input / board model, bitfield widths, JSON, pins and pin names per board    |
+| `src/connections.*`          | linking logic input → output(s): direct / route, steps                               |
+| `src/boardtools.*`           | partial export / import (renumbering) and the configuration the wizard builds        |
+| `src/devicelink.*`           | request / response queue, timeouts, retries, live writing                            |
+| `src/simulateddevice.*`      | the simulator: starts `gpiocore_fw_host` (the real firmware) and talks to it          |
+| `fwhost/`                    | Arduino shim and host program for the firmware on the PC                             |
+| `src/mainwindow.*`           | main window, modes, files, dirty tracking, warnings, next steps                      |
+| `src/connectionview.*`       | the canvas: blocks, wires, dragging, live buttons                                    |
+| `src/outputeditor.*`, `src/inputeditor.*`, `src/pinmapview.*` | editors and pin map                             |
+| `src/boardwizard.*`          | the new board wizard                                                                 |
+| `src/uihelpers.*`            | style, theme, user levels, pin lists, aspect picker                                  |
+| `src/infotexts.*`, `i18n/info/` | help texts behind the (i) buttons and the Help menu                               |
+| `src/flasher.*`, `src/webremote.*`, `src/qrcode.*` | firmware flashing, phone remote                            |
+| `tests/`                     | unit tests (protocol, model, link ↔ simulator) and GUI tests                          |

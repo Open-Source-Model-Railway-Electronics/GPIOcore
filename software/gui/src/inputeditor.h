@@ -64,7 +64,7 @@ private:
                               Gpio::RouteStep &s);
     void refresh();
     void collect();
-    void applyLevel();                       // user level: offered functions and rows, read-only above it
+    void applyLevel();                       // user level: the functions offered
     void rebuildSteps();
     void updateSteps();
     QString stepSignature() const;
@@ -86,8 +86,6 @@ private:
     QLabel       *m_help  = nullptr;
     QLabel       *m_warn  = nullptr;
     QLabel       *m_note  = nullptr;
-    QWidget      *m_levelRow = nullptr;    // "Uses Expert features ..." (read-only)
-    QLabel       *m_levelNote = nullptr;
     QComboBox    *m_function = nullptr;
     QGroupBox    *m_modeBox  = nullptr;
     QRadioButton *m_optA     = nullptr;   // toggle

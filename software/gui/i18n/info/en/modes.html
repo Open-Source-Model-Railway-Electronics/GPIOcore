@@ -25,6 +25,10 @@ flashing or flashing in opposite phase.</li>
 </ul>
 <p>A button acts like a DCC command: a second click within half a second is ignored, just like a repeated packet
 from a command station.</p>
+<p>In <b>Simulate</b>, an input with a pin (not analog) works on that pin, like the real button or switch:
+<b>&#9654; press</b> / <b>&#9654; start</b> pulls the pin low and releases it again, &#9664; holds the pin of an absolute
+input low and &#9654; high (the held side is highlighted). So everything that reads the pin reacts too, for example
+a servo that follows the input as a detector. Inputs without a pin act like a DCC command.</p>
 
 <h4>What the outputs show</h4>
 <ul>

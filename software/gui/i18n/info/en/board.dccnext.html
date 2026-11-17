@@ -1,13 +1,20 @@
 <h3>Board type</h3>
+<p>The board type decides which pins the program offers and what they are called.</p>
 <ul>
-<li><b>Arduino Uno / Nano</b>: pins D3&ndash;D12 and A0&ndash;A5. The Nano also has <b>A6</b> (analog input only).</li>
-<li><b>DCCnext</b> (by ArCoMoRa): a ready-made board with an Arduino Nano, DCC input and screw terminals. The pin
-lists then also show the <b>port numbers</b> printed on the board.</li>
+<li><b>Arduino Nano</b>: pins D3&ndash;D12 and A0&ndash;A5, D0 / D1 from the Advanced level on, and <b>A6</b> (analog
+input only).</li>
+<li><b>Arduino Uno</b>: as the Nano, but without A6 and A7.</li>
+<li><b>DCCnext</b> (by ArCoMoRa): a ready-made board with DCC input and screw terminals. The program uses the
+<b>port numbers P1&ndash;P16</b> printed on the board everywhere: in the pin lists (&ldquo;P1 (D3)&rdquo;), on the
+canvas, on the pin map and in warnings. Only these 16 ports are offered: no D0, D1, D2, D13, A6 or A7.</li>
 <li><b>Jack of all trades</b>: our own board.</li>
 </ul>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>DCCnext port</th><td>1&ndash;10</td><td>11&ndash;16</td></tr>
+<tr><th>DCCnext port</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Arduino pin</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p>On every board <b>D2</b> (DCC), <b>D13</b> (config LED) and <b>A7</b> (config button) are reserved.
-Dimming (PWM) works on D3, D5, D6, D9, D10 and D11 (DCCnext ports 1, 3, 4, 7, 8 and 9).</p>
+<p><b>D2</b> (DCC) and <b>D13</b> (config LED) are reserved on every board. The config button (<b>A7</b>) only
+exists on the Nano: an Uno and a DCCnext have no config button.
+Dimming (PWM) works on D3, D5, D6, D9, D10 and D11 (DCCnext P1, P3, P4, P7, P8 and P9).</p>
+<p>A file made for another board type keeps all its pins. A pin this board does not have is shown with a warning,
+like any other pin that cannot be used: choose another pin for it.</p>

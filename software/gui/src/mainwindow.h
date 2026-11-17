@@ -1,4 +1,5 @@
 #pragma once
+#include "boardtools.h"
 #include "connections.h"
 #include "gpioconfig.h"
 
@@ -35,6 +36,13 @@ public:
     Mode mode() const { return m_mode; }
     void connectPort(const QString &port);
     bool loadFile(const QString &path);       // configuration JSON
+    // File menu without the dialogs: export / import the in-use items of some sections (Gpio::PartSection)
+    bool exportParts(const QString &path, int sections);
+    bool importParts(const QString &path, int sections, bool sameNumbers);
+    bool openExample(const QString &path);    // like loadFile, but without a file path: Save asks for a name
+    QString filePath() const { return m_filePath; }   // the board file on screen; empty: Save asks for a name
+    static QString examplesDir();             // examples/ next to the exe, or in the source tree
+    void applyWizard(const Gpio::WizardChoice &choice);   // the new board wizard's configuration and next steps
     void setLevel(int level);                 // user level (Ui::Level): what the GUI offers, never the configuration
     static QString boardsDir();               // where <board name>.json files are kept
     // Apply a preset (without asking) once the first read-all has finished.
@@ -62,6 +70,12 @@ private:
     void applyPresetNow(int preset, bool clearNames = true);   // replace the configuration, then live write
     void openFile();
     void saveFile();
+    void exportDialog();
+    void importDialog();
+    void openExampleDialog();
+    void runWizard();
+    void raiseLevelFor();                    // the configuration needs a higher level: raise it, say so
+    void refreshNextSteps();                 // rebuild the "Next steps" panel from m_edit.nextSteps
     void testOutput(int index, int state);
 
     void selectOutput(int index);
@@ -158,6 +172,11 @@ private:
     void            refreshLampRow();
     QList<QAction *> m_actLevel;                // View menu: Beginner, Advanced, Expert
     QAction        *m_actShowUnused = nullptr;
+    QAction        *m_actNextSteps = nullptr;   // File menu: show the "Next steps" panel again
+    QWidget        *m_stepsBox = nullptr;       // "Next steps" panel above the canvas
+    QWidget        *m_stepsBody = nullptr;
+    QToolButton    *m_stepsToggle = nullptr;    // collapse / expand
+    bool            m_stepsClosed = false;
     QAction        *m_actBoardSettings = nullptr;
     QAction        *m_actLive = nullptr;
     QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board

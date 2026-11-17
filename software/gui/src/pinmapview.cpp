@@ -42,7 +42,7 @@ void PinMapView::paintEvent(QPaintEvent *)
     p.setFont(titleFont);
     p.setPen(Ui::themed(QColor(0x0F, 0x17, 0x2A)));
     p.drawText(QRectF(16, 8, width() - 32, 30), Qt::AlignLeft | Qt::AlignVCenter,
-               tr("Pin usage (Arduino Uno / Nano)"));
+               tr("Pin usage (%1)").arg(boardTypeName(boardOptions().type)));
 
     QFont small = font();
     small.setPointSizeF(qMax(7.0, font().pointSizeF() - 1));
@@ -87,8 +87,15 @@ void PinMapView::paintEvent(QPaintEvent *)
         p.setPen(Ui::themed(QColor(0x0F, 0x17, 0x2A)));
         p.drawText(QRectF(r.left() + 14, r.top() + 6, r.width() - 20, 22), Qt::AlignLeft | Qt::AlignVCenter,
                    pinName(quint8(pin)));
+        const qreal nameWidth = p.fontMetrics().horizontalAdvance(pinName(quint8(pin)));
 
         p.setFont(small);
+        if (pinName(quint8(pin)) != arduinoPinName(quint8(pin)))   // DCCnext port: the Arduino pin in small
+        {
+            p.setPen(Ui::themed(QColor(0x64, 0x74, 0x8B)));
+            p.drawText(QRectF(r.left() + 20 + nameWidth, r.top() + 6, 40, 22), Qt::AlignLeft | Qt::AlignVCenter,
+                       arduinoPinName(quint8(pin)));
+        }
         if (isPwmPin(quint8(pin)))
         {
             const QRectF badge(r.right() - 44, r.top() + 8, 36, 17);

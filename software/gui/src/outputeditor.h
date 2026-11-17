@@ -49,7 +49,7 @@ private:
     void updateVisibility();
     void updateTimeLabels();
     void fillBlockCombos();
-    void applyLevel();         // user level: offered types and boxes, read-only above the level
+    void applyLevel();         // user level: the types offered
     static Frog frogOf(const Gpio::OutputConfig &c);
 
     int                m_index = 0;
@@ -63,8 +63,6 @@ private:
     QLabel         *m_help = nullptr;
     QLabel         *m_warn = nullptr;
     QLabel         *m_note = nullptr;
-    QWidget        *m_levelRow = nullptr;    // "Uses Expert features ..." (read-only)
-    QLabel         *m_levelNote = nullptr;
     QComboBox      *m_type = nullptr;
 
     QGroupBox      *m_pinBox = nullptr;

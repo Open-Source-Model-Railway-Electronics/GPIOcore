@@ -1,6 +1,7 @@
 // Unit tests: protocol framing, config model and DeviceLink against the
 // simulated board, which runs the real firmware (gpiocore_fw_host).
 
+#include "boardtools.h"
 #include "connections.h"
 #include "devicelink.h"
 #include "gpioconfig.h"
@@ -16,6 +17,25 @@ using namespace Gpio;
 
 Q_DECLARE_METATYPE(Gpio::InputConfig)
 Q_DECLARE_METATYPE(Gpio::OutputConfig)
+
+// A board with a few outputs and inputs in use (partial export / import)
+static BoardConfig sampleBoard()
+{
+    BoardConfig b;                                   // everything not in use
+    b.board.name = QStringLiteral("Station");
+    b.board.type = BoardUno;
+    b.board.timing = true;
+    b.outputs[0].type = ServoType; b.outputs[0].pinA = 3; b.outputs[0].name = QStringLiteral("Turnout");
+    b.outputs[0].data = { { 70, 110, 20, 0 } };
+    b.outputs[2].type = FourToneSignal; b.outputs[2].pinA = 4; b.outputs[2].pinB = 5;
+    b.outputs[2].lampColors = QStringList{ "#ff0000", "#00ff00", "#0000ff", "#ffffff" };
+    b.inputs[0].type = Latching; b.inputs[0].address = 7; b.inputs[0].outputId = 0; b.inputs[0].name = QStringLiteral("Button");
+    b.inputs[3].type = Route; b.inputs[3].address = 9;
+    b.inputs[3].route = { defaultStep(0, ServoType), defaultStep(2, FourToneSignal) };
+    b.inputs[5].type = Latching; b.inputs[5].pin = 14; b.inputs[5].analog = AnalogAt; b.inputs[5].threshold = 512;
+    b.inputs[5].outputId = 2; b.inputs[5].setCustomValues(true, FourToneSignal);
+    return b;
+}
 
 // A device that answers everything except HELLO: no GPIOcore board (or very old firmware)
 class NoHelloDevice : public SimulatedDevice
@@ -482,6 +502,205 @@ private slots:
         boardOptions().serialPinsUsable = true;
         QVERIFY(pinReservedReason(0).isEmpty());
         QVERIFY(!pinNote(0).isEmpty());
+    }
+
+    void dccNextNamesAndPinRules()
+    {
+        // DCCnext: the ports P1-P16 printed on the board are the names the user sees; nothing else is usable
+        setBoardType(BoardDccNext);
+        QCOMPARE(pinName(3), QStringLiteral("P1"));
+        QCOMPARE(pinName(12), QStringLiteral("P10"));
+        QCOMPARE(pinName(14), QStringLiteral("P11"));
+        QCOMPARE(pinName(19), QStringLiteral("P16"));
+        QCOMPARE(pinLabel(3), QStringLiteral("P1 (D3)"));
+        QCOMPARE(pinLabel(19), QStringLiteral("P16 (A5)"));
+        QCOMPARE(arduinoPinName(3), QStringLiteral("D3"));
+        QCOMPARE(pinName(13), QStringLiteral("D13"));                 // not a port: its Arduino name
+        QCOMPARE(pwmPinNames(), QStringList({ "P1", "P3", "P4", "P7", "P8", "P9" }));
+        for (quint8 p : { 0, 1, 2, 13, 20, 21 })
+            QVERIFY2(!pinReservedReason(p).isEmpty(), qPrintable(pinName(p)));
+        for (quint8 p = 3; p <= 19; ++p)
+            QCOMPARE(pinReservedReason(p).isEmpty(), p != 13);
+        // Uno: no A6 / A7 (no config button), D-names
+        setBoardType(BoardUno);
+        QCOMPARE(pinName(3), QStringLiteral("D3"));
+        QCOMPARE(pinLabel(3), QStringLiteral("D3"));
+        QVERIFY(!pinReservedReason(20).isEmpty() && !pinReservedReason(21).isEmpty());
+        QVERIFY(pinReservedReason(0).isEmpty() && pinReservedReason(12).isEmpty());
+        // Nano: A6 analog input, A7 the config button
+        setBoardType(BoardNano);
+        QVERIFY(pinReservedReason(20).isEmpty());
+        QCOMPARE(pinReservedReason(21), QStringLiteral("config button"));
+        QCOMPARE(pinName(14), QStringLiteral("A0"));
+    }
+
+    // ── Partial export / import, next steps, wizard ────────────────────────
+    void exportOnlyInUseItems()
+    {
+        const BoardConfig b = sampleBoard();
+        const BoardConfig outs = exportPart(b, PartOutputs);
+        QCOMPARE(int(outs.board.type), int(BoardUno));   // the type always: it gives the pins their meaning
+        QVERIFY(outs.board.name.isEmpty() && !outs.board.timing);
+        QVERIFY(outs.outputs[0] == b.outputs[0] && outs.outputs[0].name == QStringLiteral("Turnout"));
+        QCOMPARE(outs.outputs[2].lampColors, b.outputs[2].lampColors);
+        for (const InputConfig &i : outs.inputs)
+            QCOMPARE(int(i.type), int(InputNotInUse));
+        const BoardConfig all = exportPart(b, PartOutputs | PartInputs | PartBoard);
+        QVERIFY(all.board == b.board);
+        QVERIFY(all.inputs[3].route == b.inputs[3].route);
+        QVERIFY(all.inputs[5].isAnalog() && all.inputs[5].hasCustomValues());
+        QCOMPARE(all.inputs[0].name, QStringLiteral("Button"));
+        // a normal board file: the other slots are written as 'notInUse'
+        const QJsonObject json = exportPart(b, PartInputs).toJson();
+        BoardConfig back;
+        QVERIFY(BoardConfig::fromJson(json, back, nullptr));
+        QCOMPARE(json["outputs"].toArray().at(0).toObject()["type"].toString(), QStringLiteral("notInUse"));
+        QVERIFY(back.inputs[5] == b.inputs[5]);
+        QCOMPARE(int(back.outputs[0].type), int(OutputNotInUse));
+    }
+
+    void importSameNumbers()
+    {
+        const BoardConfig file = sampleBoard();
+        BoardConfig mine;                                // the user's board: output 2 and input 3 in use
+        mine.outputs[2].type = SingleSteady; mine.outputs[2].pinA = 9;
+        mine.inputs[3].type = Momentary;
+        const ImportResult plan = planImport(mine, file, PartOutputs | PartInputs, true);
+        QVERIFY(plan.error.isEmpty());
+        QCOMPARE(plan.outputs.value(0), 0);
+        QCOMPARE(plan.outputs.value(2), 2);
+        QCOMPARE(plan.outputs.value(1), -1);             // not in use in the file
+        QCOMPARE(plan.inputs.value(3), 3);
+        QVERIFY(importedInput(file, 3, plan).route == file.inputs[3].route);   // same numbers: nothing renumbered
+        QVERIFY(planImport(mine, file, PartInputs, true).outputs.count(-1) == NumOutputs);   // outputs not ticked
+    }
+
+    void importIntoFreeSlotsRenumbers()
+    {
+        BoardConfig file;                                // a level crossing: 2 detectors, a signal, a route
+        file.outputs[0].type = ServoType; file.outputs[0].pinA = 3;
+        file.outputs[0].data = { { 80, 100, 20, 0x80 | 1 } };             // semaphore arm: follows input 1
+        file.outputs[1].type = BlockSignal; file.outputs[1].pinA = 4;
+        file.outputs[1].setBlockInputs(0, 1);
+        file.inputs[0].type = Sensor; file.inputs[0].pin = 5;
+        file.inputs[1].type = Sensor; file.inputs[1].pin = 6;
+        file.inputs[2].type = Route;
+        file.inputs[2].route = { defaultStep(0, ServoType), defaultStep(1, BlockSignal), defaultStep(9, SingleSteady) };
+        file.inputs[3].type = Latching; file.inputs[3].outputId = 0;
+        file.inputs[3].setCustomValues(true, ServoType);
+
+        BoardConfig mine;                                // outputs 0-2 and inputs 0-1 in use, output 3 driven
+        for (int o = 0; o < 3; ++o) { mine.outputs[o].type = SingleSteady; mine.outputs[o].pinA = quint8(7 + o); }
+        mine.inputs[0].type = Latching; mine.inputs[0].outputId = 0;
+        mine.inputs[1].type = Route; mine.inputs[1].route = { defaultStep(3, OutputNotInUse) };
+        const ImportResult plan = planImport(mine, file, PartOutputs | PartInputs, false);
+        QVERIFY(plan.error.isEmpty());
+        QCOMPARE(plan.outputs.value(0), 4);              // output 3 is not in use, but a route drives it
+        QCOMPARE(plan.outputs.value(1), 5);
+        QCOMPARE(plan.inputs.mid(0, 4), QVector<int>({ 2, 3, 4, 5 }));
+
+        const OutputConfig arm = importedOutput(file, 0, plan);
+        QCOMPARE(arm.servoFollows(), 3);                 // input 1 -> 3
+        const OutputConfig sig = importedOutput(file, 1, plan);
+        QCOMPARE(sig.blockOwn(), 2);
+        QCOMPARE(sig.blockNext(), 3);
+        const InputConfig route = importedInput(file, 2, plan);
+        QCOMPARE(route.route.size(), 3);
+        QCOMPARE(route.route[0].output, 4);
+        QCOMPARE(route.route[1].output, 5);
+        QCOMPARE(route.route[2].output, 9);              // output 9 was not imported: the user's own
+        const InputConfig direct = importedInput(file, 3, plan);
+        QCOMPARE(int(direct.outputId), 4);
+        QVERIFY(direct.hasCustomValues());
+        QCOMPARE(direct.route[0].output, 4);             // the custom values follow their output
+
+        // only the inputs: their references stay on the user's own outputs
+        const ImportResult inputsOnly = planImport(mine, file, PartInputs, false);
+        QCOMPARE(importedInput(file, 2, inputsOnly).route[0].output, 0);
+        QCOMPARE(int(inputsOnly.outputs.count(-1)), NumOutputs);
+
+        // not enough free slots: an error and nothing planned
+        for (int i = 2; i < NumInputs - 1; ++i) mine.inputs[i].type = Momentary;
+        const ImportResult full = planImport(mine, file, PartOutputs | PartInputs, false);
+        QVERIFY(full.error.contains(QLatin1String("Not enough free slots")));
+        QVERIFY(full.inputs.count(-1) == NumInputs && full.outputs.count(-1) == NumOutputs);
+    }
+
+    void nextStepsInTheBoardFile()
+    {
+        BoardConfig b;
+        b.nextSteps = { { QStringLiteral("Try it in Simulate"), true }, { QStringLiteral("Write all"), false } };
+        BoardConfig back;
+        QVERIFY(BoardConfig::fromJson(b.toJson(), back, nullptr));
+        QCOMPARE(back.nextSteps.size(), 2);
+        QCOMPARE(back.nextSteps[0].text, QStringLiteral("Try it in Simulate"));
+        QVERIFY(back.nextSteps[0].done && !back.nextSteps[1].done);
+        QVERIFY(!BoardConfig().toJson().contains(QLatin1String("nextSteps")));   // only written when there are steps
+    }
+
+    void wizardBuildsTheBoard()
+    {
+        WizardChoice c;                                  // 2 servos + 2 lights, DCC from 1, pins in order
+        c.servos = 2;
+        c.lights = 2;
+        c.dcc = true;
+        c.firstAddress = 1;
+        c.pinsInOrder = true;
+        QCOMPARE(c.pinsNeeded(), 4);
+        const BoardConfig b = wizardBoard(c);
+        QCOMPARE(int(b.outputs[0].type), int(ServoType));
+        QCOMPARE(int(b.outputs[1].type), int(ServoType));
+        QCOMPARE(int(b.outputs[2].type), int(SingleSteady));
+        QCOMPARE(int(b.outputs[3].type), int(SingleSteady));
+        QCOMPARE(int(b.outputs[4].type), int(OutputNotInUse));
+        QCOMPARE(QVector<int>({ b.outputs[0].pinA, b.outputs[1].pinA, b.outputs[2].pinA, b.outputs[3].pinA }),
+                 QVector<int>({ 3, 4, 5, 6 }));
+        QCOMPARE(b.outputs[0].servoMin(), quint8(80));
+        QCOMPARE(b.outputs[0].name, QStringLiteral("Servo turnout 1"));
+        QCOMPARE(b.outputs[3].name, QStringLiteral("Light 2"));
+        for (int i = 0; i < 4; ++i)
+        {
+            QCOMPARE(int(b.inputs[i].type), int(Latching));
+            QCOMPARE(int(b.inputs[i].address), i + 1);
+            QCOMPARE(int(b.inputs[i].outputId), i);
+            QCOMPARE(int(b.inputs[i].pin), int(PinNA));
+        }
+        QCOMPARE(int(b.inputs[4].type), int(InputNotInUse));
+        QStringList steps;
+        for (const NextStep &s : b.nextSteps) { steps << s.text; QVERIFY(!s.done); }
+        QCOMPARE(steps, QStringList({ "Wire Out 1–4 to D3–D6 (the Pin map tab shows which pin is which)",
+                                      "Set the end positions of servo Out 1–2 (Live slider, phone remote or loco 9999)",
+                                      "Set turnout addresses 1–4 in your command station / iTrain",
+                                      "Try it in Simulate",
+                                      "Connect the board and use Write all to put this configuration on it" }));
+        // Beginner features only
+        for (const OutputConfig &o : b.outputs) QVERIFY(o.relayA == PinNA && o.relayC == PinNA);
+
+        // a DCCnext with push buttons, a coil turnout, addresses from 10; then: pins left empty
+        c.boardType = BoardDccNext;
+        c.coils = 1;
+        c.buttons = WizardChoice::ToggleButtons;
+        c.firstAddress = 10;
+        QCOMPARE(c.pinsNeeded(), 11);
+        const BoardConfig d = wizardBoard(c);
+        QCOMPARE(int(d.board.type), int(BoardDccNext));
+        QCOMPARE(int(d.outputs[2].type), int(DoublePulse));
+        QCOMPARE(int(d.outputs[2].pinA), 5);
+        QCOMPARE(int(d.outputs[2].pinB), 6);
+        QCOMPARE(int(d.inputs[0].type), int(Momentary));
+        QCOMPARE(int(d.inputs[0].pin), 9);               // after the 6 output pins: P7
+        QCOMPARE(int(d.inputs[4].pin), 14);              // P11 = A0
+        QCOMPARE(int(d.inputs[4].address), 14);
+        QVERIFY(d.nextSteps[1].text == QStringLiteral("Wire the buttons to P7–P11 and GND"));
+        QVERIFY(d.nextSteps[2].text.endsWith(QLatin1String("(Live slider or phone remote)")));   // no config button
+        c.pinsInOrder = false;
+        c.firstAddress = 0;
+        const BoardConfig e = wizardBoard(c);
+        QCOMPARE(int(e.outputs[0].pinA), int(PinNA));
+        QCOMPARE(int(e.inputs[0].address), int(AddrNone));
+        QCOMPARE(e.nextSteps[0].text, QStringLiteral("Choose pins for Out 1–5 (output settings, or the Pin map tab)"));
+        QCOMPARE(e.nextSteps[1].text, QStringLiteral("Choose the button pins for In 1–5 (input settings)"));
+        QVERIFY(e.nextSteps[3].text.startsWith(QStringLiteral("Set the DCC addresses of In 1–5")));
     }
 
     // ── Protocol v2 ─────────────────────────────────────────────────────────

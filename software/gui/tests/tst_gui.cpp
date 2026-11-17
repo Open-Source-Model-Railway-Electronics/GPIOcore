@@ -1,6 +1,7 @@
 // Main window against the firmware simulator: edit -> dirty -> write ->
 // read back -> clean, presets, and connecting inputs / outputs by dragging.
 
+#include "boardtools.h"
 #include "connections.h"
 #include "connectionview.h"
 #include "devicelink.h"
@@ -13,6 +14,13 @@
 #include "webremote.h"
 
 #include <QApplication>
+#include <QFile>
+#include <QFileDialog>
+#include <QJsonDocument>
+#include <QListWidget>
+#include <QRadioButton>
+#include <QTemporaryDir>
+#include <QWizard>
 #include <QCheckBox>
 #include <QDialog>
 #include <QDockWidget>
@@ -39,6 +47,64 @@
 #include <QtTest>
 
 using namespace Gpio;
+
+// Answers the popups of the window under test: message boxes (the text is kept), file dialogs (with
+// 'file') and other dialogs (onDialog returns true when it handled one).
+class Popups : public QObject
+{
+public:
+    QStringList texts;
+    QString file;
+    QMessageBox::StandardButton button = QMessageBox::Yes;
+    std::function<bool(QDialog *)> onDialog;
+
+    Popups()
+    {
+        m_timer.setInterval(30);
+        connect(&m_timer, &QTimer::timeout, this, &Popups::check);
+        m_timer.start();
+    }
+
+private:
+    void check()
+    {
+        for (QWidget *top : QApplication::topLevelWidgets())
+        {
+            if (!top->isVisible())
+                continue;
+            if (auto *m = qobject_cast<QMessageBox *>(top))
+            {
+                texts << m->text();
+                QAbstractButton *b = m->button(button) ? m->button(button) : m->button(QMessageBox::Ok);
+                if (b) b->click(); else m->reject();
+            }
+            else if (auto *f = qobject_cast<QFileDialog *>(top))
+            {
+                if (auto *name = f->findChild<QLineEdit *>(QStringLiteral("fileNameEdit")))
+                    name->setText(QDir::toNativeSeparators(file));   // typed: the full path
+                static_cast<QDialog *>(f)->accept();
+            }
+            else if (auto *d = qobject_cast<QDialog *>(top); d && onDialog)
+                onDialog(d);
+        }
+    }
+    QTimer m_timer;
+};
+
+static QString writeBoard(QTemporaryDir &dir, const char *name, const BoardConfig &b)
+{
+    const QString path = dir.filePath(QLatin1String(name));
+    QFile f(path);
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        f.write(QJsonDocument(b.toJson()).toJson());
+    return path;
+}
+
+static bool readBoard(const QString &path, BoardConfig &b)
+{
+    QFile f(path);
+    return f.open(QIODevice::ReadOnly) && BoardConfig::fromJson(QJsonDocument::fromJson(f.readAll()).object(), b, nullptr);
+}
 
 class TestGui : public QObject
 {
@@ -147,10 +213,24 @@ class TestGui : public QObject
         return false;
     }
 
+    // The toolbar's board type combo; choosing an item there is what the user does
+    static void chooseBoardType(MainWindow &w, int type)
+    {
+        for (QComboBox *c : w.findChildren<QComboBox *>())
+            if (c->count() == BoardTypeCount && c->itemText(BoardDccNext) == boardTypeName(BoardDccNext))
+            {
+                c->setCurrentIndex(type);
+                emit c->activated(type);
+                return;
+            }
+        QFAIL("no board type combo");
+    }
+
 private slots:
     void initTestCase()
     {
         Ui::setLevel(Ui::Expert);               // most tests use every feature; the level tests switch themselves
+        QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);   // file dialogs Popups can answer
     }
 
     void cleanup()
@@ -1210,6 +1290,111 @@ private slots:
         w.setMode(MainWindow::ModeConfigure);
     }
 
+    // ── Board types: DCCnext port names, pin rules ─────────────────────────
+    void dccNextOverlay()
+    {
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        chooseBoardType(w, BoardDccNext);
+        QCOMPARE(int(view->board().board.type), int(BoardDccNext));
+
+        // pin lists: only P1-P16, the port first, the Arduino pin in brackets
+        auto items = [](QComboBox *c) { QList<int> d; for (int i = 0; i < c->count(); ++i) d << c->itemData(i).toInt(); return d; };
+        QList<int> ports { int(PinNA) };
+        for (int p = 3; p <= 12; ++p) ports << p;
+        for (int p = 14; p <= 19; ++p) ports << p;
+        QComboBox *pinA = comboWith(oed, trGpio("—  not used"));
+        QComboBox *inPin = comboWith(ied, trGpio("—  not used"));
+        QVERIFY(pinA && inPin);
+        QCOMPARE(items(pinA), ports);                        // no D0, D1, D2, D13, A6, A7
+        QCOMPARE(items(inPin), ports);
+        QVERIFY(pinA->itemText(pinA->findData(3)).startsWith(QLatin1String("P1 (D3)")));
+        QVERIFY(inPin->itemText(inPin->findData(19)).startsWith(QLatin1String("P16 (A5)")));
+
+        // canvas subtitle and warnings use the port names
+        QCOMPARE(Ui::outputSummaryPins(view->board().outputs[0]), QStringLiteral("P1"));
+        OutputConfig c = view->board().outputs[0];
+        c.pinA = 13;                                         // e.g. from a Nano file: kept, with a warning
+        emit oed->changed(0, c);
+        QCOMPARE(int(view->board().outputs[0].pinA), 13);
+        QVERIFY(visibleLabel(oed, QStringLiteral("Pin A uses D13, which cannot be used here: not a DCCnext port")));
+        click(view, view->outputRect(0).center());
+        QCOMPARE(pinA->currentText(), QStringLiteral("⚠ D13"));
+        c.pinA = 4;
+        emit oed->changed(0, c);
+        w.findChild<QTabWidget *>()->setCurrentIndex(0);
+        maybeScreenshot(w, "dccnext-overlay.png");
+        w.findChild<QTabWidget *>()->setCurrentIndex(1);
+        maybeScreenshot(w, "dccnext-pinmap.png");
+
+        // Uno: no A6 / A7; Nano: A6 back, D-names again
+        chooseBoardType(w, BoardUno);
+        QVERIFY(!items(inPin).contains(20) && !items(inPin).contains(21) && items(inPin).contains(13));
+        QVERIFY(pinA->itemText(pinA->findData(3)).startsWith(QLatin1String("D3")));
+        chooseBoardType(w, BoardNano);
+        QVERIFY(items(inPin).contains(20) && !items(inPin).contains(21));
+        QCOMPARE(Ui::outputSummaryPins(view->board().outputs[0]), QStringLiteral("D4"));
+    }
+
+    void simulateButtonsWorkOnThePin()
+    {
+        // Simulate: an input with a digital pin is pressed on its pin, so whatever reads the pin reacts too:
+        // servo A follows the switch (direct control), servo B follows the same input as a detector
+        MainWindow w;
+        auto *link = w.findChild<DeviceLink *>();
+        link->drainMs = 3;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+        OutputConfig unused = view->board().outputs[15];
+        unused.type = OutputNotInUse; unused.pinA = PinNA;       // frees A5
+        emit oed->changed(15, unused);
+        OutputConfig a = view->board().outputs[0];
+        a.type = ServoType; a.data = { { 60, 120, 1, 0 } };
+        emit oed->changed(0, a);
+        OutputConfig b = view->board().outputs[1];
+        b.type = ServoType; b.data = { { 60, 120, 1, 0x80 | 0 } };   // follows input 1: occupied = 60°
+        emit oed->changed(1, b);
+        InputConfig in = view->board().inputs[0];
+        in.type = Latching; in.pin = 19; in.outputId = 0;
+        emit ied->changed(0, in);
+
+        w.setMode(MainWindow::ModeSimulate);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
+        auto *sim = link->findChild<SimulatedDevice *>();
+        QVERIFY(sim && view->pinInput(0));
+        QTest::qWait(150);
+        click(view, view->liveButtonRect(0, 0).center());        // ◀: the switch holds the pin low
+        QVERIFY(view->sensorOccupied(0));
+        QTRY_COMPARE_WITH_TIMEOUT(sim->servoPosition(1), 60, 3000);  // B: occupied
+        const int aLow = sim->servoPosition(0);
+        click(view, view->liveButtonRect(0, 1).center());        // ▶: high
+        QVERIFY(!view->sensorOccupied(0));
+        QTRY_COMPARE_WITH_TIMEOUT(sim->servoPosition(1), 120, 3000); // B: free
+        QTRY_VERIFY_WITH_TIMEOUT(sim->servoPosition(0) != aLow && (sim->servoPosition(0) == 60 || sim->servoPosition(0) == 120), 3000);
+        QVERIFY(aLow == 60 || aLow == 120);                      // A followed the pin both times
+
+        // a push button: pressed and released again, A switches over, B is back at 'free'
+        w.setMode(MainWindow::ModeConfigure);
+        in.type = Momentary;
+        emit ied->changed(0, in);
+        w.setMode(MainWindow::ModeSimulate);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
+        sim = link->findChild<SimulatedDevice *>();
+        QTest::qWait(300);
+        const int before = sim->servoPosition(0);
+        click(view, view->liveButtonRect(0, 1).center());
+        QTRY_VERIFY_WITH_TIMEOUT(sim->servoPosition(0) != before && (sim->servoPosition(0) == 60 || sim->servoPosition(0) == 120), 3000);
+        QTRY_COMPARE_WITH_TIMEOUT(sim->servoPosition(1), 120, 3000);
+        w.setMode(MainWindow::ModeConfigure);
+    }
+
     // ── Workspace, user levels ──────────────────────────────────────────────
     void opensStraightIntoTheWorkspace()
     {
@@ -1359,10 +1544,10 @@ private slots:
         QCOMPARE(boardSettingsRows(), 5);                    // + own wait time, wait time, interlocking
     }
 
-    void higherLevelFeaturesStayReadOnly()
+    void higherLevelFeaturesHidden()
     {
-        // a block signal and a sensor input in an existing configuration while on Beginner: shown, working,
-        // read-only, never changed by the level
+        // a block signal, a sensor input and frog relays while on Beginner (the user lowered the level):
+        // not shown, not read-only, working, never changed by the level
         Ui::setLevel(Ui::Beginner);
         MainWindow w;
         auto *link = w.findChild<DeviceLink *>();
@@ -1374,7 +1559,7 @@ private slots:
         auto *ied = w.findChild<InputEditor *>();
         InputConfig sensor = view->board().inputs[5];
         sensor.type = Sensor; sensor.pin = 19; sensor.address = AddrNone;
-        emit ied->changed(5, sensor);                        // e.g. from a board file made by someone else
+        emit ied->changed(5, sensor);
         OutputConfig sig = view->board().outputs[0];
         sig.type = BlockSignal; sig.data = { { 0x04, 0x02, 0x01, 0 } };
         sig.setBlockInputs(5, -1);
@@ -1384,64 +1569,373 @@ private slots:
 
         click(view, view->outputRect(0).center());
         QCOMPARE(oed->index(), 0);
-        QVERIFY(visibleLabel(oed, QStringLiteral("Uses Expert features — switch to Expert in the View menu to edit"),
-                             QStringLiteral("warn")));
+        QVERIFY(!visibleLabel(oed, QStringLiteral("Uses ")));             // no yellow line any more
+        QVERIFY(!visibleLabel(ied, QStringLiteral("Uses ")));
         QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
-        QVERIFY(type);
-        QCOMPARE(type->currentText(), QStringLiteral("Block signal"));   // shown although not offered
-        QVERIFY(!offered(type).contains(BlockSignal));
-        QVERIFY(!type->isEnabled());
-        QVector<QSpinBox *> aspects;
-        for (QSpinBox *b : oed->findChildren<QSpinBox *>())
-            if (b->isVisibleTo(oed) && b->prefix() == QLatin1String("aspect ")) aspects << b;
-        QCOMPARE(aspects.size(), 3);                         // the settings are shown ...
-        QCOMPARE(aspects[0]->value(), 4);
-        QVERIFY(!aspects[0]->isEnabled());                   // ... read-only
-        maybeScreenshot(w, "beginner-readonly-block-signal.png");
+        QVERIFY(type && type->isEnabled());                                // not read-only
+        QVERIFY(!offered(type).contains(BlockSignal));                    // not in the combo
 
         click(view, view->inputRect(5).center());
-        QCOMPARE(ied->index(), 5);
         QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
-        QCOMPARE(fn->currentText(), QStringLiteral("Sensor (occupancy)"));
-        QVERIFY(!fn->isEnabled());
-        QVERIFY(visibleLabel(ied, QStringLiteral("Uses Expert features"), QStringLiteral("warn")));
+        QVERIFY(fn->isEnabled());
+        QVERIFY(!offered(fn).contains(3));                                // no Sensor
 
-        // an Advanced feature (frog relays) on a Beginner type: read-only, frog box shown
+        // frog relays on a servo: the frog box is hidden, the relay stays
         OutputConfig servo = view->board().outputs[1];
         servo.type = ServoType; servo.data = { { 80, 100, 20, 0 } }; servo.relayC = 12;
         emit oed->changed(1, servo);
         click(view, view->outputRect(1).center());
-        QVERIFY(visibleLabel(oed, QStringLiteral("Uses Advanced features — switch to Advanced in the View menu to edit")));
         for (QGroupBox *g : oed->findChildren<QGroupBox *>())
-            if (g->title() == QLatin1String("Frog polarity")) QVERIFY(g->isVisibleTo(oed) && !g->isEnabled());
-
-        // switching levels changes nothing; on Expert it can be edited
+            if (g->title() == QLatin1String("Frog polarity")) QVERIFY(!g->isVisibleTo(oed));
+        for (QCheckBox *b : oed->findChildren<QCheckBox *>())
+            if (b->text().startsWith(QLatin1String("Follows a detector"))) QVERIFY(!b->isVisibleTo(oed));
+        OutputConfig edited = view->board().outputs[1];                   // an edit of something shown ...
+        QSpinBox *speed = nullptr;
+        for (QSpinBox *b : oed->findChildren<QSpinBox *>())
+            if (b->suffix() == QStringLiteral(" ms/°")) speed = b;
+        QVERIFY(speed);
+        speed->setValue(30);
+        QCOMPARE(view->board().outputs[1].servoSpeed(), quint8(30));
+        QCOMPARE(int(view->board().outputs[1].relayC), 12);              // ... keeps the hidden relay
         levelAction(w, QStringLiteral("Advanced"))->trigger();
-        QVERIFY(!visibleLabel(oed, QStringLiteral("Uses ")));
+        for (QGroupBox *g : oed->findChildren<QGroupBox *>())
+            if (g->title() == QLatin1String("Frog polarity")) QVERIFY(g->isVisibleTo(oed));
+
+        // switching levels changes nothing
         levelAction(w, QStringLiteral("Expert"))->trigger();
         levelAction(w, QStringLiteral("Beginner"))->trigger();
         QVERIFY(view->board().outputs[0] == sigNow);
         QVERIFY(view->board().inputs[5] == sensorNow);
-        QCOMPARE(int(view->board().outputs[1].relayC), 12);
-        click(view, view->outputRect(0).center());
-        levelAction(w, QStringLiteral("Expert"))->trigger();
-        QVERIFY(!visibleLabel(oed, QStringLiteral("Uses ")));
-        QVERIFY(type->isEnabled());
-        levelAction(w, QStringLiteral("Beginner"))->trigger();
+        maybeScreenshot(w, "beginner-hidden-features.png");
 
         // it works in the simulation on Beginner
         w.setMode(MainWindow::ModeSimulate);
         QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
         QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(0), 0x01, 3000);   // safe: green
-        QVERIFY(view->sensorInput(5));
         QTest::qWait(150);
         click(view, view->liveButtonRect(5, 1).center());
         QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(0), 0x04, 2000);   // unsafe: red
-        maybeScreenshot(w, "beginner-block-signal.png");
         w.setMode(MainWindow::ModeConfigure);
         QVERIFY(view->board().outputs[0] == sigNow);
     }
 
+    void levelRaisedForAProject()
+    {
+        // opening a file that uses Expert features on Beginner: a popup, the level goes up; never down
+        QTemporaryDir dir;
+        BoardConfig expert;
+        expert.outputs[0].type = BlockSignal; expert.outputs[0].pinA = 3; expert.outputs[0].setBlockInputs(1, -1);
+        expert.inputs[1].type = Sensor; expert.inputs[1].pin = 5;
+        const QString expertFile = writeBoard(dir, "expert.json", expert);
+        BoardConfig advanced;
+        advanced.outputs[0].type = Pwm; advanced.outputs[0].pinA = 5;
+        const QString advancedFile = writeBoard(dir, "advanced.json", advanced);
+        BoardConfig beginner;
+        beginner.outputs[0].type = ServoType; beginner.outputs[0].pinA = 3;
+        const QString beginnerFile = writeBoard(dir, "beginner.json", beginner);
+
+        Ui::setLevel(Ui::Beginner);
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        Popups popups;
+        QVERIFY(w.loadFile(beginnerFile));
+        QVERIFY(popups.texts.isEmpty());
+        QCOMPARE(Ui::level(), int(Ui::Beginner));
+        QVERIFY(w.loadFile(expertFile));
+        QTRY_COMPARE(popups.texts.size(), 1);
+        QCOMPARE(popups.texts[0], QStringLiteral("This project uses Expert features (block signals, sensors). "
+                                                 "The level is set to Expert."));
+        QCOMPARE(Ui::level(), int(Ui::Expert));
+        QVERIFY(levelAction(w, QStringLiteral("Expert"))->isChecked());
+        QCOMPARE(int(w.findChild<ConnectionView *>()->board().outputs[0].type), int(BlockSignal));   // unchanged
+        QVERIFY(w.loadFile(advancedFile));                   // never lowered
+        QCOMPARE(Ui::level(), int(Ui::Expert));
+        QCOMPARE(popups.texts.size(), 1);
+
+        Ui::setLevel(Ui::Beginner);
+        w.setLevel(Ui::Beginner);
+        QVERIFY(w.loadFile(advancedFile));
+        QTRY_COMPARE(popups.texts.size(), 2);
+        QCOMPARE(popups.texts[1], QStringLiteral("This project uses Advanced features (PWM). The level is set to Advanced."));
+        QCOMPARE(Ui::level(), int(Ui::Advanced));
+
+        // importing raises it as well
+        QVERIFY(w.loadFile(beginnerFile));
+        QVERIFY(w.importParts(expertFile, PartOutputs | PartInputs, false));
+        QTRY_VERIFY(popups.texts.last().startsWith(QLatin1String("This project uses Expert features")));
+        QCOMPARE(Ui::level(), int(Ui::Expert));
+    }
+
+    // ── Export / import, examples ───────────────────────────────────────────
+    void exportOnlyInUseItems()
+    {
+        QTemporaryDir dir;
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        BoardConfig b;
+        b.board.timing = true;
+        b.outputs[1].type = ServoType; b.outputs[1].pinA = 3; b.outputs[1].name = QStringLiteral("Left");
+        b.outputs[4].type = FourToneSignal; b.outputs[4].pinA = 4; b.outputs[4].lampColors = QStringList{ "#ff0000" };
+        b.inputs[2].type = Route; b.inputs[2].route = { defaultStep(1, ServoType) }; b.inputs[2].name = QStringLiteral("Go");
+        QVERIFY(w.loadFile(writeBoard(dir, "mine.json", b)));
+        const QString out = dir.filePath(QStringLiteral("export.json"));
+        QVERIFY(w.exportParts(out, PartOutputs));
+        BoardConfig e;
+        QVERIFY(readBoard(out, e));
+        QCOMPARE(e.outputs[1].name, QStringLiteral("Left"));
+        QVERIFY(e.outputs[1] == view->board().outputs[1]);
+        QCOMPARE(e.outputs[4].lampColors, QStringList{ "#ff0000" });
+        for (int o : { 0, 2, 3, 5 }) QCOMPARE(int(e.outputs[o].type), int(OutputNotInUse));
+        for (const InputConfig &i : e.inputs) QCOMPARE(int(i.type), int(InputNotInUse));
+        QVERIFY(!e.board.timing);                            // board settings not ticked
+        QVERIFY(w.exportParts(out, PartInputs | PartBoard));
+        QVERIFY(readBoard(out, e));
+        QCOMPARE(int(e.outputs[1].type), int(OutputNotInUse));
+        QVERIFY(e.inputs[2] == view->board().inputs[2] && e.inputs[2].name == QStringLiteral("Go"));
+        QVERIFY(e.board.timing);
+    }
+
+    void importSameNumbersReplaces()
+    {
+        // connected: the import is one edit that goes to the board at once and makes the file dirty
+        QTemporaryDir dir;
+        BoardConfig file;
+        file.outputs[0].type = ServoType; file.outputs[0].pinA = 9; file.outputs[0].name = QStringLiteral("Imported");
+        file.outputs[0].data = { { 60, 120, 10, 0 } };
+        file.inputs[0].type = Momentary; file.inputs[0].address = 33; file.inputs[0].outputId = 0;
+        const QString path = writeBoard(dir, "part.json", file);
+        MainWindow w;
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        Popups popups;
+        QVERIFY(w.importParts(path, PartOutputs | PartInputs, true));
+        QTRY_VERIFY(!popups.texts.isEmpty());
+        QVERIFY(popups.texts[0].contains(QStringLiteral("Out 1 · Single steady")));   // asked first: what is replaced
+        QVERIFY(popups.texts[0].contains(QStringLiteral("In 1 · Absolute")));
+        QCOMPARE(view->board().outputs[0].name, QStringLiteral("Imported"));
+        QCOMPARE(int(view->board().outputs[0].type), int(ServoType));
+        QCOMPARE(int(view->board().inputs[0].address), 33);
+        QCOMPARE(int(view->board().outputs[6].pinA), int(PinNA));   // D9 was output 7's: it lost the pin ...
+        QCOMPARE(int(view->board().outputs[6].type), int(SingleSteady));   // ... and keeps its function
+        QTRY_VERIFY(popups.texts.size() >= 2);
+        QVERIFY(popups.texts[1].contains(QLatin1String("output 7")));   // listed afterwards
+        QVERIFY(w.windowTitle().endsWith(QLatin1String(" *")));
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy() && !writeAction(w)->isEnabled(), 8000);   // written live
+        QCOMPARE(int(view->board().outputs[0].type), int(ServoType));       // read back from the board
+
+        // cancelled: nothing changes
+        popups.button = QMessageBox::No;
+        file.outputs[0].name = QStringLiteral("Again");
+        QVERIFY(!w.importParts(writeBoard(dir, "again.json", file), PartOutputs, true));
+        QCOMPARE(view->board().outputs[0].name, QStringLiteral("Imported"));
+    }
+
+    void importIntoFreeSlots()
+    {
+        QTemporaryDir dir;
+        BoardConfig mine;                                    // outputs 1-2 and input 1 in use
+        mine.outputs[0].type = SingleSteady; mine.outputs[0].pinA = 3;
+        mine.outputs[1].type = SingleSteady; mine.outputs[1].pinA = 4; mine.outputs[1].name = QStringLiteral("Mine");
+        mine.inputs[0].type = Latching; mine.inputs[0].address = 1; mine.inputs[0].outputId = 1;
+        BoardConfig file;                                    // a detector, a block signal and a route to both outputs
+        file.outputs[0].type = ServoType; file.outputs[0].pinA = 4;          // takes D4 from 'Mine'
+        file.outputs[1].type = BlockSignal; file.outputs[1].pinA = 5; file.outputs[1].setBlockInputs(0, 2);
+        file.inputs[0].type = Sensor; file.inputs[0].pin = 6;
+        file.inputs[1].type = Route; file.inputs[1].address = 50;
+        file.inputs[1].route = { defaultStep(0, ServoType), defaultStep(9, SingleSteady) };   // output 10: not imported
+        file.inputs[2].type = Sensor; file.inputs[2].pin = 7;
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        QVERIFY(w.loadFile(writeBoard(dir, "mine.json", mine)));
+        Popups popups;
+        const QString part = writeBoard(dir, "part.json", file);
+        QVERIFY(w.importParts(part, PartOutputs | PartInputs, false));
+        const BoardConfig &b = view->board();
+        QCOMPARE(int(b.outputs[2].type), int(ServoType));    // the first free outputs: 3 and 4
+        QCOMPARE(int(b.outputs[3].type), int(BlockSignal));
+        QCOMPARE(b.outputs[3].blockOwn(), 1);                // detector inputs 1 / 3 -> 2 / 4
+        QCOMPARE(b.outputs[3].blockNext(), 3);
+        QCOMPARE(int(b.inputs[1].type), int(Sensor));
+        QCOMPARE(int(b.inputs[2].type), int(Route));
+        QCOMPARE(b.inputs[2].route[0].output, 2);            // route steps renumbered
+        QCOMPARE(b.inputs[2].route[1].output, 9);            // not imported: stays on the user's own output 10
+        QCOMPARE(int(b.inputs[3].type), int(Sensor));
+        QCOMPARE(b.outputs[1].name, QStringLiteral("Mine")); // the user's own output keeps everything but D4
+        QCOMPARE(int(b.outputs[1].pinA), int(PinNA));
+        QCOMPARE(int(b.inputs[0].outputId), 1);
+        QTRY_VERIFY(!popups.texts.isEmpty());
+        QVERIFY(popups.texts.first().contains(QLatin1String("output 2")));
+        QVERIFY(w.windowTitle().endsWith(QLatin1String(" *")));
+
+        // not enough free slots: said, nothing imported
+        BoardConfig big;
+        for (int o = 0; o < 15; ++o) { big.outputs[o].type = SingleSteady; }
+        const BoardConfig before = view->board();
+        QVERIFY(!w.importParts(writeBoard(dir, "big.json", big), PartOutputs, false));
+        QTRY_VERIFY(popups.texts.last().startsWith(QLatin1String("Not enough free slots")));
+        QVERIFY(view->board().outputs == before.outputs);
+    }
+
+    void importDialogUi()
+    {
+        // File > Import…: choose a file, tick the parts, choose where to
+        QTemporaryDir dir;
+        BoardConfig file;
+        file.outputs[0].type = ServoType; file.outputs[0].pinA = 12;
+        file.inputs[0].type = Latching; file.inputs[0].address = 40;
+        const QString path = writeBoard(dir, "part.json", file);
+        BoardConfig mine;
+        mine.outputs[0].type = SingleSteady; mine.outputs[0].pinA = 3;
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        QVERIFY(w.loadFile(writeBoard(dir, "mine.json", mine)));
+        Popups popups;
+        popups.file = path;
+        bool seen = false, freeSlots = false;
+        popups.onDialog = [&seen, &freeSlots](QDialog *d) {
+            if (d->objectName() != QLatin1String("importDialog")) return false;
+            seen = true;
+            d->findChild<QCheckBox *>(QStringLiteral("partInputs"))->setChecked(false);
+            freeSlots = d->findChild<QRadioButton *>(QStringLiteral("importFree"))->isChecked();
+            const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");
+            if (!shots.isEmpty()) d->grab().save(QString::fromLocal8Bit(shots) + QStringLiteral("/import-dialog.png"));
+            d->accept();
+            return true;
+        };
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QStringLiteral("&Import…")) { a->trigger(); break; }
+        QVERIFY(seen && freeSlots);                          // "into free slots" is the default
+        QCOMPARE(int(view->board().outputs[1].type), int(ServoType));   // into the first free output
+        QCOMPARE(int(view->board().outputs[0].type), int(SingleSteady));
+        QCOMPARE(int(view->board().inputs[0].type), int(InputNotInUse)); // inputs not ticked
+    }
+
+    void openExampleIsATemplate()
+    {
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        const QDir examples(MainWindow::examplesDir());
+        const QStringList files = examples.entryList({ QStringLiteral("*.json") }, QDir::Files, QDir::Name);
+        QVERIFY(files.size() >= 5);
+        Popups popups;
+        int listed = -1;
+        popups.onDialog = [&listed](QDialog *d) {
+            if (d->objectName() != QLatin1String("exampleDialog")) return false;
+            auto *list = d->findChild<QListWidget *>();
+            listed = list->count();
+            for (int i = 0; i < list->count(); ++i)
+                if (list->item(i)->text().startsWith(QLatin1String("Servo decoder 16\n"))) list->setCurrentRow(i);
+            d->accept();
+            return true;
+        };
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QStringLiteral("Open &example…")) { a->trigger(); break; }
+        QCOMPARE(listed, files.size());
+        QVERIFY(w.filePath().isEmpty());                      // Save asks for a new name
+        BoardConfig ex;
+        QVERIFY(readBoard(examples.filePath(QStringLiteral("servo-decoder-16.json")), ex));
+        QVERIFY(w.findChild<ConnectionView *>()->board().outputs == ex.outputs);
+        QVERIFY(w.openExample(examples.filePath(QStringLiteral("routes-demo.json"))));
+        QVERIFY(w.filePath().isEmpty());
+        QVERIFY(w.loadFile(examples.filePath(QStringLiteral("routes-demo.json"))));
+        QVERIFY(!w.filePath().isEmpty());                     // an ordinary open keeps its path
+    }
+
+    // ── New board wizard, next steps ────────────────────────────────────────
+    void wizardAndNextSteps()
+    {
+        QTemporaryDir dir;
+        Ui::setLevel(Ui::Beginner);
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        // File > New board wizard…: 2 servos + 2 lights, DCC from 1, pins in order
+        Popups popups;
+        bool finished = false, tooMany = false, said = false, fitsAgain = false, summary = false;
+        popups.onDialog = [&](QDialog *d) {
+            auto *wiz = qobject_cast<QWizard *>(d);
+            if (!wiz) return false;
+            wiz->next();                                      // board: Nano
+            wiz->findChild<QSpinBox *>(QStringLiteral("servos"))->setValue(2);
+            wiz->findChild<QSpinBox *>(QStringLiteral("lights"))->setValue(2);
+            const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");
+            if (!shots.isEmpty()) wiz->grab().save(QString::fromLocal8Bit(shots) + QStringLiteral("/wizard-page2.png"));
+            wiz->findChild<QSpinBox *>(QStringLiteral("lights"))->setValue(16);
+            tooMany = !wiz->button(QWizard::NextButton)->isEnabled();   // 18 items: does not fit
+            said = visibleLabel(wiz->currentPage(), QStringLiteral("a board has 16 outputs"));
+            wiz->findChild<QSpinBox *>(QStringLiteral("lights"))->setValue(2);
+            fitsAgain = wiz->button(QWizard::NextButton)->isEnabled();
+            wiz->next();                                      // DCC from 1, no buttons (the defaults)
+            wiz->next();                                      // pins in order
+            wiz->next();                                      // summary
+            summary = wiz->findChild<QLabel *>(QStringLiteral("wizardSummary"))->text().contains(QLatin1String("Servo turnout 1"));
+            wiz->button(QWizard::FinishButton)->click();
+            finished = true;
+            return true;
+        };
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QStringLiteral("New board &wizard…")) { a->trigger(); break; }
+        QVERIFY(finished && tooMany && said && fitsAgain && summary);
+        QVERIFY(popups.texts.isEmpty());                     // the start screen counts as empty: no question
+        const BoardConfig &b = view->board();
+        QCOMPARE(int(b.outputs[0].type), int(ServoType));
+        QCOMPARE(int(b.outputs[3].type), int(SingleSteady));
+        QCOMPARE(int(b.outputs[3].pinA), 6);
+        QCOMPARE(int(b.outputs[4].type), int(OutputNotInUse));
+        QCOMPARE(int(b.inputs[2].address), 3);
+        QCOMPARE(Ui::level(), int(Ui::Beginner));
+
+        // the Next steps panel: one tick box per step, ticks kept in the board file
+        QWidget *panel = nullptr;
+        for (QToolButton *t : w.findChildren<QToolButton *>(QStringLiteral("nextStepsToggle"))) panel = t->parentWidget();
+        QVERIFY(panel && panel->isVisible());
+        QList<QCheckBox *> boxes = panel->findChildren<QCheckBox *>();
+        QCOMPARE(boxes.size(), b.nextSteps.size());
+        QCOMPARE(boxes[0]->text(), QStringLiteral("Wire Out 1–4 to D3–D6 (the Pin map tab shows which pin is which)"));
+        maybeScreenshot(w, "next-steps.png");
+        boxes[3]->setChecked(true);                           // "Try it in Simulate"
+        QVERIFY(w.windowTitle().endsWith(QLatin1String(" *")));
+        const QString path = dir.filePath(QStringLiteral("wizard.json"));
+        popups.file = path;                                   // Ctrl+S: Save asks for a name (no file yet)
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QStringLiteral("&Save")) { a->trigger(); break; }
+        BoardConfig saved;
+        QVERIFY(readBoard(path, saved));
+        QCOMPARE(saved.nextSteps.size(), b.nextSteps.size());
+        QVERIFY(saved.nextSteps[3].done && !saved.nextSteps[0].done);
+
+        // closed, reopened from the File menu; a new window loads the ticks
+        for (QToolButton *t : panel->findChildren<QToolButton *>(QStringLiteral("panelClose"))) t->click();
+        QVERIFY(!panel->isVisible());
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QStringLiteral("Show &next steps")) { QVERIFY(a->isEnabled()); a->trigger(); }
+        QVERIFY(panel->isVisible());
+        MainWindow w2;
+        w2.resize(1320, 900);
+        w2.show();
+        QVERIFY(w2.loadFile(path));
+        QCheckBox *ticked = nullptr;
+        for (QCheckBox *c : w2.findChildren<QCheckBox *>())
+            if (c->text() == QStringLiteral("Try it in Simulate")) ticked = c;
+        QVERIFY(ticked && ticked->isChecked() && ticked->isVisible());
+
+        // the wizard replaces work of your own only after a question
+        popups.button = QMessageBox::No;
+        WizardChoice c;
+        c.lights = 1;
+        w2.applyWizard(c);
+        QTRY_VERIFY(popups.texts.last().startsWith(QLatin1String("Replace the configuration")));
+        QCOMPARE(int(w2.findChild<ConnectionView *>()->board().outputs[0].type), int(ServoType));   // unchanged
+    }
 };
 
 QTEST_MAIN(TestGui)

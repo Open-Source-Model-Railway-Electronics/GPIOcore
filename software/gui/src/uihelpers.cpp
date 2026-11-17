@@ -109,11 +109,6 @@ QString levelName(int l)
     return l >= Expert ? QObject::tr("Expert") : l == Advanced ? QObject::tr("Advanced") : QObject::tr("Beginner");
 }
 
-QString levelNote(int l)
-{
-    return QObject::tr("Uses %1 features — switch to %1 in the View menu to edit").arg(levelName(l));
-}
-
 int outputTypeLevel(quint8 type)
 {
     switch (type)
@@ -169,6 +164,52 @@ int presetLevel(int preset)
     for (const OutputConfig &o : b.outputs) l = qMax(l, outputLevel(o));
     for (const InputConfig &i : b.inputs)   l = qMax(l, inputLevel(i, false));
     return l;
+}
+
+int configLevel(const BoardConfig &b)
+{
+    int l = Beginner;
+    for (const OutputConfig &o : b.outputs) l = qMax(l, outputLevel(o));
+    for (const InputConfig &i : b.inputs)   l = qMax(l, inputLevel(i, b.board.timing));
+    return l;
+}
+
+QStringList levelFeatures(const BoardConfig &b, int above)
+{
+    QStringList f;
+    auto add = [&f, above](int l, const QString &name) { if (l > above && !f.contains(name)) f << name; };
+    for (const OutputConfig &o : b.outputs)
+    {
+        if (o.type == OutputNotInUse)
+            continue;
+        switch (o.type)
+        {
+        case BlockSignal:    add(Expert, QObject::tr("block signals"));       break;
+        case FourToneSignal: add(Advanced, QObject::tr("4-aspect signals"));  break;
+        case Pwm:            add(Advanced, QObject::tr("PWM"));               break;
+        case SoundEffect:    add(Advanced, QObject::tr("sound effects"));     break;
+        default:             add(outputTypeLevel(o.type), QObject::tr("light effects")); break;
+        }
+        if (o.servoFollows() >= 0)
+            add(Expert, QObject::tr("semaphore arms"));
+        if (outputTypeInfo(o.type).relays && (o.relayA != PinNA || o.relayB != PinNA || o.relayC != PinNA))
+            add(Advanced, QObject::tr("frog relays"));
+        for (int k = 0; k < outputTypeInfo(o.type).pinCount; ++k)
+            if (o.pin(k) < 2 && o.type != SoundEffect)
+                add(Advanced, QObject::tr("D0 / D1"));
+    }
+    for (const InputConfig &i : b.inputs)
+    {
+        if (i.type == InputNotInUse)
+            continue;
+        if (i.type == Sensor)                                  add(Expert, QObject::tr("sensors"));
+        if (i.type == RouteStraight || i.type == RouteCurved)  add(Advanced, QObject::tr("routes on straight or curved only"));
+        if (i.isAnalog())                                      add(Advanced, QObject::tr("analog inputs"));
+        if (i.hasCustomValues())                               add(Advanced, QObject::tr("custom values"));
+        if (i.pin < 2)                                         add(Advanced, QObject::tr("D0 / D1"));
+        if (b.board.timing && isRouteType(i.type))             add(Advanced, QObject::tr("own wait time per route step"));
+    }
+    return f;
 }
 
 void offerItems(QComboBox *combo, const std::function<bool(int)> &offered)
@@ -376,6 +417,8 @@ void fillPinCombo(QComboBox *combo, bool output)
         const QString note     = pinNote(pin);
         if ((pin == 20 || pin == 21) && !reserved.isEmpty())
             continue;                    // A6/A7 only appear where they can be used
+        if (boardOptions().dccNext && !dccNextPort(pin))
+            continue;                    // DCCnext: only its ports P1-P16
         if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
         else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
         else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio("analog input only"));

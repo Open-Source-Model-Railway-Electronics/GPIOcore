@@ -13,8 +13,11 @@
 #include "pinmapview.h"
 #include "simulateddevice.h"
 #include "uihelpers.h"
+#include "boardwizard.h"
 
 #include <QAction>
+#include <QListWidget>
+#include <QRadioButton>
 #include <QDesktopServices>
 #include <QDialog>
 #include <QUrl>
@@ -146,6 +149,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
             markFileDirty();             // the screen now shows the board, not the file
             m_shadow = m_edit;
             statusBar()->showMessage(tr("Board read"), 4000);
+            QTimer::singleShot(0, this, &MainWindow::raiseLevelFor);
         }
         updateActions();
         if (failures)
@@ -291,6 +295,44 @@ void MainWindow::buildUi()
     addRow->addStretch(1);
     addRow->addWidget(addOut);
     cv->addLayout(addRow);
+    // "Next steps": the to-do list of the new board wizard, ticks are kept in the board file
+    m_stepsBox = new QWidget;
+    m_stepsBox->setObjectName(QStringLiteral("sidePanel"));
+    m_stepsBox->setAttribute(Qt::WA_StyledBackground);
+    auto *sv = new QVBoxLayout(m_stepsBox);
+    sv->setContentsMargins(8, 4, 4, 6);
+    auto *stepsHead = new QHBoxLayout;
+    m_stepsToggle = new QToolButton;
+    m_stepsToggle->setObjectName(QStringLiteral("nextStepsToggle"));
+    m_stepsToggle->setCheckable(true);
+    m_stepsToggle->setChecked(true);
+    m_stepsToggle->setAutoRaise(true);
+    m_stepsToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    m_stepsToggle->setArrowType(Qt::DownArrow);
+    m_stepsToggle->setToolTip(tr("Show or hide the list"));
+    auto *stepsClose = new QToolButton;
+    stepsClose->setObjectName(QStringLiteral("panelClose"));
+    stepsClose->setText(QStringLiteral("✕"));
+    stepsClose->setToolTip(tr("Close (File > Show next steps opens it again)"));
+    stepsHead->addWidget(m_stepsToggle);
+    stepsHead->addStretch(1);
+    stepsHead->addWidget(Info::button(QStringLiteral("wizard")));
+    stepsHead->addWidget(stepsClose);
+    sv->addLayout(stepsHead);
+    m_stepsBody = new QWidget;
+    new QVBoxLayout(m_stepsBody);
+    m_stepsBody->layout()->setContentsMargins(6, 0, 0, 0);
+    sv->addWidget(m_stepsBody);
+    connect(m_stepsToggle, &QToolButton::toggled, this, [this](bool open) {
+        m_stepsBody->setVisible(open);
+        m_stepsToggle->setArrowType(open ? Qt::DownArrow : Qt::RightArrow);
+    });
+    connect(stepsClose, &QToolButton::clicked, this, [this] {
+        m_stepsClosed = true;
+        m_stepsBox->hide();
+    });
+    m_stepsBox->hide();
+    cv->addWidget(m_stepsBox);
     cv->addWidget(viewScroll, 1);
 
     auto *config = new QWidget;
@@ -675,6 +717,7 @@ void MainWindow::buildToolbar()
     // Menus
     QMenu *file = menuBar()->addMenu(tr("&File"));
     file->addAction(tr("&New board (offline)…"), this, &MainWindow::newOfflineBoard);
+    file->addAction(tr("New board &wizard…"), this, &MainWindow::runWizard);
     m_actOpen = file->addAction(style()->standardIcon(QStyle::SP_DialogOpenButton), tr("&Open configuration…"),
                                 this, &MainWindow::openFile);
     m_actOpen->setShortcut(QKeySequence::Open);
@@ -684,6 +727,19 @@ void MainWindow::buildToolbar()
     m_actSave->setToolTip(tr("Save to this board's file (Ctrl+S)"));
     m_actSaveAs = file->addAction(tr("Save &as…"), this, &MainWindow::saveFile);
     m_actSaveAs->setShortcut(QKeySequence::SaveAs);
+    file->addAction(tr("Open &example…"), this, &MainWindow::openExampleDialog);
+    file->addSeparator();
+    file->addAction(tr("&Export…"), this, &MainWindow::exportDialog)
+        ->setToolTip(tr("Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example"));
+    file->addAction(tr("&Import…"), this, &MainWindow::importDialog)
+        ->setToolTip(tr("Add the outputs, inputs or board settings of another board file to this one"));
+    m_actNextSteps = file->addAction(tr("Show &next steps"), this, [this] {
+        m_stepsClosed = false;
+        refreshNextSteps();
+        m_stepsToggle->setChecked(true);
+    });
+    m_actNextSteps->setEnabled(false);
+    file->addSeparator();
     file->addAction(tr("Open the boards folder"), this, [] {
         QDir().mkpath(boardsDir());
         QDesktopServices::openUrl(QUrl::fromLocalFile(boardsDir()));
@@ -788,6 +844,9 @@ void MainWindow::buildToolbar()
     start->setShortcut(QKeySequence::HelpContents);
     help->addAction(tr("&Configure, simulate and live test"), this, [this] {
         Info::showDialog(QStringLiteral("modes"), tr("Configure, simulate and live test"), this);
+    });
+    help->addAction(tr("New board &wizard and next steps"), this, [this] {
+        Info::showDialog(QStringLiteral("wizard"), tr("New board wizard"), this);
     });
     help->addAction(tr("&User levels"), this, [this] {
         Info::showDialog(QStringLiteral("levels"), tr("User levels"), this);
@@ -1224,17 +1283,22 @@ void MainWindow::openFile()
         loadFile(path);
 }
 
-bool MainWindow::loadFile(const QString &path)
+static bool readConfig(const QString &path, BoardConfig &b, QString *error)
 {
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly))
     {
-        QMessageBox::warning(this, windowTitle(), f.errorString());
+        *error = f.errorString();
         return false;
     }
+    return BoardConfig::fromJson(QJsonDocument::fromJson(f.readAll()).object(), b, error);
+}
+
+bool MainWindow::loadFile(const QString &path)
+{
     BoardConfig b;
     QString err;
-    if (!BoardConfig::fromJson(QJsonDocument::fromJson(f.readAll()).object(), b, &err))
+    if (!readConfig(path, b, &err))
     {
         QMessageBox::warning(this, windowTitle(), err);
         return false;
@@ -1266,8 +1330,414 @@ bool MainWindow::loadFile(const QString &path)
     showInput(m_inEd->index());
     m_filePath = path;
     m_fileDirty = false;
+    m_stepsClosed = false;
+    refreshNextSteps();
     statusBar()->showMessage(tr("Loaded %1").arg(path), 6000);
+    raiseLevelFor();
     return true;
+}
+
+bool MainWindow::openExample(const QString &path)
+{
+    if (!loadFile(path))
+        return false;
+    m_filePath.clear();                      // an example is a template: Save always asks for a new name
+    statusBar()->showMessage(tr("Example opened. Save it under a name of your own (Ctrl+S); the example itself "
+                                "is never changed."), 8000);
+    return true;
+}
+
+QString MainWindow::examplesDir()
+{
+    const QString local = QCoreApplication::applicationDirPath() + QStringLiteral("/examples");
+#ifdef GPIOCORE_SOURCE_DIR
+    if (!QFileInfo(local).isDir())
+        return QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/examples");   // dev build: the source tree
+#endif
+    return local;
+}
+
+// "Ahob level crossing" from ahob-level-crossing.json
+static QString exampleTitle(const QString &path)
+{
+    QString t = QFileInfo(path).completeBaseName().replace(QLatin1Char('-'), QLatin1Char(' '));
+    if (!t.isEmpty())
+        t[0] = t[0].toUpper();
+    return t;
+}
+
+// What is in it: the board name and the first names, then the counts
+static QString exampleDescription(const BoardConfig &b)
+{
+    QStringList names;
+    int outs = 0, ins = 0;
+    for (const OutputConfig &o : b.outputs)
+    {
+        if (o.type == OutputNotInUse) continue;
+        ++outs;
+        if (!o.name.isEmpty() && names.size() < 3) names << o.name;
+    }
+    for (const InputConfig &i : b.inputs)
+    {
+        if (i.type == InputNotInUse) continue;
+        ++ins;
+        if (!i.name.isEmpty() && names.size() < 4) names << i.name;
+    }
+    if (!b.board.name.isEmpty())
+        names.prepend(b.board.name);
+    QString d = QCoreApplication::translate("MainWindow", "%1 output(s), %2 input(s), %3")
+                    .arg(outs).arg(ins).arg(boardTypeName(b.board.type));
+    if (!names.isEmpty())
+        d = names.join(QStringLiteral(", ")) + QStringLiteral(" · ") + d;
+    return d;
+}
+
+void MainWindow::openExampleDialog()
+{
+    QDialog d(this);
+    d.setObjectName(QStringLiteral("exampleDialog"));
+    d.setWindowTitle(tr("Open example"));
+    auto *v = new QVBoxLayout(&d);
+    auto *intro = new QLabel(tr("Start from an example. It opens like a board file, but without a file name: when you "
+                                "save, you choose a new name, so the example stays as it is."));
+    intro->setWordWrap(true);
+    v->addWidget(intro);
+    auto *list = new QListWidget;
+    const QDir dir(examplesDir());
+    for (const QString &f : dir.entryList({ QStringLiteral("*.json") }, QDir::Files, QDir::Name))
+    {
+        BoardConfig b;
+        QString err;
+        if (!readConfig(dir.filePath(f), b, &err))
+            continue;
+        auto *item = new QListWidgetItem(exampleTitle(f) + QLatin1Char('\n') + exampleDescription(b), list);
+        item->setData(Qt::UserRole, dir.filePath(f));
+        item->setToolTip(QDir::toNativeSeparators(dir.filePath(f)));
+    }
+    if (list->count() == 0)
+        new QListWidgetItem(tr("No examples found in %1").arg(QDir::toNativeSeparators(dir.path())), list);
+    list->setCurrentRow(0);
+    list->setSpacing(3);
+    v->addWidget(list, 1);
+    auto *bb = new QDialogButtonBox(QDialogButtonBox::Open | QDialogButtonBox::Cancel);
+    connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    connect(list, &QListWidget::itemDoubleClicked, &d, &QDialog::accept);
+    v->addWidget(bb);
+    d.resize(620, 480);
+    if (d.exec() != QDialog::Accepted || !list->currentItem())
+        return;
+    const QString path = list->currentItem()->data(Qt::UserRole).toString();
+    if (!path.isEmpty())
+        openExample(path);
+}
+
+// ── Export / import ─────────────────────────────────────────────────────────
+// Check boxes Outputs / Inputs / Board settings, with the number of items in use
+static QVector<QCheckBox *> sectionBoxes(QFormLayout *form, int outputs, int inputs)
+{
+    const QVector<QCheckBox *> boxes {
+        new QCheckBox(QCoreApplication::translate("MainWindow", "Outputs (%1 in use)").arg(outputs)),
+        new QCheckBox(QCoreApplication::translate("MainWindow", "Inputs (%1 in use)").arg(inputs)),
+        new QCheckBox(QCoreApplication::translate("MainWindow", "Board settings (type, route timing, interlocking)")),
+    };
+    const char *const names[3] = { "partOutputs", "partInputs", "partBoard" };
+    for (int k = 0; k < 3; ++k)
+    {
+        boxes[k]->setObjectName(QLatin1String(names[k]));
+        boxes[k]->setChecked(k < 2);
+        form->addRow(boxes[k]);
+    }
+    return boxes;
+}
+
+static int sectionsOf(const QVector<QCheckBox *> &boxes)
+{
+    return (boxes[0]->isChecked() ? PartOutputs : 0) | (boxes[1]->isChecked() ? PartInputs : 0)
+         | (boxes[2]->isChecked() ? PartBoard : 0);
+}
+
+static QDialogButtonBox *sectionButtons(QDialog &d, QFormLayout *form, const QVector<QCheckBox *> &boxes, const QString &ok)
+{
+    auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    bb->button(QDialogButtonBox::Ok)->setText(ok);
+    QObject::connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    QObject::connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    for (QCheckBox *b : boxes)               // nothing ticked: nothing to do
+        QObject::connect(b, &QCheckBox::toggled, &d, [bb, boxes] {
+            bb->button(QDialogButtonBox::Ok)->setEnabled(sectionsOf(boxes) != 0);
+        });
+    form->addRow(bb);
+    return bb;
+}
+
+bool MainWindow::exportParts(const QString &path, int sections)
+{
+    QFile f(path);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QMessageBox::warning(this, windowTitle(), f.errorString());
+        return false;
+    }
+    f.write(QJsonDocument(exportPart(m_edit, sections).toJson()).toJson(QJsonDocument::Indented));
+    statusBar()->showMessage(tr("Exported to %1").arg(QDir::toNativeSeparators(path)), 6000);
+    return true;
+}
+
+void MainWindow::exportDialog()
+{
+    int outs = 0, ins = 0;
+    for (const OutputConfig &o : m_edit.outputs) outs += o.type != OutputNotInUse;
+    for (const InputConfig &i : m_edit.inputs)   ins  += i.type != InputNotInUse;
+    QDialog d(this);
+    d.setObjectName(QStringLiteral("exportDialog"));
+    d.setWindowTitle(tr("Export"));
+    auto *form = new QFormLayout(&d);
+    auto *intro = new QLabel(tr("Save the items in use of the parts you tick in a board file of their own, with their "
+                                "names, settings and routes, e.g. to make your own example. Import adds them to "
+                                "another board."));
+    intro->setWordWrap(true);
+    form->addRow(intro);
+    const QVector<QCheckBox *> boxes = sectionBoxes(form, outs, ins);
+    sectionButtons(d, form, boxes, tr("Export…"));
+    if (d.exec() != QDialog::Accepted)
+        return;
+    QDir().mkpath(boardsDir());
+    const QString path = QFileDialog::getSaveFileName(this, tr("Export"), QDir(boardsDir()).filePath(QStringLiteral("export.json")),
+                                                      tr("GPIOcore configuration (*.json)"));
+    if (!path.isEmpty())
+        exportParts(path, sectionsOf(boxes));
+}
+
+void MainWindow::importDialog()
+{
+    const QString path = QFileDialog::getOpenFileName(this, tr("Import from a board file"), boardsDir(),
+                                                      tr("GPIOcore configuration (*.json)"));
+    if (path.isEmpty())
+        return;
+    BoardConfig file;
+    QString err;
+    if (!readConfig(path, file, &err))
+    {
+        QMessageBox::warning(this, windowTitle(), err);
+        return;
+    }
+    int outs = 0, ins = 0;
+    for (const OutputConfig &o : file.outputs) outs += o.type != OutputNotInUse;
+    for (const InputConfig &i : file.inputs)   ins  += i.type != InputNotInUse;
+    QDialog d(this);
+    d.setObjectName(QStringLiteral("importDialog"));
+    d.setWindowTitle(tr("Import from %1").arg(QFileInfo(path).fileName()));
+    auto *form = new QFormLayout(&d);
+    auto *intro = new QLabel(tr("Add the items in use of the parts you tick to this board."));
+    intro->setWordWrap(true);
+    form->addRow(intro);
+    const QVector<QCheckBox *> boxes = sectionBoxes(form, outs, ins);
+    auto *where = new QLabel(tr("Where to:"));
+    where->setObjectName(QStringLiteral("help"));
+    auto *same = new QRadioButton(tr("Same numbers (replace): every item goes to its own number"));
+    auto *freeSlots = new QRadioButton(tr("Into free slots: the first free outputs and inputs, links between the imported "
+                                     "items are renumbered"));
+    same->setObjectName(QStringLiteral("importSame"));
+    freeSlots->setObjectName(QStringLiteral("importFree"));
+    freeSlots->setChecked(true);
+    form->addRow(where);
+    form->addRow(same);
+    form->addRow(freeSlots);
+    auto *note = new QLabel(tr("A pin that is already in use goes to the imported item: your own item keeps its "
+                               "function, but loses that pin. The items concerned are listed afterwards."));
+    note->setWordWrap(true);
+    note->setObjectName(QStringLiteral("help"));
+    form->addRow(note);
+    sectionButtons(d, form, boxes, tr("Import"));
+    if (d.exec() != QDialog::Accepted)
+        return;
+    importParts(path, sectionsOf(boxes), same->isChecked());
+}
+
+bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers)
+{
+    BoardConfig file;
+    QString err;
+    if (!readConfig(path, file, &err))
+    {
+        QMessageBox::warning(this, windowTitle(), err);
+        return false;
+    }
+    const ImportResult plan = planImport(m_edit, file, sections, sameNumbers);
+    if (!plan.error.isEmpty())
+    {
+        QMessageBox::warning(this, windowTitle(), plan.error);
+        return false;
+    }
+    QStringList replaced;
+    int outs = 0, ins = 0;
+    for (int o = 0; o < NumOutputs; ++o)
+    {
+        const int t = plan.outputs[o];
+        if (t < 0) continue;
+        ++outs;
+        const OutputConfig &mine = m_edit.outputs[t];
+        if (mine.type != OutputNotInUse)
+            replaced << tr("Out %1 · %2").arg(t + 1).arg(mine.name.isEmpty() ? outputTypeName(mine.type) : mine.name);
+    }
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        const int t = plan.inputs[i];
+        if (t < 0) continue;
+        ++ins;
+        const InputConfig &mine = m_edit.inputs[t];
+        if (mine.type != InputNotInUse)
+            replaced << tr("In %1 · %2").arg(t + 1).arg(mine.name.isEmpty() ? inputTypeName(mine.type) : mine.name);
+    }
+    if (!replaced.isEmpty()
+        && QMessageBox::question(this, windowTitle(),
+                                 tr("These items of yours are replaced by the ones from the file:\n\n%1\n\nImport?")
+                                     .arg(replaced.join(QLatin1Char('\n'))))
+               != QMessageBox::Yes)
+        return false;
+
+    // The target slots are emptied first, so taking over pins only touches the items that stay.
+    for (int o = 0; o < NumOutputs; ++o) if (plan.outputs[o] >= 0) m_edit.outputs[plan.outputs[o]] = OutputConfig();
+    for (int i = 0; i < NumInputs; ++i)  if (plan.inputs[i] >= 0)  m_edit.inputs[plan.inputs[i]] = InputConfig();
+    QStringList taken;
+    QVector<OutputConfig> newOut(NumOutputs);
+    QVector<InputConfig>  newIn(NumInputs);
+    for (int o = 0; o < NumOutputs; ++o)
+    {
+        const int t = plan.outputs[o];
+        if (t < 0) continue;
+        newOut[o] = importedOutput(file, o, plan);
+        const OutputTypeInfo &info = outputTypeInfo(newOut[o].type);
+        QVector<quint8> pins;
+        for (int k = 0; k < 7; ++k)
+            if (((k < 4) ? (k < info.pinCount) : info.relays) && newOut[o].pin(k) < NumPins)
+                pins << newOut[o].pin(k);
+        const QString msg = takeOverPins(pins, t, -1, Ui::pinShare(newOut[o]));
+        if (!msg.isEmpty()) taken << tr("Out %1: %2").arg(t + 1).arg(msg);
+    }
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        const int t = plan.inputs[i];
+        if (t < 0) continue;
+        newIn[i] = importedInput(file, i, plan);
+        if (newIn[i].pin >= NumPins) continue;
+        const QString msg = takeOverPins({ newIn[i].pin }, -1, t, Ui::pinShare(newIn[i]));
+        if (!msg.isEmpty()) taken << tr("In %1: %2").arg(t + 1).arg(msg);
+    }
+    for (int o = 0; o < NumOutputs; ++o) if (plan.outputs[o] >= 0) m_edit.outputs[plan.outputs[o]] = newOut[o];
+    for (int i = 0; i < NumInputs; ++i)  if (plan.inputs[i] >= 0)  m_edit.inputs[plan.inputs[i]] = newIn[i];
+    if (sections & PartBoard)
+    {
+        const QString name = m_edit.board.name;          // the name belongs to this board
+        m_edit.board = file.board;
+        m_edit.board.name = name;
+        setBoardType(m_edit.board.type);
+        if (m_link->isReady() && m_link->caps().boardSettings)
+            m_link->writeBoard(m_edit.board);
+    }
+    // one edit: refreshed, sent to a connected board, the file is dirty
+    showOutput(m_outEd->index());
+    showInput(m_inEd->index());
+    m_outName->setText(m_edit.outputs[m_outEd->index()].name);
+    m_inName->setText(m_edit.inputs[m_inEd->index()].name);
+    m_inEd->setOutputs(outputNames(), outputTypes());
+    userEdited();
+    statusBar()->showMessage(tr("Imported %1 output(s) and %2 input(s) from %3").arg(outs).arg(ins)
+                                 .arg(QFileInfo(path).fileName()), 8000);
+    if (!taken.isEmpty())
+        QMessageBox::information(this, windowTitle(), tr("Some pins were already in use:\n\n%1").arg(taken.join(QLatin1Char('\n'))));
+    raiseLevelFor();
+    return true;
+}
+
+// ── New board wizard, next steps ────────────────────────────────────────────
+void MainWindow::runWizard()
+{
+    BoardWizard wizard(m_edit.board.type, this);
+    if (wizard.exec() == QDialog::Accepted)
+        applyWizard(wizard.choice());
+}
+
+void MainWindow::applyWizard(const WizardChoice &choice)
+{
+    // nothing in use, or the start screen (a factory-fresh board), counts as empty: no question
+    const BoardConfig fresh = SimulatedDevice::factoryDefaults();
+    bool empty = true, factory = true;
+    for (int o = 0; o < NumOutputs; ++o)
+    {
+        empty   &= m_edit.outputs[o].type == OutputNotInUse;
+        factory &= m_edit.outputs[o] == fresh.outputs[o] && m_edit.outputs[o].name.isEmpty();
+    }
+    for (int i = 0; i < NumInputs; ++i)
+    {
+        empty   &= m_edit.inputs[i].type == InputNotInUse;
+        factory &= m_edit.inputs[i] == fresh.inputs[i] && m_edit.inputs[i].name.isEmpty();
+    }
+    if (!empty && !factory
+        && QMessageBox::question(this, windowTitle(), tr("Replace the configuration on screen with the new board?"))
+               != QMessageBox::Yes)
+        return;
+    if (m_link->isOpen())
+        m_link->close();                     // a new board: offline, like New board
+    const BoardConfig b = wizardBoard(choice);
+    m_edit = m_dev = b;
+    m_shadow = b;
+    setBoardType(b.board.type);
+    showOutput(m_outEd->index());
+    showInput(m_inEd->index());
+    m_outName->setText(m_edit.outputs[m_outEd->index()].name);
+    m_inName->setText(m_edit.inputs[m_inEd->index()].name);
+    refreshAll();
+    m_filePath.clear();
+    markFileDirty();
+    m_stepsClosed = false;
+    refreshNextSteps();
+    statusBar()->showMessage(tr("New board ready. The Next steps list above the canvas shows what is left to do."), 8000);
+}
+
+void MainWindow::refreshNextSteps()
+{
+    QLayout *lay = m_stepsBody->layout();
+    while (QLayoutItem *item = lay->takeAt(0))
+    {
+        delete item->widget();
+        delete item;
+    }
+    const int n = m_edit.nextSteps.size();
+    auto title = [this] {
+        int done = 0;
+        for (const NextStep &s : m_edit.nextSteps) done += s.done;
+        m_stepsToggle->setText(tr("Next steps (%1 of %2 done)").arg(done).arg(m_edit.nextSteps.size()));
+    };
+    for (int k = 0; k < n; ++k)
+    {
+        auto *box = new QCheckBox(m_edit.nextSteps[k].text);
+        box->setChecked(m_edit.nextSteps[k].done);
+        lay->addWidget(box);
+        connect(box, &QCheckBox::toggled, this, [this, k, title](bool on) {
+            if (k >= m_edit.nextSteps.size()) return;
+            m_edit.nextSteps[k].done = on;   // kept in the board file
+            markFileDirty();
+            title();
+        });
+    }
+    title();
+    m_stepsBox->setVisible(n > 0 && !m_stepsClosed);
+    m_actNextSteps->setEnabled(n > 0);
+}
+
+// ── User level raised by a configuration ────────────────────────────────────
+void MainWindow::raiseLevelFor()
+{
+    // only what the GUI shows: never lowered, the configuration never changed
+    const int need = Ui::configLevel(m_edit);
+    if (need <= Ui::level())
+        return;
+    const QStringList features = Ui::levelFeatures(m_edit, Ui::level());
+    setLevel(need);
+    QMessageBox::information(this, windowTitle(), tr("This project uses %1 features (%2). The level is set to %1.")
+                                                      .arg(Ui::levelName(need), features.join(QStringLiteral(", "))));
 }
 
 void MainWindow::saveFile()
@@ -1479,7 +1949,7 @@ QStringList MainWindow::outputWarnings(int i) const
         if (p >= NumPins) continue;
         const QString reserved = pinReservedReason(p);
         if (!reserved.isEmpty())
-            w << tr("%1 uses %2, which is the %3.").arg(trGpio(roles[s]), pinName(p), reserved);
+            w << tr("%1 uses %2, which cannot be used here: %3.").arg(trGpio(roles[s]), pinName(p), reserved);
         for (const auto &u : usage[p])
         {
             if (u.output && u.index == i) continue;
@@ -1503,9 +1973,10 @@ QStringList MainWindow::outputWarnings(int i) const
             servo |= (o.type == ServoType);
         for (int s = 0; s < info.pinCount; ++s)
             if (servo && (c.pin(s) == 9 || c.pin(s) == 10))
-                w << tr("%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on D9 and D10 "
-                        "stops working as soon as at least one servo output exists. Use D3, D5, D6 or D11 for PWM, "
-                        "or remove the servo.").arg(trGpio(roles[s]), pinName(c.pin(s)));
+                w << tr("%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on %3 and %4 "
+                        "stops working as soon as at least one servo output exists. Use %5 for PWM, "
+                        "or remove the servo.").arg(trGpio(roles[s]), pinName(c.pin(s)), pinName(9), pinName(10),
+                                                    pwmPinNames(false).join(QStringLiteral(", ")));
     }
     w.removeDuplicates();
     return w;
@@ -1523,7 +1994,7 @@ QStringList MainWindow::inputWarnings(int i) const
     {
         const QString reserved = pinReservedReason(c.pin);
         if (!reserved.isEmpty())
-            w << tr("Pin %1 is the %2.").arg(pinName(c.pin), reserved);
+            w << tr("Pin %1 cannot be used here: %2.").arg(pinName(c.pin), reserved);
         const auto usage = Ui::pinUsage(m_edit);
         for (const auto &u : usage[c.pin])
             if ((u.output || u.index != i) && !(c.isAnalog() && u.share == Ui::ShareAnalog))   // analog inputs share a channel
@@ -1570,7 +2041,7 @@ QString MainWindow::outputNote(int i) const
     if (c.type == SoundEffect)               // D1 by design, see the type help
         return QString();
     for (int s = 0; s < outputTypeInfo(c.type).pinCount; ++s)
-        if (c.pin(s) < 2)
+        if (c.pin(s) < 2 && !boardOptions().dccNext)          // a DCCnext has no D0/D1: a warning instead
             return serialPinNote();
     return QString();
 }
@@ -1578,7 +2049,7 @@ QString MainWindow::outputNote(int i) const
 QString MainWindow::inputNote(int i) const
 {
     const InputConfig &c = m_edit.inputs[i];
-    return c.type != InputNotInUse && c.pin < 2 ? serialPinNote() : QString();
+    return c.type != InputNotInUse && c.pin < 2 && !boardOptions().dccNext ? serialPinNote() : QString();
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -2189,8 +2660,17 @@ void MainWindow::newOfflineBoard()
     auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
     connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    QPushButton *wizard = bb->addButton(tr("Use the wizard…"), QDialogButtonBox::ActionRole);
+    wizard->setToolTip(tr("Answer a few questions: what you want to control and how; the wizard sets it up"));
+    connect(wizard, &QPushButton::clicked, &d, [&d] { d.done(2); });
     form->addRow(bb);
-    if (d.exec() != QDialog::Accepted)
+    const int result = d.exec();
+    if (result == 2)
+    {
+        runWizard();
+        return;
+    }
+    if (result != QDialog::Accepted)
         return;
     const QString name = cleanBoardName(nameEdit->text());
     BoardConfig b = presetBoard(start->currentData().toInt());
@@ -2203,6 +2683,7 @@ void MainWindow::newOfflineBoard()
     showInput(m_inEd->index());
     refreshAll();
     markFileDirty();
+    refreshNextSteps();
 }
 
 void MainWindow::addBlock(bool output)

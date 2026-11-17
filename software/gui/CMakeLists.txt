@@ -60,6 +60,7 @@ add_library(gpiocore_core STATIC
     src/protocol.h        src/protocol.cpp
     src/gpioconfig.h      src/gpioconfig.cpp
     src/connections.h     src/connections.cpp
+    src/boardtools.h      src/boardtools.cpp
     src/devicelink.h      src/devicelink.cpp
     src/simulateddevice.h src/simulateddevice.cpp
 )
@@ -82,6 +83,7 @@ add_library(gpiocore_ui STATIC
     src/qrcode.h          src/qrcode.cpp
     src/webremote.h       src/webremote.cpp
     src/infotexts.h       src/infotexts.cpp
+    src/boardwizard.h     src/boardwizard.cpp
     src/i18n.h            src/i18n.cpp
 )
 target_link_libraries(gpiocore_ui PUBLIC gpiocore_core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)

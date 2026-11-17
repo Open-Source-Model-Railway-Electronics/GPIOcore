@@ -232,11 +232,18 @@ QByteArray encodeBoard(const BoardSettings &b);       // payload without the len
 bool       decodeBoard(const QByteArray &payload, BoardSettings &b);
 
 // ── Whole board ─────────────────────────────────────────────────────────────
+struct NextStep                         // an item of the "Next steps" list (GUI only, kept in the board file)
+{
+    QString text;
+    bool    done = false;
+};
+
 struct BoardConfig
 {
     BoardSettings board;
     std::array<OutputConfig, NumOutputs> outputs;
     std::array<InputConfig,  NumInputs>  inputs;
+    QVector<NextStep> nextSteps;        // GUI only: the to-do list the new board wizard made ("nextSteps")
 
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &o, BoardConfig &out, QString *error);
@@ -252,10 +259,13 @@ struct BoardOptions
 BoardOptions &boardOptions();
 void          setBoardType(quint8 type);   // also sets dccNext
 
-QString pinName(quint8 pin);            // "D5", "A0", "—"
-QString pinLabel(quint8 pin);           // pinName plus "port n" on a DCCnext
+QString arduinoPinName(quint8 pin);     // "D5", "A0", "—": the Arduino name on every board
+QString pinName(quint8 pin);            // what the user sees: "P1" for a DCCnext port, otherwise arduinoPinName
+QString pinNameOn(quint8 boardType, quint8 pin);   // pinName for that board type
+QString pinLabel(quint8 pin);           // pin lists: "P1 (D3)" on a DCCnext, otherwise pinName
 int     dccNextPort(quint8 pin);        // 1..16, or 0 when the pin is not a DCCnext port
 bool    isPwmPin(quint8 pin);           // same list as isPwmPin() in output.cpp
+QStringList pwmPinNames(bool withServoTimer = true);   // "D3", "D5", ... (P1, P3, ... on a DCCnext)
 QString pinReservedReason(quint8 pin);  // non-empty: the pin cannot be used (conflict)
 QString pinNote(quint8 pin);            // non-empty: usable, but with a caveat (D0/D1)
 QString pinOutputReason(quint8 pin);    // non-empty: the pin cannot be an output (A6/A7)

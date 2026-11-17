@@ -521,6 +521,13 @@ QJsonObject BoardConfig::toJson() const
     for (int i = 0; i < NumInputs; ++i)  { QJsonObject o = inputs[i].toJson();  o["index"] = i; ins.append(o); }
     root["outputs"] = outs;
     root["inputs"]  = ins;
+    if (!nextSteps.isEmpty())
+    {
+        QJsonArray steps;
+        for (const NextStep &s : nextSteps)
+            steps.append(QJsonObject{ { "text", s.text }, { "done", s.done } });
+        root["nextSteps"] = steps;
+    }
     return root;
 }
 
@@ -541,6 +548,9 @@ bool BoardConfig::fromJson(const QJsonObject &root, BoardConfig &out, QString *e
     for (int i = 0; i < NumOutputs; ++i) out.outputs[i] = OutputConfig::fromJson(outs.at(i).toObject());
     for (int i = 0; i < NumInputs;  ++i) out.inputs[i]  = InputConfig::fromJson(ins.at(i).toObject());
     out.board = root.contains("board") ? BoardSettings::fromJson(root["board"].toObject()) : BoardSettings();
+    out.nextSteps.clear();
+    for (const QJsonValue &v : root["nextSteps"].toArray())
+        out.nextSteps.append({ v.toObject()["text"].toString(), v.toObject()["done"].toBool() });
     return true;
 }
 
@@ -626,7 +636,7 @@ BoardOptions &boardOptions()
     return options;
 }
 
-QString pinName(quint8 pin)
+QString arduinoPinName(quint8 pin)
 {
     if (pin < 14)       return QStringLiteral("D%1").arg(pin);
     if (pin < NumPins)  return QStringLiteral("A%1").arg(pin - 14);   // A0..A7
@@ -641,11 +651,32 @@ int dccNextPort(quint8 pin)
     return 0;
 }
 
+QString pinName(quint8 pin)
+{
+    return pinNameOn(boardOptions().dccNext ? quint8(BoardDccNext) : boardOptions().type, pin);
+}
+
+QString pinNameOn(quint8 boardType, quint8 pin)
+{
+    if (boardType == BoardDccNext && dccNextPort(pin))
+        return QStringLiteral("P%1").arg(dccNextPort(pin));   // the port printed on the board
+    return arduinoPinName(pin);
+}
+
 QString pinLabel(quint8 pin)
 {
     if (boardOptions().dccNext && dccNextPort(pin))
-        return QStringLiteral("%1 · port %2").arg(pinName(pin)).arg(dccNextPort(pin));
+        return QStringLiteral("%1 (%2)").arg(pinName(pin), arduinoPinName(pin));
     return pinName(pin);
+}
+
+QStringList pwmPinNames(bool withServoTimer)
+{
+    QStringList names;
+    for (quint8 p = 0; p < NumPins; ++p)
+        if (isPwmPin(p) && (withServoTimer || !isServoTimerPin(p)))
+            names << pinName(p);
+    return names;
 }
 
 bool isPwmPin(quint8 pin)
@@ -656,6 +687,8 @@ bool isPwmPin(quint8 pin)
 QString pinReservedReason(quint8 pin)
 {
     const BoardOptions &b = boardOptions();
+    if (b.dccNext && pin != 2 && pin < NumPins && !dccNextPort(pin))
+        return trGpio("not a DCCnext port");   // only P1-P16 (D3-D12, A0-A5) are on its terminals
     switch (pin)
     {
     case 0:  return b.serialPinsUsable ? QString() : trGpio("Serial RX (GUI link)");
@@ -663,7 +696,7 @@ QString pinReservedReason(quint8 pin)
     case 2:  return trGpio("DCC input");
     case 13: return trGpio("config LED");
     case 20: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
-    case 21: return trGpio("config button");
+    case 21: return b.type == BoardUno ? trGpio("only on an Arduino Nano") : trGpio("config button");
     }
     return QString();
 }

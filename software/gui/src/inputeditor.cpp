@@ -114,18 +114,6 @@ void InputEditor::buildUi()
     m_note->setWordWrap(true);
     m_note->hide();
     root->addWidget(m_note);
-    // above the user level: everything is shown, nothing can be changed
-    m_levelNote = new QLabel;
-    m_levelNote->setObjectName(QStringLiteral("warn"));
-    m_levelNote->setWordWrap(true);
-    m_levelRow = new QWidget;
-    auto *levelLay = new QHBoxLayout(m_levelRow);
-    levelLay->setContentsMargins(0, 0, 0, 0);
-    levelLay->addWidget(m_levelNote, 1);
-    levelLay->addWidget(Info::button(QStringLiteral("levels")));
-    m_levelRow->hide();
-    root->addWidget(m_levelRow);
-
     // Behaviour of direct control: toggle / absolute. A route has no choice:
     // it starts on a button press (falling edge) or on any DCC command.
     m_modeBox = new QGroupBox(tr("Behaviour"));
@@ -700,25 +688,25 @@ void InputEditor::refresh()
     m_useAddr->setEnabled(info.usesAddress);
     Ui::selectData(m_readAs, m_cfg.analog);
     if (m_cfg.isAnalog())
-        Ui::selectData(m_channel, m_cfg.pin);
+        Ui::selectData(m_channel, m_cfg.pin, QStringLiteral("⚠ %1").arg(pinName(m_cfg.pin)));
     else
-        Ui::selectData(m_pin, m_cfg.pin);
+        Ui::selectData(m_pin, m_cfg.pin, QStringLiteral("⚠ %1").arg(pinName(m_cfg.pin)));
     m_threshold->setValue(m_cfg.threshold);
     updateAnalog();
     Ui::selectData(m_output, m_cfg.outputId);
 
     m_targetBox->setVisible(info.usesOutput);
     const bool values = m_cfg.hasCustomValues();
-    const int shown = qMax(Ui::level(), Ui::inputLevel(m_cfg, m_timing));   // a higher level in use: shown as at that level
+    const int shown = Ui::level();          // features above the level are not shown (they stay as they are)
     m_customRow->setVisible(fn == FnDirect && shown >= Ui::Advanced);
     m_custom->setChecked(values);
     for (int k = 0; k < 2; ++k)
     {
         const bool show = fn == FnDirect && values;
-        m_valueRow[k]->setVisible(show);
+        m_valueRow[k]->setVisible(show && shown >= Ui::Advanced);     // still filled in: collect() reads it
         if (auto *form = qobject_cast<QFormLayout *>(m_targetBox->layout()))
             if (QWidget *label = form->labelForField(m_valueRow[k]))
-                label->setVisible(show);
+                label->setVisible(show && shown >= Ui::Advanced);
         if (show)
             showStepValue(m_valueMode[k], m_value[k], m_valuePick[k], m_cfg.route[k], stepKind(outputType(m_cfg.outputId)));
     }
@@ -745,14 +733,6 @@ void InputEditor::refresh()
 void InputEditor::applyLevel()
 {
     Ui::offerItems(m_function, [](int fn) { return fn != FnSensor || Ui::level() >= Ui::Expert; });
-    const int need = Ui::inputLevel(m_cfg, m_timing);
-    const bool locked = need > Ui::level();
-    m_levelNote->setText(locked ? Ui::levelNote(need) : QString());
-    m_levelRow->setVisible(locked);
-    m_function->setEnabled(!locked);
-    for (QWidget *w : { static_cast<QWidget *>(m_modeBox), static_cast<QWidget *>(m_srcBox),
-                        static_cast<QWidget *>(m_targetBox), static_cast<QWidget *>(m_routeBox) })
-        w->setEnabled(!locked);
 }
 
 void InputEditor::collect()

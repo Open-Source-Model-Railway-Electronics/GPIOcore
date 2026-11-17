@@ -115,6 +115,12 @@ bool ConnectionView::sensorInput(int i) const
     return m_frame == Frame::Simulate && c.type == Sensor && !c.isAnalog() && c.pin < NumPins;
 }
 
+bool ConnectionView::pinInput(int i) const
+{
+    const InputConfig &c = m_board.inputs[i];
+    return m_frame == Frame::Simulate && (isDirectType(c.type) || isRouteType(c.type)) && !c.isAnalog() && c.pin < NumPins;
+}
+
 void ConnectionView::setOutputLive(int o, int state, int value)
 {
     if (o < 0 || o >= NumOutputs)
@@ -240,6 +246,14 @@ void ConnectionView::drawInputLive(QPainter &p, int i)
         }
         else if (c.type == Latching)
         {
+            if (pinInput(i) && (dir == 0) == m_sensorHeld[i])   // the switch position the pin is held in
+            {
+                QPainterPath held;
+                held.addRoundedRect(b, 6, 6);
+                p.fillPath(held, Ui::themed(QColor(0xDB, 0xEA, 0xFE)));
+                p.setPen(QPen(QColor(0x25, 0x63, 0xEB), 1.5));
+                p.drawPath(held);
+            }
             drawLiveDot(p, QPointF(b.left() + 11, b.center().y()), 5, dir, 0);
             p.setPen(kText);
             p.drawText(b.adjusted(18, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter, dir ? QStringLiteral("▶") : QStringLiteral("◀"));
@@ -907,7 +921,19 @@ void ConnectionView::mousePressEvent(QMouseEvent *e)
                         update();
                     }
                     else if (liveValueInput(i)) emit liveValueRequested(i);
-                    else                        emit liveTriggerRequested(i, dir);
+                    else if (pinInput(i) && m_board.inputs[i].type == Latching)
+                    {
+                        m_sensorHeld[i] = (dir == 0);       // a switch: ◀ holds the pin low, ▶ high
+                        emit sensorRequested(i, m_sensorHeld[i]);
+                        update();
+                    }
+                    else if (pinInput(i))
+                    {
+                        // a button: pressed (low), released after 150 ms; the firmware reads the pins every 50 ms
+                        emit sensorRequested(i, true);
+                        QTimer::singleShot(150, this, [this, i] { emit sensorRequested(i, false); });
+                    }
+                    else                        emit liveTriggerRequested(i, dir);   // no pin: like a DCC command
                     return;
                 }
     }
