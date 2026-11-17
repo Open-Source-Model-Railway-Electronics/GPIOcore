@@ -450,6 +450,30 @@ int currentData(const QComboBox *combo)
     return combo->currentData().toInt();
 }
 
+QString inputDisplayName(const InputConfig &c, int index)
+{
+    const QString name = c.name.trimmed();
+    return name.isEmpty() ? QObject::tr("In %1").arg(index + 1) : name;
+}
+
+QString outputDisplayName(const OutputConfig &c, int index)
+{
+    const QString name = c.name.trimmed();
+    return name.isEmpty() ? QObject::tr("Out %1").arg(index + 1) : name;
+}
+
+void setEditorTitle(QLabel *title, const QString &name, const QString &number)
+{
+    const QString n = name.trimmed();
+    title->setToolTip(n);
+    if (n.isEmpty())
+        title->setText(number);
+    else        // a long name is elided, so the editor does not get wider
+        title->setText(QStringLiteral("%1&nbsp;&nbsp;<span style=\"font-size:small; font-weight:normal\">%2</span>")
+                           .arg(title->fontMetrics().elidedText(n, Qt::ElideRight, 200).toHtmlEscaped(),
+                                number.toHtmlEscaped()));
+}
+
 static BoardConfig g_pinBoard;
 static bool        g_pinBoardSet = false;
 
@@ -556,7 +580,8 @@ void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share)
             if (u.output == forOutput && u.index == selfIndex)
                 continue;                                    // this input / output itself
             (share != ShareNone && u.share == share ? shared : users)
-                << (u.output ? QObject::tr("Out %1").arg(u.index + 1) : QObject::tr("In %1").arg(u.index + 1));
+                << (u.output ? outputDisplayName(g_pinBoard.outputs[u.index], u.index)
+                             : inputDisplayName(g_pinBoard.inputs[u.index], u.index));
         }
         users.removeDuplicates();
         shared.removeDuplicates();

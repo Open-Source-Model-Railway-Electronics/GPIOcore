@@ -25,6 +25,7 @@ public:
     void setOutput(int index, const Gpio::OutputConfig &c);
     Gpio::OutputConfig config() const { return m_cfg; }
     int  index() const { return m_index; }
+    void setName(const QString &name);      // the user's name of this output, shown in the title
 
     // warnings (red) and a note (blue, information only, e.g. D0/D1)
     void setWarnings(const QStringList &warnings, const QString &note = QString());
@@ -32,7 +33,7 @@ public:
     void setLiveAvailable(bool available);   // board supports SERVO_LIVE
     void refreshPinCombos();                  // board profile changed (DCCnext, D0/D1)
     void refreshPinMarks();                   // pins used elsewhere in red
-    // Input names ("Input 3 · Sensor (occupancy)") and types, for the detectors of a block signal / semaphore arm
+    // Input names (the user's name or "In 3") and types, for the detectors of a block signal / semaphore arm
     void setInputs(const QStringList &names, const QVector<quint8> &types);
 
     enum Frog { FrogNone, FrogElectro, FrogUni };

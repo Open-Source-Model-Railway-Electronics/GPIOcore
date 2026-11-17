@@ -46,6 +46,9 @@ public:
     void selectOutput(int index);
 
     const Gpio::BoardConfig &board() const { return m_board; }
+    // Top line of a block: the user's name, else "In n" / "Out n"
+    QString inputTitle(int index) const;
+    QString outputTitle(int index) const;
     QColor inputColor(int index) const;
     QColor outputColor(int index) const;
     QRectF inputRect(int index) const;
@@ -113,6 +116,7 @@ private:
     bool    m_hideUnused = false;
     int     m_hoverIn = -1, m_hoverOut = -1;
     QRectF  trashRect(bool output, int index) const;
+    qreal   outputTitleWidth(int index) const;   // the name and the trash bin; the type label follows
     bool    m_live = false;
     bool    m_editable = true;
     Frame   m_frame = Frame::None;

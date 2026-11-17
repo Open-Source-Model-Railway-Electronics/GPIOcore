@@ -26,8 +26,9 @@ public:
     void setInput(int index, const Gpio::InputConfig &c);
     Gpio::InputConfig config() const { return m_cfg; }
     int  index() const { return m_index; }
+    void setName(const QString &name);      // the user's name of this input, shown in the title
 
-    // Output names ("Output 3 · Servo") and types, for pickers and step values
+    // Output names (the user's name or "Out 3") and types, for pickers and step values
     void setOutputs(const QStringList &names, const QVector<quint8> &types);
     void setOutputNames(const QStringList &names) { setOutputs(names, m_outputTypes); }
     void setRouteLimits(const Gpio::RouteLimits &limits, int stepsUsedElsewhere);

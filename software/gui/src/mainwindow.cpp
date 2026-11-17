@@ -116,7 +116,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         m_view->setOutputLive(o, state, value);
         if (m_view->liveMode() && o >= 0 && o < NumOutputs)
         {
-            const QString name = m_edit.outputs[o].name.isEmpty() ? tr("Output %1").arg(o + 1) : m_edit.outputs[o].name;
+            const QString name = Ui::outputDisplayName(m_edit.outputs[o], o);
             const QString what = state == 3 ? tr("frog relays A %1, B %2, unifrog %3")
                                                   .arg(value & 1 ? tr("on") : tr("off"), value & 2 ? tr("on") : tr("off"),
                                                        value & 4 ? tr("on") : tr("off"))
@@ -234,7 +234,8 @@ void MainWindow::buildUi()
     makePanel(m_outEd, tr("OUTPUT SETTINGS"), m_rightPanel, m_outName);
     connect(m_inName, &QLineEdit::textEdited, this, [this](const QString &t) {
         m_edit.inputs[m_inEd->index()].name = t.trimmed();
-        refreshRows();
+        m_inEd->setName(t.trimmed());
+        refreshAll();                    // the name shows wherever this input is meant
         markFileDirty();
     });
     // lamp colours of a 4-aspect / block signal: only for the GUI, kept in the board file
@@ -269,8 +270,8 @@ void MainWindow::buildUi()
 
     connect(m_outName, &QLineEdit::textEdited, this, [this](const QString &t) {
         m_edit.outputs[m_outEd->index()].name = t.trimmed();
-        refreshRows();
-        m_inEd->setOutputs(outputNames(), outputTypes());
+        m_outEd->setName(t.trimmed());
+        refreshAll();                    // the name shows wherever this output is meant
         markFileDirty();
     });
 
@@ -403,14 +404,17 @@ void MainWindow::buildUi()
         {
         case ConnectResult::Connected:
         case ConnectResult::Replaced:
-            statusBar()->showMessage(tr("Input %1 → output %2").arg(in + 1).arg(out + 1), 3000);
+            statusBar()->showMessage(tr("%1 → %2").arg(Ui::inputDisplayName(m_edit.inputs[in], in),
+                                                       Ui::outputDisplayName(m_edit.outputs[out], out)), 3000);
             break;
         case ConnectResult::AlreadyConnected:
-            statusBar()->showMessage(tr("Input %1 already drives output %2").arg(in + 1).arg(out + 1), 3000);
+            statusBar()->showMessage(tr("%1 already drives %2").arg(Ui::inputDisplayName(m_edit.inputs[in], in),
+                                                                     Ui::outputDisplayName(m_edit.outputs[out], out)), 3000);
             break;
         case ConnectResult::RouteFull:
-            statusBar()->showMessage(tr("The route of input %1 already has %2 steps (maximum)")
-                                         .arg(in + 1).arg(routeLimits().maxSteps), 4000);
+            statusBar()->showMessage(tr("The route of %1 already has %2 steps (maximum)")
+                                         .arg(Ui::inputDisplayName(m_edit.inputs[in], in),
+                                              QString::number(routeLimits().maxSteps)), 4000);
             break;
         case ConnectResult::PoolFull:
             statusBar()->showMessage(tr("The board has no room for more route steps (%1 in total)")
@@ -418,8 +422,8 @@ void MainWindow::buildUi()
             break;
         case ConnectResult::NotConnectable:
             if (out >= 0 && out < NumOutputs && m_edit.outputs[out].type == BlockSignal)
-                statusBar()->showMessage(tr("Output %1 is a block signal: it sets its own aspect from its detectors, "
-                                            "an input cannot switch it.").arg(out + 1), 5000);
+                statusBar()->showMessage(tr("%1 is a block signal: it sets its own aspect from its detectors, "
+                                            "an input cannot switch it.").arg(Ui::outputDisplayName(m_edit.outputs[out], out)), 5000);
             break;
         }
         userEdited();
@@ -1187,7 +1191,7 @@ void MainWindow::writeDirty(bool live)
     for (int i = 0; i < NumInputs; ++i)
         if (inputDirty(i))
         {
-            if (live && m_liveTried.contains(i)) { refused << tr("input %1").arg(i + 1); continue; }
+            if (live && m_liveTried.contains(i)) { refused << Ui::inputDisplayName(m_edit.inputs[i], i); continue; }
             m_liveTried.insert(i);
             m_link->writeInput(i, m_edit.inputs[i]);
             m_link->writeRoute(i, m_edit.inputs[i].route);
@@ -1196,7 +1200,7 @@ void MainWindow::writeDirty(bool live)
     for (int i = 0; i < NumOutputs; ++i)
         if (outputDirty(i))
         {
-            if (live && m_liveTried.contains(100 + i)) { refused << tr("output %1").arg(i + 1); continue; }
+            if (live && m_liveTried.contains(100 + i)) { refused << Ui::outputDisplayName(m_edit.outputs[i], i); continue; }
             m_liveTried.insert(100 + i);
             m_link->writeOutput(i, m_edit.outputs[i]);
             m_link->readOutput(i);
@@ -1579,7 +1583,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
         ++outs;
         const OutputConfig &mine = m_edit.outputs[t];
         if (mine.type != OutputNotInUse)
-            replaced << tr("Out %1 · %2").arg(t + 1).arg(mine.name.isEmpty() ? outputTypeName(mine.type) : mine.name);
+            replaced << tr("%1 · %2").arg(Ui::outputDisplayName(mine, t), outputTypeName(mine.type));
     }
     for (int i = 0; i < NumInputs; ++i)
     {
@@ -1588,7 +1592,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
         ++ins;
         const InputConfig &mine = m_edit.inputs[t];
         if (mine.type != InputNotInUse)
-            replaced << tr("In %1 · %2").arg(t + 1).arg(mine.name.isEmpty() ? inputTypeName(mine.type) : mine.name);
+            replaced << tr("%1 · %2").arg(Ui::inputDisplayName(mine, t), inputTypeName(mine.type));
     }
     if (!replaced.isEmpty()
         && QMessageBox::question(this, windowTitle(),
@@ -1614,7 +1618,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
             if (((k < 4) ? (k < info.pinCount) : info.relays) && newOut[o].pin(k) < NumPins)
                 pins << newOut[o].pin(k);
         const QString msg = takeOverPins(pins, t, -1, Ui::pinShare(newOut[o]));
-        if (!msg.isEmpty()) taken << tr("Out %1: %2").arg(t + 1).arg(msg);
+        if (!msg.isEmpty()) taken << tr("%1: %2").arg(Ui::outputDisplayName(newOut[o], t), msg);
     }
     for (int i = 0; i < NumInputs; ++i)
     {
@@ -1623,7 +1627,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
         newIn[i] = importedInput(file, i, plan);
         if (newIn[i].pin >= NumPins) continue;
         const QString msg = takeOverPins({ newIn[i].pin }, -1, t, Ui::pinShare(newIn[i]));
-        if (!msg.isEmpty()) taken << tr("In %1: %2").arg(t + 1).arg(msg);
+        if (!msg.isEmpty()) taken << tr("%1: %2").arg(Ui::inputDisplayName(newIn[i], t), msg);
     }
     for (int o = 0; o < NumOutputs; ++o) if (plan.outputs[o] >= 0) m_edit.outputs[plan.outputs[o]] = newOut[o];
     for (int i = 0; i < NumInputs; ++i)  if (plan.inputs[i] >= 0)  m_edit.inputs[plan.inputs[i]] = newIn[i];
@@ -1896,9 +1900,7 @@ QStringList MainWindow::outputNames() const
 {
     QStringList names;
     for (int i = 0; i < NumOutputs; ++i)
-        names << (m_edit.outputs[i].name.isEmpty()
-                      ? tr("Output %1 · %2").arg(i + 1).arg(outputTypeName(m_edit.outputs[i].type))
-                      : tr("Output %1 · %2").arg(i + 1).arg(m_edit.outputs[i].name));
+        names << Ui::outputDisplayName(m_edit.outputs[i], i);
     return names;
 }
 
@@ -1914,8 +1916,7 @@ QStringList MainWindow::inputNames() const
 {
     QStringList names;
     for (int i = 0; i < NumInputs; ++i)
-        names << tr("Input %1 · %2").arg(i + 1).arg(m_edit.inputs[i].name.isEmpty() ? inputTypeName(m_edit.inputs[i].type)
-                                                                               : m_edit.inputs[i].name);
+        names << Ui::inputDisplayName(m_edit.inputs[i], i);
     return names;
 }
 
@@ -1954,8 +1955,10 @@ QStringList MainWindow::outputWarnings(int i) const
         {
             if (u.output && u.index == i) continue;
             if (Ui::pinShare(c) != Ui::ShareNone && u.share == Ui::pinShare(c)) continue;   // sound outputs share D1
-            w << (u.output ? tr("%1 (%2) is also used by output %3 (%4).").arg(trGpio(roles[s]), pinName(p)).arg(u.index + 1).arg(u.role)
-                           : tr("%1 (%2) is also used by input %3.").arg(trGpio(roles[s]), pinName(p)).arg(u.index + 1));
+            w << (u.output ? tr("%1 (%2) is also used by %3 (%4).").arg(trGpio(roles[s]), pinName(p),
+                                                                         Ui::outputDisplayName(m_edit.outputs[u.index], u.index), u.role)
+                           : tr("%1 (%2) is also used by %3.").arg(trGpio(roles[s]), pinName(p),
+                                                                   Ui::inputDisplayName(m_edit.inputs[u.index], u.index)));
         }
         if (info.needsPwm && s < info.pinCount && !isPwmPin(p))
             w << tr("%1 (%2) is not PWM capable; %3 needs PWM.")
@@ -1963,7 +1966,8 @@ QStringList MainWindow::outputWarnings(int i) const
     }
     for (int b : c.watchedInputs())             // block signal / semaphore arm: Input::occupied() needs a pin
         if (m_edit.inputs[b].type == InputNotInUse || m_edit.inputs[b].pin == PinNA)
-            w << tr("Detector input %1 is not in use or has no pin: the board never sees that block occupied.").arg(b + 1);
+            w << tr("Detector %1 is not in use or has no pin: the board never sees that block occupied.")
+                     .arg(Ui::inputDisplayName(m_edit.inputs[b], b));
     if (c.type == SoundEffect && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
         w << tr("The firmware on this board has no sound effect output yet: update the firmware (Board > Flash firmware).");
     if (info.needsPwm || c.type == Pwm)
@@ -1998,8 +2002,9 @@ QStringList MainWindow::inputWarnings(int i) const
         const auto usage = Ui::pinUsage(m_edit);
         for (const auto &u : usage[c.pin])
             if ((u.output || u.index != i) && !(c.isAnalog() && u.share == Ui::ShareAnalog))   // analog inputs share a channel
-                w << (u.output ? tr("Pin %1 is also used by output %2.").arg(pinName(c.pin)).arg(u.index + 1)
-                               : tr("Pin %1 is also used by input %2.").arg(pinName(c.pin)).arg(u.index + 1));
+                w << tr("Pin %1 is also used by %2.").arg(pinName(c.pin),
+                                                          u.output ? Ui::outputDisplayName(m_edit.outputs[u.index], u.index)
+                                                                   : Ui::inputDisplayName(m_edit.inputs[u.index], u.index));
     }
     if (c.isAnalog() && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
         w << tr("The firmware on this board cannot read analog inputs yet: update the firmware (Board > Flash firmware).");
@@ -2011,19 +2016,23 @@ QStringList MainWindow::inputWarnings(int i) const
     {
         for (int s = 0; s < c.route.size(); ++s)
         {
-            if (m_edit.outputs[c.route[s].output].type == OutputNotInUse)
-                w << tr("Route step %1 sets output %2, which is not in use.").arg(s + 1).arg(c.route[s].output + 1);
-            if (m_edit.outputs[c.route[s].output].type == BlockSignal)
-                w << tr("Route step %1 sets output %2, a block signal: it ignores the step.").arg(s + 1).arg(c.route[s].output + 1);
+            const int o = c.route[s].output;
+            if (m_edit.outputs[o].type == OutputNotInUse)
+                w << tr("Route step %1 sets %2, which is not in use.").arg(QString::number(s + 1),
+                                                                          Ui::outputDisplayName(m_edit.outputs[o], o));
+            if (m_edit.outputs[o].type == BlockSignal)
+                w << tr("Route step %1 sets %2, a block signal: it ignores the step.").arg(QString::number(s + 1),
+                                                                                          Ui::outputDisplayName(m_edit.outputs[o], o));
         }
         const RouteLimits l = routeLimits();
         if (totalRouteSteps(m_edit) > l.pool)
             w << tr("All routes together use %1 steps; the board has room for %2.").arg(totalRouteSteps(m_edit)).arg(l.pool);
     }
     if (info.usesOutput && m_edit.outputs[c.outputId].type == OutputNotInUse)
-        w << tr("Output %1 is not in use.").arg(c.outputId + 1);
+        w << tr("%1 is not in use.").arg(Ui::outputDisplayName(m_edit.outputs[c.outputId], c.outputId));
     if (info.usesOutput && m_edit.outputs[c.outputId].type == BlockSignal)
-        w << tr("Output %1 is a block signal: it sets its own aspect and ignores this input.").arg(c.outputId + 1);
+        w << tr("%1 is a block signal: it sets its own aspect and ignores this input.")
+                 .arg(Ui::outputDisplayName(m_edit.outputs[c.outputId], c.outputId));
     return w;
 }
 
@@ -2096,7 +2105,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
                 if (((k < 4) ? (k < info.pinCount) : info.relays) && c.pin(k) == p)
                 {
                     c.setPin(k, PinNA);
-                    freed << tr("output %1").arg(o + 1);
+                    freed << Ui::outputDisplayName(c, o);
                 }
         }
         for (int j = 0; j < NumInputs; ++j)
@@ -2107,7 +2116,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
             if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several analog inputs on one channel
             c.pin    = PinNA;
             c.analog = AnalogNone;
-            freed << tr("input %1").arg(j + 1);
+            freed << Ui::inputDisplayName(c, j);
         }
     }
     freed.removeDuplicates();
@@ -2128,7 +2137,7 @@ void MainWindow::setupWebRemote()
             if (c.type != ServoType) continue;
             QJsonObject o;
             o["index"] = i;
-            o["name"]  = c.name;
+            o["name"]  = Ui::outputDisplayName(c, i);   // as everywhere in the GUI
             o["min"]   = c.servoMin();
             o["max"]   = c.servoMax();
             o["speed"] = c.servoSpeed();
@@ -2151,8 +2160,8 @@ void MainWindow::setupWebRemote()
         c.state = quint8(which);                 // the board then holds the servo at this angle
         if (m_outEd->index() == o) showOutput(o);
         userEdited();
-        statusBar()->showMessage(tr("Phone: output %1 %2 = %3°").arg(o + 1)
-                                     .arg(which ? tr("straight") : tr("curved")).arg(angle), 5000);
+        statusBar()->showMessage(tr("Phone: %1 %2 = %3°").arg(Ui::outputDisplayName(c, o),
+                                                              which ? tr("straight") : tr("curved"), QString::number(angle)), 5000);
     });
     connect(m_web, &WebRemote::adjustRequested, this, [this](int o, int which, int angle) {
         // like dragging a position slider with Live on: the servo follows, the angle is stored,
@@ -2268,7 +2277,8 @@ void MainWindow::openLiveValue(int input)
     if (in.address == AddrNone)
     {
         QMessageBox::information(this, windowTitle(),
-                                 tr("Input %1 has no DCC address, so it cannot receive a DCC extended command.").arg(input + 1));
+                                 tr("%1 has no DCC address, so it cannot receive a DCC extended command.")
+                                     .arg(Ui::inputDisplayName(in, input)));
         return;
     }
     const int address = in.address;
@@ -2366,10 +2376,10 @@ void MainWindow::openAnalogValue(int input)
     {
         const InputConfig &c = m_edit.inputs[i];
         if (c.isAnalog() && c.analogChannel() == ch && c.type != InputNotInUse)
-            users << tr("In %1: %2 %3").arg(i + 1)
-                         .arg(c.analog == AnalogBelow ? QStringLiteral("<") : c.analog == AnalogAbove ? QStringLiteral(">")
-                                                                                                     : QStringLiteral("≈"))
-                         .arg(c.threshold);
+            users << tr("%1: %2 %3").arg(Ui::inputDisplayName(c, i),
+                                         c.analog == AnalogBelow ? QStringLiteral("<") : c.analog == AnalogAbove ? QStringLiteral(">")
+                                                                                                                 : QStringLiteral("≈"),
+                                         QString::number(c.threshold));
     }
     auto *note = new QLabel(tr("1023 = 5 V, nothing pressed. Every input on A%1 reacts: %2").arg(ch).arg(users.join(QStringLiteral(", "))));
     note->setWordWrap(true);
@@ -2737,13 +2747,14 @@ void MainWindow::removeSelected()
                 InputConfig off;
                 off.name = m_edit.inputs[i].name;
                 m_edit.inputs[i] = off;
-                freed << tr("input %1").arg(i + 1);
+                freed << Ui::inputDisplayName(m_edit.inputs[i], i);
             }
+        const QString name = Ui::outputDisplayName(m_edit.outputs[o], o);
         OutputConfig c;
         m_edit.outputs[o] = c;
         if (!freed.isEmpty())
-            statusBar()->showMessage(tr("Output %1 removed; %2 drove it and is now not in use as well.")
-                                         .arg(o + 1).arg(freed.join(QStringLiteral(", "))), 8000);
+            statusBar()->showMessage(tr("%1 removed; %2 drove it and is now not in use as well.")
+                                         .arg(name, freed.join(QStringLiteral(", "))), 8000);
     }
     closePanels();
     userEdited();

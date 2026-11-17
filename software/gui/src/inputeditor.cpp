@@ -46,7 +46,7 @@ InputEditor::InputEditor(QWidget *parent) : QWidget(parent)
 {
     for (int i = 0; i < NumOutputs; ++i)
     {
-        m_outputNames << tr("Output %1").arg(i + 1);
+        m_outputNames << Ui::outputDisplayName(OutputConfig(), i);
         m_outputTypes << SingleSteady;
     }
     buildUi();
@@ -68,7 +68,7 @@ void InputEditor::addOutputItems(QComboBox *combo)
     for (int i = 0; i < NumOutputs; ++i)
     {
         combo->addItem(Ui::swatchIcon(Ui::outputTypeColor(outputType(i))),
-                       tr("Out %1 · %2").arg(i + 1).arg(outputTypeName(outputType(i))), i);
+                       tr("%1 · %2").arg(m_outputNames.value(i), outputTypeName(outputType(i))), i);
         if (outputType(i) == BlockSignal && model)        // it sets its own aspect: not a target
         {
             model->item(combo->count() - 1)->setEnabled(false);
@@ -411,6 +411,12 @@ void InputEditor::setInput(int index, const InputConfig &c)
     refresh();
 }
 
+void InputEditor::setName(const QString &name)
+{
+    m_cfg.name = name;
+    Ui::setEditorTitle(m_title, m_cfg.name, tr("Input %1").arg(m_index + 1));
+}
+
 void InputEditor::setWarnings(const QStringList &warnings, const QString &note)
 {
     m_warn->setText(warnings.join(QStringLiteral("\n")));
@@ -667,7 +673,7 @@ void InputEditor::refresh()
     m_loading = true;
     const InputTypeInfo &info = inputTypeInfo(m_cfg.type);
 
-    m_title->setText(tr("Input %1").arg(m_index + 1));
+    Ui::setEditorTitle(m_title, m_cfg.name, tr("Input %1").arg(m_index + 1));
     const Function fn = functionOf(m_cfg.type);
     Ui::selectData(m_function, int(fn));
     Ui::selectData(m_routeTrigger, isRouteType(m_cfg.type) ? int(m_cfg.type) : int(Route));

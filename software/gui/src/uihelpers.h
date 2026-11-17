@@ -11,6 +11,7 @@ class QWidget;
 
 class QApplication;
 class QComboBox;
+class QLabel;
 
 namespace Ui {
 
@@ -43,6 +44,13 @@ int         configLevel(const Gpio::BoardConfig &board);
 QStringList levelFeatures(const Gpio::BoardConfig &board, int level);
 // Hide (and disable) the items whose data is not offered; the current item still shows its text.
 void    offerItems(QComboBox *combo, const std::function<bool(int)> &offered);
+
+// Name of an input / output wherever one is meant: the user's name if set, else "In n" / "Out n"
+// (index 0-based, shown 1-based)
+QString inputDisplayName(const Gpio::InputConfig &c, int index);
+QString outputDisplayName(const Gpio::OutputConfig &c, int index);
+// Editor title: the user's name with the number ("Output 3") small after it, or just the number
+void    setEditorTitle(QLabel *title, const QString &name, const QString &number);
 
 QColor outputTypeColor(quint8 type);
 QColor inputTypeColor(quint8 type);

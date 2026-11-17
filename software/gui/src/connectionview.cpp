@@ -463,7 +463,25 @@ QColor ConnectionView::outputColor(int o) const
     return src.isEmpty() ? kIdle : Ui::inputColor(src.first());
 }
 
+QString ConnectionView::inputTitle(int index) const
+{
+    return Ui::inputDisplayName(m_board.inputs[index], index);
+}
+
+QString ConnectionView::outputTitle(int index) const
+{
+    return Ui::outputDisplayName(m_board.outputs[index], index);
+}
+
 // ── Geometry ────────────────────────────────────────────────────────────────
+qreal ConnectionView::outputTitleWidth(int index) const
+{
+    // "Out 16" keeps the type label at its place; a long name takes at most half the block
+    QFont f = font();
+    f.setBold(true);
+    return qBound<qreal>(64, QFontMetricsF(f).horizontalAdvance(outputTitle(index)) + 22, outputRect(index).width() / 2);
+}
+
 qreal ConnectionView::nodeWidth() const
 {
     return qBound<qreal>(190, (width() - 2 * Margin) * 0.32, 270);
@@ -645,9 +663,7 @@ void ConnectionView::drawInput(QPainter &p, int i)
     f.setBold(true);
     p.setFont(f);
     p.setPen(kText);
-    QString title = (m_inDirty.value(i) ? QStringLiteral("   ") : QString()) + tr("In %1").arg(i + 1);
-    if (!c.name.isEmpty())
-        title += QStringLiteral(" · ") + c.name;
+    QString title = (m_inDirty.value(i) ? QStringLiteral("   ") : QString()) + inputTitle(i);
     title = p.fontMetrics().elidedText(title, Qt::ElideRight, int(r.width() - 110));
     p.drawText(QRectF(r.left() + 14, r.top() + 4, r.width() - 110, 20), Qt::AlignLeft | Qt::AlignVCenter, title);
     if (m_inDirty.value(i))
@@ -704,18 +720,11 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     f.setBold(true);
     p.setFont(f);
     p.setPen(kText);
-    p.drawText(QRectF(r.left() + 14, r.top() + 4, 80, 20), Qt::AlignLeft | Qt::AlignVCenter,
-               (m_outDirty.value(o) ? QStringLiteral("   ") : QString()) + tr("Out %1").arg(o + 1));
-    if (!c.name.isEmpty())   // the name replaces the type text below the title
-    {
-        QFont nf = font();
-        nf.setItalic(true);
-        p.setFont(nf);
-        p.setPen(kMuted);
-        p.drawText(QRectF(r.left() + 14, r.top() + 24, r.width() - 40, 18), Qt::AlignRight | Qt::AlignVCenter,
-                   p.fontMetrics().elidedText(c.name, Qt::ElideRight, int(r.width() / 2)));
-        p.setFont(f);
-    }
+    const qreal titleW = outputTitleWidth(o);
+    const QString dirty = m_outDirty.value(o) ? QStringLiteral("   ") : QString();
+    const int textW = int(titleW) - 22 + p.fontMetrics().horizontalAdvance(dirty);   // clear of the trash bin
+    p.drawText(QRectF(r.left() + 14, r.top() + 4, textW + 2, 20), Qt::AlignLeft | Qt::AlignVCenter,
+               p.fontMetrics().elidedText(dirty + outputTitle(o), Qt::ElideRight, textW));
     if (m_outDirty.value(o))
     {
         p.setPen(kAmber);
@@ -727,7 +736,7 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     p.setFont(small);
 
     // type with swatch
-    const QRectF typeRect(r.left() + 78, r.top() + 6, r.width() - 90, 17);
+    const QRectF typeRect(r.left() + 14 + titleW, r.top() + 6, r.width() - 26 - titleW, 17);
     p.fillRect(QRectF(typeRect.left(), typeRect.top() + 3, 10, 10), Ui::outputTypeColor(c.type));
     p.setPen(kText);
     p.drawText(typeRect.adjusted(15, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter,
@@ -959,7 +968,7 @@ QRectF ConnectionView::trashRect(bool output, int index) const
 {
     const QRectF r = output ? outputRect(index) : inputRect(index);
     if (r.isEmpty()) return QRectF();
-    return output ? QRectF(r.left() + 58, r.top() + 4, 16, 16)    // right of 'Out n'
+    return output ? QRectF(r.left() + outputTitleWidth(index) - 6, r.top() + 4, 16, 16)   // right of the name
                   : QRectF(r.right() - 112, r.top() + 6, 16, 16); // left of the type badge
 }
 
@@ -1058,7 +1067,7 @@ void ConnectionView::contextMenuEvent(QContextMenuEvent *e)
         const Wire wire = m_wires[w];
         m_selWire = w;
         update();
-        menu.addAction(tr("Remove connection In %1 → Out %2").arg(wire.input + 1).arg(wire.output + 1),
+        menu.addAction(tr("Remove connection %1 → %2").arg(inputTitle(wire.input), outputTitle(wire.output)),
                        this, [this, wire] { emit disconnectRequested(wire.input, wire.step); });
         if (wire.step >= 0)
         {
@@ -1078,7 +1087,7 @@ void ConnectionView::contextMenuEvent(QContextMenuEvent *e)
     }
     else if (in >= 0 && inputConnected(m_board.inputs[in]))
     {
-        menu.addAction(tr("Remove all connections of In %1").arg(in + 1), this, [this, in] {
+        menu.addAction(tr("Remove all connections of %1").arg(inputTitle(in)), this, [this, in] {
             const InputConfig &c = m_board.inputs[in];
             if (isDirectType(c.type))
                 emit disconnectRequested(in, -1);
@@ -1101,7 +1110,7 @@ bool ConnectionView::event(QEvent *e)
         {
             const Wire &wire = m_wires[w];
             const QString mode = inputTypeName(m_board.inputs[wire.input].type);
-            QString text = tr("In %1 → Out %2 (%3)").arg(wire.input + 1).arg(wire.output + 1).arg(mode);
+            QString text = tr("%1 → %2 (%3)").arg(inputTitle(wire.input), outputTitle(wire.output), mode);
             if (wire.step >= 0)
                 text += tr("\nstep %1: %2, then wait %3")
                             .arg(wire.step + 1)

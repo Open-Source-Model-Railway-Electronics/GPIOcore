@@ -539,7 +539,7 @@ private slots:
         QCOMPARE(view->board().outputs[1].data, before.data);
         QCOMPARE(outputSources(view->board(), 1), QVector<int>{ 1 });      // its input still drives it
         QVERIFY(view->outputShown(1));
-        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("output 2 keeps its settings")));
+        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("Out 2 keeps its settings")));
         click(view, view->outputRect(1).center());            // its panel: the missing pin is a warning
         bool warned = false;
         for (QLabel *l : oed->findChildren<QLabel *>(QStringLiteral("error")))
@@ -1056,6 +1056,96 @@ private slots:
         QVERIFY(ied->findChild<QComboBox *>(QStringLiteral("firstStep")));
     }
 
+    void namesReplaceNumbers()
+    {
+        // the user's name replaces "In n" / "Out n" everywhere; without a name the number is shown
+        QTemporaryDir dir;
+        BoardConfig b;
+        b.outputs[0].type = SingleSteady; b.outputs[0].pinA = 3;
+        b.outputs[1].type = ServoType;    b.outputs[1].pinA = 9; b.outputs[1].name = QStringLiteral("Turnout station left side");
+        b.outputs[2].type = SingleSteady; b.outputs[2].pinA = 4;
+        b.inputs[0].type = Latching;  b.inputs[0].address = 1; b.inputs[0].outputId = 0;
+        b.inputs[1].type = Momentary; b.inputs[1].address = 2; b.inputs[1].outputId = 1; b.inputs[1].name = QStringLiteral("Button");
+        b.inputs[2].type = Latching;  b.inputs[2].address = 3; b.inputs[2].outputId = 2;
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+        QVERIFY(w.loadFile(writeBoard(dir, "names.json", b)));
+        auto nameField = [&w](QWidget *editor) -> QLineEdit * {     // the name field above an editor
+            for (QLineEdit *e : w.findChildren<QLineEdit *>())
+                if (e->placeholderText().startsWith(QLatin1String("Name, e.g.")) && e->parentWidget()->isAncestorOf(editor))
+                    return e;
+            return nullptr;
+        };
+        auto rename = [](QLineEdit *field, const QString &name) {
+            field->setFocus();
+            QTest::keyClick(field, Qt::Key_A, Qt::ControlModifier);
+            QTest::keyClick(field, Qt::Key_Backspace);
+            QTest::keyClicks(field, name);
+        };
+
+        click(view, view->outputRect(0).center());
+        QCOMPARE(oed->index(), 0);
+        QLineEdit *outName = nameField(oed);
+        QVERIFY(outName);
+        rename(outName, QStringLiteral("yolo1"));
+        click(view, view->inputRect(0).center());
+        QCOMPARE(ied->index(), 0);
+        QLineEdit *inName = nameField(ied);
+        QVERIFY(inName && inName != outName);
+        rename(inName, QStringLiteral("Port 1"));
+
+        // canvas: the top line of the block
+        QCOMPARE(view->outputTitle(0), QStringLiteral("yolo1"));
+        QCOMPARE(view->outputTitle(2), QStringLiteral("Out 3"));
+        QCOMPARE(view->inputTitle(0), QStringLiteral("Port 1"));
+        QCOMPARE(view->inputTitle(2), QStringLiteral("In 3"));
+        // editor title: the name with the number after it
+        QVERIFY(visibleLabel(ied, QStringLiteral("Port 1"), QStringLiteral("title")));
+        QVERIFY(visibleLabel(ied, QStringLiteral("Input 1"), QStringLiteral("title")));
+        // the input editor's output list: name (or number) and type
+        QComboBox *outs = comboWith(ied, QStringLiteral("yolo1 · "));
+        QVERIFY(outs);
+        QCOMPARE(outs->itemText(0), QStringLiteral("yolo1 · %1").arg(outputTypeName(SingleSteady)));
+        QCOMPARE(outs->itemText(1), QStringLiteral("Turnout station left side · %1").arg(outputTypeName(ServoType)));
+        QCOMPARE(outs->itemText(2), QStringLiteral("Out 3 · %1").arg(outputTypeName(SingleSteady)));
+        // pin lists: who uses a pin
+        bool marked = false;
+        for (QComboBox *c : ied->findChildren<QComboBox *>())
+            for (int k = 0; k < c->count(); ++k)
+                marked |= c->itemData(k).toInt() == 3 && c->itemText(k).contains(QLatin1String("in use: yolo1"));
+        QVERIFY(marked);
+        // the output editor's detector lists
+        click(view, view->outputRect(0).center());
+        QVERIFY(visibleLabel(oed, QStringLiteral("yolo1"), QStringLiteral("title")));
+        QVERIFY(comboWith(oed, QStringLiteral("Port 1 · %1").arg(inputTypeName(Latching))));
+        maybeScreenshot(w, "names.png");
+        if (!qgetenv("GPIOCORE_SHOT_DIR").isEmpty())         // the canvas alone, the trash bin of 'yolo1' shown
+        {
+            mouse(view, QEvent::MouseMove, view->outputRect(0).center(), Qt::NoButton);
+            view->grab().save(QString::fromLocal8Bit(qgetenv("GPIOCORE_SHOT_DIR")) + QStringLiteral("/names-canvas.png"));
+        }
+
+        // a warning: input 1 drives an output that became a block signal
+        QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
+        QVERIFY(type);
+        type->setCurrentIndex(type->findData(int(BlockSignal)));
+        click(view, view->inputRect(0).center());
+        QVERIFY(visibleLabel(ied, QStringLiteral("yolo1 is a block signal"), QStringLiteral("error")));
+
+        // no name: the number again
+        click(view, view->outputRect(0).center());
+        rename(outName, QString());
+        QCOMPARE(view->outputTitle(0), QStringLiteral("Out 1"));
+        QVERIFY(visibleLabel(oed, QStringLiteral("Output 1"), QStringLiteral("title")));
+        QCOMPARE(outs->itemText(0), QStringLiteral("Out 1 · %1").arg(outputTypeName(BlockSignal)));
+        click(view, view->inputRect(0).center());
+        QVERIFY(visibleLabel(ied, QStringLiteral("Out 1 is a block signal"), QStringLiteral("error")));
+    }
+
     void blockSignalEditor()
     {
         MainWindow w;
@@ -1088,10 +1178,10 @@ private slots:
                 if (c->isVisibleTo(oed) && c->count() && c->itemText(0) == first) return c;
             return nullptr;
         };
-        QComboBox *own = visibleCombo(QStringLiteral("Input 1 · Absolute"));
+        QComboBox *own = visibleCombo(QStringLiteral("In 1 · Absolute"));
         QComboBox *next = visibleCombo(QStringLiteral("— none"));
         QVERIFY(own && next);
-        QCOMPARE(own->currentText(), QStringLiteral("Input 5 · Sensor (occupancy)"));
+        QCOMPARE(own->currentText(), QStringLiteral("In 5 · Sensor (occupancy)"));
         QCOMPARE(Ui::currentData(next), -1);
         QVector<QSpinBox *> aspects;                         // own occupied, next occupied, both free
         for (QSpinBox *b : oed->findChildren<QSpinBox *>())
@@ -1140,7 +1230,7 @@ private slots:
         next->setCurrentIndex(next->findData(6));
         QCOMPARE(int(view->board().outputs[0].data[3]), 0x64);
         QVERIFY(aspects[1]->isEnabled());
-        QVERIFY(visibleText(oed, QStringLiteral("Detector input 7 is not in use"), QStringLiteral("error")));
+        QVERIFY(visibleText(oed, QStringLiteral("Detector In 7 is not in use"), QStringLiteral("error")));
         aspects[2]->setValue(0x11);                          // free: lamp A flashing
         QCOMPARE(int(view->board().outputs[0].data[2]), 0x11);
         QVERIFY(visibleText(oed, QStringLiteral("lamp 1 flashing")));
@@ -1152,7 +1242,7 @@ private slots:
         QVERIFY(out);
         QVERIFY(!qobject_cast<QStandardItemModel *>(out->model())->item(0)->isEnabled());
         QVERIFY(qobject_cast<QStandardItemModel *>(out->model())->item(1)->isEnabled());
-        QVERIFY(visibleText(ied, QStringLiteral("Output 1 is a block signal"), QStringLiteral("error")));   // input 0 (shown as 1) drove it
+        QVERIFY(visibleText(ied, QStringLiteral("Out 1 is a block signal"), QStringLiteral("error")));   // input 0 (shown as 1) drove it
 
         // the input editor offers 'Sensor': no output, behaviour, custom values or route
         QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
@@ -1167,7 +1257,7 @@ private slots:
         const InputConfig in1 = view->board().inputs[1];
         drag(view, view->inputPort(1), view->outputRect(0).center());
         QVERIFY(view->board().inputs[1] == in1);
-        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("Output 1 is a block signal")));
+        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("Out 1 is a block signal")));
 
         // a 4-aspect signal with lamp A only: no 'pin not set' either
         type->setCurrentIndex(type->findData(int(FourToneSignal)));
@@ -1212,7 +1302,7 @@ private slots:
         QCOMPARE(int(view->board().outputs[0].data[3]), 0x80);
         QCOMPARE(view->board().outputs[0].watchedInputs(), QVector<int>{ 0 });
         QVERIFY(swap->isVisibleTo(oed));
-        QComboBox *detector = visibleCombo(QStringLiteral("Input 1 · Sensor (occupancy)"));
+        QComboBox *detector = visibleCombo(QStringLiteral("In 1 · Sensor (occupancy)"));
         QVERIFY(detector);
         detector->setCurrentIndex(detector->findData(4));
         swap->setChecked(true);
@@ -1721,7 +1811,7 @@ private slots:
         QCOMPARE(int(view->board().outputs[6].pinA), int(PinNA));   // D9 was output 7's: it lost the pin ...
         QCOMPARE(int(view->board().outputs[6].type), int(SingleSteady));   // ... and keeps its function
         QTRY_VERIFY(popups.texts.size() >= 2);
-        QVERIFY(popups.texts[1].contains(QLatin1String("output 7")));   // listed afterwards
+        QVERIFY(popups.texts[1].contains(QLatin1String("Out 7")));   // listed afterwards
         QVERIFY(w.windowTitle().endsWith(QLatin1String(" *")));
         QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy() && !writeAction(w)->isEnabled(), 8000);   // written live
         QCOMPARE(int(view->board().outputs[0].type), int(ServoType));       // read back from the board
@@ -1769,7 +1859,7 @@ private slots:
         QCOMPARE(int(b.outputs[1].pinA), int(PinNA));
         QCOMPARE(int(b.inputs[0].outputId), 1);
         QTRY_VERIFY(!popups.texts.isEmpty());
-        QVERIFY(popups.texts.first().contains(QLatin1String("output 2")));
+        QVERIFY(popups.texts.first().contains(QLatin1String("Mine keeps its settings")));   // by its name
         QVERIFY(w.windowTitle().endsWith(QLatin1String(" *")));
 
         // not enough free slots: said, nothing imported

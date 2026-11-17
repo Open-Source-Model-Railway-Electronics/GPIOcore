@@ -51,7 +51,7 @@ OutputEditor::OutputEditor(QWidget *parent) : QWidget(parent)
 {
     for (int i = 0; i < NumInputs; ++i)
     {
-        m_inputNames << tr("Input %1").arg(i + 1);
+        m_inputNames << Ui::inputDisplayName(InputConfig(), i);
         m_inputTypes << InputNotInUse;
     }
     buildUi();
@@ -486,6 +486,12 @@ void OutputEditor::setOutput(int index, const OutputConfig &c)
     refresh();
 }
 
+void OutputEditor::setName(const QString &name)
+{
+    m_cfg.name = name;
+    Ui::setEditorTitle(m_title, m_cfg.name, tr("Output %1").arg(m_index + 1));
+}
+
 void OutputEditor::setInputs(const QStringList &names, const QVector<quint8> &types)
 {
     if (names == m_inputNames && types == m_inputTypes)
@@ -506,9 +512,10 @@ void OutputEditor::fillBlockCombos()
     m_blockNext->addItem(tr("— none"), -1);
     for (int i = 0; i < NumInputs; ++i)
     {
-        const QIcon icon = Ui::swatchIcon(Ui::inputTypeColor(m_inputTypes.value(i, InputNotInUse)));
+        const quint8 type = m_inputTypes.value(i, InputNotInUse);
+        const QIcon icon = Ui::swatchIcon(Ui::inputTypeColor(type));
         for (QComboBox *c : { m_blockOwn, m_blockNext, m_followInput })
-            c->addItem(icon, m_inputNames.value(i), i);
+            c->addItem(icon, tr("%1 · %2").arg(m_inputNames.value(i), inputTypeName(type)), i);
     }
     Ui::selectData(m_blockOwn,  block ? m_cfg.blockOwn() : 0);
     Ui::selectData(m_blockNext, block ? m_cfg.blockNext() : -1);
@@ -542,7 +549,7 @@ void OutputEditor::refresh()
     m_loading = true;
     const OutputTypeInfo &info = outputTypeInfo(m_cfg.type);
 
-    m_title->setText(tr("Output %1").arg(m_index + 1));
+    Ui::setEditorTitle(m_title, m_cfg.name, tr("Output %1").arg(m_index + 1));
     Ui::selectData(m_type, m_cfg.type);
     m_help->setText(outputTypeHelp(m_cfg.type));
 
