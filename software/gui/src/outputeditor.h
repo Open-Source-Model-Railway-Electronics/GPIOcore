@@ -49,6 +49,7 @@ private:
     void updateVisibility();
     void updateTimeLabels();
     void fillBlockCombos();
+    void applyLevel();         // user level: offered types and boxes, read-only above the level
     static Frog frogOf(const Gpio::OutputConfig &c);
 
     int                m_index = 0;
@@ -62,6 +63,8 @@ private:
     QLabel         *m_help = nullptr;
     QLabel         *m_warn = nullptr;
     QLabel         *m_note = nullptr;
+    QWidget        *m_levelRow = nullptr;    // "Uses Expert features ..." (read-only)
+    QLabel         *m_levelNote = nullptr;
     QComboBox      *m_type = nullptr;
 
     QGroupBox      *m_pinBox = nullptr;
@@ -102,7 +105,7 @@ private:
     QDoubleSpinBox *m_blinkHz = nullptr;     // signal: blink frequency (data[1] = Hz x 10)
     QComboBox      *m_blockOwn = nullptr;    // block signal: input of its own block detector
     QComboBox      *m_blockNext = nullptr;   // input of the next block detector, or none
-    QSpinBox       *m_blockAspect[3] {};     // aspect: own block occupied, next block occupied, both free
+    QSpinBox       *m_blockAspect[3] {};     // aspect: unsafe (own block occupied), caution (next block occupied), safe
     QLabel         *m_blockText[3] {};       // what that aspect shows
     QWidget        *m_blockRow[3] {};
     QStringList     m_inputNames;
@@ -113,5 +116,4 @@ private:
     QComboBox      *m_state = nullptr;
     QPushButton    *m_test0 = nullptr;
     QPushButton    *m_test1 = nullptr;
-    QLabel         *m_raw = nullptr;
 };

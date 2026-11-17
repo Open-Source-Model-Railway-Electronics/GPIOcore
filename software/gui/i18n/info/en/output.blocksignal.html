@@ -1,10 +1,11 @@
 <h3>Block signal</h3>
+<p><i>Expert level (View menu).</i></p>
 <p>A block signal sets itself, without a command station or computer. The board looks at two
 <b>block detectors</b> (inputs) every 50 ms and shows one of three aspects:</p>
 <ul>
-<li><b>Own block occupied</b> — when the detector of its own block reports a train (usually red),</li>
-<li><b>Next block occupied</b> — when its own block is free but the next block is occupied (usually yellow),</li>
-<li><b>Both free</b> — otherwise (usually green).</li>
+<li><b>Unsafe</b> — when the detector of its own block reports a train (usually red),</li>
+<li><b>Caution</b> — when its own block is free but the next block is occupied (usually yellow),</li>
+<li><b>Safe</b> — when both blocks are free (usually green).</li>
 </ul>
 <p>Each aspect is chosen lamp by lamp with <b>▾</b>, like a route step: every lamp can be off, on or flashing.
 Flashing lamps flash at 1 Hz. The lamps are on pins A–D; only pin A is required, so a signal with two or three
@@ -17,13 +18,13 @@ cannot be chosen as a target in the input panel and an input cannot be dragged o
 
 <h4>Example 1: Dutch 3-aspect signals in a row</h4>
 <p>Lamps: A green, B yellow, C red. Signal 1 protects block 1 (own block = its detector) and looks at block 2
-(next block), signal 2 protects block 2 and looks at block 3, and so on. Aspects: own block occupied = C on,
-next block occupied = B on, both free = A on (the defaults). A train in block 2 gives signal 2 red, signal 1
+(next block), signal 2 protects block 2 and looks at block 3, and so on. Aspects: unsafe = C on, caution = B on,
+safe = A on (the defaults). A train in block 2 gives signal 2 red, signal 1
 yellow and signal 3 green.</p>
 
 <h4>Example 2: a main signal without a linked next block</h4>
-<p>Red / green only: leave <b>Next block</b> at “none”. Own block occupied = red, both free = green; the
-“next block occupied” aspect is not used.</p>
+<p>Red / green only: leave <b>Next block</b> at “none”. Unsafe = red, safe = green; the caution aspect is
+not used.</p>
 
 <h4>Example 3: a distant signal</h4>
 <p>A distant signal stands in front of a main signal and announces what that main signal shows. Make it a block

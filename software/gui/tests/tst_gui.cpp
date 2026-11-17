@@ -15,8 +15,12 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QDialog>
+#include <QDockWidget>
 #include <QGroupBox>
 #include <QLabel>
+#include <QLineEdit>
+#include <QListView>
+#include <QSettings>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
@@ -24,6 +28,7 @@
 #include <QSlider>
 #include <QStatusBar>
 #include <QStandardItemModel>
+#include <QTabWidget>
 #include <QTcpSocket>
 
 #include <QAction>
@@ -116,7 +121,43 @@ class TestGui : public QObject
         QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 5000);
     }
 
+    // The item data a combo offers at the current user level (rows not hidden)
+    static QList<int> offered(QComboBox *combo)
+    {
+        QList<int> data;
+        auto *view = qobject_cast<QListView *>(combo->view());
+        for (int i = 0; i < combo->count(); ++i)
+            if (!view || !view->isRowHidden(i))
+                data << combo->itemData(i).toInt();
+        return data;
+    }
+
+    static QAction *levelAction(MainWindow &w, const QString &name)
+    {
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == name && a->isCheckable()) return a;
+        return nullptr;
+    }
+
+    static bool visibleLabel(QWidget *root, const QString &part, const QString &objectName = QString())
+    {
+        for (QLabel *l : root->findChildren<QLabel *>())
+            if (l->isVisibleTo(root) && (objectName.isEmpty() || l->objectName() == objectName) && l->text().contains(part))
+                return true;
+        return false;
+    }
+
 private slots:
+    void initTestCase()
+    {
+        Ui::setLevel(Ui::Expert);               // most tests use every feature; the level tests switch themselves
+    }
+
+    void cleanup()
+    {
+        Ui::setLevel(Ui::Expert);
+    }
+
     void editWriteReadBack()
     {
         MainWindow w;
@@ -610,7 +651,6 @@ private slots:
         {
             w.resize(1320, 900);
             w.show();
-            w.showWorkspace();
             maybeScreenshot(w, "sound-output.png");
         }
 
@@ -981,6 +1021,18 @@ private slots:
         QCOMPARE(aspects[1]->value(), 2);
         QCOMPARE(aspects[2]->value(), 1);
         QVERIFY(aspects[0]->isEnabled() && !aspects[1]->isEnabled() && aspects[2]->isEnabled());   // no next block
+        const QStringList aspectNames = { QStringLiteral("Unsafe"), QStringLiteral("Caution"), QStringLiteral("Safe") };
+        for (int k = 0; k < 3; ++k)
+        {
+            QLabel *label = nullptr;
+            for (QLabel *l : oed->findChildren<QLabel *>())
+                if (l->isVisibleTo(oed) && l->text() == aspectNames[k]) label = l;
+            QVERIFY2(label, qPrintable(aspectNames[k]));
+            QVERIFY(!label->toolTip().isEmpty());
+        }
+        for (QLabel *l : oed->findChildren<QLabel *>())
+            QVERIFY2(!l->text().contains(QLatin1String("Own block occupied")) && l->text() != QLatin1String("Both free"),
+                     qPrintable(l->text()));
         auto visibleText = [](QWidget *root, const QString &part, const QString &objectName = QString()) {
             for (QLabel *l : root->findChildren<QLabel *>())
                 if (l->isVisibleTo(root) && (objectName.isEmpty() || l->objectName() == objectName) && l->text().contains(part))
@@ -998,7 +1050,6 @@ private slots:
         for (QGroupBox *g : oed->findChildren<QGroupBox *>())
             stateShown |= g->title() == QLatin1String("State") && g->isVisibleTo(oed);
         QVERIFY(!stateShown);
-        w.showWorkspace();
         click(view, view->outputRect(0).center());            // its panel
         QCOMPARE(oed->index(), 0);
         maybeScreenshot(w, "block-signal.png");
@@ -1157,6 +1208,238 @@ private slots:
         click(view, view->liveButtonRect(6, 1).center());        // the detector on D0 works in the simulator
         QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(2), 0x04, 2000);
         w.setMode(MainWindow::ModeConfigure);
+    }
+
+    // ── Workspace, user levels ──────────────────────────────────────────────
+    void opensStraightIntoTheWorkspace()
+    {
+        // no welcome page, no serial log, no payload bytes: Configuration and Pin map tabs at every level
+        for (int level : { Ui::Beginner, Ui::Advanced, Ui::Expert })
+        {
+            Ui::setLevel(level);
+            MainWindow w;
+            w.resize(1320, 900);
+            w.show();
+            auto *tabs = qobject_cast<QTabWidget *>(w.centralWidget());
+            QVERIFY(tabs);
+            QCOMPARE(tabs->count(), 2);
+            QCOMPARE(tabs->tabText(0), QStringLiteral("Configuration"));
+            QCOMPARE(tabs->tabText(1), QStringLiteral("Pin map"));
+            QVERIFY(tabs->isTabVisible(1) && tabs->isTabEnabled(1));
+            QVERIFY(tabs->tabBar()->isVisible());
+            QCOMPARE(tabs->currentIndex(), 0);
+            QVERIFY(w.findChild<ConnectionView *>()->isVisible());
+            QVERIFY(!w.findChild<QWidget *>(QStringLiteral("startPage")));
+            QVERIFY(w.findChildren<QDockWidget *>().isEmpty());
+            QVERIFY(w.findChildren<QLabel *>(QStringLiteral("mono")).isEmpty());
+            for (QAction *a : w.findChildren<QAction *>())
+                QVERIFY2(!a->text().contains(QLatin1String("Expert mode")) && !a->text().contains(QLatin1String("log")),
+                         qPrintable(a->text()));
+            QCOMPARE(w.mode(), MainWindow::ModeConfigure);
+        }
+    }
+
+    void levelsOfferWhatTheyShould()
+    {
+        Ui::setLevel(Ui::Beginner);
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        QAction *beginner = levelAction(w, QStringLiteral("Beginner"));
+        QAction *advanced = levelAction(w, QStringLiteral("Advanced"));
+        QAction *expert   = levelAction(w, QStringLiteral("Expert"));
+        QVERIFY(beginner && advanced && expert);
+        QVERIFY(beginner->isChecked() && !advanced->isChecked() && !expert->isChecked());
+
+        QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
+        QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
+        QComboBox *pinA = comboWith(oed, trGpio("—  not used"));
+        QVERIFY(type && fn && pinA);
+        auto box = [](QWidget *root, const QString &title) -> QGroupBox * {
+            for (QGroupBox *g : root->findChildren<QGroupBox *>())
+                if (g->title() == title) return g;
+            return nullptr;
+        };
+        auto checkBox = [](QWidget *root, const QString &text) -> QCheckBox * {
+            for (QCheckBox *b : root->findChildren<QCheckBox *>())
+                if (b->text() == text) return b;
+            return nullptr;
+        };
+        QGroupBox *frogBox = box(oed, QStringLiteral("Frog polarity"));
+        QCheckBox *custom = checkBox(ied, QStringLiteral("Custom values"));
+        QComboBox *readAs = comboWith(ied, QStringLiteral("Digital"));
+        QComboBox *startsOn = comboWith(ied, QStringLiteral("any command"));
+        QVERIFY(frogBox && custom && readAs && startsOn);
+
+        // Beginner: servo, single / double steady and pulse; direct control and route; no frogs, analog,
+        // custom values, 'Route starts on', D0 / D1
+        const QList<int> beginnerTypes = { SingleSteady, SinglePulse, DoubleSteady, DoublePulse, ServoType, OutputNotInUse };
+        QCOMPARE(offered(type), beginnerTypes);
+        QCOMPARE(offered(fn).size(), 3);                     // direct control, route, not in use
+        QVERIFY(!offered(fn).contains(3));                   // no Sensor
+        QVERIFY(!offered(pinA).contains(0) && !offered(pinA).contains(1) && offered(pinA).contains(3));
+        QVERIFY(!frogBox->isVisibleTo(oed));                 // output 1 is a single steady output (frog relays possible)
+        QVERIFY(!readAs->isVisibleTo(ied));
+        InputConfig direct = view->board().inputs[0];
+        direct.type = Latching;
+        emit ied->changed(0, direct);
+        QVERIFY(!custom->isVisibleTo(ied));
+        type->setCurrentIndex(type->findData(int(ServoType)));
+        QCOMPARE(int(view->board().outputs[0].type), int(ServoType));
+        QVERIFY(!frogBox->isVisibleTo(oed));
+        QVERIFY(!checkBox(oed, QStringLiteral("Follows a detector (semaphore arm)"))->isVisibleTo(oed));
+        fn->setCurrentIndex(fn->findData(1));                // route
+        QVERIFY(isRouteType(view->board().inputs[0].type));
+        QVERIFY(!startsOn->isVisibleTo(ied));
+        QVERIFY(!visibleLabel(ied, QStringLiteral("Route starts on")));
+        QVERIFY(!visibleLabel(ied, QStringLiteral("Uses ")));      // all Beginner: editable
+        QVERIFY(fn->isEnabled() && type->isEnabled());
+        QComboBox *preset = nullptr;
+        for (QComboBox *c : w.findChildren<QComboBox *>())
+            if (c->count() == 9 && c->itemText(3).contains(QLatin1String("single"))) preset = c;
+        QVERIFY(preset);
+        QCOMPARE(offered(preset), QList<int>({ 0, 3, 4, 7, 8 }));   // no frog relay presets
+        maybeScreenshot(w, "level-beginner.png");
+
+        // Advanced: + effects, signal, PWM, sound, frog relays, analog, custom values, 'Route starts on', D0 / D1
+        advanced->trigger();
+        QCOMPARE(Ui::level(), int(Ui::Advanced));
+        QVERIFY(advanced->isChecked() && !beginner->isChecked());
+        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 1);   // all but the block signal
+        QVERIFY(!offered(type).contains(BlockSignal));
+        QVERIFY(offered(type).contains(FourToneSignal) && offered(type).contains(Pwm) && offered(type).contains(SoundEffect)
+                && offered(type).contains(WelderLight));
+        QVERIFY(!offered(fn).contains(3));
+        QVERIFY(offered(pinA).contains(0) && offered(pinA).contains(1));
+        QVERIFY(frogBox->isVisibleTo(oed));
+        QVERIFY(readAs->isVisibleTo(ied));
+        QVERIFY(startsOn->isVisibleTo(ied));
+        QVERIFY(!checkBox(oed, QStringLiteral("Follows a detector (semaphore arm)"))->isVisibleTo(oed));
+        QCOMPARE(offered(preset).size(), 9);
+
+        // Expert: + block signal, sensor input, semaphore arm
+        expert->trigger();
+        QCOMPARE(offered(type).size(), int(OutputTypeCount));
+        QVERIFY(offered(fn).contains(3));
+        QVERIFY(checkBox(oed, QStringLiteral("Follows a detector (semaphore arm)"))->isVisibleTo(oed));
+        maybeScreenshot(w, "level-expert.png");
+
+        // the level is remembered and changes nothing in the configuration
+        const BoardConfig before = view->board();
+        beginner->trigger();
+        QCOMPARE(QSettings().value(QStringLiteral("ui/level")).toInt(), int(Ui::Beginner));
+        QVERIFY(view->board().outputs == before.outputs);
+        QVERIFY(view->board().inputs == before.inputs);
+
+        // board settings: name and board type only at Beginner
+        auto boardSettingsRows = [&w] {
+            int shown = -1;
+            QTimer::singleShot(200, &w, [&shown] {
+                for (QWidget *top : QApplication::topLevelWidgets())
+                    if (auto *d = qobject_cast<QDialog *>(top); d && d->isVisible())
+                    {
+                        shown = 0;
+                        for (QWidget *f : d->findChildren<QWidget *>())
+                            if ((qobject_cast<QComboBox *>(f) || qobject_cast<QCheckBox *>(f) || qobject_cast<QAbstractSpinBox *>(f)
+                                 || (qobject_cast<QLineEdit *>(f) && !qobject_cast<QAbstractSpinBox *>(f->parentWidget())))
+                                && f->isVisibleTo(d))
+                                ++shown;
+                        d->reject();
+                    }
+            });
+            for (QAction *a : w.findChildren<QAction *>())
+                if (a->text() == QStringLiteral("Board settings…")) { a->trigger(); break; }
+            return shown;
+        };
+        QCOMPARE(boardSettingsRows(), 2);                    // name, board type
+        advanced->trigger();
+        QCOMPARE(boardSettingsRows(), 5);                    // + own wait time, wait time, interlocking
+    }
+
+    void higherLevelFeaturesStayReadOnly()
+    {
+        // a block signal and a sensor input in an existing configuration while on Beginner: shown, working,
+        // read-only, never changed by the level
+        Ui::setLevel(Ui::Beginner);
+        MainWindow w;
+        auto *link = w.findChild<DeviceLink *>();
+        link->drainMs = 3;
+        w.resize(1320, 900);
+        w.show();
+        ConnectionView *view = w.findChild<ConnectionView *>();
+        auto *oed = w.findChild<OutputEditor *>();
+        auto *ied = w.findChild<InputEditor *>();
+        InputConfig sensor = view->board().inputs[5];
+        sensor.type = Sensor; sensor.pin = 19; sensor.address = AddrNone;
+        emit ied->changed(5, sensor);                        // e.g. from a board file made by someone else
+        OutputConfig sig = view->board().outputs[0];
+        sig.type = BlockSignal; sig.data = { { 0x04, 0x02, 0x01, 0 } };
+        sig.setBlockInputs(5, -1);
+        emit oed->changed(0, sig);
+        const OutputConfig sigNow = view->board().outputs[0];
+        const InputConfig sensorNow = view->board().inputs[5];
+
+        click(view, view->outputRect(0).center());
+        QCOMPARE(oed->index(), 0);
+        QVERIFY(visibleLabel(oed, QStringLiteral("Uses Expert features — switch to Expert in the View menu to edit"),
+                             QStringLiteral("warn")));
+        QComboBox *type = comboWith(oed, outputTypeName(SingleSteady));
+        QVERIFY(type);
+        QCOMPARE(type->currentText(), QStringLiteral("Block signal"));   // shown although not offered
+        QVERIFY(!offered(type).contains(BlockSignal));
+        QVERIFY(!type->isEnabled());
+        QVector<QSpinBox *> aspects;
+        for (QSpinBox *b : oed->findChildren<QSpinBox *>())
+            if (b->isVisibleTo(oed) && b->prefix() == QLatin1String("aspect ")) aspects << b;
+        QCOMPARE(aspects.size(), 3);                         // the settings are shown ...
+        QCOMPARE(aspects[0]->value(), 4);
+        QVERIFY(!aspects[0]->isEnabled());                   // ... read-only
+        maybeScreenshot(w, "beginner-readonly-block-signal.png");
+
+        click(view, view->inputRect(5).center());
+        QCOMPARE(ied->index(), 5);
+        QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
+        QCOMPARE(fn->currentText(), QStringLiteral("Sensor (occupancy)"));
+        QVERIFY(!fn->isEnabled());
+        QVERIFY(visibleLabel(ied, QStringLiteral("Uses Expert features"), QStringLiteral("warn")));
+
+        // an Advanced feature (frog relays) on a Beginner type: read-only, frog box shown
+        OutputConfig servo = view->board().outputs[1];
+        servo.type = ServoType; servo.data = { { 80, 100, 20, 0 } }; servo.relayC = 12;
+        emit oed->changed(1, servo);
+        click(view, view->outputRect(1).center());
+        QVERIFY(visibleLabel(oed, QStringLiteral("Uses Advanced features — switch to Advanced in the View menu to edit")));
+        for (QGroupBox *g : oed->findChildren<QGroupBox *>())
+            if (g->title() == QLatin1String("Frog polarity")) QVERIFY(g->isVisibleTo(oed) && !g->isEnabled());
+
+        // switching levels changes nothing; on Expert it can be edited
+        levelAction(w, QStringLiteral("Advanced"))->trigger();
+        QVERIFY(!visibleLabel(oed, QStringLiteral("Uses ")));
+        levelAction(w, QStringLiteral("Expert"))->trigger();
+        levelAction(w, QStringLiteral("Beginner"))->trigger();
+        QVERIFY(view->board().outputs[0] == sigNow);
+        QVERIFY(view->board().inputs[5] == sensorNow);
+        QCOMPARE(int(view->board().outputs[1].relayC), 12);
+        click(view, view->outputRect(0).center());
+        levelAction(w, QStringLiteral("Expert"))->trigger();
+        QVERIFY(!visibleLabel(oed, QStringLiteral("Uses ")));
+        QVERIFY(type->isEnabled());
+        levelAction(w, QStringLiteral("Beginner"))->trigger();
+
+        // it works in the simulation on Beginner
+        w.setMode(MainWindow::ModeSimulate);
+        QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(0), 0x01, 3000);   // safe: green
+        QVERIFY(view->sensorInput(5));
+        QTest::qWait(150);
+        click(view, view->liveButtonRect(5, 1).center());
+        QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(0), 0x04, 2000);   // unsafe: red
+        maybeScreenshot(w, "beginner-block-signal.png");
+        w.setMode(MainWindow::ModeConfigure);
+        QVERIFY(view->board().outputs[0] == sigNow);
     }
 
 };

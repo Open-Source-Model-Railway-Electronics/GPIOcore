@@ -950,7 +950,7 @@ private slots:
         QTRY_COMPARE_WITH_TIMEOUT(last(), 45, 5000);
         QTest::qWait(50);
 
-        OutputConfig pwm;                        // a raw value is reported at once (no sweep)
+        OutputConfig pwm;                        // no fading: the new value is reported as one PWM step
         pwm.type = Pwm; pwm.pinA = 5;
         r.sim->setOutput(6, pwm);
         events.clear();
@@ -1005,12 +1005,19 @@ private slots:
             for (const OutputConfig &o : presetBoard(p).outputs)
                 if (o.type == Pwm) QCOMPARE(int(o.data[1]), 0);
 
-        // the board keeps the fade time; a new brightness is reported as the target at once
+        // the board keeps the fade time
         Rig r; makeRig(r);
         r.link->writeOutput(4, c);
         r.link->readOutput(4);
         waitFinished(r);
         QCOMPARE(int(r.outputs[4].data[1]), 30);
+
+        // a new brightness fades there step by step; every step is reported as OUTPUT_EVENT state 2
+        // (skipped when the serial buffer is full, never the last one), not the target at once
+        c.data[1] = 2;                                           // 2 s for 0 -> 255: about 8 ms per step
+        r.link->writeOutput(4, c);
+        waitFinished(r);
+        QTRY_COMPARE_WITH_TIMEOUT(r.sim->servoPosition(4), 200, 5000);   // faded up to 200 first
         InputConfig route;
         route.type = Route; route.address = 60;
         route.route = { RouteStep{ 4, 90, true, 0 } };
@@ -1018,8 +1025,16 @@ private slots:
         QSignalSpy events(r.link, &DeviceLink::outputEvent);
         r.link->triggerInput(8, 1);
         QTRY_VERIFY_WITH_TIMEOUT(!events.isEmpty() && events.last().at(0).toInt() == 4
-                                 && events.last().at(1).toInt() == 2 && events.last().at(2).toInt() == 90, 2000);
-        QCOMPARE(int(r.sim->output(4).data[1]), 30);
+                                 && events.last().at(1).toInt() == 2 && events.last().at(2).toInt() == 90, 5000);
+        QVector<int> steps;
+        for (const QList<QVariant> &e : events)
+            if (e.at(0).toInt() == 4 && e.at(1).toInt() == 2) steps << e.at(2).toInt();
+        QVERIFY2(steps.size() > 10, qPrintable(QString::number(steps.size())));   // 110 steps, a few may be skipped
+        QVERIFY(steps.first() < 200);
+        for (int k = 1; k < steps.size(); ++k)
+            QVERIFY(steps[k] < steps[k - 1] && steps[k] >= 90);  // downwards, ending at the target
+        QCOMPARE(steps.last(), 90);
+        QCOMPARE(int(r.sim->output(4).data[1]), 2);
         QCOMPARE(r.errors, 0);
     }
 

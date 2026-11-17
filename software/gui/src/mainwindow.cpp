@@ -41,7 +41,6 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDateTime>
-#include <QDockWidget>
 #include <QFile>
 #include <QFileDialog>
 #include <QHash>
@@ -54,14 +53,12 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
-#include <QPlainTextEdit>
 #include <QPointer>
 #include <QProgressBar>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSerialPortInfo>
 #include <QSplitter>
-#include <QStackedWidget>
 #include <QStatusBar>
 #include <QStyle>
 #include <QTabWidget>
@@ -100,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     m_analogTimer->start();
 
     buildUi();
+    m_inEd->setTimingEnabled(m_edit.board.timing);   // wait time per route step: a board setting
     buildToolbar();
     setupWebRemote();
     refreshPorts();
@@ -131,9 +129,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         m_inEd->setAnalogReading(channel, value);
         m_view->setAnalogValue(channel, value);
     });
-    connect(m_link, &DeviceLink::logMessage,     this, &MainWindow::appendLog);
     connect(m_link, &DeviceLink::errorOccurred,  this, [this](const QString &m) {
-        appendLog(QStringLiteral("ERR"), m);
         statusBar()->showMessage(m, 6000);
     });
     connect(m_link, &DeviceLink::progress, this, [this](int done, int total) {
@@ -161,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     });
 
     applyCapabilities();
-    setExpertMode(QSettings().value(QStringLiteral("ui/expert"), false).toBool());
+    setLevel(Ui::level());
     updateConnState();
     updateEditing();
     refreshAll();
@@ -328,25 +324,7 @@ void MainWindow::buildUi()
     m_pinMap = new PinMapView;
     m_tabs->addTab(m_pinMap, tr("Pin map"));
 
-    m_stack = new QStackedWidget;
-    m_stack->addWidget(buildStartPage());
-    m_stack->addWidget(m_tabs);
-    setCentralWidget(m_stack);
-
-    // Log dock
-    m_log = new QPlainTextEdit;
-    m_log->setObjectName(QStringLiteral("log"));
-    m_log->setReadOnly(true);
-    m_log->setMaximumBlockCount(3000);
-    auto *dock = new QDockWidget(tr("Serial log"), this);
-    dock->setObjectName(QStringLiteral("logDock"));
-    dock->setWidget(m_log);
-    dock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-    addDockWidget(Qt::BottomDockWidgetArea, dock);
-    connect(dock->toggleViewAction(), &QAction::triggered, this, [](bool on) {
-        QSettings().setValue(QStringLiteral("ui/showLog"), on);
-    });
-    resizeDocks({ dock }, { 170 }, Qt::Vertical);
+    setCentralWidget(m_tabs);              // straight into the workspace: Configuration | Pin map
 
     // Status bar
     m_connChip   = new QLabel;
@@ -356,11 +334,7 @@ void MainWindow::buildUi()
     m_progress->setMaximumWidth(180);
     m_progress->setTextVisible(false);
     m_progress->hide();
-    m_protoChip = new QLabel;
-    m_protoChip->setObjectName(QStringLiteral("chip"));
-    m_protoChip->hide();
     statusBar()->addPermanentWidget(m_dirtyChip);
-    statusBar()->addPermanentWidget(m_protoChip);
     statusBar()->addPermanentWidget(m_progress);
     statusBar()->addPermanentWidget(m_connChip);
 
@@ -575,11 +549,6 @@ void MainWindow::applyCapabilities()
     m_inEd->setLiveReadingAvailable(m_link->isReady() && c.analogSound);
     m_outEd->refreshPinCombos();
     m_inEd->refreshPinCombos();
-    if (known)
-    {
-        m_protoChip->setText(tr("protocol v%1 · %2 steps/route · %3 in total").arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool));
-    }
-    m_protoChip->setVisible(known && m_expert);
     updateInputEditorLimits();
     refreshAll();
 }
@@ -680,7 +649,8 @@ void MainWindow::buildToolbar()
     tb->addSeparator();
 
     m_preset = new QComboBox;
-    m_preset->addItems(presetNames());
+    for (const QString &name : presetNames())
+        m_preset->addItem(name, m_preset->count());
     tb->addWidget(new QLabel(tr(" Preset ")));
     tb->addWidget(m_preset);
     m_actPreset = tb->addAction(tr("Apply"), this, &MainWindow::applyPreset);
@@ -729,7 +699,7 @@ void MainWindow::buildToolbar()
     board->addAction(m_actRevert);
     board->addSeparator();
     board->addAction(m_actBoardSettings);
-    board->addAction(tr("Apply a preset…"), this, [this] { setExpertMode(true); m_preset->setFocus(); });
+    board->addAction(tr("Apply a preset…"), this, [this] { m_preset->setFocus(); });
     board->addSeparator();
     board->addAction(tr("&Flash firmware…"), this, &MainWindow::flashFirmware);
     board->addAction(tr("&Phone remote…"), this, &MainWindow::openPhoneRemote);
@@ -737,10 +707,26 @@ void MainWindow::buildToolbar()
     m_actRead->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
 
     QMenu *view = menuBar()->addMenu(tr("&View"));
-    m_actExpert = view->addAction(tr("&Expert mode"));
-    m_actExpert->setCheckable(true);
-    m_actExpert->setToolTip(tr("Show bytes, the serial log and protocol details"));
-    connect(m_actExpert, &QAction::toggled, this, &MainWindow::setExpertMode);
+    // user level: decides what is offered, never changes the configuration
+    auto *levels = new QActionGroup(view);
+    levels->setExclusive(true);
+    const QString levelTips[3] = { tr("Servos, lights and turnout coils; buttons, DCC addresses and simple routes"),
+                                   tr("Also light effects, signals, PWM, sound, frog relays, analog inputs and custom values"),
+                                   tr("Also automatic block signals, sensor inputs and semaphore arms") };
+    for (int l = Ui::Beginner; l <= Ui::Expert; ++l)
+    {
+        QAction *a = view->addAction(Ui::levelName(l));
+        a->setCheckable(true);
+        a->setToolTip(levelTips[l]);
+        a->setStatusTip(levelTips[l]);
+        levels->addAction(a);
+        m_actLevel << a;
+        connect(a, &QAction::triggered, this, [this, l] { setLevel(l); });
+    }
+    view->addAction(tr("What do the levels offer?"), this, [this] {
+        Info::showDialog(QStringLiteral("levels"), tr("User levels"), this);
+    });
+    view->addSeparator();
     m_actShowUnused = view->addAction(tr("Show unused inputs and outputs"));
     m_actShowUnused->setCheckable(true);
     m_actShowUnused->setChecked(QSettings().value(QStringLiteral("ui/showUnused2"), false).toBool());
@@ -749,13 +735,6 @@ void MainWindow::buildToolbar()
         QSettings().setValue(QStringLiteral("ui/showUnused2"), on);
         m_view->setHideUnused(!on);
     });
-    view->addSeparator();
-    m_actRaw = view->addAction(tr("Show TX/RX bytes in log"));
-    m_actRaw->setCheckable(true);
-    m_actRaw->setChecked(true);
-    view->addAction(tr("Clear log"), m_log, &QPlainTextEdit::clear);
-    if (auto *dock = findChild<QDockWidget *>(QStringLiteral("logDock")))
-        view->addAction(dock->toggleViewAction());
 
     // Theme: automatic (Windows), light, dark; applied at once
     view->addSeparator();
@@ -809,6 +788,9 @@ void MainWindow::buildToolbar()
     start->setShortcut(QKeySequence::HelpContents);
     help->addAction(tr("&Configure, simulate and live test"), this, [this] {
         Info::showDialog(QStringLiteral("modes"), tr("Configure, simulate and live test"), this);
+    });
+    help->addAction(tr("&User levels"), this, [this] {
+        Info::showDialog(QStringLiteral("levels"), tr("User levels"), this);
     });
     help->addAction(tr("&Board settings"), this, [this] {
         Info::showDialog(QStringLiteral("board.settings"), tr("Board settings"), this);
@@ -876,7 +858,6 @@ void MainWindow::connectPort(const QString &port)
     m_shadow = m_edit;
     m_nameAsked = false;
     m_simulating = false;
-    showWorkspace();
     QString err;
     if (!m_link->openSerial(port, &err))
         QMessageBox::warning(this, windowTitle(), tr("Could not open %1:\n%2").arg(port, err));
@@ -900,7 +881,6 @@ void MainWindow::connectSimulatedBoard()
     m_shadow = m_edit;
     m_nameAsked = true;
     m_simulating = false;
-    showWorkspace();
     QString err;
     if (!m_link->openDevice(new SimulatedDevice, false, &err))     // the firmware in it waits for a request
         QMessageBox::warning(this, windowTitle(), err);
@@ -941,7 +921,6 @@ void MainWindow::startSimulation()
     m_outKnown.fill(false);
     m_inKnown.fill(false);
     m_nameAsked = true;                  // a simulation does not ask for a name
-    showWorkspace();
     // the simulated board starts with exactly what is on screen: your own configuration
     auto *sim = new SimulatedDevice;
     for (int i = 0; i < NumOutputs; ++i) sim->setOutput(i, m_edit.outputs[i]);
@@ -1145,7 +1124,6 @@ void MainWindow::writeDirty(bool live)
     // Live writing sends every edited item once. If the board still reports something else
     // afterwards (it cannot store it), the item is not sent again until the user edits again:
     // otherwise the GUI would write the same thing forever.
-    int n = 0;
     QStringList refused;
     for (int i = 0; i < NumInputs; ++i)
         if (inputDirty(i))
@@ -1155,7 +1133,6 @@ void MainWindow::writeDirty(bool live)
             m_link->writeInput(i, m_edit.inputs[i]);
             m_link->writeRoute(i, m_edit.inputs[i].route);
             m_link->readInput(i);                             // also reads the route back
-            ++n;
         }
     for (int i = 0; i < NumOutputs; ++i)
         if (outputDirty(i))
@@ -1164,16 +1141,12 @@ void MainWindow::writeDirty(bool live)
             m_liveTried.insert(100 + i);
             m_link->writeOutput(i, m_edit.outputs[i]);
             m_link->readOutput(i);
-            ++n;
         }
-    if (n)
-        appendLog(QStringLiteral("INFO"), tr("Writing %1 item(s), each is read back for verification").arg(n));
     if (!refused.isEmpty() && !m_liveWarned)
     {
         m_liveWarned = true;
-        const QString msg = tr("The board keeps a different value for %1; not sending it again.").arg(refused.join(QStringLiteral(", ")));
-        appendLog(QStringLiteral("WARN"), msg);
-        statusBar()->showMessage(msg, 8000);
+        statusBar()->showMessage(tr("The board keeps a different value for %1; not sending it again.")
+                                     .arg(refused.join(QStringLiteral(", "))), 8000);
     }
 }
 
@@ -1288,7 +1261,6 @@ bool MainWindow::loadFile(const QString &path)
     setBoardType(m_edit.board.type);
     if (!m_link->isReady())
         m_shadow = m_edit;
-    showWorkspace();
     refreshAll();
     showOutput(m_outEd->index());
     showInput(m_inEd->index());
@@ -1372,7 +1344,7 @@ void MainWindow::updateActions()
         m_dirtyChip->setText(busy ? tr("Saving on the board…") : tr("%1 change(s) waiting").arg(dirty));
     else
         m_dirtyChip->setText(tr("%1 unsent change(s)").arg(dirty));
-    m_dirtyChip->setVisible(dirty > 0 && (m_expert || !m_link->isReady() || busy));
+    m_dirtyChip->setVisible(dirty > 0 && (!m_link->isReady() || busy));
 }
 
 // ── Canvas refresh ──────────────────────────────────────────────────────────
@@ -1607,25 +1579,6 @@ QString MainWindow::inputNote(int i) const
 {
     const InputConfig &c = m_edit.inputs[i];
     return c.type != InputNotInUse && c.pin < 2 ? serialPinNote() : QString();
-}
-
-// ── Log ─────────────────────────────────────────────────────────────────────
-void MainWindow::appendLog(const QString &kind, const QString &text)
-{
-    if ((kind == QLatin1String("TX") || kind == QLatin1String("RX")) && m_actRaw && !m_actRaw->isChecked())
-        return;
-    static const QHash<QString, QString> colors = {
-        { QStringLiteral("TX"),   QStringLiteral("#93C5FD") },
-        { QStringLiteral("RX"),   QStringLiteral("#86EFAC") },
-        { QStringLiteral("INFO"), QStringLiteral("#CBD5E1") },
-        { QStringLiteral("WARN"), QStringLiteral("#FCD34D") },
-        { QStringLiteral("ERR"),  QStringLiteral("#FCA5A5") },
-    };
-    const QString time = QTime::currentTime().toString(QStringLiteral("HH:mm:ss.zzz"));
-    m_log->appendHtml(QStringLiteral("<span style=\"color:#64748B\">%1</span> "
-                                     "<span style=\"color:%2; white-space:pre\">%3  %4</span>")
-                          .arg(time, colors.value(kind, QStringLiteral("#E2E8F0")),
-                               kind.leftJustified(4), text.toHtmlEscaped()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -1984,75 +1937,17 @@ void MainWindow::refreshLampRow()
                                             .arg(Ui::lampColor(o, k).name()));
 }
 
-// ── Simple / expert mode ────────────────────────────────────────────────────
-void MainWindow::setExpertMode(bool on)
+// ── User level ──────────────────────────────────────────────────────────────
+void MainWindow::setLevel(int level)
 {
-    m_expert = on;
-    QSettings().setValue(QStringLiteral("ui/expert"), on);
-    if (m_actExpert && m_actExpert->isChecked() != on)
-        m_actExpert->setChecked(on);
-    for (QAction *a : m_expertOnly)
-        a->setVisible(on);
-    if (auto *dock = findChild<QDockWidget *>(QStringLiteral("logDock")))
-    {
-        // the serial log is off by default, also in expert mode (View > Serial log)
-        dock->setVisible(on && QSettings().value(QStringLiteral("ui/showLog"), false).toBool());
-        dock->toggleViewAction()->setVisible(on);
-    }
-    if (m_actRaw) m_actRaw->setVisible(on);
-    // payload bytes under the editors
-    for (QWidget *ed : { static_cast<QWidget *>(m_inEd), static_cast<QWidget *>(m_outEd) })
-        for (QLabel *l : ed->findChildren<QLabel *>(QStringLiteral("mono")))
-            l->setVisible(on);
-    m_protoChip->setVisible(on && m_link->isOpen() && m_link->caps().known);
-    updateActions();
-}
-
-void MainWindow::showWorkspace()
-{
-    if (m_stack)
-        m_stack->setCurrentIndex(1);
-}
-
-QWidget *MainWindow::buildStartPage()
-{
-    auto *page = new QWidget;
-    page->setObjectName(QStringLiteral("startPage"));
-    auto *outer = new QVBoxLayout(page);
-    outer->addStretch(1);
-    auto *box = new QWidget;
-    box->setMaximumWidth(520);
-    auto *v = new QVBoxLayout(box);
-    auto *title = new QLabel(tr("<h2>GPIOcore Configurator</h2>"
-                                "<p>Plug a GPIOcore board into a USB port, choose its port at the top and press "
-                                "<b>Connect</b>. Everything you change is sent to the board straight away.</p>"));
-    title->setWordWrap(true);
-    v->addWidget(title);
-    auto add = [this, v](const QString &text, const QString &help, auto slot) {
-        auto *b = new QPushButton(text);
-        b->setMinimumHeight(40);
-        b->setToolTip(help);
-        connect(b, &QPushButton::clicked, this, slot);
-        v->addWidget(b);
-        auto *l = new QLabel(help);
-        l->setObjectName(QStringLiteral("help"));
-        l->setWordWrap(true);
-        v->addWidget(l);
-    };
-    add(tr("Connect to the board"), tr("Uses the port selected at the top."), [this] { toggleConnection(); });
-    add(tr("Simulate"), tr("Try a configuration without a board: open a board file or start a new one, then "
-                           "simulate it. Nothing can break."), [this] { connectDemo(); });
-    add(tr("Open a board file…"), tr("Look at or prepare the settings of a board without connecting it."), [this] { openFile(); });
-    add(tr("New board (offline)…"), tr("Prepare a new board on this computer and send it later."), [this] { newOfflineBoard(); });
-    add(tr("Flash firmware…"), tr("Put the GPIOcore firmware on an Arduino."), [this] { flashFirmware(); });
-    v->addWidget(Info::button(QStringLiteral("app.start")), 0, Qt::AlignLeft);
-    auto *h = new QHBoxLayout;
-    h->addStretch(1);
-    h->addWidget(box);
-    h->addStretch(1);
-    outer->addLayout(h);
-    outer->addStretch(2);
-    return page;
+    // only what the GUI offers changes: the configuration (types, settings) stays exactly as it is
+    Ui::setLevel(level);
+    for (int l = 0; l < m_actLevel.size(); ++l)
+        m_actLevel[l]->setChecked(l == Ui::level());
+    Ui::offerItems(m_preset, [](int p) { return Ui::presetLevel(p) <= Ui::level(); });
+    m_outEd->refreshPinCombos();             // D0 / D1, offered types, boxes, read-only above the level
+    m_inEd->refreshPinCombos();
+    refreshWarnings();
 }
 
 // ── Board settings, name and board files ────────────────────────────────────
@@ -2099,7 +1994,6 @@ void MainWindow::onBoardReceived(const BoardSettings &b)
         {
             for (int i = 0; i < NumOutputs; ++i) { m_edit.outputs[i].name = file.outputs[i].name; m_edit.outputs[i].lampColors = file.outputs[i].lampColors; }
             for (int i = 0; i < NumInputs; ++i)  m_edit.inputs[i].name  = file.inputs[i].name;
-            appendLog(QStringLiteral("INFO"), tr("Names loaded from %1").arg(QDir::toNativeSeparators(path)));
         }
     }
     m_edit.board = b;
@@ -2223,6 +2117,12 @@ void MainWindow::editBoardSettings()
     form->addRow(QString(), timing);
     form->addRow(tr("Wait time per step"), delay);
     form->addRow(tr("Route interlocking"), interlock);
+    if (Ui::level() < Ui::Advanced)          // Beginner: name and board type only (the rest is kept as it is)
+        for (QWidget *w : { static_cast<QWidget *>(timing), static_cast<QWidget *>(delay), static_cast<QWidget *>(interlock) })
+        {
+            w->hide();
+            if (QWidget *label = form->labelForField(w)) label->hide();
+        }
     auto *note = new QLabel(m_link->isReady() && !m_link->caps().boardSettings
                                 ? tr("This board's firmware cannot store these settings yet; they are only kept in the file.")
                                 : QString());
@@ -2278,6 +2178,7 @@ void MainWindow::newOfflineBoard()
     start->addItem(tr("Empty (1 input, 1 output)"), 8);
     for (int k = 0; k < 8; ++k)
         start->addItem(tr("Preset: %1").arg(presets.value(k)), k);
+    Ui::offerItems(start, [](int p) { return Ui::presetLevel(p) <= Ui::level(); });
     form->addRow(tr("Name"), nameEdit);
     form->addRow(tr("Start with"), start);
     auto *hint = new QLabel(tr("When you later connect a board and give it this name, these settings belong to it. "
@@ -2298,7 +2199,6 @@ void MainWindow::newOfflineBoard()
     m_edit = m_dev = b;
     m_shadow = b;
     setBoardType(b.board.type);
-    showWorkspace();
     showOutput(m_outEd->index());
     showInput(m_inEd->index());
     refreshAll();

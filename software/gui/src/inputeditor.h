@@ -64,6 +64,7 @@ private:
                               Gpio::RouteStep &s);
     void refresh();
     void collect();
+    void applyLevel();                       // user level: offered functions and rows, read-only above it
     void rebuildSteps();
     void updateSteps();
     QString stepSignature() const;
@@ -85,6 +86,8 @@ private:
     QLabel       *m_help  = nullptr;
     QLabel       *m_warn  = nullptr;
     QLabel       *m_note  = nullptr;
+    QWidget      *m_levelRow = nullptr;    // "Uses Expert features ..." (read-only)
+    QLabel       *m_levelNote = nullptr;
     QComboBox    *m_function = nullptr;
     QGroupBox    *m_modeBox  = nullptr;
     QRadioButton *m_optA     = nullptr;   // toggle
@@ -96,6 +99,7 @@ private:
     QComboBox    *m_pin     = nullptr;
     QWidget      *m_pinRow  = nullptr;
     QComboBox    *m_readAs  = nullptr;    // digital, or analog below / above / at a value
+    QWidget      *m_readAsRow = nullptr;
     QComboBox    *m_channel = nullptr;    // analog pin A0-A6
     QWidget      *m_channelRow = nullptr;
     QSpinBox     *m_threshold = nullptr;
@@ -123,5 +127,4 @@ private:
     QGridLayout  *m_stepGrid = nullptr;
     QPushButton  *m_addStep = nullptr;
     QVector<StepRow> m_rows;
-    QLabel       *m_raw = nullptr;
 };

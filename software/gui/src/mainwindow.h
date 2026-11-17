@@ -16,9 +16,7 @@ class QAction;
 class QCheckBox;
 class QComboBox;
 class QLabel;
-class QPlainTextEdit;
 class QProgressBar;
-class QStackedWidget;
 class QLineEdit;
 class QTimer;
 class QToolButton;
@@ -37,8 +35,7 @@ public:
     Mode mode() const { return m_mode; }
     void connectPort(const QString &port);
     bool loadFile(const QString &path);       // configuration JSON
-    void setExpertMode(bool on);              // simple mode hides bytes, log and protocol details
-    void showWorkspace();                     // leave the start page
+    void setLevel(int level);                 // user level (Ui::Level): what the GUI offers, never the configuration
     static QString boardsDir();               // where <board name>.json files are kept
     // Apply a preset (without asking) once the first read-all has finished.
     void applyPresetOnStart(int preset);
@@ -107,12 +104,10 @@ private:
     void openLiveValue(int input);           // live test: aspect / PWM value via DCC extended
     void openAnalogValue(int input);         // simulation: the voltage on an analog input's pin
     void pollAnalog();                       // live reading of the analog pins in view (GET_ANALOG)
-    QWidget *buildStartPage();
     void refreshRows();
     void refreshAll();
     void refreshWarnings();
     void updateActions();
-    void appendLog(const QString &kind, const QString &text);
 
     bool outputDirty(int index) const;
     bool inputDirty(int index) const;
@@ -150,12 +145,10 @@ private:
     OutputEditor   *m_outEd = nullptr;
     InputEditor    *m_inEd = nullptr;
     PinMapView     *m_pinMap = nullptr;
-    QPlainTextEdit *m_log = nullptr;
 
     QComboBox      *m_port = nullptr;
     QComboBox      *m_preset = nullptr;
     QComboBox      *m_boardType = nullptr;
-    QStackedWidget *m_stack = nullptr;          // 0 = start page, 1 = workspace
     QTimer         *m_liveTimer = nullptr;
     QTimer         *m_analogTimer = nullptr;    // live reading of analog pins, every 250 ms
     QLineEdit      *m_inName = nullptr;
@@ -163,15 +156,13 @@ private:
     QWidget        *m_lampRow = nullptr;       // signal: lamp colours (board file only)
     QList<QToolButton *> m_lampButtons;
     void            refreshLampRow();
-    QAction        *m_actExpert = nullptr;
+    QList<QAction *> m_actLevel;                // View menu: Beginner, Advanced, Expert
     QAction        *m_actShowUnused = nullptr;
     QAction        *m_actBoardSettings = nullptr;
     QAction        *m_actLive = nullptr;
     QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board
     QAction        *m_actWriteAll = nullptr;
     QAction        *m_actSaveAs = nullptr;
-    QList<QAction *> m_expertOnly;              // toolbar items shown in expert mode only
-    bool            m_expert = false;
     bool            m_nameAsked = false;
     bool            m_simulating = false;
     Mode            m_mode = ModeConfigure;
@@ -196,9 +187,7 @@ private:
     QAction        *m_actPreset = nullptr;
     QAction        *m_actOpen = nullptr;
     QAction        *m_actSave = nullptr;
-    QAction        *m_actRaw = nullptr;
     QLabel         *m_connChip = nullptr;
     QLabel         *m_dirtyChip = nullptr;
-    QLabel         *m_protoChip = nullptr;
     QProgressBar   *m_progress = nullptr;
 };

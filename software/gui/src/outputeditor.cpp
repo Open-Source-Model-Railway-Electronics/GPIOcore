@@ -4,7 +4,6 @@
 
 #include <QTimer>
 #include "infotexts.h"
-#include "protocol.h"
 #include "uihelpers.h"
 
 #include <QCheckBox>
@@ -102,6 +101,17 @@ void OutputEditor::buildUi()
     m_note->setWordWrap(true);
     m_note->hide();
     root->addWidget(m_note);
+    // above the user level: everything is shown, nothing can be changed
+    m_levelNote = new QLabel;
+    m_levelNote->setObjectName(QStringLiteral("warn"));
+    m_levelNote->setWordWrap(true);
+    m_levelRow = new QWidget;
+    auto *levelLay = new QHBoxLayout(m_levelRow);
+    levelLay->setContentsMargins(0, 0, 0, 0);
+    levelLay->addWidget(m_levelNote, 1);
+    levelLay->addWidget(Info::button(QStringLiteral("levels")));
+    m_levelRow->hide();
+    root->addWidget(m_levelRow);
 
     // Pins
     m_pinBox  = new QGroupBox(tr("Pins"));
@@ -308,7 +318,10 @@ void OutputEditor::buildUi()
         ownRow->addWidget(Info::button(QStringLiteral("output.blocksignal")));
         f->addRow(tr("Own block"), ownRow);
         f->addRow(tr("Next block"), m_blockNext);
-        const QString aspectLabels[3] = { tr("Own block occupied"), tr("Next block occupied"), tr("Both free") };
+        const QString aspectLabels[3] = { tr("Unsafe"), tr("Caution"), tr("Safe") };
+        const QString aspectTips[3] = { tr("Aspect while its own block is occupied"),
+                                        tr("Aspect while its own block is free and the next block is occupied"),
+                                        tr("Aspect while both blocks are free") };
         for (int k = 0; k < 3; ++k)
         {
             // the aspect picker of route steps / custom values: a value plus 'choose lamp by lamp'
@@ -331,16 +344,19 @@ void OutputEditor::buildUi()
             lay->addWidget(m_blockText[k], 1);
             m_blockRow[k] = new QWidget;
             m_blockRow[k]->setLayout(lay);
-            f->addRow(aspectLabels[k], m_blockRow[k]);
+            auto *label = new QLabel(aspectLabels[k]);
+            label->setToolTip(aspectTips[k]);
+            m_blockRow[k]->setToolTip(aspectTips[k]);
+            f->addRow(label, m_blockRow[k]);
             connect(pick, &QToolButton::clicked, this, [this, k] {
                 const int v = Ui::pickAspect(this, m_blockAspect[k]->value(), m_index);
                 if (v >= 0) m_blockAspect[k]->setValue(v);
             });
             connect(m_blockAspect[k], QOverload<int>::of(&QSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
         }
-        auto *blockHint = new QLabel(tr("The board chooses the aspect itself every 50 ms: own block occupied first, then the "
-                                        "next block, otherwise both free. Inputs, routes and DCC cannot set it. "
-                                        "Flashing lamps flash at 1 Hz."));
+        auto *blockHint = new QLabel(tr("The board chooses the aspect itself every 50 ms: unsafe while its own block is "
+                                        "occupied, caution while the next block is, otherwise safe. Inputs, routes and "
+                                        "DCC cannot set it. Flashing lamps flash at 1 Hz."));
         blockHint->setWordWrap(true);
         blockHint->setObjectName(QStringLiteral("help"));
         f->addRow(blockHint);
@@ -379,11 +395,6 @@ void OutputEditor::buildUi()
     testLay->addWidget(m_test1);
     testLay->addStretch();
     root->addWidget(stateBox);
-
-    m_raw = new QLabel;
-    m_raw->setObjectName(QStringLiteral("mono"));
-    m_raw->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    root->addWidget(m_raw);
     root->addStretch();
 
     refreshPinCombos();
@@ -586,8 +597,6 @@ void OutputEditor::refresh()
 
     updateVisibility();
     updateTimeLabels();
-    m_raw->setText(QStringLiteral("payload  %1")
-                       .arg(Proto::toHex(encodeOutput(m_index, m_cfg))));
     m_loading = false;
 }
 
@@ -606,7 +615,8 @@ void OutputEditor::updateVisibility()
     m_pinBox->setVisible(info.pinCount > 0);
     m_pinBox->setTitle(info.needsPwm ? tr("Pins (PWM capable: D3 D5 D6 D9 D10 D11)") : tr("Pins"));
 
-    m_relayBox->setVisible(info.relays);
+    const int shown = qMax(Ui::level(), Ui::outputLevel(m_cfg));   // a higher level in use: shown as at that level
+    m_relayBox->setVisible(info.relays && shown >= Ui::Advanced);
     const bool showRelay[3] = { m_frog == FrogElectro, m_frog == FrogElectro, m_frog == FrogUni };
     for (int i = 0; i < 3; ++i)
     {
@@ -619,6 +629,7 @@ void OutputEditor::updateVisibility()
     const Page page = pageFor(info.params);
     m_params->setCurrentIndex(page);
     m_paramBox->setVisible(page != PageNone);
+    m_follow->setVisible(shown >= Ui::Expert);
     m_followBox->setVisible(m_cfg.servoFollows() >= 0);
     for (int k = 0; k < 3; ++k)
         m_blockText[k]->setText(Ui::aspectText(m_cfg.data[k]));
@@ -628,6 +639,20 @@ void OutputEditor::updateVisibility()
         if (QWidget *label = form->labelForField(m_blockRow[1]))
             label->setEnabled(next);
     m_stateBox->setVisible(m_cfg.type != BlockSignal);   // no stored state: the aspect is computed
+    applyLevel();
+}
+
+void OutputEditor::applyLevel()
+{
+    Ui::offerItems(m_type, [](int t) { return Ui::outputTypeLevel(quint8(t)) <= Ui::level(); });
+    const int need = Ui::outputLevel(m_cfg);
+    const bool locked = need > Ui::level();
+    m_levelNote->setText(locked ? Ui::levelNote(need) : QString());
+    m_levelRow->setVisible(locked);
+    m_type->setEnabled(!locked);
+    for (QWidget *w : { static_cast<QWidget *>(m_pinBox), static_cast<QWidget *>(m_relayBox),
+                        static_cast<QWidget *>(m_paramBox), static_cast<QWidget *>(m_stateBox) })
+        w->setEnabled(!locked);
 }
 
 void OutputEditor::updateTimeLabels()
@@ -710,7 +735,6 @@ void OutputEditor::collect()
     m_frogNote->setVisible(false);
     updateVisibility();
     updateTimeLabels();
-    m_raw->setText(QStringLiteral("payload  %1").arg(Proto::toHex(encodeOutput(m_index, m_cfg))));
     m_loading = false;
 
     emit changed(m_index, m_cfg);

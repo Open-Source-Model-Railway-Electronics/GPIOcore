@@ -1,6 +1,5 @@
 #include "inputeditor.h"
 #include "infotexts.h"
-#include "protocol.h"
 #include "uihelpers.h"
 
 #include <QCheckBox>
@@ -115,6 +114,17 @@ void InputEditor::buildUi()
     m_note->setWordWrap(true);
     m_note->hide();
     root->addWidget(m_note);
+    // above the user level: everything is shown, nothing can be changed
+    m_levelNote = new QLabel;
+    m_levelNote->setObjectName(QStringLiteral("warn"));
+    m_levelNote->setWordWrap(true);
+    m_levelRow = new QWidget;
+    auto *levelLay = new QHBoxLayout(m_levelRow);
+    levelLay->setContentsMargins(0, 0, 0, 0);
+    levelLay->addWidget(m_levelNote, 1);
+    levelLay->addWidget(Info::button(QStringLiteral("levels")));
+    m_levelRow->hide();
+    root->addWidget(m_levelRow);
 
     // Behaviour of direct control: toggle / absolute. A route has no choice:
     // it starts on a button press (falling edge) or on any DCC command.
@@ -158,19 +168,20 @@ void InputEditor::buildUi()
     m_routeTriggerRow->setLayout(trig);
     m_routeTriggerLabel = new QLabel(tr("Route starts on"));
     srcForm->addRow(m_routeTriggerLabel, m_routeTriggerRow);
-    // digital (button to GND) or analog (a voltage compared with a threshold, e.g. a resistor ladder)
-    m_readAs = new QComboBox;
-    m_readAs->addItem(tr("Digital — button to GND"),                     int(AnalogNone));
-    m_readAs->addItem(tr("Analog — below a value"),                      int(AnalogBelow));
-    m_readAs->addItem(tr("Analog — above a value"),                      int(AnalogAbove));
-    m_readAs->addItem(tr("Analog — at a value (resistor ladder)"),       int(AnalogAt));
-    srcForm->addRow(tr("Read as"), withInfo(m_readAs, QStringLiteral("input.analog")));
     auto rowWidget = [](QLayout *lay) {
         auto *w = new QWidget;
         lay->setContentsMargins(0, 0, 0, 0);
         w->setLayout(lay);
         return w;
     };
+    // digital (button to GND) or analog (a voltage compared with a threshold, e.g. a resistor ladder)
+    m_readAs = new QComboBox;
+    m_readAs->addItem(tr("Digital — button to GND"),                     int(AnalogNone));
+    m_readAs->addItem(tr("Analog — below a value"),                      int(AnalogBelow));
+    m_readAs->addItem(tr("Analog — above a value"),                      int(AnalogAbove));
+    m_readAs->addItem(tr("Analog — at a value (resistor ladder)"),       int(AnalogAt));
+    m_readAsRow = rowWidget(withInfo(m_readAs, QStringLiteral("input.analog")));
+    srcForm->addRow(tr("Read as"), m_readAsRow);
     m_pin = new QComboBox;
     m_pin->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_pin->setMinimumContentsLength(10);
@@ -270,11 +281,6 @@ void InputEditor::buildUi()
     addRow->addStretch();
     routeLay->addLayout(addRow);
     root->addWidget(m_routeBox);
-
-    m_raw = new QLabel;
-    m_raw->setObjectName(QStringLiteral("mono"));
-    m_raw->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    root->addWidget(m_raw);
     root->addStretch();
 
     refreshPinCombos();
@@ -703,7 +709,8 @@ void InputEditor::refresh()
 
     m_targetBox->setVisible(info.usesOutput);
     const bool values = m_cfg.hasCustomValues();
-    m_customRow->setVisible(fn == FnDirect);
+    const int shown = qMax(Ui::level(), Ui::inputLevel(m_cfg, m_timing));   // a higher level in use: shown as at that level
+    m_customRow->setVisible(fn == FnDirect && shown >= Ui::Advanced);
     m_custom->setChecked(values);
     for (int k = 0; k < 2; ++k)
     {
@@ -716,8 +723,12 @@ void InputEditor::refresh()
             showStepValue(m_valueMode[k], m_value[k], m_valuePick[k], m_cfg.route[k], stepKind(outputType(m_cfg.outputId)));
     }
     m_routeBox->setVisible(fn == FnRoute);
-    m_routeTriggerRow->setVisible(fn == FnRoute);
-    m_routeTriggerLabel->setVisible(fn == FnRoute);
+    m_routeTriggerRow->setVisible(fn == FnRoute && shown >= Ui::Advanced);
+    m_routeTriggerLabel->setVisible(fn == FnRoute && shown >= Ui::Advanced);
+    m_readAsRow->setVisible(shown >= Ui::Advanced);   // Beginner: digital only
+    if (auto *form = qobject_cast<QFormLayout *>(m_srcBox->layout()))
+        if (QWidget *label = form->labelForField(m_readAsRow))
+            label->setVisible(shown >= Ui::Advanced);
     m_routeTrigger->setEnabled(m_useAddr->isChecked() || m_cfg.address != AddrNone);
 
     const QString sig = stepSignature();
@@ -727,9 +738,21 @@ void InputEditor::refresh()
         rebuildSteps();
     }
     updateSteps();
-
-    m_raw->setText(QStringLiteral("payload  %1").arg(Proto::toHex(encodeInput(m_index, m_cfg))));
+    applyLevel();
     m_loading = false;
+}
+
+void InputEditor::applyLevel()
+{
+    Ui::offerItems(m_function, [](int fn) { return fn != FnSensor || Ui::level() >= Ui::Expert; });
+    const int need = Ui::inputLevel(m_cfg, m_timing);
+    const bool locked = need > Ui::level();
+    m_levelNote->setText(locked ? Ui::levelNote(need) : QString());
+    m_levelRow->setVisible(locked);
+    m_function->setEnabled(!locked);
+    for (QWidget *w : { static_cast<QWidget *>(m_modeBox), static_cast<QWidget *>(m_srcBox),
+                        static_cast<QWidget *>(m_targetBox), static_cast<QWidget *>(m_routeBox) })
+        w->setEnabled(!locked);
 }
 
 void InputEditor::collect()

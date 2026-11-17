@@ -7,6 +7,8 @@ class QWidget;
 #include <QString>
 #include <QVector>
 
+#include <functional>
+
 class QApplication;
 class QComboBox;
 
@@ -21,6 +23,23 @@ void    setThemeOverride(const QString &theme);  // this run only, not saved (--
 void    setThemeSetting(const QString &theme);   // and applies it
 bool    isDark();
 QColor  themed(const QColor &light);              // the dark-mode equivalent of a light-theme colour
+
+// ── User level (View menu) ──────────────────────────────────────────────────
+// The level only decides what the GUI offers; it never changes the configuration. Stored in
+// QSettings "ui/level"; new installs start at Beginner.
+enum Level { Beginner, Advanced, Expert };
+int     level();
+void    setLevel(int level);
+QString levelName(int level);
+QString levelNote(int level);         // "Uses Expert features — switch to Expert in the View menu to edit"
+int     outputTypeLevel(quint8 type);
+int     inputTypeLevel(quint8 type);
+// The lowest level that can edit this output / input (timing: board setting, own wait per route step)
+int     outputLevel(const Gpio::OutputConfig &c);
+int     inputLevel(const Gpio::InputConfig &c, bool timing);
+int     presetLevel(int preset);
+// Hide (and disable) the items whose data is not offered; the current item still shows its text.
+void    offerItems(QComboBox *combo, const std::function<bool(int)> &offered);
 
 QColor outputTypeColor(quint8 type);
 QColor inputTypeColor(quint8 type);

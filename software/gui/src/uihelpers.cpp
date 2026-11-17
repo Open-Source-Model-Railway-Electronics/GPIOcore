@@ -7,6 +7,8 @@
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QLabel>
+#include <QListView>
+#include <QStandardItemModel>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPalette>
@@ -86,6 +88,101 @@ void setThemeSetting(const QString &theme)
     applyAppStyle(*qApp);
 }
 
+// ── User level ──────────────────────────────────────────────────────────────
+static int g_level = -1;                 // -1: not read from the settings yet
+
+int level()
+{
+    if (g_level < 0)
+        g_level = qBound(int(Beginner), QSettings().value(QStringLiteral("ui/level"), int(Beginner)).toInt(), int(Expert));
+    return g_level;
+}
+
+void setLevel(int l)
+{
+    g_level = qBound(int(Beginner), l, int(Expert));
+    QSettings().setValue(QStringLiteral("ui/level"), g_level);
+}
+
+QString levelName(int l)
+{
+    return l >= Expert ? QObject::tr("Expert") : l == Advanced ? QObject::tr("Advanced") : QObject::tr("Beginner");
+}
+
+QString levelNote(int l)
+{
+    return QObject::tr("Uses %1 features — switch to %1 in the View menu to edit").arg(levelName(l));
+}
+
+int outputTypeLevel(quint8 type)
+{
+    switch (type)
+    {
+    case OutputNotInUse:
+    case ServoType:
+    case SingleSteady:
+    case DoubleSteady:
+    case SinglePulse:
+    case DoublePulse:  return Beginner;
+    case BlockSignal:  return Expert;
+    default:           return Advanced;  // light effects, 4-aspect signal, PWM, sound
+    }
+}
+
+int inputTypeLevel(quint8 type)
+{
+    if (type == Sensor)                                   return Expert;
+    if (type == RouteStraight || type == RouteCurved)    return Advanced;   // 'Route starts on'
+    return Beginner;
+}
+
+int outputLevel(const OutputConfig &c)
+{
+    if (c.type == OutputNotInUse)
+        return Beginner;
+    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    int l = outputTypeLevel(c.type);
+    if (info.relays && (c.relayA != PinNA || c.relayB != PinNA || c.relayC != PinNA))
+        l = qMax(l, int(Advanced));                       // frog relays
+    for (int k = 0; k < info.pinCount; ++k)
+        if (c.pin(k) < 2)
+            l = qMax(l, int(Advanced));                   // D0 / D1
+    if (c.type == ServoType && c.servoFollows() >= 0)
+        l = Expert;                                       // semaphore arm
+    return l;
+}
+
+int inputLevel(const InputConfig &c, bool timing)
+{
+    if (c.type == InputNotInUse)
+        return Beginner;
+    int l = inputTypeLevel(c.type);
+    if (c.isAnalog() || c.hasCustomValues() || c.pin < 2 || (timing && isRouteType(c.type)))
+        l = qMax(l, int(Advanced));                       // analog, custom values, D0 / D1, own wait per step
+    return l;
+}
+
+int presetLevel(int preset)
+{
+    const BoardConfig b = presetBoard(preset);
+    int l = Beginner;
+    for (const OutputConfig &o : b.outputs) l = qMax(l, outputLevel(o));
+    for (const InputConfig &i : b.inputs)   l = qMax(l, inputLevel(i, false));
+    return l;
+}
+
+void offerItems(QComboBox *combo, const std::function<bool(int)> &offered)
+{
+    auto *view  = qobject_cast<QListView *>(combo->view());
+    auto *model = qobject_cast<QStandardItemModel *>(combo->model());
+    for (int i = 0; i < combo->count(); ++i)
+    {
+        const bool on = offered(combo->itemData(i).toInt());
+        if (view)  view->setRowHidden(i, !on);
+        if (model) model->item(i)->setEnabled(on);     // not reached with the mouse wheel either
+    }
+}
+
 void applyAppStyle(QApplication &app)
 {
     const QString theme = themeSetting();
@@ -133,7 +230,7 @@ void applyAppStyle(QApplication &app)
         QTableWidget { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; gridline-color: #EEF2F7; selection-background-color: #DBEAFE; selection-color: #1F2937; }
         QHeaderView::section { background: #F8FAFC; border: none; border-bottom: 1px solid #E2E8F0; padding: 5px 6px; color: #64748B; font-weight: 600; }
         QTabWidget::pane { border: none; }
-        QTabBar::tab { padding: 7px 16px; margin-right: 2px; border-top-left-radius: 6px; border-top-right-radius: 6px; color: #64748B; }
+        QTabBar::tab { padding: 7px 16px; margin-right: 2px; border-top-left-radius: 6px; border-top-right-radius: 6px; color: #475569; background: #EEF2F7; border: 1px solid #E2E8F0; border-bottom: none; }
         QTabBar::tab:selected { background: #FFFFFF; color: #1F2937; font-weight: 600; border: 1px solid #E2E8F0; border-bottom: none; }
         QLabel#title { font-size: 15pt; font-weight: 600; color: #0F172A; }
         QToolButton#info { border: 1px solid #93C5FD; border-radius: 10px; color: #2563EB; background: #EFF6FF;
@@ -289,6 +386,8 @@ void fillPinCombo(QComboBox *combo, bool output)
         if (!note.isEmpty())
             combo->setItemData(combo->count() - 1, note, Qt::ToolTipRole);
     }
+    if (level() == Beginner)                 // D0 / D1 (serial pins) from Advanced on
+        offerItems(combo, [](int pin) { return pin >= 2; });
 }
 
 void selectData(QComboBox *combo, int value, const QString &unknownText)
