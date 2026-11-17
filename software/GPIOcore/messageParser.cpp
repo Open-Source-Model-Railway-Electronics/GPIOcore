@@ -96,7 +96,8 @@ OPCODE( OPCODE_SET_OUTPUT_DATA )
     data.relayPinB = msg->payload[ p++ ] ;
     data.relayPinC = msg->payload[ p++ ] ;
     data.type      = msg->payload[ p++ ] ;
-    data.state     = msg->payload[ p++ ] ;
+    data.state      = msg->payload[ p   ] & 1 ;
+    data.invertFrog = ( msg->payload[ p++ ] >> 1 ) & 1 ;   // bit1: frog relays active low
 
     for( int i=0 ; i<4 ; i++ )
     {
@@ -128,7 +129,7 @@ OPCODE( OPCODE_GET_OUTPUT_DATA )
     msg->payload[p++] = data->relayPinB ;
     msg->payload[p++] = data->relayPinC ;
     msg->payload[p++] = data->type ;
-    msg->payload[p++] = data->state ;
+    msg->payload[p++] = data->state | ( data->invertFrog << 1 ) ;
 
     for( int i = 0 ; i < OUTPUT_DATA_BYTES ; i++ )
     {

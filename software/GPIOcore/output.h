@@ -18,6 +18,7 @@ typedef struct eeOutputSettings
     uint8_t     relayPinC : 6  ; // unifrog
     uint8_t     type      : 4  ;
     uint8_t     state     : 1  ;
+    uint8_t     invertFrog : 1 ; // frog relays active low (relay modules that switch on LOW)
 
     union {
         uint32_t switchTime ;  // switch time for flashing or pulsed IO
@@ -121,6 +122,7 @@ public:
     uint8_t     position() { return pos ; }   // servo: current angle, block signal: current aspect
     uint8_t     showAspect( uint8_t a ) { if( a == pos ) return 0 ; pos = a ; return 1 ; }   // block signal: 1 = changed
     uint8_t     frogRelays() { return relays ; }   // bit0 relay A, bit1 relay B, bit2 relay C (unifrog)
+    void        refreshRelays() ;                  // write the relay levels again (after invertFrog changed)
 
 private:
     StateMachine sm ;

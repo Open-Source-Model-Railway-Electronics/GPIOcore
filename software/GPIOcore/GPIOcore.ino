@@ -197,11 +197,18 @@ void notifyDccSpeed( uint16_t Addr, DCC_ADDR_TYPE AddrType, uint8_t Speed, DCC_D
 void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uint8_t FuncState )
 {
     if( Addr != 9999 || FuncGrp != FN_0_4 || !configMode ) return ;
-    uint8_t rose = FuncState & ~fnPrev ;
+    uint8_t rose    = FuncState & ~fnPrev ;
+    uint8_t changed = FuncState ^ fnPrev ;
     fnPrev = FuncState ;
     if( rose & FN_BIT_04 ) { selectNextServo() ; return ; }
     if( selServo < 0 ) return ;
     Output &o = output[selServo] ;
+    if( changed & FN_BIT_00 )                       // F0, every press: frog relays inverted / normal
+    {
+        o.eedata.invertFrog ^= 1 ;
+        o.saveEEPROM() ;
+        o.refreshRelays() ;
+    }
     if( rose & FN_BIT_01 ) { o.eedata.servo.servoMin = learnAngle ; o.saveEEPROM() ; }   // curved
     if( rose & FN_BIT_02 ) { o.eedata.servo.servoMax = learnAngle ; o.saveEEPROM() ; }   // straight
     if( rose & FN_BIT_03 ) callbackInput( selServo, !o.eedata.state, 0 ) ;               // toggle

@@ -52,7 +52,7 @@ void Output::set( Settings *data )
     if( eedata.type == servoType && ( pos < lo || pos > hi ) )      // position unknown (new servo): start at the end position
         pos = eedata.state ? eedata.servo.servoMax : eedata.servo.servoMin ;
     setPinModes() ;     // new pins are outputs right away (not only after a reset)
-    saveEEPROM() ; // Opslaan indien gewenst
+    saveEEPROM() ;
 }
 
 // Sweep to an angle at the servo's speed, waiting for a free servo slot like a state change.
@@ -157,11 +157,18 @@ void Output::relayWrite( uint8_t which, uint8_t level )
 {
     uint8_t pin = which == 0 ? eedata.relayPinA : which == 1 ? eedata.relayPinB : eedata.relayPinC ;
     if( pin == NA ) return ;
-    digitalWrite( pin, level ) ;
+    digitalWrite( pin, level ^ eedata.invertFrog ) ;       // 'relays' keeps the logical level
     uint8_t bits = level ? ( relays | ( 1 << which ) ) : ( relays & ~( 1 << which ) ) ;
     if( bits == relays ) return ;
     relays = bits ;
     if( callbackFrog ) callbackFrog( this, relays ) ;
+}
+
+void Output::refreshRelays()
+{
+    const uint8_t pins[3] = { eedata.relayPinA, eedata.relayPinB, eedata.relayPinC } ;
+    for( uint8_t i = 0 ; i < 3 ; i ++ )
+        if( pins[i] != NA ) digitalWrite( pins[i], ( ( relays >> i ) & 1 ) ^ eedata.invertFrog ) ;
 }
 
 uint8_t Output::sweep()
