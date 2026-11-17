@@ -61,6 +61,8 @@ with a bell, lights that come on at dusk, a water crane, and more).
 | Optional: a push button on pin **A7** (with a 10 kΩ resistor to 5 V) | to set servos at the layout with your throttle |
 | Optional: relay modules, a coil driver (ULN2803), a DFPlayer Mini … | depending on what you build, see [examples.md](examples.md) |
 
+**DCCnext:** the program shows the board's own port numbers **P1–P16** (P1 = D3 … P10 = D12, P11 = A0 … P16 = A5).
+
 **Pins with a fixed job:** D2 = DCC, D13 = the little LED on the Nano (shows the config mode), A7 = config
 button. All other pins are yours.
 
@@ -81,13 +83,36 @@ button. All other pins are yours.
    *Board → Flash firmware…*, pick the port and click **Flash**.
 4. **Connect:** choose the port at the top (e.g. "COM5 — USB Serial") and click **Connect**. The frame
    around the drawing turns red: you are connected.
-5. **Start configuring:**
-   - click **Read board** to see what is on the board now, or
-   - pick a **Preset** (a ready-made setup, e.g. "16 servos") and click **Apply**, or
-   - open an example file (*File → Open*, folder `examples`).
+5. **Start configuring**, the easiest way first:
+   - **File → New board wizard…** asks what you want to control (servos, coil turnouts, stall motors,
+     lights, uncouplers) and how (DCC addresses, buttons), puts everything on pins in order and gives you a
+     **Next steps** list to tick off;
+   - **File → Open example…** opens a ready-made example as a copy (AHOB, servo decoders, a resistor ladder,
+     …); Save then asks for a new name, so the example itself never changes;
+   - pick a **Preset** (e.g. "16 servos") and click **Apply**;
+   - or click **Read board** to see what is on the board now.
 
-> **No board yet?** You can do everything without one: *File → New board (offline)…*. Try it in the
-> **Simulate** mode and write it to the board later with **Write all**.
+> **No board yet?** You can do everything without one: *File → New board (offline)…* or the wizard. Try it
+> in the **Simulate** mode and write it to the board later with **Write all**.
+
+### Beginner, Advanced, Expert
+
+Under **View** you choose how much the program shows. A new installation starts at **Beginner**.
+
+| Level | What you get |
+|---|---|
+| **Beginner** | servos, lights, coil turnouts, stall motors, uncouplers; buttons, switches and DCC; routes with a fixed wait time |
+| **Advanced** | + light effects, signals, PWM with fading, sound, frog relays, analog inputs and resistor ladders, custom values, a wait time per route step |
+| **Expert** | + automatic block signals, occupancy sensors, servos that follow a detector (semaphore signals) |
+
+Features above your level are hidden, but never removed. When you open a project (or read a board) that
+uses more, the program tells you and switches to the level it needs.
+
+### Sharing parts of a configuration
+
+**File → Export…** saves only the outputs and/or inputs you choose (for example just your resistor ladder).
+**File → Import…** adds them to the current configuration, either on the same numbers or on free places;
+references between the imported parts are renumbered for you.
 
 ---
 
@@ -299,6 +324,8 @@ page with all servos: slide **curved** or **straight** and the servo moves along
 once, and the slider in the program moves along too.
 
 ### With the config button and your throttle (no PC needed)
+
+Only on an Arduino **Nano**: the Uno and the DCCnext have no A7.
 
 1. **Hold the button on A7 for 2 seconds.** The LED on the Nano blinks: config mode.
 2. **Short press:** the next servo is selected and moves, so you see which one it is.
