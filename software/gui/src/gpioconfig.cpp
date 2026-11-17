@@ -148,7 +148,7 @@ bool OutputConfig::operator==(const OutputConfig &o) const
 {
     for (int s = 0; s < 7; ++s)
         if (pin(s) != o.pin(s)) return false;
-    return type == o.type && state == o.state && data == o.data;
+    return type == o.type && state == o.state && invertFrog == o.invertFrog && data == o.data;
 }
 
 static QJsonValue pinToJson(quint8 p) { return p == PinNA ? QJsonValue() : QJsonValue(int(p)); }
@@ -165,6 +165,7 @@ QJsonObject OutputConfig::toJson() const
     o["relayA"] = pinToJson(relayA); o["relayB"] = pinToJson(relayB);
     o["relayC"] = pinToJson(relayC);
     o["state"]  = int(state);
+    if (invertFrog) o["invertFrog"] = true;   // only when set: older files stay as they are
     QJsonArray d;
     for (quint8 b : data) d.append(int(b));
     o["data"]   = d;
@@ -185,6 +186,7 @@ OutputConfig OutputConfig::fromJson(const QJsonObject &o)
     c.relayA = pinFromJson(o["relayA"]); c.relayB = pinFromJson(o["relayB"]);
     c.relayC = pinFromJson(o["relayC"]);
     c.state  = quint8(o["state"].toInt() & 1);
+    c.invertFrog = o["invertFrog"].toBool();
     const QJsonArray d = o["data"].toArray();
     for (int i = 0; i < 4 && i < d.size(); ++i)
         c.data[i] = quint8(d.at(i).toInt());
@@ -200,7 +202,7 @@ QByteArray encodeOutput(int index, const OutputConfig &c)
     for (int s = 0; s < 7; ++s)
         p.append(char(c.pin(s)));
     p.append(char(c.type));
-    p.append(char(c.state));
+    p.append(char(c.state | (c.invertFrog ? 0x02 : 0)));   // bit1: frog relays inverted
     for (quint8 b : c.data)
         p.append(char(b));
     return p;   // 14 bytes
@@ -215,7 +217,8 @@ bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c)
     for (int s = 0; s < 7; ++s)
         c.setPin(s, at(1 + s));
     c.type  = at(8);
-    c.state = at(9);
+    c.state = at(9) & 0x01;
+    c.invertFrog = at(9) & 0x02;
     for (int i = 0; i < 4; ++i)
         c.data[i] = at(10 + i);
     return index >= 0 && index < NumOutputs;

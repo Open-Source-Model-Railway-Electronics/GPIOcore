@@ -72,9 +72,11 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td><code>pinA</code>–<code>pinD</code>, <code>relayA</code>–<code>relayC</code></td><td>6</td><td>0–13 = D0–D13, 14–19 = A0–A5, <b>0x3F = not used</b> (0xFF becomes 0x3F)</td></tr>
 <tr><td><code>type</code></td><td>4</td><td>see the table below</td></tr>
 <tr><td><code>state</code></td><td>1</td><td>0 = curved / off, 1 = straight / on</td></tr>
+<tr><td><code>invertFrog</code></td><td>1</td><td>1 = relay pins A–C are driven inverted (relay modules that switch on LOW); the reported relay state (<code>OUTPUT_EVENT</code> state 3) stays logical</td></tr>
 <tr><td><code>data[4]</code></td><td>32</td><td>union; the meaning depends on the type</td></tr>
 </tbody></table>
 <p>Frog relays: <code>relayA</code> + <code>relayB</code> = <b>electrofrog</b> (A at straight, B at curved, both off first); <code>relayC</code> = <b>unifrog</b>. The GUI allows only one of the two.</p>
+<p>In <code>SET_OUTPUT_DATA</code> / <code>GET_OUTPUT_DATA</code> the <code>state</code> byte carries <code>state</code> in <b>bit0</b> and <code>invertFrog</code> in <b>bit1</b> (bits 2–7 are 0). Older firmware ignores bit1 and reads it back as 0.</p>
 <table><thead><tr><th><code>type</code></th><th>Name</th><th>Pins</th><th><code>data[4]</code></th></tr></thead><tbody>
 <tr><td>0</td><td>single steady</td><td>A</td><td>–</td></tr>
 <tr><td>1</td><td>single pulse</td><td>A (+ unifrog C)</td><td><code>uint32</code> LE switching time × 100 ms</td></tr>
@@ -351,7 +353,8 @@ An output or input that uses D13 or A7 is set to <i>not in use</i> at start-up; 
 <tr><td>Loc 9999 <b>F1</b></td><td>save current angle as <i>curved</i> (<code>servoMin</code>)</td></tr>
 <tr><td>Loc 9999 <b>F2</b></td><td>save current angle as <i>straight</i> (<code>servoMax</code>)</td></tr>
 <tr><td>Loc 9999 <b>F3</b></td><td>toggle the selected servo</td></tr>
-<tr><td>Loc 9999 <b>F4</b></td><td>next servo</td></tr>
+<tr><td>Loc 9999 <b>F4</b></td><td>every press: invert the frog relays of the selected servo (<code>invertFrog</code>) on / off</td></tr>
+<tr><td>Loc 9999 <b>F5</b></td><td>next servo</td></tr>
 </tbody></table>
 <p>Same operation as the OS-Servo-Decoder. The angles are in the EEPROM immediately; the GUI reads them back when connecting.</p>
 <p><b>Servos at start-up:</b> one by one, the next one every 500 ms. Each servo gets its stored position (curved or straight) for ~500 ms and is then detached. An own angle (route step, live) is not remembered.</p>

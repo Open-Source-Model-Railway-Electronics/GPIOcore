@@ -73,6 +73,7 @@ private:
     QComboBox      *m_frogMode = nullptr;
     QComboBox      *m_relays[3] {};          // electrofrog A, electrofrog B, unifrog
     QLabel         *m_frogNote = nullptr;
+    QCheckBox      *m_invertFrog = nullptr;  // relay pins driven inverted (relay modules that switch on LOW)
 
     QGroupBox      *m_paramBox = nullptr;
     QStackedWidget *m_params = nullptr;

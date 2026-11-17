@@ -199,6 +199,18 @@ private slots:
         QVERIFY(decodeOutput(p, idx, d));
         QCOMPARE(idx, 3);
         QVERIFY(d == c);
+        QVERIFY(!d.invertFrog);
+        c.invertFrog = true;                       // state byte bit1, bit0 stays the state
+        const QByteArray q = encodeOutput(3, c);
+        QCOMPARE(quint8(q.at(9)), quint8(0x03));
+        QVERIFY(decodeOutput(q, idx, d));
+        QVERIFY(d.invertFrog);
+        QCOMPARE(int(d.state), 1);
+        QVERIFY(d == c);
+        c.state = 0;
+        QVERIFY(decodeOutput(encodeOutput(3, c), idx, d));
+        QCOMPARE(int(d.state), 0);
+        QVERIFY(d.invertFrog);
     }
 
     void inputBitfieldsTruncate()
@@ -220,11 +232,18 @@ private slots:
         RouteStep a; a.output = 2; a.value = 1;
         RouteStep c2; c2.output = 7; c2.value = 120; c2.raw = true; c2.delay = 16383;
         b.inputs[1].route = { a, c2 };
+        b.outputs[3].type = ServoType; b.outputs[3].relayC = 8; b.outputs[3].invertFrog = true;
         const QByteArray json = QJsonDocument(b.toJson()).toJson();
         BoardConfig c; QString err;
         QVERIFY(BoardConfig::fromJson(QJsonDocument::fromJson(json).object(), c, &err));
         QVERIFY(c.outputs[2] == b.outputs[2]);
         QVERIFY(c.inputs[1] == b.inputs[1]);
+        QVERIFY(c.outputs[3].invertFrog);
+        QVERIFY(c.outputs[3] == b.outputs[3]);
+        // only written when set: older files (without the key) load as 'not inverted'
+        QVERIFY(b.outputs[3].toJson().value(QStringLiteral("invertFrog")).toBool());
+        QVERIFY(!b.outputs[2].toJson().contains(QStringLiteral("invertFrog")));
+        QVERIFY(!OutputConfig::fromJson(b.outputs[2].toJson()).invertFrog);
     }
 
     // ── Device link vs simulator ────────────────────────────────────────────
@@ -1186,6 +1205,37 @@ private slots:
         QTRY_COMPARE(int(r.sim->output(0).state), 1);
         r.sim->setPinLevel(17, true);
         QTRY_COMPARE(int(r.sim->output(0).state), 0);
+        QCOMPARE(r.errors, 0);
+    }
+
+    void firmwareInvertFrog()
+    {
+        // output.cpp relayWrite(): with invertFrog the relay pins are written inverted; the logical relay
+        // state (frogRelays(), OUTPUT_EVENT state 3) does not change. GET_OUTPUT_DATA: state byte bit1.
+        Rig r; makeRig(r);
+        OutputConfig unused = r.sim->output(1);          // output 1 had D4
+        unused.type = OutputNotInUse; unused.pinA = PinNA;
+        r.sim->setOutput(1, unused);
+        OutputConfig servo;
+        servo.type = ServoType; servo.pinA = 3; servo.relayC = 4;   // unifrog relay on D4
+        servo.data = { { 30, 150, 2, 0 } };
+        for (bool invert : { false, true })
+        {
+            servo.invertFrog = invert;
+            r.sim->setOutput(0, servo);
+            for (int state : { 1, 0 })
+            {
+                r.link->triggerInput(0, state);          // absolute input 0 -> output 0
+                waitFinished(r);
+                QTRY_COMPARE(r.sim->servoPosition(0), state ? 150 : 30);
+                QTRY_COMPARE((r.sim->frogRelays(0) >> 2) & 1, state);       // logical: straight = on
+                QCOMPARE(int(r.sim->pin(4).level), state ^ int(invert));   // the pin itself
+            }
+            r.link->readOutput(0);
+            waitFinished(r);
+            QCOMPARE(r.outputs[0].invertFrog, invert);
+            QCOMPARE(r.sim->output(0).invertFrog, invert);
+        }
         QCOMPARE(r.errors, 0);
     }
 

@@ -331,12 +331,15 @@ QString aspectText(int aspect)
     return parts.isEmpty() ? QObject::tr("all lamps off") : parts.join(QStringLiteral(", "));
 }
 
-int pickAspect(QWidget *parent, int current, int output)
+int pickAspect(QWidget *parent, int current, int output, bool lookup)
 {
     QDialog d(parent);
-    d.setWindowTitle(QObject::tr("Signal aspect"));
+    d.setWindowTitle(lookup ? QObject::tr("Aspect numbers") : QObject::tr("Signal aspect"));
     auto *form = new QFormLayout(&d);
-    auto *intro = new QLabel(QObject::tr("Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on."));
+    auto *intro = new QLabel(lookup ? QObject::tr("Choose per lamp what the signal should show. The number below is the "
+                                                  "DCC extended value for it: enter that in iTrain, Rocrail or your command "
+                                                  "station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.")
+                                    : QObject::tr("Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on."));
     intro->setWordWrap(true);
     form->addRow(intro);
     QVector<QComboBox *> lamps;
@@ -356,9 +359,12 @@ int pickAspect(QWidget *parent, int current, int output)
     };
     auto show = [&] {
         const int v = compute();
-        value->setText(QObject::tr("Value: %1  (0x%2)").arg(v).arg(v, 2, 16, QLatin1Char('0')));
+        value->setText((lookup ? QObject::tr("DCC extended number: %1  (0x%2)") : QObject::tr("Value: %1  (0x%2)"))
+                           .arg(v).arg(v, 2, 16, QLatin1Char('0')));
         meaning->setText(aspectText(v));
     };
+    if (lookup)                                    // to copy the number
+        value->setTextInteractionFlags(Qt::TextSelectableByMouse);
     for (int k = 0; k < 4; ++k)
     {
         auto *c = new QComboBox;
@@ -382,12 +388,12 @@ int pickAspect(QWidget *parent, int current, int output)
     }
     form->addRow(value);
     form->addRow(meaning);
-    auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    auto *bb = new QDialogButtonBox(lookup ? QDialogButtonBox::StandardButtons(QDialogButtonBox::Close) : QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     QObject::connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
     QObject::connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
     form->addRow(bb);
     show();
-    return d.exec() == QDialog::Accepted ? compute() : -1;
+    return d.exec() == QDialog::Accepted && !lookup ? compute() : -1;
 }
 
 void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share)
@@ -408,7 +414,7 @@ void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share)
             if (u.output == forOutput && u.index == selfIndex)
                 continue;                                    // this input / output itself
             (share != ShareNone && u.share == share ? shared : users)
-                << (u.output ? QObject::tr("Out %1").arg(u.index) : QObject::tr("In %1").arg(u.index));
+                << (u.output ? QObject::tr("Out %1").arg(u.index + 1) : QObject::tr("In %1").arg(u.index + 1));
         }
         users.removeDuplicates();
         shared.removeDuplicates();
@@ -507,8 +513,8 @@ QString outputSummaryParams(const OutputConfig &c)
             .arg(c.pwmValue() & 0x0F, 4, 2, QLatin1Char('0'))
             .arg(c.pwmValue() >> 4, 4, 2, QLatin1Char('0'));
     case ParamKind::Block:
-        return c.blockNext() >= 0 ? QStringLiteral("In %1 / In %2").arg(c.blockOwn()).arg(c.blockNext())
-                                  : QStringLiteral("In %1").arg(c.blockOwn());
+        return c.blockNext() >= 0 ? QStringLiteral("In %1 / In %2").arg(c.blockOwn() + 1).arg(c.blockNext() + 1)
+                                  : QStringLiteral("In %1").arg(c.blockOwn() + 1);
     case ParamKind::None:
         break;
     }
@@ -522,7 +528,7 @@ QString inputSummaryTarget(const InputConfig &c)
         return c.route.isEmpty() ? trGpio("(empty route)")
                                  : trGpio("%1 steps").arg(c.route.size());
     if (info.usesOutput)
-        return trGpio("Output %1").arg(c.outputId);
+        return trGpio("Output %1").arg(c.outputId + 1);
     return QString();
 }
 

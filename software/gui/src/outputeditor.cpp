@@ -52,7 +52,7 @@ OutputEditor::OutputEditor(QWidget *parent) : QWidget(parent)
 {
     for (int i = 0; i < NumInputs; ++i)
     {
-        m_inputNames << tr("Input %1").arg(i);
+        m_inputNames << tr("Input %1").arg(i + 1);
         m_inputTypes << InputNotInUse;
     }
     buildUi();
@@ -144,6 +144,9 @@ void OutputEditor::buildUi()
         m_relays[i] = new QComboBox;
         m_relayForm->addRow(relayLabels[i], m_relays[i]);
     }
+    m_invertFrog = new QCheckBox(tr("Relays switch on LOW (inverted)"));
+    m_invertFrog->setToolTip(tr("For relay modules that switch on when the input is LOW: the relay pins are driven the other way round"));
+    m_relayForm->addRow(m_invertFrog);
     relayInner->addWidget(relayHost);
     m_frogNote = new QLabel;
     m_frogNote->setObjectName(QStringLiteral("warn"));
@@ -278,6 +281,15 @@ void OutputEditor::buildUi()
         hint->setWordWrap(true);
         hint->setObjectName(QStringLiteral("help"));
         f->addRow(hint);
+        // read-only lookup: the aspect picker shows the number for a lamp combination, nothing is stored
+        auto *numbers = new QPushButton(tr("Aspect numbers…"));
+        numbers->setToolTip(tr("Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station"));
+        auto *numbersRow = new QHBoxLayout;
+        numbersRow->addWidget(numbers);
+        numbersRow->addStretch(1);
+        numbersRow->addWidget(Info::button(QStringLiteral("output.signal")));
+        f->addRow(numbersRow);
+        connect(numbers, &QPushButton::clicked, this, [this] { Ui::pickAspect(this, m_cfg.data[0], m_index, true); });
         m_params->addWidget(w);
         connect(m_blinkHz, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this] { if (!m_loading) collect(); });
     }
@@ -412,6 +424,7 @@ void OutputEditor::buildUi()
     auto onEdit = [this] { if (!m_loading) collect(); };
     for (auto *c : m_pins)   connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     for (auto *c : m_relays) connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
+    connect(m_invertFrog, &QCheckBox::toggled, this, onEdit);
     connect(m_state, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm, m_fade })
         connect(s, QOverload<int>::of(&QSpinBox::valueChanged), this, onEdit);
@@ -530,7 +543,7 @@ void OutputEditor::refresh()
     m_loading = true;
     const OutputTypeInfo &info = outputTypeInfo(m_cfg.type);
 
-    m_title->setText(tr("Output %1").arg(m_index));
+    m_title->setText(tr("Output %1").arg(m_index + 1));
     Ui::selectData(m_type, m_cfg.type);
     m_help->setText(outputTypeHelp(m_cfg.type));
 
@@ -541,6 +554,7 @@ void OutputEditor::refresh()
     m_frogNote->setText(tr("Both electrofrog and unifrog relays were set. Only one frog mode is allowed: "
                            "the unifrog relay is removed when you change this output."));
     m_frogNote->setVisible(mixed);
+    m_invertFrog->setChecked(m_cfg.invertFrog);
 
     m_switchTime->setValue(int(qMin<quint32>(m_cfg.switchTime(), 65535)));
     m_swingPulse->setValue(m_cfg.swingPulse());
@@ -600,6 +614,7 @@ void OutputEditor::updateVisibility()
         if (QWidget *label = m_relayForm->labelForField(m_relays[i]))
             label->setVisible(showRelay[i]);
     }
+    m_invertFrog->setEnabled(m_cfg.relayA != PinNA || m_cfg.relayB != PinNA || m_cfg.relayC != PinNA);
 
     const Page page = pageFor(info.params);
     m_params->setCurrentIndex(page);
@@ -644,6 +659,7 @@ void OutputEditor::collect()
     m_cfg.relayA = (relays && m_frog == FrogElectro) ? quint8(Ui::currentData(m_relays[0])) : PinNA;
     m_cfg.relayB = (relays && m_frog == FrogElectro) ? quint8(Ui::currentData(m_relays[1])) : PinNA;
     m_cfg.relayC = (relays && m_frog == FrogUni)     ? quint8(Ui::currentData(m_relays[2])) : PinNA;
+    m_cfg.invertFrog = m_invertFrog->isChecked();
 
     switch (info.params)
     {

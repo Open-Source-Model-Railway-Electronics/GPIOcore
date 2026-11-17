@@ -73,10 +73,14 @@ A GET first gets the data reply and then that `ACK`.
 | `pinA`–`pinD`, `relayA`–`relayC` | 6 | 0–13 = D0–D13, 14–19 = A0–A5, **0x3F = not used** (0xFF becomes 0x3F) |
 | `type` | 4 | see the table below |
 | `state` | 1 | 0 = curved / off, 1 = straight / on |
+| `invertFrog` | 1 | 1 = relay pins A–C are driven inverted (relay modules that switch on LOW); the reported relay state (`OUTPUT_EVENT` state 3) stays logical |
 | `data[4]` | 32 | union; the meaning depends on the type |
 
 Frog relays: `relayA` + `relayB` = **electrofrog** (A at straight, B at curved, both off first);
 `relayC` = **unifrog**. The GUI allows only one of the two.
+
+In `SET_OUTPUT_DATA` / `GET_OUTPUT_DATA` the `state` byte carries `state` in **bit0** and `invertFrog` in **bit1**
+(bits 2–7 are 0). Older firmware ignores bit1 and reads it back as 0.
 
 | `type` | Name | Pins | `data[4]` |
 |---|---|---|---|
@@ -413,7 +417,8 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 | Loc 9999 **F1** | save current angle as *curved* (`servoMin`) |
 | Loc 9999 **F2** | save current angle as *straight* (`servoMax`) |
 | Loc 9999 **F3** | toggle the selected servo |
-| Loc 9999 **F4** | next servo |
+| Loc 9999 **F4** | every press: invert the frog relays of the selected servo (`invertFrog`) on / off |
+| Loc 9999 **F5** | next servo |
 
 Same operation as the OS-Servo-Decoder. The angles are in the EEPROM immediately; the GUI reads them back when
 connecting.

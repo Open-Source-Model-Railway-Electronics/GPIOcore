@@ -611,18 +611,18 @@ QString DeviceLink::describe(const Txn &t) const
     switch (t.kind)
     {
     case Kind::Version:   return tr("version request");
-    case Kind::GetInput:  return tr("read input %1").arg(t.index);
-    case Kind::GetOutput: return tr("read output %1").arg(t.index);
-    case Kind::SetInput:  return tr("write input %1").arg(t.index);
-    case Kind::SetOutput: return tr("write output %1").arg(t.index);
+    case Kind::GetInput:  return tr("read input %1").arg(t.index + 1);
+    case Kind::GetOutput: return tr("read output %1").arg(t.index + 1);
+    case Kind::SetInput:  return tr("write input %1").arg(t.index + 1);
+    case Kind::SetOutput: return tr("write output %1").arg(t.index + 1);
     case Kind::Hello:     return tr("hello");
-    case Kind::GetRoute:  return tr("read route %1").arg(t.index);
-    case Kind::SetRoute:  return tr("write route %1").arg(t.index);
-    case Kind::ServoLive: return tr("live servo %1").arg(t.index);
+    case Kind::GetRoute:  return tr("read route %1").arg(t.index + 1);
+    case Kind::SetRoute:  return tr("write route %1").arg(t.index + 1);
+    case Kind::ServoLive: return tr("live servo %1").arg(t.index + 1);
     case Kind::GetBoard:  return tr("read board settings");
     case Kind::SetBoard:  return tr("write board settings");
-    case Kind::TriggerInput:   return tr("trigger input %1").arg(t.index);
-    case Kind::GetOutputState: return tr("read state of output %1").arg(t.index);
+    case Kind::TriggerInput:   return tr("trigger input %1").arg(t.index + 1);
+    case Kind::GetOutputState: return tr("read state of output %1").arg(t.index + 1);
     case Kind::DccExt:         return tr("DCC extended to address %1").arg(t.index);
     case Kind::GetAnalog:      return tr("read analog pin A%1").arg(t.index);
     }

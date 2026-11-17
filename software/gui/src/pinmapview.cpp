@@ -104,10 +104,10 @@ void PinMapView::paintEvent(QPaintEvent *)
         for (const Ui::PinUse &u : users)
         {
             if (u.output)
-                lines << tr("Out %1 %2 · %3").arg(u.index).arg(u.role,
+                lines << tr("Out %1 %2 · %3").arg(u.index + 1).arg(u.role,
                          outputTypeName(m_board.outputs[u.index].type));
             else
-                lines << tr("In %1 · %2").arg(u.index)
+                lines << tr("In %1 · %2").arg(u.index + 1)
                          .arg(inputTypeName(m_board.inputs[u.index].type));
         }
         if (lines.isEmpty())

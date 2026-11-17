@@ -60,10 +60,10 @@ function setPos(w,v){$(w?'sS':'sC').value=v;$(w?'vS':'vC').textContent=v}
 function draw(){$('board').textContent=(st.board||'')+(st.connected?'':' · '+T.off);
  const l=$('list');l.innerHTML='';if(!st.servos.length){l.textContent=T.none}
  st.servos.forEach(s=>{const b=document.createElement('button');b.className=s.index==sel?'sel':'';
-  b.innerHTML='<b>'+(s.name||('Out '+s.index))+'</b><br><small>'+s.min+'° / '+s.max+'°</small>';
+  b.innerHTML='<b>'+(s.name||('Out '+(s.index+1)))+'</b><br><small>'+s.min+'° / '+s.max+'°</small>';
   b.onclick=()=>{sel=s.index;touched=0;draw()};l.appendChild(b)});
  const s=cur();$('card').style.display=s?'block':'none';
- if(s){$('title').textContent=s.name||('Out '+s.index);
+ if(s){$('title').textContent=s.name||('Out '+(s.index+1));
   if(Date.now()-touched>2000){setPos(0,s.min);setPos(1,s.max)}}}   // do not jump while you are sliding
 async function load(){try{st=await api('/api/state');$('err').textContent='';draw()}catch(e){$('err').textContent='⚠ '+e.message}}
 // sliding: at most 4 updates per second, the newest value always goes out

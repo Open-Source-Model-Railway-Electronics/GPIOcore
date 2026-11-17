@@ -115,7 +115,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         m_view->setOutputLive(o, state, value);
         if (m_view->liveMode() && o >= 0 && o < NumOutputs)
         {
-            const QString name = m_edit.outputs[o].name.isEmpty() ? tr("Output %1").arg(o) : m_edit.outputs[o].name;
+            const QString name = m_edit.outputs[o].name.isEmpty() ? tr("Output %1").arg(o + 1) : m_edit.outputs[o].name;
             const QString what = state == 3 ? tr("frog relays A %1, B %2, unifrog %3")
                                                   .arg(value & 1 ? tr("on") : tr("off"), value & 2 ? tr("on") : tr("off"),
                                                        value & 4 ? tr("on") : tr("off"))
@@ -387,14 +387,14 @@ void MainWindow::buildUi()
         {
         case ConnectResult::Connected:
         case ConnectResult::Replaced:
-            statusBar()->showMessage(tr("Input %1 → output %2").arg(in).arg(out), 3000);
+            statusBar()->showMessage(tr("Input %1 → output %2").arg(in + 1).arg(out + 1), 3000);
             break;
         case ConnectResult::AlreadyConnected:
-            statusBar()->showMessage(tr("Input %1 already drives output %2").arg(in).arg(out), 3000);
+            statusBar()->showMessage(tr("Input %1 already drives output %2").arg(in + 1).arg(out + 1), 3000);
             break;
         case ConnectResult::RouteFull:
             statusBar()->showMessage(tr("The route of input %1 already has %2 steps (maximum)")
-                                         .arg(in).arg(routeLimits().maxSteps), 4000);
+                                         .arg(in + 1).arg(routeLimits().maxSteps), 4000);
             break;
         case ConnectResult::PoolFull:
             statusBar()->showMessage(tr("The board has no room for more route steps (%1 in total)")
@@ -403,7 +403,7 @@ void MainWindow::buildUi()
         case ConnectResult::NotConnectable:
             if (out >= 0 && out < NumOutputs && m_edit.outputs[out].type == BlockSignal)
                 statusBar()->showMessage(tr("Output %1 is a block signal: it sets its own aspect from its detectors, "
-                                            "an input cannot switch it.").arg(out), 5000);
+                                            "an input cannot switch it.").arg(out + 1), 5000);
             break;
         }
         userEdited();
@@ -1150,7 +1150,7 @@ void MainWindow::writeDirty(bool live)
     for (int i = 0; i < NumInputs; ++i)
         if (inputDirty(i))
         {
-            if (live && m_liveTried.contains(i)) { refused << tr("input %1").arg(i); continue; }
+            if (live && m_liveTried.contains(i)) { refused << tr("input %1").arg(i + 1); continue; }
             m_liveTried.insert(i);
             m_link->writeInput(i, m_edit.inputs[i]);
             m_link->writeRoute(i, m_edit.inputs[i].route);
@@ -1160,7 +1160,7 @@ void MainWindow::writeDirty(bool live)
     for (int i = 0; i < NumOutputs; ++i)
         if (outputDirty(i))
         {
-            if (live && m_liveTried.contains(100 + i)) { refused << tr("output %1").arg(i); continue; }
+            if (live && m_liveTried.contains(100 + i)) { refused << tr("output %1").arg(i + 1); continue; }
             m_liveTried.insert(100 + i);
             m_link->writeOutput(i, m_edit.outputs[i]);
             m_link->readOutput(i);
@@ -1455,8 +1455,8 @@ QStringList MainWindow::outputNames() const
     QStringList names;
     for (int i = 0; i < NumOutputs; ++i)
         names << (m_edit.outputs[i].name.isEmpty()
-                      ? tr("Output %1 · %2").arg(i).arg(outputTypeName(m_edit.outputs[i].type))
-                      : tr("Output %1 · %2").arg(i).arg(m_edit.outputs[i].name));
+                      ? tr("Output %1 · %2").arg(i + 1).arg(outputTypeName(m_edit.outputs[i].type))
+                      : tr("Output %1 · %2").arg(i + 1).arg(m_edit.outputs[i].name));
     return names;
 }
 
@@ -1472,7 +1472,7 @@ QStringList MainWindow::inputNames() const
 {
     QStringList names;
     for (int i = 0; i < NumInputs; ++i)
-        names << tr("Input %1 · %2").arg(i).arg(m_edit.inputs[i].name.isEmpty() ? inputTypeName(m_edit.inputs[i].type)
+        names << tr("Input %1 · %2").arg(i + 1).arg(m_edit.inputs[i].name.isEmpty() ? inputTypeName(m_edit.inputs[i].type)
                                                                                : m_edit.inputs[i].name);
     return names;
 }
@@ -1512,8 +1512,8 @@ QStringList MainWindow::outputWarnings(int i) const
         {
             if (u.output && u.index == i) continue;
             if (Ui::pinShare(c) != Ui::ShareNone && u.share == Ui::pinShare(c)) continue;   // sound outputs share D1
-            w << (u.output ? tr("%1 (%2) is also used by output %3 (%4).").arg(trGpio(roles[s]), pinName(p)).arg(u.index).arg(u.role)
-                           : tr("%1 (%2) is also used by input %3.").arg(trGpio(roles[s]), pinName(p)).arg(u.index));
+            w << (u.output ? tr("%1 (%2) is also used by output %3 (%4).").arg(trGpio(roles[s]), pinName(p)).arg(u.index + 1).arg(u.role)
+                           : tr("%1 (%2) is also used by input %3.").arg(trGpio(roles[s]), pinName(p)).arg(u.index + 1));
         }
         if (info.needsPwm && s < info.pinCount && !isPwmPin(p))
             w << tr("%1 (%2) is not PWM capable; %3 needs PWM.")
@@ -1521,9 +1521,7 @@ QStringList MainWindow::outputWarnings(int i) const
     }
     for (int b : c.watchedInputs())             // block signal / semaphore arm: Input::occupied() needs a pin
         if (m_edit.inputs[b].type == InputNotInUse || m_edit.inputs[b].pin == PinNA)
-            w << tr("Detector input %1 is not in use or has no pin: the board never sees that block occupied.").arg(b);
-    if (c.type == ServoType && c.servoMin() > c.servoMax())
-        w << tr("Min is larger than max: positions are swapped.");
+            w << tr("Detector input %1 is not in use or has no pin: the board never sees that block occupied.").arg(b + 1);
     if (c.type == SoundEffect && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
         w << tr("The firmware on this board has no sound effect output yet: update the firmware (Board > Flash firmware).");
     if (info.needsPwm || c.type == Pwm)
@@ -1557,8 +1555,8 @@ QStringList MainWindow::inputWarnings(int i) const
         const auto usage = Ui::pinUsage(m_edit);
         for (const auto &u : usage[c.pin])
             if ((u.output || u.index != i) && !(c.isAnalog() && u.share == Ui::ShareAnalog))   // analog inputs share a channel
-                w << (u.output ? tr("Pin %1 is also used by output %2.").arg(pinName(c.pin)).arg(u.index)
-                               : tr("Pin %1 is also used by input %2.").arg(pinName(c.pin)).arg(u.index));
+                w << (u.output ? tr("Pin %1 is also used by output %2.").arg(pinName(c.pin)).arg(u.index + 1)
+                               : tr("Pin %1 is also used by input %2.").arg(pinName(c.pin)).arg(u.index + 1));
     }
     if (c.isAnalog() && m_link->isOpen() && !m_simulating && m_link->caps().known && !m_link->caps().analogSound)
         w << tr("The firmware on this board cannot read analog inputs yet: update the firmware (Board > Flash firmware).");
@@ -1571,18 +1569,18 @@ QStringList MainWindow::inputWarnings(int i) const
         for (int s = 0; s < c.route.size(); ++s)
         {
             if (m_edit.outputs[c.route[s].output].type == OutputNotInUse)
-                w << tr("Route step %1 sets output %2, which is not in use.").arg(s + 1).arg(c.route[s].output);
+                w << tr("Route step %1 sets output %2, which is not in use.").arg(s + 1).arg(c.route[s].output + 1);
             if (m_edit.outputs[c.route[s].output].type == BlockSignal)
-                w << tr("Route step %1 sets output %2, a block signal: it ignores the step.").arg(s + 1).arg(c.route[s].output);
+                w << tr("Route step %1 sets output %2, a block signal: it ignores the step.").arg(s + 1).arg(c.route[s].output + 1);
         }
         const RouteLimits l = routeLimits();
         if (totalRouteSteps(m_edit) > l.pool)
             w << tr("All routes together use %1 steps; the board has room for %2.").arg(totalRouteSteps(m_edit)).arg(l.pool);
     }
     if (info.usesOutput && m_edit.outputs[c.outputId].type == OutputNotInUse)
-        w << tr("Output %1 is not in use.").arg(c.outputId);
+        w << tr("Output %1 is not in use.").arg(c.outputId + 1);
     if (info.usesOutput && m_edit.outputs[c.outputId].type == BlockSignal)
-        w << tr("Output %1 is a block signal: it sets its own aspect and ignores this input.").arg(c.outputId);
+        w << tr("Output %1 is a block signal: it sets its own aspect and ignores this input.").arg(c.outputId + 1);
     return w;
 }
 
@@ -1674,7 +1672,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
                 if (((k < 4) ? (k < info.pinCount) : info.relays) && c.pin(k) == p)
                 {
                     c.setPin(k, PinNA);
-                    freed << tr("output %1").arg(o);
+                    freed << tr("output %1").arg(o + 1);
                 }
         }
         for (int j = 0; j < NumInputs; ++j)
@@ -1685,7 +1683,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
             if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several analog inputs on one channel
             c.pin    = PinNA;
             c.analog = AnalogNone;
-            freed << tr("input %1").arg(j);
+            freed << tr("input %1").arg(j + 1);
         }
     }
     freed.removeDuplicates();
@@ -1729,7 +1727,7 @@ void MainWindow::setupWebRemote()
         c.state = quint8(which);                 // the board then holds the servo at this angle
         if (m_outEd->index() == o) showOutput(o);
         userEdited();
-        statusBar()->showMessage(tr("Phone: output %1 %2 = %3°").arg(o)
+        statusBar()->showMessage(tr("Phone: output %1 %2 = %3°").arg(o + 1)
                                      .arg(which ? tr("straight") : tr("curved")).arg(angle), 5000);
     });
     connect(m_web, &WebRemote::adjustRequested, this, [this](int o, int which, int angle) {
@@ -1846,7 +1844,7 @@ void MainWindow::openLiveValue(int input)
     if (in.address == AddrNone)
     {
         QMessageBox::information(this, windowTitle(),
-                                 tr("Input %1 has no DCC address, so it cannot receive a DCC extended command.").arg(input));
+                                 tr("Input %1 has no DCC address, so it cannot receive a DCC extended command.").arg(input + 1));
         return;
     }
     const int address = in.address;
@@ -1944,7 +1942,7 @@ void MainWindow::openAnalogValue(int input)
     {
         const InputConfig &c = m_edit.inputs[i];
         if (c.isAnalog() && c.analogChannel() == ch && c.type != InputNotInUse)
-            users << tr("In %1: %2 %3").arg(i)
+            users << tr("In %1: %2 %3").arg(i + 1)
                          .arg(c.analog == AnalogBelow ? QStringLiteral("<") : c.analog == AnalogAbove ? QStringLiteral(">")
                                                                                                      : QStringLiteral("≈"))
                          .arg(c.threshold);
@@ -2358,13 +2356,13 @@ void MainWindow::removeSelected()
                 InputConfig off;
                 off.name = m_edit.inputs[i].name;
                 m_edit.inputs[i] = off;
-                freed << tr("input %1").arg(i);
+                freed << tr("input %1").arg(i + 1);
             }
         OutputConfig c;
         m_edit.outputs[o] = c;
         if (!freed.isEmpty())
             statusBar()->showMessage(tr("Output %1 removed; %2 drove it and is now not in use as well.")
-                                         .arg(o).arg(freed.join(QStringLiteral(", "))), 8000);
+                                         .arg(o + 1).arg(freed.join(QStringLiteral(", "))), 8000);
     }
     closePanels();
     userEdited();

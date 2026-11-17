@@ -631,7 +631,7 @@ void ConnectionView::drawInput(QPainter &p, int i)
     f.setBold(true);
     p.setFont(f);
     p.setPen(kText);
-    QString title = (m_inDirty.value(i) ? QStringLiteral("   ") : QString()) + tr("In %1").arg(i);
+    QString title = (m_inDirty.value(i) ? QStringLiteral("   ") : QString()) + tr("In %1").arg(i + 1);
     if (!c.name.isEmpty())
         title += QStringLiteral(" · ") + c.name;
     title = p.fontMetrics().elidedText(title, Qt::ElideRight, int(r.width() - 110));
@@ -691,7 +691,7 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     p.setFont(f);
     p.setPen(kText);
     p.drawText(QRectF(r.left() + 14, r.top() + 4, 80, 20), Qt::AlignLeft | Qt::AlignVCenter,
-               (m_outDirty.value(o) ? QStringLiteral("   ") : QString()) + tr("Out %1").arg(o));
+               (m_outDirty.value(o) ? QStringLiteral("   ") : QString()) + tr("Out %1").arg(o + 1));
     if (!c.name.isEmpty())   // the name replaces the type text below the title
     {
         QFont nf = font();
@@ -1032,7 +1032,7 @@ void ConnectionView::contextMenuEvent(QContextMenuEvent *e)
         const Wire wire = m_wires[w];
         m_selWire = w;
         update();
-        menu.addAction(tr("Remove connection In %1 → Out %2").arg(wire.input).arg(wire.output),
+        menu.addAction(tr("Remove connection In %1 → Out %2").arg(wire.input + 1).arg(wire.output + 1),
                        this, [this, wire] { emit disconnectRequested(wire.input, wire.step); });
         if (wire.step >= 0)
         {
@@ -1052,7 +1052,7 @@ void ConnectionView::contextMenuEvent(QContextMenuEvent *e)
     }
     else if (in >= 0 && inputConnected(m_board.inputs[in]))
     {
-        menu.addAction(tr("Remove all connections of In %1").arg(in), this, [this, in] {
+        menu.addAction(tr("Remove all connections of In %1").arg(in + 1), this, [this, in] {
             const InputConfig &c = m_board.inputs[in];
             if (isDirectType(c.type))
                 emit disconnectRequested(in, -1);
@@ -1075,7 +1075,7 @@ bool ConnectionView::event(QEvent *e)
         {
             const Wire &wire = m_wires[w];
             const QString mode = inputTypeName(m_board.inputs[wire.input].type);
-            QString text = tr("In %1 → Out %2 (%3)").arg(wire.input).arg(wire.output).arg(mode);
+            QString text = tr("In %1 → Out %2 (%3)").arg(wire.input + 1).arg(wire.output + 1).arg(mode);
             if (wire.step >= 0)
                 text += tr("\nstep %1: %2, then wait %3")
                             .arg(wire.step + 1)

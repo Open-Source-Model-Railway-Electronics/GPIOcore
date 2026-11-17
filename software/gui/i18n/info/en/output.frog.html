@@ -14,3 +14,6 @@ the pulse.</li>
 </ul>
 <p>You can only use one of the two. Choosing one removes the pins of the other.</p>
 <p><b>Wiring:</b> use a relay <i>module</i> (with transistor and diode) — an Arduino pin cannot drive a bare relay.</p>
+<p><b>Relays switch on LOW (inverted)</b>: tick this for relay modules that switch on when the input is LOW
+(many cheap modules with an optocoupler). The board then drives the relay pins the other way round; what the
+relays mean (straight / curved) stays the same.</p>

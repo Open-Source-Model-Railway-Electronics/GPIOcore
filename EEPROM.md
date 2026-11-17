@@ -23,7 +23,7 @@ Source: `software/GPIOcore/routes.h` (`EE_*` constants).
 
 | Byte | Contents |
 |---|---|
-| 0 – 5 | Bit stream starting at bit 0 of byte 0: `pinA` bits 0–5, `pinB` 6–11, `pinC` 12–17, `pinD` 18–23, `relayPinA` 24–29, `relayPinB` 30–35, `relayPinC` 36–41, `type` 42–45 (0–14; 14 = sound effect, `pinA` = 1), `state` 46, bit 47 unused |
+| 0 – 5 | Bit stream starting at bit 0 of byte 0: `pinA` bits 0–5, `pinB` 6–11, `pinC` 12–17, `pinD` 18–23, `relayPinA` 24–29, `relayPinB` 30–35, `relayPinC` 36–41, `type` 42–45 (0–14; 14 = sound effect, `pinA` = 1), `state` 46, `invertFrog` 47 (frog relays driven inverted) |
 | 6 – 9 | `data[4]`, the meaning depends on the type (see `PROTOCOL.md` §2.1) |
 
 Pin numbers: 0–13 = D0–D13, 14–19 = A0–A5, 20–21 = A6–A7, 63 (0x3F) = not used.

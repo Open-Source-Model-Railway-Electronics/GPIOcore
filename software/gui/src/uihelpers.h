@@ -52,9 +52,10 @@ QVector<QVector<PinUse>> pinUsage(const Gpio::BoardConfig &board);
 void setPinBoard(const Gpio::BoardConfig &board);
 // 4-aspect signal value: bits 0-3 lamp 1-4 on (pin A-D), bits 4-7 flashing; flashing without 'on' =
 // opposite phase. aspectText() explains a value, pickAspect() lets you choose lamp by lamp
-// (returns -1 on cancel; 'output' gives the lamp colours).
+// (returns -1 on cancel; 'output' gives the lamp colours). lookup: only shows the number for the
+// lamps chosen (to type into iTrain / Rocrail), with a Close button; returns -1.
 QString aspectText(int aspect);
-int     pickAspect(QWidget *parent, int current, int output);
+int     pickAspect(QWidget *parent, int current, int output, bool lookup = false);
 // share: users with the same share (analog inputs, sound outputs) are listed as 'shared', not red.
 void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share = ShareNone);
 

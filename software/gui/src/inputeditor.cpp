@@ -47,7 +47,7 @@ InputEditor::InputEditor(QWidget *parent) : QWidget(parent)
 {
     for (int i = 0; i < NumOutputs; ++i)
     {
-        m_outputNames << tr("Output %1").arg(i);
+        m_outputNames << tr("Output %1").arg(i + 1);
         m_outputTypes << SingleSteady;
     }
     buildUi();
@@ -69,7 +69,7 @@ void InputEditor::addOutputItems(QComboBox *combo)
     for (int i = 0; i < NumOutputs; ++i)
     {
         combo->addItem(Ui::swatchIcon(Ui::outputTypeColor(outputType(i))),
-                       tr("Out %1 · %2").arg(i).arg(outputTypeName(outputType(i))), i);
+                       tr("Out %1 · %2").arg(i + 1).arg(outputTypeName(outputType(i))), i);
         if (outputType(i) == BlockSignal && model)        // it sets its own aspect: not a target
         {
             model->item(combo->count() - 1)->setEnabled(false);
@@ -673,7 +673,7 @@ void InputEditor::refresh()
     m_loading = true;
     const InputTypeInfo &info = inputTypeInfo(m_cfg.type);
 
-    m_title->setText(tr("Input %1").arg(m_index));
+    m_title->setText(tr("Input %1").arg(m_index + 1));
     const Function fn = functionOf(m_cfg.type);
     Ui::selectData(m_function, int(fn));
     Ui::selectData(m_routeTrigger, isRouteType(m_cfg.type) ? int(m_cfg.type) : int(Route));

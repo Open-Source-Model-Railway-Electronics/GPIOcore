@@ -57,6 +57,7 @@ struct OutputConfig
     quint8 relayA = PinNA, relayB = PinNA, relayC = PinNA;
     quint8 type   = OutputNotInUse;
     quint8 state  = 0;
+    bool   invertFrog = false;                 // relay pins A-C driven inverted (modules that switch on LOW)
     std::array<quint8, 4> data { { 0, 0, 0, 0 } };   // union, AVR little endian
     QString name;                          // GUI only (board file), not stored on the board
     QStringList lampColors;                // GUI only: colours of signal lamps 1-4 ("#RRGGBB"), empty = default

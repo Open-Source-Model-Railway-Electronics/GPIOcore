@@ -61,7 +61,7 @@ int fwOutputState(int index, uint8_t *out)
     out[n++] = s.pinA; out[n++] = s.pinB; out[n++] = s.pinC; out[n++] = s.pinD;
     out[n++] = s.relayPinA; out[n++] = s.relayPinB; out[n++] = s.relayPinC;
     out[n++] = s.type;
-    out[n++] = s.state;
+    out[n++] = uint8_t(s.state | (s.invertFrog << 1));   // as GET_OUTPUT_DATA: bit1 = invertFrog
     for (int i = 0; i < 4; ++i) out[n++] = s.data[i];
     out[n++] = o.position();
     out[n++] = o.frogRelays();

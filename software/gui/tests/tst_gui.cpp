@@ -12,6 +12,7 @@
 #include "qrcode.h"
 #include "webremote.h"
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QDialog>
 #include <QGroupBox>
@@ -417,7 +418,7 @@ private slots:
         QCOMPARE(view->board().outputs[1].data, before.data);
         QCOMPARE(outputSources(view->board(), 1), QVector<int>{ 1 });      // its input still drives it
         QVERIFY(view->outputShown(1));
-        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("output 1 keeps its settings")));
+        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("output 2 keeps its settings")));
         click(view, view->outputRect(1).center());            // its panel: the missing pin is a warning
         bool warned = false;
         for (QLabel *l : oed->findChildren<QLabel *>(QStringLiteral("error")))
@@ -829,6 +830,31 @@ private slots:
         const OutputConfig &o = view->board().outputs[1];
         QCOMPARE(o.relayA, PinNA);                // electrofrog relays removed: one frog mode only
         QCOMPARE(o.relayB, PinNA);
+
+        // relays that switch on LOW: only with a relay pin
+        QCheckBox *invert = nullptr;
+        for (QCheckBox *b : oed->findChildren<QCheckBox *>())
+            if (b->text() == QLatin1String("Relays switch on LOW (inverted)")) invert = b;
+        QVERIFY(invert && invert->isVisibleTo(oed));
+        QVERIFY(!invert->isEnabled());
+        QComboBox *relayC = nullptr;
+        for (QLabel *l : oed->findChildren<QLabel *>())
+            if (l->text() == QLatin1String("Unifrog relay")) relayC = qobject_cast<QComboBox *>(l->buddy());
+        QVERIFY(relayC);
+        relayC->setCurrentIndex(relayC->findData(12));
+        QCOMPARE(int(o.relayC), 12);
+        QVERIFY(invert->isEnabled());
+        invert->setChecked(true);
+        QVERIFY(view->board().outputs[1].invertFrog);
+        QCOMPARE(int(view->board().outputs[1].relayC), 12);
+
+        // min > max is allowed (the firmware sweeps both ways): no warning
+        OutputConfig servo = view->board().outputs[1];
+        servo.data[0] = 140; servo.data[1] = 40;
+        emit oed->changed(1, servo);
+        for (QLabel *l : oed->findChildren<QLabel *>(QStringLiteral("error")))
+            QVERIFY2(!l->isVisibleTo(oed) || !l->text().contains(QLatin1String("larger than max")), qPrintable(l->text()));
+        QCOMPARE(int(view->board().outputs[1].servoMin()), 140);
     }
 
     void noRecorderOrFeedback()
@@ -942,10 +968,10 @@ private slots:
                 if (c->isVisibleTo(oed) && c->count() && c->itemText(0) == first) return c;
             return nullptr;
         };
-        QComboBox *own = visibleCombo(QStringLiteral("Input 0 · Absolute"));
+        QComboBox *own = visibleCombo(QStringLiteral("Input 1 · Absolute"));
         QComboBox *next = visibleCombo(QStringLiteral("— none"));
         QVERIFY(own && next);
-        QCOMPARE(own->currentText(), QStringLiteral("Input 4 · Sensor (occupancy)"));
+        QCOMPARE(own->currentText(), QStringLiteral("Input 5 · Sensor (occupancy)"));
         QCOMPARE(Ui::currentData(next), -1);
         QVector<QSpinBox *> aspects;                         // own occupied, next occupied, both free
         for (QSpinBox *b : oed->findChildren<QSpinBox *>())
@@ -983,7 +1009,7 @@ private slots:
         next->setCurrentIndex(next->findData(6));
         QCOMPARE(int(view->board().outputs[0].data[3]), 0x64);
         QVERIFY(aspects[1]->isEnabled());
-        QVERIFY(visibleText(oed, QStringLiteral("Detector input 6 is not in use"), QStringLiteral("error")));
+        QVERIFY(visibleText(oed, QStringLiteral("Detector input 7 is not in use"), QStringLiteral("error")));
         aspects[2]->setValue(0x11);                          // free: lamp A flashing
         QCOMPARE(int(view->board().outputs[0].data[2]), 0x11);
         QVERIFY(visibleText(oed, QStringLiteral("lamp 1 flashing")));
@@ -991,11 +1017,11 @@ private slots:
         // not a target: disabled in the input editor's output list, a drag onto it is refused
         QComboBox *out = nullptr;
         for (QComboBox *c : ied->findChildren<QComboBox *>())
-            if (c->isVisibleTo(ied) && c->count() == NumOutputs && c->itemText(0).startsWith(QStringLiteral("Out 0 · "))) out = c;
+            if (c->isVisibleTo(ied) && c->count() == NumOutputs && c->itemText(0).startsWith(QStringLiteral("Out 1 · "))) out = c;
         QVERIFY(out);
         QVERIFY(!qobject_cast<QStandardItemModel *>(out->model())->item(0)->isEnabled());
         QVERIFY(qobject_cast<QStandardItemModel *>(out->model())->item(1)->isEnabled());
-        QVERIFY(visibleText(ied, QStringLiteral("Output 0 is a block signal"), QStringLiteral("error")));   // input 0 drove it
+        QVERIFY(visibleText(ied, QStringLiteral("Output 1 is a block signal"), QStringLiteral("error")));   // input 0 (shown as 1) drove it
 
         // the input editor offers 'Sensor': no output, behaviour, custom values or route
         QComboBox *fn = comboWith(ied, QStringLiteral("Direct control"));
@@ -1010,11 +1036,36 @@ private slots:
         const InputConfig in1 = view->board().inputs[1];
         drag(view, view->inputPort(1), view->outputRect(0).center());
         QVERIFY(view->board().inputs[1] == in1);
-        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("Output 0 is a block signal")));
+        QVERIFY(w.statusBar()->currentMessage().contains(QLatin1String("Output 1 is a block signal")));
 
         // a 4-aspect signal with lamp A only: no 'pin not set' either
         type->setCurrentIndex(type->findData(int(FourToneSignal)));
         QVERIFY(!visibleText(oed, QStringLiteral("is not set"), QStringLiteral("error")));
+        // 'Aspect numbers…': a read-only lookup of the DCC extended number, the configuration stays
+        QPushButton *numbers = nullptr;
+        for (QPushButton *b : oed->findChildren<QPushButton *>())
+            if (b->text() == QStringLiteral("Aspect numbers…") && b->isVisibleTo(oed)) numbers = b;
+        QVERIFY(numbers);
+        maybeScreenshot(w, "signal-aspect-numbers.png");
+        const OutputConfig signal = view->board().outputs[0];
+        QString shown;
+        QTimer::singleShot(200, this, [&shown] {
+            for (QWidget *top : QApplication::topLevelWidgets())
+                if (auto *d = qobject_cast<QDialog *>(top); d && d->isVisible())
+                {
+                    QList<QComboBox *> lamps = d->findChildren<QComboBox *>();
+                    if (lamps.size() == 4) lamps[1]->setCurrentIndex(2);   // lamp 2 flashing
+                    for (QLabel *l : d->findChildren<QLabel *>())
+                        if (l->text().startsWith(QLatin1String("DCC extended number"))) shown = l->text();
+                    if (const QByteArray dir = qgetenv("GPIOCORE_SHOT_DIR"); !dir.isEmpty())
+                        d->grab().save(QString::fromLocal8Bit(dir) + QLatin1String("/aspect-numbers.png"));
+                    d->reject();
+                }
+        });
+        numbers->click();
+        const int v = 0x22 | (signal.data[0] & 0xDD);                  // the dialog starts at the current aspect
+        QCOMPARE(shown, QStringLiteral("DCC extended number: %1  (0x%2)").arg(v).arg(v, 2, 16, QLatin1Char('0')));
+        QVERIFY(view->board().outputs[0] == signal);
 
         // servo: follows a detector (semaphore arm)
         type->setCurrentIndex(type->findData(int(ServoType)));
@@ -1030,7 +1081,7 @@ private slots:
         QCOMPARE(int(view->board().outputs[0].data[3]), 0x80);
         QCOMPARE(view->board().outputs[0].watchedInputs(), QVector<int>{ 0 });
         QVERIFY(swap->isVisibleTo(oed));
-        QComboBox *detector = visibleCombo(QStringLiteral("Input 0 · Sensor (occupancy)"));
+        QComboBox *detector = visibleCombo(QStringLiteral("Input 1 · Sensor (occupancy)"));
         QVERIFY(detector);
         detector->setCurrentIndex(detector->findData(4));
         swap->setChecked(true);
