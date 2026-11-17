@@ -632,6 +632,9 @@ uint8_t Output::update()
         State( fourToneSignalState ) {
             sm.nextState( idle ) ; }
 
+        State( pwm ) {                  // was missing: PWM never ran, so it never wrote, faded or reported
+            sm.nextState( idle ) ; }
+
         State( turnOnRelays ) {
             sm.nextState( idle ) ; }
     }
