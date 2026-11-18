@@ -573,6 +573,16 @@ private slots:
         QCOMPARE(plan.inputs.value(3), 3);
         QVERIFY(importedInput(file, 3, plan).route == file.inputs[3].route);   // same numbers: nothing renumbered
         QVERIFY(planImport(mine, file, PartInputs, true).outputs.count(-1) == NumOutputs);   // outputs not ticked
+
+        // a file without outputs in use (e.g. a resistor ladder): ticking Outputs touches none of mine
+        BoardConfig ladder;
+        ladder.inputs[0].type = Route;
+        for (bool same : { true, false })
+        {
+            const ImportResult p = planImport(mine, ladder, PartOutputs | PartInputs, same);
+            QVERIFY(p.error.isEmpty());
+            QVERIFY(p.outputs.count(-1) == NumOutputs);
+        }
     }
 
     void importIntoFreeSlotsRenumbers()

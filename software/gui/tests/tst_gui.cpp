@@ -2013,11 +2013,11 @@ private slots:
             QCOMPARE(QFileInfo(combo->itemData(k).toString()).absolutePath(), dir.absolutePath());
             QVERIFY(files.contains(QFileInfo(combo->itemData(k).toString()).fileName()));
         }
-        // "presetName" from the file, sorted by name with the numbers in order
-        QCOMPARE(names, QStringList({ "4 double pulse + electrofrog relays", "5 double pulse + unifrog relay",
+        // "presetName" from the file: "Empty" first, then by name with the numbers in order
+        QCOMPARE(names, QStringList({ "Empty: 1 input, 1 output",
+                                      "4 double pulse + electrofrog relays", "5 double pulse + unifrog relay",
                                       "5 servos + electrofrog relays", "8 double pulse", "8 double steady",
-                                      "8 servos + unifrog relay", "16 servos", "16 single steady",
-                                      "Empty: 1 input, 1 output" }));
+                                      "8 servos + unifrog relay", "16 servos", "16 single steady" }));
 
         // what is in them: pins from D3 upwards (D3-D12, A0-A5, never D13), input n -> output n from DCC 1
         const BoardConfig s16 = shippedPreset("16-servos");

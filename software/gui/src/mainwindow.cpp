@@ -111,7 +111,11 @@ static QVector<PresetFile> presetFiles()
     byName.setNumericMode(true);
     byName.setCaseSensitivity(Qt::CaseInsensitive);
     std::sort(list.begin(), list.end(),
-              [&byName](const PresetFile &a, const PresetFile &b) { return byName.compare(a.name, b.name) < 0; });
+              [&byName](const PresetFile &a, const PresetFile &b) {
+                  const bool ea = a.name.startsWith(QLatin1String("Empty")), eb = b.name.startsWith(QLatin1String("Empty"));
+                  if (ea != eb) return ea;                       // "Empty" first, the rest by name
+                  return byName.compare(a.name, b.name) < 0;
+              });
     return list;
 }
 
@@ -1436,7 +1440,9 @@ static QVector<QCheckBox *> sectionBoxes(QFormLayout *form, int outputs, int inp
     for (int k = 0; k < 3; ++k)
     {
         boxes[k]->setObjectName(QLatin1String(names[k]));
-        boxes[k]->setChecked(k < 2);
+        const bool empty = ( k == 0 && outputs == 0 ) || ( k == 1 && inputs == 0 );   // nothing in use: nothing to take
+        boxes[k]->setChecked(k < 2 && !empty);
+        boxes[k]->setEnabled(!empty);
         form->addRow(boxes[k]);
     }
     return boxes;
