@@ -26,7 +26,7 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
         pin = inputPinNumber( pin ) ;
     }
     if( isReservedPin( pin ) ) return false ;       // D2 = DCC, D13 = config LED, A7 = config button
-    if( pin >= 20 ) return !isOutput && pin <= 21 && board.type == BOARD_NANO ;   // A6/A7: analog inputs, Nano only
+    if( pin >= 20 ) return !isOutput && pin <= 21 && board.type <= BOARD_NANO ;   // A6/A7: analog inputs, Nano only (type 0 Uno = Nano)
     return true ;
 }
 
@@ -49,6 +49,7 @@ OPCODE( OPCODE_SET_INPUT_DATA )
     // payload 7-13 are unused, the route comes with SET_ROUTE
 
     input[index].set( &data ) ;
+    input[index].syncState( output[ data.outputID ].eedata.state ) ;   // the next sample compares with the output
 
     // ACK is sent by Transceiver::receive()
 }

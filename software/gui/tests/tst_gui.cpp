@@ -10,12 +10,14 @@
 #include "mainwindow.h"
 #include "outputeditor.h"
 #include "simulateddevice.h"
+#include "soundplayer.h"
 #include "uihelpers.h"
 #include "qrcode.h"
 #include "webremote.h"
 
 #include <QApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QListWidget>
@@ -49,6 +51,15 @@
 #include <QtTest>
 
 using namespace Gpio;
+
+// Stands in for Qt Multimedia: records what would be played
+struct FakeSound : SoundPlayer::Backend
+{
+    QStringList *calls;
+    explicit FakeSound(QStringList *log) : calls(log) {}
+    void play(const QString &file) override { *calls << QFileInfo(file).fileName(); }
+    void stop() override { *calls << QStringLiteral("stop"); }
+};
 
 // Answers the popups of the window under test: message boxes (the text is kept), file dialogs (with
 // 'file') and other dialogs (onDialog returns true when it handled one).
@@ -236,10 +247,12 @@ class TestGui : public QObject
     static void chooseBoardType(MainWindow &w, int type)
     {
         for (QComboBox *c : w.findChildren<QComboBox *>())
-            if (c->count() == BoardTypeCount && c->itemText(BoardDccNext) == boardTypeName(BoardDccNext))
+            if (c->findData(int(BoardDccNext)) >= 0 && c->itemText(c->findData(int(BoardDccNext))) == boardTypeName(BoardDccNext))
             {
-                c->setCurrentIndex(type);
-                emit c->activated(type);
+                const int i = c->findData(type);
+                QVERIFY(i >= 0);
+                c->setCurrentIndex(i);
+                emit c->activated(i);
                 return;
             }
         QFAIL("no board type combo");
@@ -766,6 +779,101 @@ private slots:
         QCOMPARE(int(view->board().outputs[0].type), int(SoundEffect));   // kept, without the pin
         QCOMPARE(int(view->board().outputs[0].pinA), int(PinNA));
         QCOMPARE(int(view->board().outputs[1].pinA), int(PinNA));
+
+        // a DCCnext has no D1: the type is not offered there, an existing sound output stays (with a pin warning)
+        QVERIFY(offered(type).contains(SoundEffect));
+        chooseBoardType(w, BoardDccNext);
+        QVERIFY(!offered(type).contains(SoundEffect));
+        QCOMPARE(int(view->board().outputs[0].type), int(SoundEffect));
+        QCOMPARE(Ui::currentData(type), int(SoundEffect));
+        chooseBoardType(w, BoardNano);
+        QVERIFY(offered(type).contains(SoundEffect));
+    }
+
+    // Simulate / Live test: OUTPUT_EVENT state 2 of a sound effect output plays that track from the sound folder
+    // (0001.mp3 as on the DFPlayer's SD card, also 007.wav), 0 stops it; a missing file is reported; mute.
+    void soundPlaysTheTracks()
+    {
+        QTemporaryDir dir;
+        for (const char *name : { "0001.mp3", "007.wav", "notes.txt" })
+        {
+            QFile f(dir.filePath(QLatin1String(name)));
+            QVERIFY(f.open(QIODevice::WriteOnly));
+        }
+        MainWindow w;
+        auto *player = w.findChild<SoundPlayer *>();
+        QVERIFY(player);
+        QStringList calls;
+        player->setBackend(new FakeSound(&calls));
+        const QString oldFolder = player->folder();
+        const bool oldMuted = player->isMuted();
+        player->setFolder(QString());
+        player->setMuted(false);
+        calls.clear();
+        QCOMPARE(player->trackFile(7), QString());
+
+        ConnectionView *view = startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *sim  = w.findChild<SimulatedDevice *>();
+        OutputConfig snd = view->board().outputs[0];
+        snd.type = SoundEffect; snd.pinA = SoundPin; snd.data = { { 0, 0, 0, 0 } };
+        emit w.findChild<OutputEditor *>()->changed(0, snd);
+        InputConfig in = view->board().inputs[0];               // absolute, no pin: off = stop, on = track 7
+        in.type = Latching; in.outputId = 0; in.pin = PinNA;
+        in.setCustomValues(true, SoundEffect);
+        in.route[1].value = 7;
+        emit w.findChild<InputEditor *>()->changed(0, in);
+        QTRY_VERIFY_WITH_TIMEOUT(sim->output(0).type == SoundEffect && sim->input(0).hasCustomValues()
+                                 && sim->input(0).route.value(1).value == 7, 3000);
+        waitIdleOrNot(link);
+        QAction *live = nullptr;
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text().contains(QLatin1String("Live test"))) live = a;
+        QVERIFY(live);
+        live->trigger();
+        QTRY_VERIFY(view->liveMode());
+        QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 3000);
+
+        click(view, view->liveButtonRect(0, 1).center());       // no folder yet: silent, a hint once
+        QTRY_VERIFY_WITH_TIMEOUT(w.statusBar()->currentMessage().contains(QLatin1String("Sound folder")), 2000);
+        QVERIFY(calls.isEmpty());
+        click(view, view->liveButtonRect(0, 0).center());
+        QTRY_COMPARE_WITH_TIMEOUT(calls, QStringList{ QStringLiteral("stop") }, 2000);
+
+        player->setFolder(dir.path());
+        calls.clear();
+        click(view, view->liveButtonRect(0, 1).center());       // the firmware reports track 7: 007.wav
+        QTRY_COMPARE_WITH_TIMEOUT(calls, QStringList{ QStringLiteral("007.wav") }, 2000);
+        click(view, view->liveButtonRect(0, 0).center());       // track 0 = stop
+        QTRY_COMPARE_WITH_TIMEOUT(calls, (QStringList{ QStringLiteral("007.wav"), QStringLiteral("stop") }), 2000);
+        QCOMPARE(player->trackFile(1), dir.filePath(QStringLiteral("0001.mp3")));
+
+        calls.clear();
+        emit link->outputEvent(0, 2, 1);                        // track 1: 0001.mp3
+        QCOMPARE(calls, QStringList{ QStringLiteral("0001.mp3") });
+        emit link->outputEvent(0, 2, 12);                       // not in the folder
+        QCOMPARE(w.statusBar()->currentMessage(),
+                 QStringLiteral("0012.mp3 not found in %1").arg(QDir::toNativeSeparators(dir.path())));
+        QCOMPARE(calls.size(), 1);
+
+        QAction *mute = nullptr;
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QLatin1String("Mute sounds")) mute = a;
+        QVERIFY(mute && mute->isVisible() && !mute->isChecked());
+        calls.clear();
+        mute->trigger();                                         // muting stops the sound and is remembered
+        QVERIFY(player->isMuted());
+        QCOMPARE(calls, QStringList{ QStringLiteral("stop") });
+        emit link->outputEvent(0, 2, 1);
+        QCOMPARE(calls.size(), 1);
+        mute->trigger();
+        emit link->outputEvent(0, 2, 1);
+        QCOMPARE(calls.last(), QStringLiteral("0001.mp3"));
+        emit link->outputEvent(1, 2, 1);                        // not a sound output: nothing
+        QCOMPARE(calls.size(), 2);
+
+        player->setFolder(oldFolder);
+        player->setMuted(oldMuted);
     }
 
     void pwmFadeTimeEditor()
@@ -1437,8 +1545,11 @@ private slots:
         emit oed->changed(0, c);
         maybeScreenshot(w, "dccnext-overlay.png");
 
-        // Uno: no A6 / A7; Nano: A6 back, D-names again
-        chooseBoardType(w, BoardUno);
+        // Jack of all trades: no A6 / A7; Nano: A6 back, D-names again. The Uno is not offered.
+        for (QComboBox *c : w.findChildren<QComboBox *>())
+            if (c->itemText(c->findData(int(BoardDccNext))) == boardTypeName(BoardDccNext))
+                QVERIFY(c->findData(int(BoardUno)) < 0 && c->count() == BoardTypeCount - 1);
+        chooseBoardType(w, BoardJackOfAllTrades);
         QVERIFY(!items(inPin).contains(20) && !items(inPin).contains(21) && items(inPin).contains(13));
         QVERIFY(pinA->itemText(pinA->findData(3)).startsWith(QLatin1String("D3")));
         chooseBoardType(w, BoardNano);
@@ -2150,6 +2261,9 @@ private slots:
         link->drainMs   = 3;
         link->timeoutMs = 100;
         auto *sim = new SimulatedDevice;
+        InputConfig d0;                                      // D0 in use: the port closes after the window
+        d0.type = Sensor; d0.pin = 0;
+        sim->setInput(0, d0);
         QVERIFY(sim->open(QIODevice::ReadWrite));
         sim->advanceClock(6000);
         QTRY_VERIFY(sim->serialIsIO());

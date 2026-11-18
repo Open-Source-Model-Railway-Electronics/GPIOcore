@@ -111,7 +111,9 @@ bool SimulatedDevice::open(OpenMode mode)
         return false;
     }
 
-    // the configuration that was set before: board settings first (they decide the route format)
+    // the levels and the configuration that were set before: board settings first (they decide the route format)
+    m_proc->write(m_setupLevels);
+    m_setupLevels.clear();
     if (m_setupBoard) sendBoard(*m_setupBoard);
     for (int i = 0; i < NumOutputs; ++i) if (m_setupOut[i]) sendOutput(i, *m_setupOut[i]);
     for (int i = 0; i < NumInputs; ++i)  if (m_setupIn[i])  sendInput(i, *m_setupIn[i]);
@@ -170,14 +172,15 @@ qint64 SimulatedDevice::writeData(const char *data, qint64 size)
 
 void SimulatedDevice::sendFrame(char type, const QByteArray &data)
 {
-    if (!m_proc)
-        return;
     QByteArray f;
     f.append(type);
     f.append(char(data.size() & 0xFF));
     f.append(char(data.size() >> 8));
     f += data;
-    m_proc->write(f);
+    if (m_proc)
+        m_proc->write(f);
+    else if (type == 'A')                // a level set before open(): sent first, before the set-up
+        m_setupLevels += f;
 }
 
 // ── Setting the board up ─────────────────────────────────────────────────────

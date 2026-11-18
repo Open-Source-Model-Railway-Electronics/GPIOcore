@@ -36,6 +36,7 @@ public:
     void    startRoute() ;          // interlocking, PROTOCOL.md section 10: a refused route is ignored
 
     void    syncState( uint8_t outputState ) { state = outputState ; }   // after boot: toggle from the stored output state
+    void    rearm() { trigger = Trigger() ; analogHit = 0 ; }              // the next sample is a new starting level
     uint8_t occupied() { return eedata.type != NOT_IN_USE && eedata.pin != NA && trigger.armed && !trigger.state ; }   // pressed / detector active
 
 private:

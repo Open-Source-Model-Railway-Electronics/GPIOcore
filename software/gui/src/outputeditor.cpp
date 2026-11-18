@@ -639,7 +639,10 @@ void OutputEditor::updateVisibility()
 
 void OutputEditor::applyLevel()
 {
-    Ui::offerItems(m_type, [](int t) { return Ui::outputTypeLevel(quint8(t)) <= Ui::level(); });
+    Ui::offerItems(m_type, [](int t) {
+        return Ui::outputTypeLevel(quint8(t)) <= Ui::level()
+            && !(t == SoundEffect && boardOptions().dccNext);   // a DCCnext has no D1 for the DFPlayer
+    });
 }
 
 void OutputEditor::updateTimeLabels()

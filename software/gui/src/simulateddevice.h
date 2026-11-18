@@ -57,6 +57,7 @@ public:
 
     // ── The outside world ───────────────────────────────────────────────────
     // Voltage on A0-A7 as analogRead() sees it (default 1023: nothing pressed, pull-up).
+    // Before open(): applied right after the firmware booted, before the set-up above.
     void setAnalogValue(int channel, int value);
     int  analogValue(int channel) const { return m_analog[channel & 7]; }
     void setPinLevel(int pin, bool high);                   // a button to GND: false = pressed
@@ -106,6 +107,7 @@ private:
 
     // set before open(), sent once the firmware runs
     std::optional<Gpio::BoardSettings> m_setupBoard;
+    QByteArray m_setupLevels;         // 'A' frames
     std::array<std::optional<Gpio::OutputConfig>, Gpio::NumOutputs> m_setupOut;
     std::array<std::optional<Gpio::InputConfig>,  Gpio::NumInputs>  m_setupIn;
 };

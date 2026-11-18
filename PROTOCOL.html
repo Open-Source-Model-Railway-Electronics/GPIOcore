@@ -155,6 +155,7 @@ checksum : XOR of command and all payload bytes</code></pre>
 </li></ul>
 <p>With 6 and 7 two routes share one DCC address, for example a level crossing barrier: curved = closed, straight = open.</p>
 <p><b>Repeated DCC packets.</b> A command station sends a turnout command a few times. A toggle input and a route take the first one and ignore the same address for 500 ms afterwards (<code>DCC_LOCKOUT_MS</code>). An absolute input does not need this (same direction = same state). <code>SET_INPUT_STATE</code> (0x32) goes through the same code, so the lockout time applies there too.</p>
+<p><b>Start-up (firmware 2026-11-18).</b> The first sample of an input's pin is its starting level, not an edge. An <b>absolute</b> input applies that level once, exactly as an edge would (custom values included), but only when it differs from its output's stored state: a switch moved while the power was off is followed, without needless EEPROM writes. Toggle and route inputs do nothing at start-up. <code>SET_INPUT_DATA</code> starts an input again (the next sample is a new starting level), so a new configuration gets the same rule. An input on D0/D1 starts when those pins become I/O (<code>serialToIO()</code>).</p>
 <h3>2.3 Presets (in the GUI)</h3>
 <p>Since 2026-11-13 the presets are no longer in the firmware (that saved 2.7 KB of flash). The GUI calculates a preset (<code>presetBoard()</code> in <code>gpioconfig.cpp</code>) and sends the result as normal <code>SET_OUTPUT_DATA</code> / <code>SET_INPUT_DATA</code> (saved live). So this also works offline and in the simulation.</p>
 <p>Pins start at D3 and skip <b>D13</b> (config LED): D3–D12, A0–A5. The inputs that are used become absolute, DCC address 1, 2, …, input <i>n</i> → output <i>n</i>; the rest become <i>not in use</i>.</p>
@@ -189,8 +190,8 @@ After power-up or reset it waits <b>5 s</b> with Serial active and does <b>nothi
 If a <code>HELLO</code> arrives within those 5 s, there is a <b>configuration session</b>: D0/D1 stay Serial until the
  next reset. Outputs and inputs on D0/D1 do nothing in that session.
 </li><li>
-If no <code>HELLO</code> arrives, it does <code>Serial.end()</code> and sets D0/D1 as normal I/O
- (<code>pinMode</code> according to the configuration).
+If no <code>HELLO</code> arrives and the configuration uses D0/D1, it does <code>Serial.end()</code> and sets D0/D1 as normal I/O
+ (<code>pinMode</code> according to the configuration). Otherwise Serial stays open (§3.1).
 </li><li>
 If you want to configure again later, you reset the board. The GUI does this itself when connecting (DTR).
  Without a reset (over Bluetooth, or a USB chip without DTR): press the config button briefly (§3.1).
@@ -210,7 +211,7 @@ In the <b>simulator</b> (the firmware built for the PC, <code>GPIOCORE_HOST</cod
 </li></ul>
 <p>The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a note (not an error). Without bit0 they are reserved and red.</p>
 <h3>3.1 Serial window, GUI mode and the announce (HELLO bit5, firmware 2026-11-18)</h3>
-<p>The 5 s at start-up are the <b>serial window</b>: it runs from <code>serialWindowStart</code> (0 at start-up). Without <code>HELLO</code> in the window the firmware does <code>Serial.end()</code> and D0/D1 become I/O (<code>serialToIO()</code>; a sound effect output gets TX at 9600 baud for the DFPlayer).</p>
+<p>The 5 s at start-up are the <b>serial window</b>: it runs from <code>serialWindowStart</code> (0 at start-up). Without <code>HELLO</code> in the window the firmware does <code>Serial.end()</code> and D0/D1 become I/O (<code>serialToIO()</code>; a sound effect output gets TX at 9600 baud for the DFPlayer) — <b>only when the configuration uses D0 or D1</b> (firmware 2026-11-18): an input pin, an output or frog relay pin, or a sound effect output (TX). Otherwise Serial stays open at 115200 for good, so a GUI can connect at any time (USB without a reset, Bluetooth) without a press on the config button. <code>serialCheck()</code> decides this every 50 ms after the window, outside a session: a configuration that starts using D0/D1 later (e.g. in the simulator) closes the port then. A session keeps the port open until the next reset, as before (the board does not notice the GUI going away); the next start-up decides again.</p>
 <p><b>GUI mode.</b> A <b>short press</b> on the config button (A7, Nano) <b>outside config mode</b>:</p>
 <ul><li>
 serial port closed (<code>serialIsIO</code>): <code>Serial.begin(115200)</code> again, D0/D1 are Serial (what is on them pauses, as in a
@@ -220,8 +221,8 @@ serial port open, no session yet (start-up window): the window starts again;
 </li><li>
 always: the board sends the <b>announce</b>, the <code>HELLO</code> reply (<code>95 ...</code>) unasked. It does <b>not</b> start a session.
 </li></ul>
-<p>The GUI then sends <code>REQ_VERSION</code> and <code>HELLO</code> as usual; with <code>HELLO</code> the session starts and the port stays open. Without <code>HELLO</code> within 5 s, D0/D1 become I/O again, exactly as after start-up.</p>
-<p><b>The GUI.</b> When it gets no answer to <code>REQ_VERSION</code> or <code>HELLO</code> while connecting, it does not give up: it shows <i>"Waiting for the board — press its config button briefly (Nano)…"</i> and listens for up to 30 s (<code>DeviceLink::announceWaitMs</code>) for the announce. Then it continues with <code>REQ_VERSION</code> and <code>HELLO</code>. After 30 s it shows the "No GPIOcore board answered" message. Disconnect cancels the wait. This is what you need over Bluetooth: opening a Bluetooth COM port does not reset the board, so after 5 s its serial port is closed.</p>
+<p>The GUI then sends <code>REQ_VERSION</code> and <code>HELLO</code> as usual; with <code>HELLO</code> the session starts and the port stays open. Without <code>HELLO</code> within 5 s, D0/D1 become I/O again (when the configuration uses them), exactly as after start-up.</p>
+<p><b>The GUI.</b> When it gets no answer to <code>REQ_VERSION</code> or <code>HELLO</code> while connecting, it does not give up: it shows <i>"Waiting for the board — press its config button briefly (Nano)…"</i> and listens for up to 30 s (<code>DeviceLink::announceWaitMs</code>) for the announce. Then it continues with <code>REQ_VERSION</code> and <code>HELLO</code>. After 30 s it shows the "No GPIOcore board answered" message. Disconnect cancels the wait. This is what you need over Bluetooth: opening a Bluetooth COM port does not reset the board, so after 5 s its serial port is closed (when the configuration uses D0/D1).</p>
 <h2>4. Routes</h2>
 <h3>Step = 4 bytes</h3>
 <pre><code>byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bit 5 STEP_VALUES (custom value) | bits 6-7 reserved (0)
@@ -306,7 +307,8 @@ In the GUI you tick the <i>DCCnext board</i> checkbox. The pin choices then show
 <pre><code>host   -&gt; C0                                        (GET_BOARD, no payload)
 device -&gt; CF &lt;len&gt; &lt;type&gt; &lt;flags&gt; &lt;delay&gt; &lt;name ...&gt; (also SET_BOARD from host -&gt; ACK)
 len    : 4 + name length (name 0..16 ASCII bytes, no terminator)
-type   : 0 = Arduino Uno, 1 = Arduino Nano, 2 = DCCnext, 3 = Jack of all trades
+type   : 0 = Arduino Uno (no longer offered: the GUI reads it as a Nano), 1 = Arduino Nano, 2 = DCCnext,
+         3 = Jack of all trades
 flags  : bit0   = reserved (was: recorder enabled), ignored and cleared
          bit1   = route step timing (per-step wait times stored)
          bit2-3 = route interlocking: 0 = off (all routes may run in parallel)
@@ -323,7 +325,8 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 <b>Type.</b> Determines which pins exist. On the Nano, A6/A7 (pin index 20/21) are analog-only
  inputs without pull-up: the firmware reads them with <code>analogRead() &lt; 512</code> as "pressed", and the button
  needs an external 10 kΩ pull-up. The type is set by the GUI; the firmware only uses it
- to check pins.
+ to check pins. Type 0 (Uno) is no longer offered: the GUI shows it as a Nano and the firmware applies the
+ Nano's pin rules to it.
 </li><li>
 <b>Recorder.</b> Removed on 2026-11-16 (it needed an external I2C EEPROM on A4/A5, ±4.6 KB flash and ±250 B RAM).
  A4/A5 are always normal pins.

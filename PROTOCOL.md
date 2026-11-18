@@ -202,6 +202,13 @@ a route take the first one and ignore the same address for 500 ms afterwards (`D
 input does not need this (same direction = same state). `SET_INPUT_STATE` (0x32) goes through the same
 code, so the lockout time applies there too.
 
+**Start-up (firmware 2026-11-18).** The first sample of an input's pin is its starting level, not an edge. An
+**absolute** input applies that level once, exactly as an edge would (custom values included), but only when it
+differs from its output's stored state: a switch moved while the power was off is followed, without needless
+EEPROM writes. Toggle and route inputs do nothing at start-up. `SET_INPUT_DATA` starts an input again (the
+next sample is a new starting level), so a new configuration gets the same rule. An input on D0/D1 starts when
+those pins become I/O (`serialToIO()`).
+
 ### 2.3 Presets (in the GUI)
 
 Since 2026-11-13 the presets are no longer in the firmware (that saved 2.7 KB of flash). The GUI calculates a
@@ -246,8 +253,8 @@ the port causes through DTR. For boards without auto-reset it sends it after `RE
 1. After power-up or reset it waits **5 s** with Serial active and does **nothing** yet on D0/D1.
 2. If a `HELLO` arrives within those 5 s, there is a **configuration session**: D0/D1 stay Serial until the
    next reset. Outputs and inputs on D0/D1 do nothing in that session.
-3. If no `HELLO` arrives, it does `Serial.end()` and sets D0/D1 as normal I/O
-   (`pinMode` according to the configuration).
+3. If no `HELLO` arrives and the configuration uses D0/D1, it does `Serial.end()` and sets D0/D1 as normal I/O
+   (`pinMode` according to the configuration). Otherwise Serial stays open (§3.1).
 4. If you want to configure again later, you reset the board. The GUI does this itself when connecting (DTR).
    Without a reset (over Bluetooth, or a USB chip without DTR): press the config button briefly (§3.1).
 
@@ -267,7 +274,12 @@ Without bit0 they are reserved and red.
 
 The 5 s at start-up are the **serial window**: it runs from `serialWindowStart` (0 at start-up). Without
 `HELLO` in the window the firmware does `Serial.end()` and D0/D1 become I/O (`serialToIO()`; a sound effect output
-gets TX at 9600 baud for the DFPlayer).
+gets TX at 9600 baud for the DFPlayer) — **only when the configuration uses D0 or D1** (firmware 2026-11-18): an
+input pin, an output or frog relay pin, or a sound effect output (TX). Otherwise Serial stays open at 115200
+for good, so a GUI can connect at any time (USB without a reset, Bluetooth) without a press on the config button.
+`serialCheck()` decides this every 50 ms after the window, outside a session: a configuration that starts using
+D0/D1 later (e.g. in the simulator) closes the port then. A session keeps the port open until the next reset,
+as before (the board does not notice the GUI going away); the next start-up decides again.
 
 **GUI mode.** A **short press** on the config button (A7, Nano) **outside config mode**:
 - serial port closed (`serialIsIO`): `Serial.begin(115200)` again, D0/D1 are Serial (what is on them pauses, as in a
@@ -276,13 +288,14 @@ gets TX at 9600 baud for the DFPlayer).
 - always: the board sends the **announce**, the `HELLO` reply (`95 ...`) unasked. It does **not** start a session.
 
 The GUI then sends `REQ_VERSION` and `HELLO` as usual; with `HELLO` the session starts and the port stays open.
-Without `HELLO` within 5 s, D0/D1 become I/O again, exactly as after start-up.
+Without `HELLO` within 5 s, D0/D1 become I/O again (when the configuration uses them), exactly as after start-up.
 
 **The GUI.** When it gets no answer to `REQ_VERSION` or `HELLO` while connecting, it does not give up: it shows
 *"Waiting for the board — press its config button briefly (Nano)…"* and listens for up to 30 s
 (`DeviceLink::announceWaitMs`) for the announce. Then it continues with `REQ_VERSION` and `HELLO`. After 30 s it
 shows the "No GPIOcore board answered" message. Disconnect cancels the wait. This is what you need over Bluetooth:
-opening a Bluetooth COM port does not reset the board, so after 5 s its serial port is closed.
+opening a Bluetooth COM port does not reset the board, so after 5 s its serial port is closed (when the
+configuration uses D0/D1).
 
 ## 4. Routes
 
@@ -388,7 +401,8 @@ decoder does not report bit0 in HELLO, and to A6/A7 as output or on a board othe
 host   -> C0                                        (GET_BOARD, no payload)
 device -> CF <len> <type> <flags> <delay> <name ...> (also SET_BOARD from host -> ACK)
 len    : 4 + name length (name 0..16 ASCII bytes, no terminator)
-type   : 0 = Arduino Uno, 1 = Arduino Nano, 2 = DCCnext, 3 = Jack of all trades
+type   : 0 = Arduino Uno (no longer offered: the GUI reads it as a Nano), 1 = Arduino Nano, 2 = DCCnext,
+         3 = Jack of all trades
 flags  : bit0   = reserved (was: recorder enabled), ignored and cleared
          bit1   = route step timing (per-step wait times stored)
          bit2-3 = route interlocking: 0 = off (all routes may run in parallel)
@@ -405,7 +419,8 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 - **Type.** Determines which pins exist. On the Nano, A6/A7 (pin index 20/21) are analog-only
   inputs without pull-up: the firmware reads them with `analogRead() < 512` as "pressed", and the button
   needs an external 10 kΩ pull-up. The type is set by the GUI; the firmware only uses it
-  to check pins.
+  to check pins. Type 0 (Uno) is no longer offered: the GUI shows it as a Nano and the firmware applies the
+  Nano's pin rules to it.
 - **Recorder.** Removed on 2026-11-16 (it needed an external I2C EEPROM on A4/A5, ±4.6 KB flash and ±250 B RAM).
   A4/A5 are always normal pins.
 - **Switching timing on/off.** The decoder converts the stored routes (2 ↔ 4 B per step). If it does not fit

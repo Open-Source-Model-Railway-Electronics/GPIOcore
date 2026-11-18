@@ -84,8 +84,10 @@ def build_gui():
         RELEASE_DIR.mkdir(exist_ok=True)
         shutil.copy2(exe, RELEASE_DIR / EXE)
         shutil.copy2(build_dir / FW_HOST, RELEASE_DIR / FW_HOST)   # statically linked, no DLLs
-        # Qt libraries, plugins, Qt's own translations and the MinGW runtime next to the exe
+        # Qt libraries, plugins, Qt's own translations and the MinGW runtime next to the exe.
+        # Sound (Qt Multimedia): only the Windows Media Foundation plugin (MP3 / WAV), not FFmpeg
         run([qt / "bin" / "windeployqt.exe", "--release", "--no-opengl-sw", "--no-system-d3d-compiler",
+             "--no-ffmpeg", "--exclude-plugins", "ffmpegmediaplugin",
              "--dir", RELEASE_DIR, RELEASE_DIR / EXE], env)
     finally:
         shutil.rmtree(build_dir, ignore_errors=True)

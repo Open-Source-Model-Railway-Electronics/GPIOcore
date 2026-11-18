@@ -76,6 +76,13 @@ void eepromBegin()
     routesBegin() ;
 }
 
+uint8_t outputOnPin( const Settings &o, uint8_t a, uint8_t b )   // one of its pins is a or b
+{
+    const uint8_t pins[7] = { o.pinA, o.pinB, o.pinC, o.pinD, o.relayPinA, o.relayPinB, o.relayPinC } ;
+    for( uint8_t j = 0 ; j < 7 ; j ++ ) if( pins[j] == a || pins[j] == b ) return 1 ;
+    return 0 ;
+}
+
 void setup()
 {
     delay(100) ;
@@ -111,10 +118,7 @@ void setup()
     for( uint8_t i = 0 ; i < 16 ; i++ )
     {
         Settings &o = output[i].eedata ;
-        const uint8_t pins[7] = { o.pinA, o.pinB, o.pinC, o.pinD, o.relayPinA, o.relayPinB, o.relayPinC } ;
-        uint8_t bad = 0 ;
-        for( uint8_t j = 0 ; j < 7 ; j ++ ) bad |= ( pins[j] == CONFIG_LED_PIN || pins[j] == CONFIG_BUTTON_PIN ) ;
-        if( bad ) { o.type = notInUse ; o.pinA = o.pinB = o.pinC = o.pinD = o.relayPinA = o.relayPinB = o.relayPinC = NA ; output[i].saveEEPROM() ; }
+        if( outputOnPin( o, CONFIG_LED_PIN, CONFIG_BUTTON_PIN ) ) { o.type = notInUse ; o.pinA = o.pinB = o.pinC = o.pinD = o.relayPinA = o.relayPinB = o.relayPinC = NA ; output[i].saveEEPROM() ; }
         const uint8_t inPin = inputPinNumber( input[i].eedata.pin ) ;
         if( inPin == CONFIG_LED_PIN || inPin == CONFIG_BUTTON_PIN )
         {
@@ -227,6 +231,18 @@ void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uin
 }
 
 // ── Serial window: D0/D1 stay Serial for 5 s after start-up or after a short press on the config button
+uint8_t usesSerialPins()                        // an input, output or relay pin on D0/D1, or a sound effect (TX)
+{
+    for( uint8_t i = 0 ; i < 16 ; i++ )
+    {
+        const Settings &o = output[i].eedata ;
+        if( o.type == soundEffect ) return 1 ;
+        if( o.type != notInUse && outputOnPin( o, 0, 1 ) ) return 1 ;
+        if( input[i].eedata.type != NOT_IN_USE && input[i].eedata.pin < 2 ) return 1 ;
+    }
+    return 0 ;
+}
+
 void serialToIO()                               // no HELLO within the window: D0/D1 become I/O
 {
     Serial.flush() ;
@@ -243,7 +259,16 @@ void serialToIO()                               // no HELLO within the window: D
     {
         output[i].setPinModes() ;
          input[i].setPinMode() ;
+        if( input[i].eedata.pin < 2 ) input[i].rearm() ;     // D0/D1 start now: their first sample is the starting level
     }
+}
+
+// Every 50 ms: after the window without a session, D0/D1 become I/O only when the configuration uses them.
+// Otherwise Serial stays open at 115200, so a GUI can connect any time (USB without reset, Bluetooth).
+void serialCheck()
+{
+    if( configSession || serialIsIO || millis() - serialWindowStart < SERIAL_WINDOW_MS ) return ;
+    if( usesSerialPins() ) serialToIO() ;
 }
 
 void guiMode()                                  // short press: the GUI may connect (also over Bluetooth, no reset)
@@ -324,8 +349,6 @@ void loop()
     if( !serialIsIO ) transceiver.receive() ;
     if( btSetupPending ) btSetup() ;
 
-    if( !configSession && !serialIsIO && millis() - serialWindowStart >= SERIAL_WINDOW_MS ) serialToIO() ;
-
     static uint8_t index ;
     if( ++ index == 16 ) index = 0 ;
     output[index].update() ;
@@ -340,6 +363,7 @@ void loop()
         }
         blockSignals() ;
         configUpdate() ;
+        serialCheck() ;
     }
 
     // servos start one by one: each gets its stored position for ~500 ms, the next one 500 ms later

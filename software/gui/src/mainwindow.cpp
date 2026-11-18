@@ -10,6 +10,7 @@
 #include "inputeditor.h"
 #include "outputeditor.h"
 #include "simulateddevice.h"
+#include "soundplayer.h"
 #include "uihelpers.h"
 
 #include <QAction>
@@ -126,6 +127,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     resize(1600, 900);
 
     m_link = new DeviceLink(this);
+    m_sound = new SoundPlayer(this);
+    connect(m_sound, &SoundPlayer::message, this, [this](const QString &m) { statusBar()->showMessage(m, 6000); });
 
     // Start screen, offline in Configure: an empty board with 1 input and 1 output (the "Empty" preset).
     PresetFile empty;
@@ -134,9 +137,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         m_edit.outputs = empty.board.outputs;
         m_edit.inputs  = empty.board.inputs;
     }
-    m_edit.board.type = quint8(QSettings().value(QStringLiteral("board/type"), int(BoardNano)).toInt());
+    Gpio::setBoardType(quint8(QSettings().value(QStringLiteral("board/type"), int(BoardNano)).toInt()));
+    m_edit.board.type = boardOptions().type;           // an old 'Uno' setting is a Nano
     m_shadow = m_edit;
-    Gpio::setBoardType(m_edit.board.type);
     m_dev = m_edit;
 
     m_liveTimer = new QTimer(this);
@@ -174,6 +177,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
                                : state == 2 ? tr("value %1").arg(value)
                                             : (state ? tr("straight / on") : tr("curved / off"));
             statusBar()->showMessage(tr("%1 → %2").arg(name, what), 4000);
+            if (state == 2 && m_edit.outputs[o].type == SoundEffect)
+                m_sound->playTrack(value);       // the DFPlayer's track from the sound folder, 0 = stop
         }
     });
     connect(m_link, &DeviceLink::capabilitiesChanged, this, [this] { applyCapabilities(); });
@@ -625,12 +630,12 @@ void MainWindow::updateInputEditorLimits()
 
 void MainWindow::setBoardType(int type)
 {
-    m_edit.board.type = quint8(type);
-    Gpio::setBoardType(m_edit.board.type);
-    QSettings().setValue(QStringLiteral("board/type"), type);
+    Gpio::setBoardType(quint8(type));
+    m_edit.board.type = boardOptions().type;           // Uno = Nano
+    QSettings().setValue(QStringLiteral("board/type"), int(m_edit.board.type));
     m_inEd->setTimingEnabled(m_edit.board.timing);
-    if (m_boardType && m_boardType->currentIndex() != type)
-        m_boardType->setCurrentIndex(type);
+    if (m_boardType)
+        m_boardType->setCurrentIndex(m_boardType->findData(int(m_edit.board.type)));
     m_outEd->refreshPinCombos();
     m_inEd->refreshPinCombos();
     refreshAll();
@@ -721,12 +726,12 @@ void MainWindow::buildToolbar()
     tb->addSeparator();
 
     m_boardType = new QComboBox;
-    for (int t = 0; t < BoardTypeCount; ++t)
-        m_boardType->addItem(boardTypeName(quint8(t)));
-    m_boardType->setCurrentIndex(m_edit.board.type);
+    for (int t = BoardNano; t < BoardTypeCount; ++t)     // the Uno is not offered
+        m_boardType->addItem(boardTypeName(quint8(t)), t);
+    m_boardType->setCurrentIndex(m_boardType->findData(int(m_edit.board.type)));
     m_boardType->setToolTip(tr("Which board this is: decides which pins exist"));
-    connect(m_boardType, QOverload<int>::of(&QComboBox::activated), this, [this](int t) {
-        setBoardType(t);
+    connect(m_boardType, QOverload<int>::of(&QComboBox::activated), this, [this](int i) {
+        setBoardType(m_boardType->itemData(i).toInt());
         if (m_link->isReady() && m_link->caps().boardSettings)
             m_link->writeBoard(m_edit.board);
         markFileDirty();
@@ -807,6 +812,18 @@ void MainWindow::buildToolbar()
         QSettings().setValue(QStringLiteral("ui/showUnused2"), on);
         m_view->setHideUnused(!on);
     });
+    // Sound effect outputs: the tracks are played on the PC in Simulate and Live test
+    m_actSoundFolder = view->addAction(tr("Sound folder…"), this, [this] {
+        const QString dir = QFileDialog::getExistingDirectory(this, tr("Sound folder: 0001.mp3, 0002.mp3 … as on the "
+                                                                       "DFPlayer's SD card"), m_sound->folder());
+        if (!dir.isEmpty())
+            m_sound->setFolder(dir);
+    });
+    m_actSoundFolder->setToolTip(tr("Plays a sound effect output's tracks in Simulate and Live test"));
+    m_actMute = view->addAction(tr("Mute sounds"));
+    m_actMute->setCheckable(true);
+    m_actMute->setChecked(m_sound->isMuted());
+    connect(m_actMute, &QAction::toggled, m_sound, &SoundPlayer::setMuted);
 
     // Theme: automatic (Windows), light, dark; applied at once
     view->addSeparator();
@@ -851,7 +868,7 @@ void MainWindow::buildToolbar()
     help->addSeparator();
     help->addAction(tr("&About"), this, [this] {
         QMessageBox::about(this, windowTitle(),
-                           tr("<b>GPIOcore Configurator</b> %1<br><br>Configures GPIOcore boards (Arduino Nano / Uno, "
+                           tr("<b>GPIOcore Configurator</b> %1<br><br>Configures GPIOcore boards (Arduino Nano, "
                               "DCCnext) for model railways.")
                                .arg(QApplication::applicationVersion()));
     });
@@ -1750,6 +1767,8 @@ void MainWindow::updateActions()
     m_actRevert->setEnabled(dirty > 0);
     m_actPreset->setEnabled(m_mode == ModeConfigure && !m_simulating);   // presets are files read by the GUI: also offline
     m_actBluetooth->setVisible(Ui::level() >= Ui::Advanced);
+    m_actSoundFolder->setVisible(Ui::level() >= Ui::Advanced);
+    m_actMute->setVisible(Ui::level() >= Ui::Advanced);
     m_actBluetooth->setEnabled(ready && !busy && m_link->caps().bluetooth);
     m_port->setEnabled(!m_link->isOpen());
     m_actRefresh->setEnabled(!m_link->isOpen());
@@ -2197,6 +2216,8 @@ void MainWindow::setLiveTest(bool on)
     }
     closePanels();
     m_view->setLiveMode(on);
+    if (!on)
+        m_sound->stop();
     updateEditing();
     if (on)
     {
@@ -2515,8 +2536,8 @@ void MainWindow::editBoardSettings()
     auto *name = new QLineEdit(m_edit.board.name);
     name->setMaxLength(MaxBoardName);
     auto *type = new QComboBox;
-    for (int t = 0; t < BoardTypeCount; ++t) type->addItem(boardTypeName(quint8(t)));
-    type->setCurrentIndex(m_edit.board.type);
+    for (int t = BoardNano; t < BoardTypeCount; ++t) type->addItem(boardTypeName(quint8(t)), t);
+    type->setCurrentIndex(type->findData(int(m_edit.board.type)));
     auto *timing = new QCheckBox(tr("Own wait time per route step"));
     timing->setChecked(m_edit.board.timing);
     timing->setToolTip(tr("Off: every step waits the same time and routes need half the memory"));
@@ -2560,7 +2581,7 @@ void MainWindow::editBoardSettings()
 
     BoardSettings b = m_edit.board;
     b.name      = cleanBoardName(name->text());
-    b.type      = quint8(type->currentIndex());
+    b.type      = quint8(type->currentData().toInt());
     b.timing    = timing->isChecked();
     b.delay     = quint8(qRound(delay->value() * 10));
     b.interlock = quint8(interlock->currentIndex());

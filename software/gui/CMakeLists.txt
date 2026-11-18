@@ -15,6 +15,8 @@ endif()
 # Works with Qt 6 (preferred) and Qt 5.12+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets SerialPort Network Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort Network Test)
+# The GUI plays the DFPlayer's tracks (src/soundplayer.cpp, Qt 6 API): Windows Media Foundation plugin, no FFmpeg
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Multimedia)
 
 # ── The firmware on the PC ──────────────────────────────────────────────────
 # gpiocore_fw_host runs the real firmware (software/GPIOcore) with an Arduino shim (fwhost/).
@@ -83,8 +85,10 @@ add_library(gpiocore_ui STATIC
     src/webremote.h       src/webremote.cpp
     src/infotexts.h       src/infotexts.cpp
     src/i18n.h            src/i18n.cpp
+    src/soundplayer.h     src/soundplayer.cpp
 )
-target_link_libraries(gpiocore_ui PUBLIC gpiocore_core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(gpiocore_ui PUBLIC gpiocore_core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
+                      Qt${QT_VERSION_MAJOR}::Multimedia)
 
 # Help texts: i18n/info/<lang>/<topic>.html, compiled in as :/info/<lang>/<topic>.html
 file(GLOB_RECURSE GPIOCORE_HELP_FILES CONFIGURE_DEPENDS

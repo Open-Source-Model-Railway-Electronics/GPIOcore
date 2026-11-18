@@ -23,7 +23,7 @@ static BoardConfig sampleBoard()
 {
     BoardConfig b;                                   // everything not in use
     b.board.name = QStringLiteral("Station");
-    b.board.type = BoardUno;
+    b.board.type = BoardJackOfAllTrades;
     b.board.timing = true;
     b.outputs[0].type = ServoType; b.outputs[0].pinA = 3; b.outputs[0].name = QStringLiteral("Turnout");
     b.outputs[0].data = { { 70, 110, 20, 0 } };
@@ -521,12 +521,22 @@ private slots:
             QVERIFY2(!pinReservedReason(p).isEmpty(), qPrintable(pinName(p)));
         for (quint8 p = 3; p <= 19; ++p)
             QCOMPARE(pinReservedReason(p).isEmpty(), p != 13);
-        // Uno: no A6 / A7 (no config button), D-names
-        setBoardType(BoardUno);
+        // Jack of all trades: no A6 / A7, D-names
+        setBoardType(BoardJackOfAllTrades);
         QCOMPARE(pinName(3), QStringLiteral("D3"));
         QCOMPARE(pinLabel(3), QStringLiteral("D3"));
         QVERIFY(!pinReservedReason(20).isEmpty() && !pinReservedReason(21).isEmpty());
         QVERIFY(pinReservedReason(0).isEmpty() && pinReservedReason(12).isEmpty());
+        // Uno (type 0, old files and boards): no longer offered, it is a Nano
+        setBoardType(BoardUno);
+        QCOMPARE(int(boardOptions().type), int(BoardNano));
+        QVERIFY(pinReservedReason(20).isEmpty());
+        BoardSettings uno;
+        QVERIFY(decodeBoard(QByteArray("\x00\x08\x03", 3), uno));
+        QCOMPARE(int(uno.type), int(BoardNano));
+        QJsonObject j = BoardSettings().toJson();
+        j["type"] = QStringLiteral("uno");
+        QCOMPARE(int(BoardSettings::fromJson(j).type), int(BoardNano));
         // Nano: A6 analog input, A7 the config button
         setBoardType(BoardNano);
         QVERIFY(pinReservedReason(20).isEmpty());
@@ -539,7 +549,7 @@ private slots:
     {
         const BoardConfig b = sampleBoard();
         const BoardConfig outs = exportPart(b, PartOutputs);
-        QCOMPARE(int(outs.board.type), int(BoardUno));   // the type always: it gives the pins their meaning
+        QCOMPARE(int(outs.board.type), int(BoardJackOfAllTrades));   // the type always: it gives the pins their meaning
         QVERIFY(outs.board.name.isEmpty() && !outs.board.timing);
         QVERIFY(outs.outputs[0] == b.outputs[0] && outs.outputs[0].name == QStringLiteral("Turnout"));
         QCOMPARE(outs.outputs[2].lampColors, b.outputs[2].lampColors);
@@ -749,6 +759,9 @@ private slots:
     void shortPressOpensTheSerialPort()
     {
         SimulatedDevice sim;
+        InputConfig d0;                                      // D0 in use: the port closes after the window
+        d0.type = Sensor; d0.pin = 0;
+        sim.setInput(0, d0);
         QVERIFY(sim.open(QIODevice::ReadWrite));
         sim.advanceClock(6000);
         QTRY_VERIFY(sim.serialIsIO());
@@ -789,6 +802,9 @@ private slots:
     void connectWaitsForTheAnnounce()
     {
         auto *sim = new SimulatedDevice;
+        InputConfig d0;                                      // D0 in use: the port closes after the window
+        d0.type = Sensor; d0.pin = 0;
+        sim->setInput(0, d0);
         QVERIFY(sim->open(QIODevice::ReadWrite));
         sim->advanceClock(6000);
         QTRY_VERIFY(sim->serialIsIO());
@@ -812,6 +828,51 @@ private slots:
         QTRY_VERIFY(sim->configSession());
         QCOMPARE(noBoard.size(), 0);
         QCOMPARE(errors.size(), 0);
+    }
+
+    // GPIOcore.ino serialCheck(): after the window the serial port only closes when the configuration uses D0/D1
+    // (an input, output or relay pin, or a sound effect on TX). Checked every 50 ms, so a new configuration counts.
+    void serialStaysOpenWithoutD0D1()
+    {
+        SimulatedDevice sim;
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        sim.advanceClock(6000);
+        QTest::qWait(200);
+        QVERIFY(!sim.serialIsIO());                          // factory board: D0/D1 unused, the port stays open
+
+        auto shortPress = [&sim] {
+            sim.setAnalogValue(7, 0);
+            QTest::qWait(150);
+            sim.setAnalogValue(7, AnalogMaxValue);
+            QTRY_VERIFY(!sim.serialIsIO());
+            QByteArray announce;
+            QTRY_VERIFY((announce += sim.readAll()).size() >= 7);
+        };
+        InputConfig d0;
+        d0.type = Sensor; d0.pin = 0;
+        sim.setInput(0, d0);                                 // the configuration now uses D0
+        QTRY_VERIFY(sim.serialIsIO());
+
+        shortPress();
+        sim.setInput(0, SimulatedDevice::factoryDefaults().inputs[0]);
+        OutputConfig sound;
+        sound.type = SoundEffect; sound.pinA = SoundPin;
+        sim.setOutput(5, sound);
+        QTest::qWait(200);
+        QVERIFY(!sim.serialIsIO());                          // the window still runs
+        sim.advanceClock(5100);
+        QTRY_VERIFY(sim.serialIsIO());                       // the DFPlayer needs TX
+
+        shortPress();
+        sim.setOutput(5, SimulatedDevice::factoryDefaults().outputs[5]);
+        sim.advanceClock(5100);
+        QTest::qWait(200);
+        QVERIFY(!sim.serialIsIO());                          // nothing on D0/D1 any more: it stays open
+        sim.write(QByteArray(1, char(Proto::HELLO)));        // a GUI connects later, without a reset
+        QByteArray rx;
+        QTRY_VERIFY((rx += sim.readAll()).size() >= 7);
+        QCOMPARE(quint8(rx.at(0)), quint8(Proto::HELLO_GROUP << 4 | 5));
+        QTRY_VERIFY(sim.configSession());
     }
 
     // BT_SETUP: the board finds the HC-05 (AT mode) at one of five baud rates and sets 115200 baud and its name.
@@ -1571,6 +1632,50 @@ private slots:
         QCOMPARE(int(r.sim->output(6).state), 1);
         r.sim->setAnalogValue(2, 100);                       // held: pressed = LOW = off
         QTRY_COMPARE(int(r.sim->output(6).state), 0);
+    }
+
+    void firmwareAbsoluteInputAtStart()
+    {
+        // input.cpp update(): the first sample is the starting level. An absolute input applies it once when its
+        // output differs (a switch moved while the power was off); a toggle input does nothing. SET_INPUT_DATA
+        // starts an input again, so it is the same for a new configuration.
+        SimulatedDevice sim;
+        for (int o : { 0, 2 })
+        {
+            OutputConfig lamp = sim.output(o);               // single steady on D3 / D5, on
+            lamp.state = 1;
+            sim.setOutput(o, lamp);
+        }
+        InputConfig absolute;
+        absolute.type = Latching; absolute.pin = 0; absolute.outputId = 0;
+        sim.setInput(0, absolute);
+        absolute.pin = 20; absolute.outputId = 2;            // A6, not pressed: equal to the output, nothing to do
+        sim.setInput(2, absolute);
+        InputConfig toggle;
+        toggle.type = Momentary; toggle.pin = 1; toggle.outputId = 1;
+        sim.setInput(1, toggle);
+        sim.setPinLevel(0, false);                           // D0 and D1 LOW from the start
+        sim.setPinLevel(1, false);
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        QTest::qWait(300);
+        QCOMPARE(int(sim.output(0).state), 0);               // no edge: it followed its switch
+        QCOMPARE(int(sim.pin(3).level), 0);
+        QCOMPARE(int(sim.output(1).state), 0);               // the toggle input did nothing
+        QCOMPARE(int(sim.output(2).state), 1);
+
+        sim.setPinLevel(0, true);                            // edges as before
+        QTRY_COMPARE(int(sim.output(0).state), 1);
+        sim.setPinLevel(1, true);
+        QTest::qWait(150);
+        sim.setPinLevel(1, false);                           // a press toggles
+        QTRY_COMPARE(int(sim.output(1).state), 1);
+
+        OutputConfig lamp = sim.output(3);                   // a new absolute input on A6 (released = 1), output off
+        lamp.state = 0;
+        sim.setOutput(3, lamp);
+        absolute.outputId = 3;
+        sim.setInput(3, absolute);
+        QTRY_COMPARE(int(sim.output(3).state), 1);
     }
 };
 

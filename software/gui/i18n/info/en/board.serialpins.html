@@ -5,7 +5,8 @@ your layout:</p>
 <li>When the board starts, it waits <b>5 seconds</b> for this program.</li>
 <li>If the program connects, D0 / D1 stay reserved for USB while you configure. Things on those pins do
 <b>not</b> work then.</li>
-<li>If nothing connects (normal operation on the layout), D0 / D1 become normal pins.</li>
+<li>If nothing connects (normal operation on the layout), D0 / D1 become normal pins. When nothing is on
+D0 / D1 (no input or output, no sound effect), they stay USB wires: the program can connect at any time.</li>
 <li>A brief press on the config button (Nano) makes them USB wires again for 5 seconds, so the program can
 connect without a reset.</li>
 </ul>

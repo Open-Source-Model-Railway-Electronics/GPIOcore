@@ -552,7 +552,6 @@ QString boardTypeName(quint8 type)
 {
     switch (type)
     {
-    case BoardUno:             return trGpio("Arduino Uno");
     case BoardNano:            return trGpio("Arduino Nano");
     case BoardDccNext:         return trGpio("DCCnext");
     case BoardJackOfAllTrades: return trGpio("Jack of all trades");
@@ -587,6 +586,7 @@ BoardSettings BoardSettings::fromJson(const QJsonObject &o)
     const QString t = o["type"].toString();
     for (quint8 i = 0; i < BoardTypeCount; ++i)
         if (t == QLatin1String(kBoardKeys[i])) b.type = i;
+    if (b.type == BoardUno) b.type = BoardNano;      // "uno" in an old file
     b.timing   = o["timing"].toBool(false);
     const QString il = o["interlock"].toString();
     for (quint8 i = 0; i < 3; ++i)
@@ -609,7 +609,7 @@ bool decodeBoard(const QByteArray &p, BoardSettings &b)
 {
     if (p.size() < 3)
         return false;
-    b.type      = quint8(p.at(0)) < BoardTypeCount ? quint8(p.at(0)) : quint8(BoardNano);
+    b.type      = quint8(p.at(0)) < BoardTypeCount && p.at(0) != BoardUno ? quint8(p.at(0)) : quint8(BoardNano);
     // bit 0 (was 'recorder on') is ignored
     b.timing    = p.at(1) & 0x02;
     b.interlock = quint8((p.at(1) >> 2) & 0x03);
@@ -686,7 +686,7 @@ QString pinReservedReason(quint8 pin)
     case 2:  return trGpio("DCC input");
     case 13: return trGpio("config LED");
     case 20: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
-    case 21: return b.type == BoardUno ? trGpio("only on an Arduino Nano") : trGpio("config button");
+    case 21: return trGpio("config button");
     }
     return QString();
 }
@@ -703,7 +703,7 @@ bool isServoTimerPin(quint8 pin)
 
 void setBoardType(quint8 type)
 {
-    boardOptions().type    = type < BoardTypeCount ? type : quint8(BoardNano);
+    boardOptions().type    = type < BoardTypeCount && type != BoardUno ? type : quint8(BoardNano);
     boardOptions().dccNext = (type == BoardDccNext);
 }
 

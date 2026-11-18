@@ -18,6 +18,7 @@ class QComboBox;
 class QLabel;
 class QProgressBar;
 class QLineEdit;
+class SoundPlayer;
 class QTimer;
 class QToolButton;
 
@@ -169,6 +170,9 @@ private:
     QAction        *m_actShowUnused = nullptr;
     QAction        *m_actBoardSettings = nullptr;
     QAction        *m_actBluetooth = nullptr;   // Board menu: Advanced and up, boards with HELLO bit5
+    QAction        *m_actSoundFolder = nullptr; // View menu: Advanced and up
+    QAction        *m_actMute = nullptr;
+    SoundPlayer    *m_sound = nullptr;          // a sound effect output's tracks in Simulate / Live test
     QAction        *m_actLive = nullptr;
     QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board
     QAction        *m_actWriteAll = nullptr;

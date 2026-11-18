@@ -43,6 +43,7 @@ void Input::set( InputSettings *data )
     eedata = *data ;
     setPinMode() ;
     saveEEPROM() ;
+    rearm() ;                           // as at start-up: an absolute input follows its switch once
 }
 
 InputSettings* Input::get()
@@ -107,7 +108,11 @@ void Input::update()
     // ── Normal inputs ─────────────────────────────────────────────────────────
     if( eedata.type != NOT_IN_USE && eedata.pin != NA )
     {
+        uint8_t first = !trigger.armed ;
         trigger.update( readPin() ) ;
+
+        // the first sample is the starting level: an absolute input applies it once, when the output differs
+        if( first && eedata.type == LATCHING && trigger.state != state ) { state = trigger.state ; switchOutput() ; }
 
         if( trigger.toggled() )         // trigger.state is the new level: 1 = rising, 0 = falling edge
         {

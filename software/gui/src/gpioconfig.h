@@ -206,7 +206,8 @@ QByteArray encodeInput(int index, const InputConfig &c);
 bool       decodeInput(const QByteArray &payload, int &index, InputConfig &c);
 
 // ── Board settings (GET_BOARD 0xC0 / SET_BOARD 0xCF) ────────────────────────
-enum BoardType : quint8 { BoardUno, BoardNano, BoardDccNext, BoardJackOfAllTrades, BoardTypeCount };
+enum BoardType : quint8 { BoardUno, BoardNano,   // BoardUno (0): no longer offered, read as a Nano
+                           BoardDccNext, BoardJackOfAllTrades, BoardTypeCount };
 enum Interlock : quint8 { InterlockOff, InterlockOn, InterlockAuto };
 constexpr int MaxBoardName = 16;
 
@@ -245,12 +246,12 @@ struct BoardConfig
 // ── Board / pins (Arduino Uno / Nano, or DCCnext) ──────────────────────────
 struct BoardOptions
 {
-    quint8 type           = BoardNano;
+    quint8 type           = BoardNano;   // never BoardUno
     bool dccNext          = false;   // ArCoMoRa DCCnext: ports 1-10 = D3-D12, 11-16 = A0-A5, no D13
     bool serialPinsUsable = true;    // decoder releases D0/D1 after its boot window
 };
 BoardOptions &boardOptions();
-void          setBoardType(quint8 type);   // also sets dccNext
+void          setBoardType(quint8 type);   // also sets dccNext; Uno (or unknown) = Nano
 
 QString arduinoPinName(quint8 pin);     // "D5", "A0", "—": the Arduino name on every board
 QString pinName(quint8 pin);            // what the user sees: "P1" for a DCCnext port, otherwise arduinoPinName
