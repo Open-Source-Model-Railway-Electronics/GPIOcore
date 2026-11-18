@@ -711,10 +711,12 @@ private slots:
         link.drainMs    = 3;
         QSignalSpy closed(&link, &DeviceLink::closed);
         QSignalSpy errors(&link, &DeviceLink::errorOccurred);
+        QSignalSpy noBoard(&link, &DeviceLink::noBoard);
         QString err;
         QVERIFY(link.openDevice(new NoHelloDevice, true, &err));
         QVERIFY(closed.wait(3000));                         // no HELLO reply: not a GPIOcore board, link closed
         QCOMPARE(errors.size(), 1);
+        QTRY_COMPARE(noBoard.size(), 1);                    // the GUI shows a clear message for this one
         QVERIFY(!link.isOpen());
         QVERIFY(!link.caps().known);
     }

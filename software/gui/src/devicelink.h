@@ -92,6 +92,7 @@ signals:
     void progress(int done, int total);
     void finished(int failures);            // queue became empty
     void errorOccurred(const QString &message);
+    void noBoard(const QString &port);       // the port opened, but no GPIOcore board answered HELLO
     void logMessage(const QString &kind, const QString &text);   // TX, RX, INFO, WARN, ERR
 
 private:

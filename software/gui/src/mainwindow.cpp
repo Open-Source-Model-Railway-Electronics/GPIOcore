@@ -184,6 +184,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(m_link, &DeviceLink::errorOccurred,  this, [this](const QString &m) {
         statusBar()->showMessage(m, 6000);
     });
+    connect(m_link, &DeviceLink::noBoard, this, [this](const QString &port) {
+        // a status-bar line is easy to miss: say it clearly (the link is already closed)
+        QMessageBox::warning(this, windowTitle(),
+                             tr("No GPIOcore board answered on %1.\n\nCheck that the right port is chosen and that the "
+                                "board has the GPIOcore firmware (Board > Flash firmware). A board that has been running "
+                                "for more than 5 seconds without the program may need a reset (unplug and plug in "
+                                "the USB cable).").arg(port));
+    });
     connect(m_link, &DeviceLink::progress, this, [this](int done, int total) {
         m_progress->setVisible(total > 0);
         m_progress->setMaximum(qMax(1, total));

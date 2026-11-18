@@ -356,7 +356,9 @@ void DeviceLink::onTimeout()
         // every GPIOcore firmware answers HELLO: this is another device or very old firmware
         emit errorOccurred(tr("No answer to HELLO: this is no GPIOcore board, or its firmware is too old. "
                               "Flash the firmware (Board > Flash firmware)."));
+        const QString port = m_portName;
         close();
+        emit noBoard(port);
         return;
     }
     if (m_current.kind == Kind::ServoLive || m_current.kind == Kind::GetAnalog)
