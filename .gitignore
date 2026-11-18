@@ -22,3 +22,6 @@ fp-info-cache
 
 # Release folder: built files for end users, not in git (ship them as a GitHub release)
 release/
+
+# Inno Setup output when the installer is built by hand
+installer/output/

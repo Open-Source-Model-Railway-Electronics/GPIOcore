@@ -18,6 +18,7 @@ Steps:
 Needs git and the GitHub CLI (gh auth login). The same file works in other repositories with this layout.
 """
 
+import os
 import re
 import shutil
 import subprocess
@@ -69,6 +70,30 @@ def make_zip(tag, out_dir):
     return Path(shutil.make_archive(str(base), "zip", root_dir=staged.parent))
 
 
+def find_iscc():
+    """Inno Setup compiler, or None (then only the zip is made)."""
+    for p in (os.environ.get("ISCC"), shutil.which("ISCC"),
+              r"C:\Program Files\Inno Setup 7\ISCC.exe", r"C:\Program Files (x86)\Inno Setup 7\ISCC.exe",
+              r"C:\Program Files\Inno Setup 6\ISCC.exe", r"C:\Program Files (x86)\Inno Setup 6\ISCC.exe"):
+        if p and Path(p).is_file():
+            return p
+    return None
+
+
+def make_setup(version, out_dir):
+    """installer/<REPO>.iss -> <REPO>-v<version>-setup.exe, or None without Inno Setup or script."""
+    iss = ROOT / "installer" / f"{REPO}.iss"
+    iscc = find_iscc()
+    if not iss.is_file() or not iscc:
+        return None
+    res = subprocess.run([iscc, "-Q", f"-DAppVersion={version}", f"-DSourceDir={RELEASE_DIR}",
+                          f"-DOutputDir={out_dir}", str(iss)], cwd=ROOT)
+    if res.returncode != 0:
+        fail("Inno Setup could not build the installer")
+    found = sorted(Path(out_dir).glob("*-setup.exe"))
+    return found[0] if found else None
+
+
 def main():
     dry = "--dry-run" in sys.argv
     build_first = "--no-build" not in sys.argv
@@ -114,6 +139,8 @@ def main():
 
     with tempfile.TemporaryDirectory() as tmp:
         archive = make_zip(tag, Path(tmp))
+        setup = make_setup(version, Path(tmp) / "setup")
+        print(f"\n  setup   : {setup.name if setup else '- (no Inno Setup or installer script)'}", end="")
         print(f"\n  release : {REPO} {tag}\n  zip     : {archive.name} ({len(files)} files, {size:.1f} MB unpacked)"
               f"\n  also    : {', '.join(p.name for p in hexes) or '-'}\n  notes   : {notes.splitlines()[0]}")
         if dry:
@@ -128,7 +155,8 @@ def main():
         git("tag", "-a", tag, "-m", notes)
         git("push")
         git("push", "origin", tag)
-        res = subprocess.run(["gh", "release", "create", tag, str(archive), *map(str, hexes),
+        assets = [str(archive)] + ([str(setup)] if setup else []) + [str(h) for h in hexes]
+        res = subprocess.run(["gh", "release", "create", tag, *assets,
                               "--title", f"{REPO} {tag}", "--notes", notes], cwd=ROOT)
         if res.returncode != 0:
             fail(f"GitHub release failed; the tag is pushed. Retry with: gh release create {tag} <zip>")
