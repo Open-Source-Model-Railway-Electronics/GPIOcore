@@ -93,6 +93,7 @@ private:
     Gpio::InputConfig asStored(const Gpio::InputConfig &c) const;   // what the board keeps of an input
     void onBoardReceived(const Gpio::BoardSettings &b);
     void editBoardSettings();
+    void setupBluetooth();                       // Board > Set up Bluetooth (HC-05): BT_SETUP on the connected board
     void askBoardName();
     void saveBoardFile();
     void backupBoardFile(const QString &path);   // copy to boards/backup/ before it is overwritten
@@ -167,6 +168,7 @@ private:
     QList<QAction *> m_actLevel;                // View menu: Beginner, Advanced, Expert
     QAction        *m_actShowUnused = nullptr;
     QAction        *m_actBoardSettings = nullptr;
+    QAction        *m_actBluetooth = nullptr;   // Board menu: Advanced and up, boards with HELLO bit5
     QAction        *m_actLive = nullptr;
     QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board
     QAction        *m_actWriteAll = nullptr;

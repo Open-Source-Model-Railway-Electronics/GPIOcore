@@ -1,10 +1,11 @@
 # GPIOcore serial protocol
 
-Date: 2026-11-16 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by
+Date: 2026-11-18 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by
 the firmware (`software/GPIOcore`), the Qt GUI and the simulator (`software/gui/src/simulateddevice.cpp`).
 
 After opening the port the GUI sends `HELLO`. A board that answers is a GPIOcore decoder and reports its
-capabilities. If a board does not answer `HELLO`, the GUI asks you to flash the GPIOcore firmware.
+capabilities. If a board does not answer at all, the GUI first waits up to 30 s for the board to announce itself
+(a short press on its config button, §3.1). If nothing comes, the GUI asks you to flash the GPIOcore firmware.
 
 ## 1. Framing
 
@@ -32,7 +33,7 @@ A GET first gets the data reply and then that `ACK`.
   firmware answers with `NACK 3` and starts over. So send a frame in one go.
 - **Maximum length.** A payload is at most **32 bytes**; longer gives `NACK 2`.
 - **Start-up.** After a reset the firmware sends **nothing**: without the GUI the board is silent. After about
-  2.5 s the GUI asks for `REQ_VERSION` and then reports in with `HELLO` (within the boot window of 5 s).
+  2.5 s the GUI asks for `REQ_VERSION` and then reports in with `HELLO` (within the serial window of 5 s, §3.1).
   If no `HELLO` arrives, the firmware stops Serial and D0/D1 become normal pins. Opening the port resets an
   Uno or Nano through DTR. The bootloader and `setup()` together take about 1–2 s.
 - **Index ≥ 16.** An `index` of 16 or higher is ignored, but the frame still gets an `ACK`. A GET
@@ -64,6 +65,8 @@ A GET first gets the data reply and then that `ACK`.
 | **`CF` SET_BOARD** | ↔ | `len type flags delay name[0..16]`, see §9 |
 | **`D1` GET_ANALOG** | → | `channel` (0–7 = A0–A7) → reply `D3`, then the normal `ACK`. Live measurement for setting up analog inputs; the GUI asks for it about every 250 ms while an analog input is on screen. HELLO bit4 |
 | **`D3` ANALOG_VALUE** | ← | `channel valueH valueL` — `analogRead()` of A0–A7, 0–1023. HELLO bit4 |
+| **`E0` BT_SETUP** | → | – (no checksum, no ACK) → after ~0.3–2 s reply `E3`. Sets up an HC-05 in AT mode on D0/D1, see §11. HELLO bit5 |
+| **`E3` BT_RESULT** | ← | `status baud name_ok` — status 0 = done, 1 = no HC-05 answered, 2 = `AT+UART` refused; baud = the rate the HC-05 answered at ÷ 2400 (0 = none); name_ok 1 = `AT+NAME` answered OK. HELLO bit5 |
 
 
 ### 2.1 Output fields (`Settings` in `output.h`, 10 bytes in EEPROM)
@@ -230,6 +233,8 @@ flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit2 = (no longer sent; was: recorder in external EEPROM)
          bit3 = BOARD settings (C0 / CF) supported, see section 9
          bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
+         bit5 = Bluetooth: BT_SETUP (E0 / E3) and the announce after a short press on the
+                config button (GUI mode, section 3.1)
 step pool: number of route steps that still fit with the current board settings
            (timing on/off), all routes together
 ```
@@ -244,6 +249,7 @@ the port causes through DTR. For boards without auto-reset it sends it after `RE
 3. If no `HELLO` arrives, it does `Serial.end()` and sets D0/D1 as normal I/O
    (`pinMode` according to the configuration).
 4. If you want to configure again later, you reset the board. The GUI does this itself when connecting (DTR).
+   Without a reset (over Bluetooth, or a USB chip without DTR): press the config button briefly (§3.1).
 
 **Is using D0/D1 sensible at all?** It can be done, with three caveats:
 - On an Uno/Nano, D0/D1 are connected to the USB-serial chip through 1 kΩ. An output simply works. An input with
@@ -256,6 +262,27 @@ the port causes through DTR. For boards without auto-reset it sends it after `RE
 
 The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a note (not an error).
 Without bit0 they are reserved and red.
+
+### 3.1 Serial window, GUI mode and the announce (HELLO bit5, firmware 2026-11-18)
+
+The 5 s at start-up are the **serial window**: it runs from `serialWindowStart` (0 at start-up). Without
+`HELLO` in the window the firmware does `Serial.end()` and D0/D1 become I/O (`serialToIO()`; a sound effect output
+gets TX at 9600 baud for the DFPlayer).
+
+**GUI mode.** A **short press** on the config button (A7, Nano) **outside config mode**:
+- serial port closed (`serialIsIO`): `Serial.begin(115200)` again, D0/D1 are Serial (what is on them pauses, as in a
+  session), and a new 5 s window starts (`serialWindowStart = millis()`);
+- serial port open, no session yet (start-up window): the window starts again;
+- always: the board sends the **announce**, the `HELLO` reply (`95 ...`) unasked. It does **not** start a session.
+
+The GUI then sends `REQ_VERSION` and `HELLO` as usual; with `HELLO` the session starts and the port stays open.
+Without `HELLO` within 5 s, D0/D1 become I/O again, exactly as after start-up.
+
+**The GUI.** When it gets no answer to `REQ_VERSION` or `HELLO` while connecting, it does not give up: it shows
+*"Waiting for the board — press its config button briefly (Nano)…"* and listens for up to 30 s
+(`DeviceLink::announceWaitMs`) for the announce. Then it continues with `REQ_VERSION` and `HELLO`. After 30 s it
+shows the "No GPIOcore board answered" message. Disconnect cancels the wait. This is what you need over Bluetooth:
+opening a Bluetooth COM port does not reset the board, so after 5 s its serial port is closed.
 
 ## 4. Routes
 
@@ -399,7 +426,7 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 - **Interlocking:** a route counts as running until the wait time after the last step has passed.
 - **Still open:** `setPosition()`/`SERVO_LIVE` do not switch the unifrog relay; `SET_OUTPUT_DATA` does not set
   `pinMode` for newly configured pins; an output on D0/D1 is not stopped during the
-  boot window.
+  serial window.
 
 ## 10. Config button (A7), config LED (D13) and teaching servos (firmware, 2026-11-13)
 
@@ -413,6 +440,7 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
 |---|---|
 | A7 pressed for 2 s | config mode on / off |
 | A7 short press (in config mode) | select next servo; it toggles, so you can see which one it is |
+| A7 short press (not in config mode) | GUI mode: serial port open for 5 s, the board announces itself (§3.1) |
 | Loc **9999**, speed knob + direction | selected servo moves (1–10° per 100 ms) |
 | Loc 9999 **F1** | save current angle as *curved* (`servoMin`) |
 | Loc 9999 **F2** | save current angle as *straight* (`servoMax`) |
@@ -425,3 +453,34 @@ connecting.
 
 **Servos at start-up:** one by one, the next one every 500 ms. Each servo gets its stored position (curved or straight)
 for ~500 ms and is then detached. An own angle (route step, live) is not remembered.
+
+## 11. Bluetooth (HC-05, HELLO bit5, firmware 2026-11-18)
+
+An HC-05 on D0/D1 replaces the USB cable. The GUI's *Board > Set up Bluetooth (HC-05)* sets it up through the board.
+
+**Wiring** (HC-05 → Nano): VCC → 5 V, GND → GND, RXD → D1 through a voltage divider (1 kΩ from D1 to RXD, 2 kΩ from
+RXD to GND: the HC-05 takes 3.3 V), TXD → D0 through a **Schottky diode** (BAT85 or 1N5819) with the **cathode at the
+HC-05 TXD**. The diode can only pull D0 low, so the USB-serial chip still drives D0 and USB keeps working while the
+HC-05 is attached.
+
+**BT_SETUP (`E0`).** The HC-05 must be in **AT mode**: hold its button while it gets power (LED blinks slowly,
+about every 2 s); AT mode is always 38400 baud. The handler only sets `btSetupPending`; `loop()` then runs
+`btSetup()`, which blocks for up to ~2 s:
+
+1. `Serial.flush()`; for each baud rate 38400, 9600, 57600, 115200, 19200: `Serial.begin(baud)`, empty the input, send
+   `AT\r\n`, wait up to 300 ms for `OK`.
+2. Found: `AT+UART=115200,0,0\r\n` (wait for `OK`), then `AT+NAME=GPIOcore\r\n`, or `AT+NAME=GPIOcore-<name>\r\n`
+   with the board name (only letters, digits, `-` and `_`, max. 20 characters in total). The PIN is not changed.
+3. `Serial.begin(115200)`, empty the input, send `BT_RESULT` (`E3 status baud÷2400 name_ok`).
+
+Meanwhile the PC gets the AT commands at the wrong baud rate (noise) and maybe `NACK`s caused by the HC-05's
+answers. The GUI sends nothing else during the set-up (one task, 8 s timeout) and ignores every byte until it finds
+a valid `BT_RESULT` frame in the byte stream. The session goes on at 115200 afterwards.
+
+**Afterwards:** unplug the board and plug it in again (without holding the HC-05 button); the HC-05 now runs at
+115200 baud. Pair *GPIOcore…* in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a
+COM port for it. Connecting over that port does not reset the board: press the config button briefly (§3.1).
+
+**Simulator.** `gpiocore_fw_host` can attach a fake HC-05 (frame `'H' <baud÷2400>`) that answers `OK` to every AT
+command at that baud rate and reports what it received (`'h'`); bytes the firmware sends at a baud rate other than
+115200 (and 9600, the DFPlayer) reach the GUI as noise (`F0` per byte), never as valid frames.

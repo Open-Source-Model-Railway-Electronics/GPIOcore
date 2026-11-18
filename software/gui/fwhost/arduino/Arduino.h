@@ -74,6 +74,7 @@ public:
     int    availableForWrite();
     size_t write(uint8_t b);
     size_t write(const uint8_t *buffer, size_t size);
+    size_t write(const char *s) { return write(reinterpret_cast<const uint8_t *>(s), strlen(s)); }
     operator bool() const { return true; }
 };
 

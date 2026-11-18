@@ -206,19 +206,29 @@ OPCODE( OPCODE_REQ_VERSION )
 
 
 
-OPCODE( OPCODE_HELLO )
+// HELLO reply; sent unasked (without a session) after a short press on the config button: the announce
+void sendHelloReply()
 {
     uint16_t pool = freeRouteSteps() ;
+    Message m ;
+    m.command    = OPCODE_HELLO_REPLY ;
+    m.payload[0] = PROTOCOL_VERSION ;
+    m.payload[1] = MAX_ROUTE_STEPS ;
+    m.payload[2] = pool & 0xFF ;
+    m.payload[3] = pool >> 8 ;
+    m.payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL | HELLO_ANALOG_SOUND | HELLO_BLUETOOTH ;
+    transceiver.sendMessage( &m ) ;
+}
 
+OPCODE( OPCODE_HELLO )
+{
     configSession = 1 ;
+    sendHelloReply() ;
+}
 
-    msg->command    = OPCODE_HELLO_REPLY ;
-    msg->payload[0] = PROTOCOL_VERSION ;
-    msg->payload[1] = MAX_ROUTE_STEPS ;
-    msg->payload[2] = pool & 0xFF ;
-    msg->payload[3] = pool >> 8 ;
-    msg->payload[4] = HELLO_BOARD | HELLO_SERVO_LIVE | HELLO_IO_ON_SERIAL | HELLO_ANALOG_SOUND ;
-    transceiver.sendMessage( msg ) ;
+OPCODE( OPCODE_BT_SETUP )               // done by loop() after this message: it changes the baud rate
+{
+    btSetupPending = 1 ;
 }
 
 OPCODE( OPCODE_GET_BOARD )
@@ -348,6 +358,7 @@ void messageReceived( Message *msg, uint8 len )  // call back message
         process( OPCODE_SET_ROUTE        ) ;
         process( OPCODE_SERVO_LIVE       ) ;
         process( OPCODE_GET_ANALOG       ) ;
+        process( OPCODE_BT_SETUP         ) ;
     }
 }
 #undef process

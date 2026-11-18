@@ -1,0 +1,34 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>With an <b>HC-05</b> Bluetooth module on the board you can configure it without a USB cable. The program sets the
+module up for you through the board (<i>Board &gt; Set up Bluetooth (HC-05)</i>, level Advanced or higher).
+Arduino <b>Nano</b> only: you need the config button to connect later.</p>
+<p><b>Wiring</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> through a voltage divider: 1 k&Omega; from D1 to RXD, 2 k&Omega; from RXD to GND
+(the HC-05 takes 3.3 V on its RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> through a <b>Schottky diode</b> (BAT85 or 1N5819), with the <b>cathode (the stripe)
+at the HC-05 TXD</b>. The diode lets the HC-05 pull D0 low but never fights the USB chip, so USB keeps working while
+the HC-05 is attached.</li>
+</ul>
+<p><b>Setting it up</b> (once):</p>
+<ol>
+<li>Hold the button on the HC-05 while you plug in the USB cable. Its LED now blinks <b>slowly</b> (about every
+2 seconds): the module is in <b>AT mode</b>.</li>
+<li>Connect the program to the board over USB.</li>
+<li>Choose <i>Board &gt; Set up Bluetooth (HC-05)</i> and click <b>Start</b>. The board tries the usual speeds and
+sets the module to <b>115200 baud</b> and the name <b>GPIOcore-&lt;board name&gt;</b>. The PIN stays as it is.
+This takes a few seconds.</li>
+<li>Unplug the board and plug it in again, <b>without</b> holding the button.</li>
+<li>In the Windows Bluetooth settings pair <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, or 0000 on some modules).
+Windows creates a COM port for it (sometimes two: use the "outgoing" one). Choose that port in GPIOcore.</li>
+</ol>
+<p>If it fails: the module is not in AT mode (fast blinking = normal mode), the wiring is wrong, or the diode is
+missing or the wrong way round. Other modules (HC-06, some clones) do not know these commands.</p>
+<p><b>Connecting over Bluetooth</b>: opening the Bluetooth COM port does not reset the board, and 5 seconds after
+start-up the board closes its serial port (D0/D1 become normal pins). So when you click <i>Connect</i>, the program
+shows <i>"Waiting for the board &mdash; press its config button briefly"</i>. Press the config button (A7)
+<b>briefly</b>: the board opens its serial port again for 5 seconds and announces itself, and the program connects.
+The program waits up to 30 seconds for that.</p>
+<p>While the program is connected, D0 and D1 belong to the serial port: do not use them for inputs or outputs on a
+board with an HC-05.</p>

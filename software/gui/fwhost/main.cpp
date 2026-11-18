@@ -12,6 +12,8 @@
 //   'E' <addr H> <addr L> <value>    DCC extended accessory packet (notifyDccSigOutputState)
 //   'L' <addr H> <addr L> <speed> <forward>   DCC loco speed, 128 steps (notifyDccSpeed)
 //   'F' <addr H> <addr L> <F0-F4>    DCC functions F0-F4 (notifyDccFunc, FN_0_4)
+//   'H' <baud / 2400>                a fake HC-05 in AT mode on D0/D1 that answers OK at that baud (0 = none)
+//   'T' <ms lo> <ms hi>              the clock jumps ahead (tests: no waiting for the 5 s serial window)
 //
 // firmware -> GUI (state frames come before the serial bytes of the same loop() round)
 //   'R' <version>                    setup() done
@@ -22,6 +24,7 @@
 //   'B' <type> <flags> <delay> <name>     board settings changed
 //   'G' <configSession> <serialIsIO> <configMode>
 //   'P' <22 x mode, level, PWM, servo angle>   pins changed
+//   'h' <text>                       an AT command the fake HC-05 received (without CR LF)
 //
 // The program ends when stdin closes. Options: --eeprom <file>  keep the EEPROM in a file.
 // loop() runs continuously like on the board; when there is nothing to do the program sleeps ~1 ms
@@ -144,6 +147,9 @@ static void reportChanges()
     report('G', lastGlobals, buf, fwGlobals(buf));
     hostPinState(buf);
     report('P', lastPins, buf, HostPins * 4);
+    char line[64];
+    while (hostHc05Take(line, sizeof(line)))
+        send('h', reinterpret_cast<const uint8_t *>(line), strlen(line));
 
     uint8_t serial[4096];
     while (size_t n = hostSerialTake(serial, sizeof(serial)))
@@ -204,6 +210,8 @@ static void handleFrames()
         case 'E': fwDccExtended(address, at(f, 2)); break;
         case 'L': fwDccSpeed(address, at(f, 2), at(f, 3)); break;
         case 'F': fwDccFunctions(address, at(f, 2)); break;
+        case 'H': hostHc05(uint32_t(at(f, 0)) * 2400); break;
+        case 'T': hostDelay(uint32_t(at(f, 0) | at(f, 1) << 8)); break;
         default:  fprintf(stderr, "gpiocore_fw_host: unknown frame '%c'\n", f.type); break;
         }
         frames.pop_front();

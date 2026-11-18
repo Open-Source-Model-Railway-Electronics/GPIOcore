@@ -273,6 +273,17 @@ void SimulatedDevice::dccLocoSpeed(int address, int speed, bool forward)
     sendFrame('L', bytes({ address >> 8, address & 0xFF, speed, forward ? 1 : 0 }));
 }
 
+void SimulatedDevice::attachFakeHc05(int baud)
+{
+    sendFrame('H', bytes({ baud / 2400 }));
+}
+
+void SimulatedDevice::advanceClock(int ms)
+{
+    ms = qBound(0, ms, 0xFFFF);
+    sendFrame('T', bytes({ ms & 0xFF, ms >> 8 }));
+}
+
 void SimulatedDevice::dccFunctions(int address, quint8 f0f4)
 {
     sendFrame('F', bytes({ address >> 8, address & 0xFF, f0f4 }));
@@ -351,6 +362,9 @@ bool SimulatedDevice::handleFrame(char type, const QByteArray &d)
     }
     case 'B':
         decodeBoard(d, m_board);
+        break;
+    case 'h':
+        m_hc05 << QString::fromLatin1(d);
         break;
     case 'G':
         for (int i = 0; i < 3; ++i) m_globals[i] = at(i) != 0;

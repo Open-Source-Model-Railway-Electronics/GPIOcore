@@ -45,6 +45,9 @@ constexpr quint8 HELLO_FLAG_SERVO_LIVE  = 0x02;  // SERVO_LIVE supported
 // 0x04 is reserved (was: external EEPROM for the recorder)
 constexpr quint8 HELLO_FLAG_BOARD       = 0x08;  // GET_BOARD / SET_BOARD supported
 constexpr quint8 HELLO_FLAG_ANALOG_SOUND = 0x10; // analog inputs (GET_ANALOG) and the sound effect output
+constexpr quint8 HELLO_FLAG_BLUETOOTH   = 0x20;  // BT_SETUP, and the announce (a short press on the config button)
+// The announce: the HELLO reply sent unasked, when the config button is pressed briefly. The board has
+// opened its serial port again for 5 s (GUI mode) and waits for HELLO.
 
 // Board settings and name (PROTOCOL.md section 10)
 // GET_BOARD (0 bytes) -> reply SET_BOARD <len> <type> <flags> <delay> <name 0..16>
@@ -55,6 +58,12 @@ constexpr quint8 SET_BOARD              = 0xCF;
 // GET_ANALOG <channel 0-7> -> reply ANALOG_VALUE <channel> <value H> <value L> (analogRead, 0-1023)
 constexpr quint8 GET_ANALOG             = 0xD1;
 constexpr quint8 ANALOG_VALUE           = 0xD3;
+
+// Bluetooth: BT_SETUP (0 bytes) makes the board set up an HC-05 in AT mode on D0/D1 (blocks ~2 s, noise
+// at other baud rates meanwhile), then BT_RESULT <status> <baud / 2400> <name ok>
+// status: 0 = done (115200 baud, name GPIOcore-<board name>), 1 = no HC-05 answered, 2 = AT+UART refused
+constexpr quint8 BT_SETUP               = 0xE0;
+constexpr quint8 BT_RESULT              = 0xE3;
 
 // Routes: up to 16 steps of 4 bytes, transferred in chunks of up to 7 steps.
 // GET_ROUTE <route> <first step>            -> reply SET_ROUTE

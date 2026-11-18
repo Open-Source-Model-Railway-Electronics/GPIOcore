@@ -29,6 +29,7 @@ struct DeviceCaps
     bool servoLive     = false;
     bool boardSettings = false;   // GET_BOARD / SET_BOARD (name, type, ...)
     bool analogSound   = false;   // analog inputs (GET_ANALOG) and the sound effect output
+    bool bluetooth     = false;   // BT_SETUP (HC-05) and the announce after a short press on the config button
 };
 
 class DeviceLink : public QObject
@@ -47,6 +48,7 @@ public:
     bool    isOpen()  const { return m_device != nullptr; }
     bool    isReady() const { return m_ready; }
     bool    isBusy()  const;           // live readings in the background do not count
+    bool    isWaitingForBoard() const { return m_waiting; }   // no answer yet: waiting for the announce
     QString version() const { return m_version; }
     QString portName() const { return m_portName; }
 
@@ -65,6 +67,7 @@ public:
     void dccExt(int address, int value);           // as if a DCC extended accessory packet arrived
     void writeBoard(const Gpio::BoardSettings &b);
     void readAnalog(int channel);                  // analog boards: answered with analogValue; not in progress / finished
+    void bluetoothSetup();                         // BT_SETUP: answered with bluetoothResult
 
     const DeviceCaps &caps() const { return m_caps; }
 
@@ -74,6 +77,8 @@ public:
     int eepromShiftMs = 4000;   // SET_ROUTE / SET_BOARD may move the whole route pool
     int drainMs      = 15;
     int retries      = 2;
+    int bluetoothMs  = 8000;    // BT_SETUP: the board tries five baud rates
+    int announceWaitMs = 30000; // no answer when connecting: how long to wait for the board to announce itself
 
 signals:
     void opened();
@@ -93,12 +98,18 @@ signals:
     void finished(int failures);            // queue became empty
     void errorOccurred(const QString &message);
     void noBoard(const QString &port);       // the port opened, but no GPIOcore board answered HELLO
+    // No answer when connecting: waiting (announceWaitMs) for the board to announce itself, which it does
+    // after a short press on its config button
+    void waitingForBoard();
+    // BT_RESULT: status 0 = done, 1 = no HC-05 answered, 2 = AT+UART refused, -1 = the board did not answer;
+    // baud = the rate the HC-05 answered at (0 = none)
+    void bluetoothResult(int status, int baud, bool nameOk);
     void logMessage(const QString &kind, const QString &text);   // TX, RX, INFO, WARN, ERR
 
 private:
     enum class Kind { Version, Hello, GetInput, GetOutput, SetInput, SetOutput,
                       GetRoute, SetRoute, ServoLive, GetBoard, SetBoard,
-                      TriggerInput, GetOutputState, DccExt, GetAnalog };
+                      TriggerInput, GetOutputState, DccExt, GetAnalog, BtSetup };
 
     struct Txn
     {
@@ -122,6 +133,9 @@ private:
     void onReadyRead();
     void onTimeout();
     void onBootTimeout();
+    void startWaiting();
+    void onAnnounceTimeout();
+    bool scanBluetooth(const QByteArray &data);
     void handleFrame(const Proto::Frame &f);
     void handleUnsolicited(const Proto::Frame &f);
     void setReady(const QString &version);
@@ -135,6 +149,9 @@ private:
     Txn                 m_current;
     QTimer              m_timer;
     QTimer              m_bootTimer;
+    QTimer              m_announceTimer;
+    bool                m_waiting      = false;
+    QByteArray          m_btBuf;          // during BT_SETUP: raw bytes, noise until BT_RESULT
     bool                m_draining     = false;
     bool                m_booting      = false;
     bool                m_ready        = false;

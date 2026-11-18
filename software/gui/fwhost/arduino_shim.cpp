@@ -96,8 +96,9 @@ long map(long x, long inMin, long inMax, long outMin, long outMax)
 }
 
 // ── Serial (UART) ─────────────────────────────────────────────────────────────
-// RX: what the GUI sent. TX: what the firmware sends; only forwarded at 115200 baud (the GUI's
-// line). At 9600 baud the firmware talks to the DFPlayer (no GUI), that is dropped.
+// RX: what the GUI sent. TX: what the firmware sends; forwarded as it is at 115200 baud (the GUI's
+// line). At 9600 baud the firmware talks to the DFPlayer (no GUI), that is dropped. At any other
+// baud rate (Bluetooth set-up) the GUI gets noise: one 0xF0 per byte, never a valid frame.
 volatile uint8_t UCSR0B;
 HardwareSerial   Serial;
 
@@ -107,6 +108,42 @@ static size_t   rxHead, rxTail;               // ring buffer
 static uint8_t  tx[16384];
 static size_t   txLen;
 static unsigned long baud;
+
+// Fake HC-05 (AT mode): hears the firmware's TX at its baud rate, answers "OK\r\n" on RX (D0)
+static unsigned long hc05Baud;
+static char          hc05Line[64];
+static size_t        hc05Len;
+static char          hc05Heard[8][64];        // AT commands received, for the GUI's tests
+static size_t        hc05Count;
+
+static void hc05Hear(uint8_t b)
+{
+    if (b == '\r') return;
+    if (b != '\n')
+    {
+        if (hc05Len < sizeof(hc05Line) - 1) hc05Line[hc05Len++] = char(b);
+        return;
+    }
+    hc05Line[hc05Len] = 0;
+    if (hc05Len >= 2 && hc05Line[0] == 'A' && hc05Line[1] == 'T')
+    {
+        if (hc05Count < 8) memcpy(hc05Heard[hc05Count++], hc05Line, hc05Len + 1);
+        static const uint8_t ok[] = { 'O', 'K', '\r', '\n' };
+        hostSerialPush(ok, sizeof(ok));
+    }
+    hc05Len = 0;
+}
+
+void hostHc05(uint32_t b) { hc05Baud = b; hc05Len = 0; }
+
+bool hostHc05Take(char *line, size_t max)
+{
+    if (!hc05Count || !max) return false;
+    strncpy(line, hc05Heard[0], max - 1);
+    line[max - 1] = 0;
+    memmove(hc05Heard[0], hc05Heard[1], sizeof(hc05Heard[0]) * --hc05Count);
+    return true;
+}
 
 void HardwareSerial::begin(unsigned long b)
 {
@@ -146,8 +183,10 @@ int HardwareSerial::availableForWrite()
 
 size_t HardwareSerial::write(uint8_t b)
 {
-    if (baud != 115200 || !(UCSR0B & _BV(TXEN0))) return 1;
-    if (txLen < sizeof(tx)) tx[txLen++] = b;
+    if (!(UCSR0B & _BV(TXEN0))) return 1;
+    if (hc05Baud && baud == hc05Baud) hc05Hear(b);
+    if (baud == 9600) return 1;
+    if (txLen < sizeof(tx)) tx[txLen++] = baud == 115200 ? b : 0xF0;
     return 1;
 }
 

@@ -16,9 +16,12 @@ void     hostDelay(uint32_t ms);            // the firmware's delay(): the clock
 // ── provided by arduino_shim.cpp ──────────────────────────────────────────────
 void     hostSerialPush(const uint8_t *data, size_t n);   // bytes from the GUI (UART RX)
 size_t   hostSerialPending();                             // RX bytes the firmware has not read yet
-size_t   hostSerialTake(uint8_t *out, size_t max);        // bytes the firmware sent (UART TX at 115200)
+size_t   hostSerialTake(uint8_t *out, size_t max);        // bytes the firmware sent (UART TX at 115200; noise at other rates but 9600)
 size_t   hostSerialMark();                                // TX position, for hostSerialDropFrom()
 void     hostSerialDropFrom(size_t mark);                 // forget what was sent after mark
+// A fake HC-05 in AT mode on D0/D1: answers "OK" to every AT command it gets at this baud rate (0 = none)
+void     hostHc05(uint32_t baud);
+bool     hostHc05Take(char *line, size_t max);            // the next AT command it received (without CR LF)
 
 void     hostSetLevel(int pin, int level);                // voltage on a pin, 0-1023 (1023 = pulled up)
 int      hostLevel(int pin);

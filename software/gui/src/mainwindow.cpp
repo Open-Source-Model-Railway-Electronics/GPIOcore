@@ -189,8 +189,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         QMessageBox::warning(this, windowTitle(),
                              tr("No GPIOcore board answered on %1.\n\nCheck that the right port is chosen and that the "
                                 "board has the GPIOcore firmware (Board > Flash firmware). A board that has been running "
-                                "for more than 5 seconds without the program may need a reset (unplug and plug in "
-                                "the USB cable).").arg(port));
+                                "for more than 5 seconds without the program needs a short press on its config button "
+                                "(Nano) or a reset (unplug and plug in the USB cable).").arg(port));
+    });
+    connect(m_link, &DeviceLink::waitingForBoard, this, [this] {
+        // no answer: its serial port may be closed (over Bluetooth connecting does not reset the board)
+        m_connChip->setText(tr("◌ Waiting for the board — press its config button briefly (Nano)…"));
+        statusBar()->showMessage(tr("Waiting for the board — press its config button briefly (Nano)…"), 30000);
+        updateConnState();
     });
     connect(m_link, &DeviceLink::progress, this, [this](int done, int total) {
         m_progress->setVisible(total > 0);
@@ -768,6 +774,7 @@ void MainWindow::buildToolbar()
     board->addSeparator();
     board->addAction(tr("&Flash firmware…"), this, &MainWindow::flashFirmware);
     board->addAction(tr("&Phone remote…"), this, &MainWindow::openPhoneRemote);
+    m_actBluetooth = board->addAction(tr("Set up &Bluetooth (HC-05)…"), this, &MainWindow::setupBluetooth);
     m_actWrite->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
     m_actRead->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
 
@@ -837,6 +844,9 @@ void MainWindow::buildToolbar()
     });
     help->addAction(tr("Config &button and teaching servos (9999)"), this, [this] {
         Info::showDialog(QStringLiteral("board.config"), tr("Config button and teaching servos"), this);
+    });
+    help->addAction(tr("B&luetooth (HC-05)"), this, [this] {
+        Info::showDialog(QStringLiteral("board.bluetooth"), tr("Bluetooth (HC-05)"), this);
     });
     help->addSeparator();
     help->addAction(tr("&About"), this, [this] {
@@ -996,6 +1006,8 @@ void MainWindow::updateConnState()
     else if (m_link->isReady())
         text = tr("● Connected: %1 (%2)").arg(m_dev.board.name.isEmpty() ? tr("board") : m_dev.board.name, m_link->portName()),
         name = QStringLiteral("chipOk");
+    else if (m_link->isWaitingForBoard())
+        text = tr("◌ Waiting for the board — press its config button briefly (Nano)…"), name = QStringLiteral("chipWarn");
     else if (m_link->isOpen())
         text = tr("◌ Connecting to %1…").arg(m_link->portName());
     else
@@ -1737,6 +1749,8 @@ void MainWindow::updateActions()
     m_actWrite->setText(dirty ? tr("Write %1 change(s)").arg(dirty) : tr("Write changes"));
     m_actRevert->setEnabled(dirty > 0);
     m_actPreset->setEnabled(m_mode == ModeConfigure && !m_simulating);   // presets are files read by the GUI: also offline
+    m_actBluetooth->setVisible(Ui::level() >= Ui::Advanced);
+    m_actBluetooth->setEnabled(ready && !busy && m_link->caps().bluetooth);
     m_port->setEnabled(!m_link->isOpen());
     m_actRefresh->setEnabled(!m_link->isOpen());
     if (m_link->isReady())
@@ -2352,6 +2366,7 @@ void MainWindow::setLevel(int level)
     m_outEd->refreshPinCombos();             // D0 / D1, offered types, boxes, read-only above the level
     m_inEd->refreshPinCombos();
     refreshWarnings();
+    updateActions();                         // Bluetooth set-up: Advanced and up
 }
 
 // ── Board settings, name and board files ────────────────────────────────────
@@ -2690,6 +2705,78 @@ void MainWindow::flashFirmware()
             QTimer::singleShot(1500, this, [this, port] { connectPort(port); });
     });
     d.exec();
+}
+
+// ── Bluetooth: the board sets up an HC-05 (in AT mode) on D0/D1 ─────────────
+void MainWindow::setupBluetooth()
+{
+    auto *d = new QDialog(this);
+    d->setObjectName(QStringLiteral("bluetoothDialog"));
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->setWindowTitle(tr("Set up Bluetooth (HC-05)"));
+    d->setModal(true);
+    auto *lay = new QVBoxLayout(d);
+    auto *wiring = new QLabel(tr("<b>Wiring</b> (HC-05 → Nano):<ul>"
+                                 "<li>VCC → 5 V, GND → GND</li>"
+                                 "<li>RXD → D1 through a voltage divider: 1 kΩ from D1 to RXD, 2 kΩ from RXD to GND</li>"
+                                 "<li>TXD → D0 through a Schottky diode (BAT85 or 1N5819), <b>cathode (stripe) at the "
+                                 "HC-05 TXD</b>, so USB still works while the HC-05 is attached</li></ul>"
+                                 "Hold the button on the HC-05 while you plug in the USB cable (its LED blinks slowly), "
+                                 "connect, then click <b>Start</b>."));
+    wiring->setWordWrap(true);
+    lay->addWidget(wiring);
+    auto *status = new QLabel;
+    status->setObjectName(QStringLiteral("btStatus"));
+    status->setWordWrap(true);
+    status->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    lay->addWidget(status);
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Close | QDialogButtonBox::Help);
+    QPushButton *start = buttons->addButton(tr("Start"), QDialogButtonBox::ActionRole);
+    start->setObjectName(QStringLiteral("btStart"));
+    lay->addWidget(buttons);
+    connect(buttons, &QDialogButtonBox::rejected, d, &QDialog::reject);
+    connect(buttons, &QDialogButtonBox::helpRequested, d, [d] {
+        Info::showDialog(QStringLiteral("board.bluetooth"), tr("Bluetooth (HC-05)"), d);
+    });
+    connect(start, &QPushButton::clicked, d, [this, start, status] {
+        if (!m_link->isReady() || m_link->isBusy())
+            return;
+        start->setEnabled(false);
+        status->setText(tr("Setting up the HC-05… (a few seconds)"));
+        m_link->bluetoothSetup();
+    });
+    connect(m_link, &DeviceLink::bluetoothResult, d, [this, start, status](int result, int baud, bool nameOk) {
+        start->setEnabled(true);
+        QString name = QStringLiteral("GPIOcore");      // as the firmware makes it: letters, digits, - and _
+        for (const QChar c : m_dev.board.name)
+            if (name.size() < 20 && c.unicode() < 128 && (c.isLetterOrNumber() || c == QLatin1Char('-') || c == QLatin1Char('_')))
+                name += (name.size() == 8 ? QStringLiteral("-") : QString()) + c;
+        switch (result)
+        {
+        case 0:
+            status->setText(tr("<b>Done:</b> the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the "
+                               "board and plug it in again (without holding the button). Pair '%2' in Windows "
+                               "Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for "
+                               "it — choose that port in GPIOcore.").arg(baud).arg(nameOk ? name : QStringLiteral("HC-05"))
+                            + (nameOk ? QString() : tr("<br>The name could not be set: it keeps its old name.")));
+            break;
+        case 1:
+            status->setText(tr("<b>No HC-05 answered.</b> Likely causes: it is not in AT mode (hold its button while "
+                               "plugging in the USB cable: the LED blinks slowly, about every 2 s), the wiring (TXD → D0, "
+                               "RXD → D1 through the divider), or the diode is missing or the wrong way round (stripe at "
+                               "the HC-05)."));
+            break;
+        case 2:
+            status->setText(tr("<b>The HC-05 answered at %1 baud but refused the new settings.</b> It is probably not "
+                               "in AT mode: hold its button while plugging in the USB cable (the LED blinks slowly) and "
+                               "try again. Some other modules (HC-06, clones) do not know these commands.").arg(baud));
+            break;
+        default:
+            status->setText(tr("<b>The board did not answer.</b> Check the connection and try again."));
+            break;
+        }
+    });
+    d->show();
 }
 
 // ── Screenshot mode (for documentation / automated checks) ──────────────────

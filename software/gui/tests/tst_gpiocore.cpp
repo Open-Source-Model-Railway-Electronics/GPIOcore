@@ -709,16 +709,163 @@ private slots:
         link.bootWaitMs = 200;
         link.timeoutMs  = 100;
         link.drainMs    = 3;
+        link.announceWaitMs = 300;
         QSignalSpy closed(&link, &DeviceLink::closed);
         QSignalSpy errors(&link, &DeviceLink::errorOccurred);
         QSignalSpy noBoard(&link, &DeviceLink::noBoard);
+        QSignalSpy waiting(&link, &DeviceLink::waitingForBoard);
         QString err;
         QVERIFY(link.openDevice(new NoHelloDevice, true, &err));
-        QVERIFY(closed.wait(3000));                         // no HELLO reply: not a GPIOcore board, link closed
+        QVERIFY(waiting.wait(3000));                        // no HELLO reply: first wait for an announce
+        QVERIFY(link.isOpen() && link.isWaitingForBoard());
+        QCOMPARE(errors.size(), 0);
+        QVERIFY(closed.wait(3000));                         // none came: not a GPIOcore board, link closed
         QCOMPARE(errors.size(), 1);
         QTRY_COMPARE(noBoard.size(), 1);                    // the GUI shows a clear message for this one
         QVERIFY(!link.isOpen());
+        QVERIFY(!link.isWaitingForBoard());
         QVERIFY(!link.caps().known);
+    }
+
+    void disconnectCancelsTheWait()
+    {
+        DeviceLink link;
+        link.timeoutMs  = 100;
+        link.drainMs    = 3;
+        link.announceWaitMs = 400;
+        QSignalSpy noBoard(&link, &DeviceLink::noBoard);
+        QSignalSpy waiting(&link, &DeviceLink::waitingForBoard);
+        QString err;
+        QVERIFY(link.openDevice(new NoHelloDevice, false, &err));
+        QVERIFY(waiting.wait(3000));
+        link.close();
+        QTest::qWait(700);
+        QCOMPARE(noBoard.size(), 0);
+        QVERIFY(!link.isWaitingForBoard());
+    }
+
+    // The board ran for more than 5 s without the GUI: D0/D1 are I/O, its serial port is closed. A short press
+    // on the config button (A7) opens it again for 5 s and the board announces itself (the HELLO reply, unasked).
+    void shortPressOpensTheSerialPort()
+    {
+        SimulatedDevice sim;
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        sim.advanceClock(6000);
+        QTRY_VERIFY(sim.serialIsIO());
+        sim.write(QByteArray(1, char(Proto::HELLO)));       // lost: the port is closed
+        QTest::qWait(100);
+        QVERIFY(sim.readAll().isEmpty());
+        QVERIFY(!sim.configSession());
+
+        auto shortPress = [&sim] {
+            sim.setAnalogValue(7, 0);
+            QTest::qWait(150);
+            sim.setAnalogValue(7, AnalogMaxValue);
+        };
+        shortPress();
+        QByteArray rx;
+        QTRY_VERIFY((rx += sim.readAll()).size() >= 7);
+        QCOMPARE(quint8(rx.at(0)), quint8(Proto::HELLO_GROUP << 4 | 5));    // the announce
+        QVERIFY(quint8(rx.at(5)) & Proto::HELLO_FLAG_BLUETOOTH);
+        QVERIFY(!sim.serialIsIO());
+        QVERIFY(!sim.configMode());                          // a short press, not config mode
+        QVERIFY(!sim.configSession());                       // the announce starts no session
+
+        sim.advanceClock(5100);                              // no HELLO within 5 s: D0/D1 are I/O again
+        QTRY_VERIFY(sim.serialIsIO());
+
+        shortPress();                                        // again, now the GUI answers
+        rx.clear();
+        QTRY_VERIFY((rx += sim.readAll()).size() >= 7);
+        sim.write(QByteArray(1, char(Proto::HELLO)));
+        QTRY_VERIFY(sim.configSession());
+        sim.advanceClock(6000);
+        QTest::qWait(100);
+        QVERIFY(!sim.serialIsIO());                          // the session keeps the port
+    }
+
+    // Connecting to a board whose port is closed (over Bluetooth, nothing resets it): the link waits for the
+    // announce instead of giving up, then signs on as usual.
+    void connectWaitsForTheAnnounce()
+    {
+        auto *sim = new SimulatedDevice;
+        QVERIFY(sim->open(QIODevice::ReadWrite));
+        sim->advanceClock(6000);
+        QTRY_VERIFY(sim->serialIsIO());
+        DeviceLink link;
+        link.timeoutMs = 100;
+        link.drainMs   = 3;
+        link.announceWaitMs = 5000;
+        QSignalSpy waiting(&link, &DeviceLink::waitingForBoard);
+        QSignalSpy noBoard(&link, &DeviceLink::noBoard);
+        QSignalSpy errors(&link, &DeviceLink::errorOccurred);
+        QString err;
+        QVERIFY(link.openDevice(sim, false, &err));
+        QVERIFY(waiting.wait(3000));
+        QVERIFY(link.isWaitingForBoard() && !link.isReady());
+        sim->setAnalogValue(7, 0);                           // short press on the config button
+        QTest::qWait(150);
+        sim->setAnalogValue(7, AnalogMaxValue);
+        QTRY_VERIFY(link.caps().known);
+        QVERIFY(link.isReady() && !link.isWaitingForBoard());
+        QVERIFY(link.caps().bluetooth);
+        QTRY_VERIFY(sim->configSession());
+        QCOMPARE(noBoard.size(), 0);
+        QCOMPARE(errors.size(), 0);
+    }
+
+    // BT_SETUP: the board finds the HC-05 (AT mode) at one of five baud rates and sets 115200 baud and its name.
+    // The noise it makes at the other rates is ignored.
+    void bluetoothSetupFindsTheHc05()
+    {
+        Rig r; makeRig(r);
+        QVERIFY(r.link->caps().bluetooth);
+        BoardSettings b;
+        b.name = QStringLiteral("Yard 2 (east)");
+        r.sim->setBoard(b);
+        r.sim->attachFakeHc05(38400);                        // AT mode: always 38400
+        QSignalSpy result(r.link, &DeviceLink::bluetoothResult);
+        r.link->bluetoothSetup();
+        QVERIFY(r.link->isBusy());
+        QVERIFY(result.wait(5000));
+        QCOMPARE(result.first().at(0).toInt(), 0);
+        QCOMPARE(result.first().at(1).toInt(), 38400);
+        QVERIFY(result.first().at(2).toBool());
+        QTRY_COMPARE(r.sim->hc05Commands(),
+                     (QStringList{ "AT", "AT+UART=115200,0,0", "AT+NAME=GPIOcore-Yard2east" }));
+        QCOMPARE(r.errors, 0);
+        r.link->readOutput(0);                               // the session goes on at 115200
+        waitFinished(r);
+        QCOMPARE(r.errors, 0);
+        QVERIFY(r.sim->configSession());
+    }
+
+    void bluetoothSetupOtherBaudRate()
+    {
+        Rig r; makeRig(r);
+        r.sim->attachFakeHc05(57600);                        // tried third, after noise at 38400 and 9600
+        QSignalSpy result(r.link, &DeviceLink::bluetoothResult);
+        r.link->bluetoothSetup();
+        QVERIFY(result.wait(5000));
+        QCOMPARE(result.first().at(0).toInt(), 0);
+        QCOMPARE(result.first().at(1).toInt(), 57600);
+        QTRY_COMPARE(r.sim->hc05Commands(), (QStringList{ "AT", "AT+UART=115200,0,0", "AT+NAME=GPIOcore" }));
+        QCOMPARE(r.errors, 0);
+    }
+
+    void bluetoothSetupWithoutHc05()
+    {
+        Rig r; makeRig(r);
+        QSignalSpy result(r.link, &DeviceLink::bluetoothResult);
+        r.link->bluetoothSetup();
+        QVERIFY(result.wait(5000));
+        QCOMPARE(result.first().at(0).toInt(), 1);           // no HC-05 answered
+        QCOMPARE(result.first().at(1).toInt(), 0);
+        QVERIFY(!result.first().at(2).toBool());
+        QVERIFY(r.sim->hc05Commands().isEmpty());
+        r.link->readOutput(0);
+        waitFinished(r);
+        QCOMPARE(r.errors, 0);
     }
 
     void routeRoundTripV2()

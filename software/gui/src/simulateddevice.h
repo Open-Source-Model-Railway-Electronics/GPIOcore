@@ -67,6 +67,10 @@ public:
 
     // Line noise: the checksum of the next n frames from the host is broken (the firmware NACKs them).
     void corruptNextFrames(int n) { m_corrupt = n; }
+    // A fake HC-05 in AT mode on D0/D1: answers OK to every AT command it gets at this baud rate (0 = none)
+    void attachFakeHc05(int baud);
+    QStringList hc05Commands() const { return m_hc05; }      // the AT commands it received, without CR LF
+    void advanceClock(int ms);                              // the firmware's clock jumps ahead (max 65535 ms)
 
 signals:
     void stateChanged();                                    // output(), input(), board(), pin() ... changed
@@ -89,6 +93,7 @@ private:
     QByteArray m_fromHost;            // not yet parsed
     QByteArray m_rx;                  // serial bytes, readable by the DeviceLink
     int        m_corrupt = 0;
+    QStringList m_hc05;
 
     std::array<Gpio::OutputConfig, Gpio::NumOutputs> m_out;
     std::array<Gpio::InputConfig,  Gpio::NumInputs>  m_in;

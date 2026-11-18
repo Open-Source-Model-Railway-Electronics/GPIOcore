@@ -5,6 +5,7 @@
 #include "connections.h"
 #include "connectionview.h"
 #include "devicelink.h"
+#include "infotexts.h"
 #include "inputeditor.h"
 #include "mainwindow.h"
 #include "outputeditor.h"
@@ -2087,6 +2088,81 @@ private slots:
         const BoardConfig &b = w.findChild<ConnectionView *>()->board();
         QVERIFY(b.outputs == shippedPreset("8-double-steady").outputs);
         QCOMPARE(b.board.name, QStringLiteral("Yard"));
+    }
+
+    // Board > Set up Bluetooth (HC-05): the board sets up a (fake) HC-05 in AT mode, the dialog says what happened
+    void bluetoothSetupDialog()
+    {
+        MainWindow w;
+        startDemo(w);
+        auto *link = w.findChild<DeviceLink *>();
+        auto *sim  = w.findChild<SimulatedDevice *>();
+        QVERIFY(link && sim);
+        QAction *bt = nullptr;
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QStringLiteral("Set up &Bluetooth (HC-05)…")) bt = a;
+        QVERIFY(bt);
+        QVERIFY(bt->isVisible() && bt->isEnabled());
+        w.setLevel(Ui::Beginner);
+        QVERIFY(!bt->isVisible());                           // Advanced and up
+        w.setLevel(Ui::Advanced);
+        QVERIFY(bt->isVisible());
+
+        sim->attachFakeHc05(38400);
+        bt->trigger();
+        auto *d = w.findChild<QDialog *>(QStringLiteral("bluetoothDialog"));
+        QVERIFY(d && d->isVisible());
+        QVERIFY(visibleLabel(d, QStringLiteral("Schottky")));  // the wiring, with the diode
+        QVERIFY(Info::text(QStringLiteral("board.bluetooth")).contains(QLatin1String("AT mode")));   // its help page
+        auto *start  = d->findChild<QPushButton *>(QStringLiteral("btStart"));
+        auto *status = d->findChild<QLabel *>(QStringLiteral("btStatus"));
+        QVERIFY(start && status);
+        start->click();
+        QVERIFY(!start->isEnabled());
+        QVERIFY(link->isBusy());
+        QVERIFY(!bt->isEnabled());                           // one task at a time
+        QTRY_VERIFY_WITH_TIMEOUT(status->text().contains(QLatin1String("Done")), 10000);
+        QVERIFY(status->text().contains(QLatin1String("115200 baud")));
+        QVERIFY(status->text().contains(QLatin1String("'GPIOcore")));
+        QVERIFY(start->isEnabled());
+        QCOMPARE(sim->hc05Commands().value(1), QStringLiteral("AT+UART=115200,0,0"));
+        QVERIFY(sim->hc05Commands().value(2).startsWith(QLatin1String("AT+NAME=GPIOcore")));
+
+        sim->attachFakeHc05(0);                              // no HC-05 (or not in AT mode): the likely causes
+        start->click();
+        QTRY_VERIFY_WITH_TIMEOUT(status->text().contains(QLatin1String("No HC-05 answered")), 10000);
+        QVERIFY(status->text().contains(QLatin1String("AT mode")));
+        d->close();
+        QVERIFY(link->isReady());
+        QTRY_VERIFY(bt->isEnabled());
+    }
+
+    // Connect to a board whose serial port is closed (over Bluetooth nothing resets it): the window asks for a
+    // short press on the config button and connects when the board announces itself.
+    void connectWaitsForTheAnnounce()
+    {
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        Popups popups;                                       // the name question: no
+        popups.onDialog = [](QDialog *d) { d->reject(); return true; };
+        auto *link = w.findChild<DeviceLink *>();
+        link->drainMs   = 3;
+        link->timeoutMs = 100;
+        auto *sim = new SimulatedDevice;
+        QVERIFY(sim->open(QIODevice::ReadWrite));
+        sim->advanceClock(6000);
+        QTRY_VERIFY(sim->serialIsIO());
+        QString err;
+        QVERIFY(link->openDevice(sim, false, &err));
+        QTRY_VERIFY(link->isWaitingForBoard());
+        QVERIFY(visibleLabel(&w, QStringLiteral("press its config button briefly")));
+        sim->setAnalogValue(7, 0);
+        QTest::qWait(150);
+        sim->setAnalogValue(7, AnalogMaxValue);
+        QTRY_VERIFY(link->isReady() && link->caps().known);
+        QVERIFY(!visibleLabel(&w, QStringLiteral("press its config button briefly")));
+        QVERIFY(popups.texts.isEmpty());                     // no "no board" message
     }
 };
 

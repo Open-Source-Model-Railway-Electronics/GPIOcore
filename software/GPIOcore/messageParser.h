@@ -32,6 +32,8 @@ const int OPCODE_GET_BOARD         = 0xC0 ;   // no payload -> reply SET_BOARD
 const int OPCODE_SET_BOARD         = 0xCF ;
 const int OPCODE_GET_ANALOG        = 0xD1 ;   // <channel 0-7> -> reply ANALOG_VALUE
 const int OPCODE_ANALOG_VALUE      = 0xD3 ;   // device -> host: <channel> <value H> <value L> (analogRead, 0-1023)   // <len> <type> <flags> <delay> <name 0..16>
+const int OPCODE_BT_SETUP          = 0xE0 ;   // no payload: set up an HC-05 (AT mode) on D0/D1 -> reply BT_RESULT
+const int OPCODE_BT_RESULT         = 0xE3 ;   // device -> host: <status 0 done, 1 no HC-05, 2 AT+UART refused> <baud / 2400> <name ok>
 
 const uint8_t NACK_FULL            = 4 ;
 const uint8_t NACK_INVALID_PIN     = 5 ;
@@ -43,5 +45,9 @@ const uint8_t HELLO_SERVO_LIVE     = 0x02 ;
 const uint8_t HELLO_EXT_EEPROM     = 0x04 ;   // no longer sent (the recorder is removed)
 const uint8_t HELLO_BOARD          = 0x08 ;
 const uint8_t HELLO_ANALOG_SOUND   = 0x10 ;   // analog inputs (GET_ANALOG) and the sound effect output
+const uint8_t HELLO_BLUETOOTH      = 0x20 ;   // BT_SETUP, and the announce after a short press on the config button
+
+extern uint8_t btSetupPending ;               // BT_SETUP received: loop() runs btSetup()
+void sendHelloReply() ;                       // the HELLO reply, also sent unasked as the announce
 
 extern uint16_t freeRouteSteps() ;

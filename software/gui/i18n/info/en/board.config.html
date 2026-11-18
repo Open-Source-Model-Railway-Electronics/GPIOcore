@@ -19,4 +19,9 @@ for the next servo.</li>
 <li>Hold the config button for 2 seconds again: the LED stays on. Back to normal.</li>
 </ol>
 <p>The new positions are stored at once. Connect the program later and it reads them back.</p>
+<p><b>Short press outside config mode = GUI mode.</b> 5 seconds after start-up the board closes its serial port
+when no program connected (D0/D1 become normal pins). A <b>brief</b> press on the config button (LED steady, not in
+config mode) opens it again for 5 seconds and the board announces itself, so the program can connect without a
+reset, for example over Bluetooth (see <i>Help &gt; Bluetooth (HC-05)</i>). When the program says <i>"Waiting for
+the board"</i>, that is the moment to press it.</p>
 <p>Because of this, <b>D13</b> and <b>A7</b> can never be used for inputs or outputs.</p>

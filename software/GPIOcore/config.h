@@ -62,7 +62,7 @@ typedef struct                      // name[16] is not kept in RAM, it is read f
 extern BoardSettings board ;
 extern uint16_t      boardEEAddress ;
 extern uint8_t       configSession ;    // set by HELLO
-extern uint8_t       serialIsIO ;       // D0/D1 are I/O: no HELLO within the boot window
+extern uint8_t       serialIsIO ;       // D0/D1 are I/O: no HELLO within the serial window
 #ifdef GPIOCORE_HOST
 inline uint8_t serialPinsFree() { return 1 ; }            // simulator: the GUI does not talk over D0/D1
 #else

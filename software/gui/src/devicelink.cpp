@@ -20,8 +20,10 @@ DeviceLink::DeviceLink(QObject *parent) : QObject(parent)
 {
     m_timer.setSingleShot(true);
     m_bootTimer.setSingleShot(true);
+    m_announceTimer.setSingleShot(true);
     connect(&m_timer,     &QTimer::timeout, this, &DeviceLink::onTimeout);
     connect(&m_bootTimer, &QTimer::timeout, this, &DeviceLink::onBootTimeout);
+    connect(&m_announceTimer, &QTimer::timeout, this, &DeviceLink::onAnnounceTimeout);
 }
 
 DeviceLink::~DeviceLink()
@@ -83,6 +85,8 @@ bool DeviceLink::openDevice(QIODevice *device, bool bootsOnOpen, QString *error)
     m_parser.reset();
     m_lastByte.start();
     m_ready        = false;
+    m_waiting      = false;
+    m_btBuf.clear();
     m_version.clear();
     m_caps         = DeviceCaps();
     m_batchTotal = m_batchDone = m_failures = 0;
@@ -110,11 +114,14 @@ void DeviceLink::close()
 
     m_timer.stop();
     m_bootTimer.stop();
+    m_announceTimer.stop();
     m_queue.clear();
     m_current      = Txn();
     m_draining     = false;
     m_booting      = false;
     m_ready        = false;
+    m_waiting      = false;
+    m_btBuf.clear();
     m_batchTotal = m_batchDone = m_failures = 0;
 
     QIODevice *dev = m_device;
@@ -229,6 +236,13 @@ void DeviceLink::readAnalog(int channel)
     enqueue(Kind::GetAnalog, GET_ANALOG, QByteArray(1, char(channel & 7)), channel & 7, timeoutMs);
 }
 
+// One long task: the board talks to the HC-05 at other baud rates, so nothing else is sent meanwhile
+// (one transaction at a time) and everything but a valid BT_RESULT is ignored (scanBluetooth).
+void DeviceLink::bluetoothSetup()
+{
+    enqueue(Kind::BtSetup, BT_SETUP, QByteArray(), -1, bluetoothMs);
+}
+
 void DeviceLink::readOutputState(int output)
 {
     enqueue(Kind::GetOutputState, GET_OUTPUT_STATE, QByteArray(1, char(output)), output, timeoutMs);
@@ -274,7 +288,8 @@ void DeviceLink::enqueue(Kind kind, quint8 command, const QByteArray &payload, i
     t.payload   = payload;
     t.index     = index;
     t.timeout   = timeout;
-    t.triesLeft = (kind == Kind::ServoLive || kind == Kind::GetAnalog) ? 0 : (kind == Kind::Hello ? 1 : retries);
+    t.triesLeft = (kind == Kind::ServoLive || kind == Kind::GetAnalog || kind == Kind::BtSetup) ? 0
+                : (kind == Kind::Hello ? 1 : retries);
 
     // Version / hello requests and follow-up route chunks go first.
     if (front || kind == Kind::Version) m_queue.prepend(t);
@@ -290,7 +305,7 @@ void DeviceLink::enqueue(Kind kind, quint8 command, const QByteArray &payload, i
 
 void DeviceLink::sendNext()
 {
-    if (!m_device || m_current.active || m_draining || m_booting)
+    if (!m_device || m_current.active || m_draining || m_booting || m_waiting)
         return;
 
     if (m_queue.isEmpty())
@@ -351,14 +366,9 @@ void DeviceLink::onTimeout()
         transmit();
         return;
     }
-    if (m_current.kind == Kind::Hello)
+    if (m_current.kind == Kind::Hello || (m_current.kind == Kind::Version && !m_ready))
     {
-        // every GPIOcore firmware answers HELLO: this is another device or very old firmware
-        emit errorOccurred(tr("No answer to HELLO: this is no GPIOcore board, or its firmware is too old. "
-                              "Flash the firmware (Board > Flash firmware)."));
-        const QString port = m_portName;
-        close();
-        emit noBoard(port);
+        startWaiting();                  // the board's serial port may be closed: wait for its announce
         return;
     }
     if (m_current.kind == Kind::ServoLive || m_current.kind == Kind::GetAnalog)
@@ -368,6 +378,41 @@ void DeviceLink::onTimeout()
     }
     emit errorOccurred(tr("No answer to %1").arg(describe(m_current)));
     complete(false);
+    if (m_current.kind == Kind::BtSetup)
+    {
+        m_btBuf.clear();
+        emit bluetoothResult(-1, 0, false);
+    }
+}
+
+// No answer when connecting. The board may have closed its serial port: it has run for more than 5 s
+// without the GUI (over Bluetooth connecting does not reset it). A short press on its config button opens
+// the port again for 5 s and the board announces itself (the HELLO reply, unasked): wait for that.
+void DeviceLink::startWaiting()
+{
+    m_timer.stop();
+    m_current = Txn();
+    m_queue.clear();
+    m_ready = false;
+    m_batchTotal = m_batchDone = m_failures = 0;
+    emit progress(0, 0);
+    m_waiting = true;
+    m_announceTimer.start(announceWaitMs);
+    emit logMessage(QStringLiteral("INFO"), tr("No answer: waiting for the board (short press on its config button)"));
+    emit waitingForBoard();
+}
+
+void DeviceLink::onAnnounceTimeout()
+{
+    if (!m_waiting)
+        return;
+    m_waiting = false;
+    // every GPIOcore firmware answers HELLO: this is another device or very old firmware
+    emit errorOccurred(tr("No answer to HELLO: this is no GPIOcore board, or its firmware is too old. "
+                          "Flash the firmware (Board > Flash firmware)."));
+    const QString port = m_portName;
+    close();
+    emit noBoard(port);
 }
 
 void DeviceLink::setCaps(const DeviceCaps &caps)
@@ -394,6 +439,8 @@ void DeviceLink::onReadyRead()
         return;
 
     const QByteArray data = m_device->readAll();
+    if (m_current.active && m_current.kind == Kind::BtSetup && scanBluetooth(data))
+        return;
     if (!m_parser.idle() && m_lastByte.elapsed() > 100)
     {
         emit logMessage(QStringLiteral("WARN"), tr("Incomplete frame discarded"));
@@ -407,6 +454,34 @@ void DeviceLink::onReadyRead()
         emit logMessage(QStringLiteral("ERR"), e);
     for (const Frame &f : r.frames)
         handleFrame(f);
+}
+
+// During BT_SETUP the board talks to the HC-05 at other baud rates: noise here, maybe NACKs from the HC-05's
+// replies. Only a valid BT_RESULT counts. Returns true: the bytes are taken.
+bool DeviceLink::scanBluetooth(const QByteArray &data)
+{
+    m_lastByte.restart();
+    m_btBuf += data;
+    for (int i = 0; i + 4 < m_btBuf.size(); ++i)
+    {
+        const auto b = [this, i](int k) { return quint8(m_btBuf.at(i + k)); };
+        if (b(0) != BT_RESULT || b(1) > 2 || quint8(b(0) ^ b(1) ^ b(2) ^ b(3)) != b(4))
+            continue;
+        emit logMessage(QStringLiteral("RX"), QStringLiteral("%1  %2").arg(commandName(BT_RESULT), -30)
+                                                  .arg(toHex(m_btBuf.mid(i, 5))));
+        if (i > 0)
+            emit logMessage(QStringLiteral("INFO"), tr("%1 byte(s) of noise ignored during the Bluetooth set-up").arg(i));
+        const int  status = b(1), baud = b(2) * 2400;
+        const bool nameOk = b(3);
+        m_btBuf.clear();
+        m_parser.reset();
+        complete(true);                  // the dialog shows the result
+        emit bluetoothResult(status, baud, nameOk);
+        return true;
+    }
+    if (m_btBuf.size() > 4096)
+        m_btBuf = m_btBuf.right(4);
+    return true;
 }
 
 void DeviceLink::handleFrame(const Frame &f)
@@ -507,6 +582,7 @@ void DeviceLink::handleFrame(const Frame &f)
             c.servoLive     = f.byte(4) & HELLO_FLAG_SERVO_LIVE;
             c.boardSettings = f.byte(4) & HELLO_FLAG_BOARD;
             c.analogSound   = f.byte(4) & HELLO_FLAG_ANALOG_SOUND;
+            c.bluetooth     = f.byte(4) & HELLO_FLAG_BLUETOOTH;
             emit logMessage(QStringLiteral("INFO"),
                             tr("Protocol v%1: %2 steps per route, %3 steps in total")
                                 .arg(c.protocol).arg(c.maxRouteSteps).arg(c.stepPool));
@@ -573,6 +649,8 @@ void DeviceLink::handleFrame(const Frame &f)
     case Kind::GetAnalog:
         break;                           // ANALOG_VALUE is handled above
 
+    case Kind::BtSetup:
+        break;                           // BT_RESULT is found by scanBluetooth()
     }
 
     if (f.group() == VERSION_GROUP)
@@ -584,6 +662,17 @@ void DeviceLink::handleUnsolicited(const Frame &f)
     if (f.isAck())
         return;                   // trailing ACK of the previous transaction
 
+    if (m_waiting && (f.group() == VERSION_GROUP || (f.group() == HELLO_GROUP && f.payload.size() >= 5)))
+    {
+        m_waiting = false;        // the board is there (the announce, or it was reset): sign on as usual
+        m_announceTimer.stop();
+        emit logMessage(QStringLiteral("INFO"), tr("The board announced itself"));
+        if (f.group() == HELLO_GROUP)
+        {
+            requestVersion();     // then HELLO, within the 5 s the board keeps its port open
+            return;
+        }
+    }
     if (f.group() == VERSION_GROUP)
     {
         const bool wasBooting = m_booting;
@@ -627,6 +716,7 @@ QString DeviceLink::describe(const Txn &t) const
     case Kind::GetOutputState: return tr("read state of output %1").arg(t.index + 1);
     case Kind::DccExt:         return tr("DCC extended to address %1").arg(t.index);
     case Kind::GetAnalog:      return tr("read analog pin A%1").arg(t.index);
+    case Kind::BtSetup:        return tr("Bluetooth set-up");
     }
     return QString();
 }

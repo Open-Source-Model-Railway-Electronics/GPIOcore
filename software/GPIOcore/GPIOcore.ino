@@ -19,10 +19,13 @@ uint16_t        nextEEAddress = 0 ;
 BoardSettings   board ;
 uint16_t        boardEEAddress = EE_BOARD ; // type, flags, delay, name[16]
 uint8_t         configSession  = 0 ;        // 1 after HELLO
-uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the boot window
-const uint16_t  BOOT_WINDOW_MS = 5000 ;
+uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the serial window
+uint32_t        serialWindowStart = 0 ;     // the serial window: from start-up, or from a short press on the config button
+const uint16_t  SERIAL_WINDOW_MS  = 5000 ;
+uint8_t         btSetupPending ;            // BT_SETUP received
 
 void blockSignals() ;                       // defined below; also for the PC build of the simulator
+void guiMode() ;
 
 
 
@@ -129,6 +132,7 @@ void setup()
 // so you can see which one it is. With loco address 9999 on the throttle the selected servo is taught:
 // speed knob + direction = move it, F1 = store as curved, F2 = store as straight, F3 = toggle, F4 = invert frog relays, F5 = next.
 // Hold A7 for 2 s again: back to normal (D13 on).
+// A short press outside config mode is the GUI mode: Serial is opened again for 5 s and the board announces itself.
 uint8_t  configMode ;
 int8_t   selServo = -1 ;
 uint8_t  learnAngle = 90 ;
@@ -169,7 +173,7 @@ void configUpdate()                                             // every 50 ms
     }
     else
     {
-        if( held && held < 40 && configMode ) selectNextServo() ;   // short press
+        if( held && held < 40 ) { if( configMode ) selectNextServo() ; else guiMode() ; }   // short press
         held = 0 ;
         longDone = 0 ;
     }
@@ -222,28 +226,105 @@ void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uin
     }
 }
 
+// ── Serial window: D0/D1 stay Serial for 5 s after start-up or after a short press on the config button
+void serialToIO()                               // no HELLO within the window: D0/D1 become I/O
+{
+    Serial.flush() ;
+    Serial.end() ;
+    serialIsIO = 1 ;
+    for( uint8_t i = 0 ; i < 16 ; i++ )      // a sound effect output: TX (D1) at 9600 baud for the DFPlayer,
+    {                                        // RX stays off so D0 can be an input
+        if( output[i].eedata.type != soundEffect ) continue ;
+        Serial.begin( 9600 ) ;
+        UCSR0B &= ~_BV( RXEN0 ) ;
+        break ;
+    }
+    for( uint8_t i = 0 ; i < 16 ; i++ )
+    {
+        output[i].setPinModes() ;
+         input[i].setPinMode() ;
+    }
+}
+
+void guiMode()                                  // short press: the GUI may connect (also over Bluetooth, no reset)
+{
+    if( serialIsIO )                            // D0/D1 back to Serial: what is on them pauses
+    {
+        Serial.begin( 115200 ) ;                // also ends the DFPlayer's 9600 baud, RX on again
+        serialIsIO = 0 ;
+    }
+    if( !configSession ) serialWindowStart = millis() ;
+    sendHelloReply() ;                          // the announce: a waiting GUI sends HELLO
+}
+
+// ── Bluetooth: an HC-05 in AT mode on D0/D1 gets 115200 baud and the name GPIOcore-<board name>
+uint8_t btCommand( const char *cmd, const char *arg )   // 1: "OK" within ~300 ms
+{
+    while( Serial.available() ) Serial.read() ;
+    Serial.write( cmd ) ;
+    Serial.write( arg ) ;
+    Serial.write( "\r\n" ) ;
+    uint8_t prev = 0 ;
+    for( uint16_t t = 0 ; t < 300 ; t ++ )
+    {
+        delay( 1 ) ;
+        while( Serial.available() )
+        {
+            uint8_t c = Serial.read() ;
+            if( prev == 'O' && c == 'K' ) return 1 ;
+            prev = c ;
+        }
+    }
+    return 0 ;
+}
+
+void btSetup()                                  // blocks up to ~2 s; the GUI ignores the noise at other baud rates
+{
+    static const uint8_t bauds[] = { 16, 4, 24, 48, 8 } ;   // x 2400: 38400 (AT mode) first, then the usual ones
+    uint8_t status = 1, code = 0, nameOk = 0 ;
+    char    name[13] = "" ;                     // "-" + up to 11 safe characters of the board name: 20 in total
+    for( uint8_t i = 0, n = 0 ; i < BOARD_NAME_LEN && n < 12 ; i ++ )
+    {
+        char c = EEPROM.read( boardEEAddress + sizeof( board ) + i ) ;
+        if( c == 0 || c == (char)0xFF ) break ;
+        if( !( ( c >= '0' && c <= '9' ) || ( ( c | 0x20 ) >= 'a' && ( c | 0x20 ) <= 'z' ) || c == '-' || c == '_' ) ) continue ;
+        if( n == 0 ) name[n ++] = '-' ;
+        name[n ++] = c ;
+        name[n]    = 0 ;
+    }
+    btSetupPending = 0 ;
+    Serial.flush() ;
+    for( uint8_t i = 0 ; i < sizeof( bauds ) ; i ++ )
+    {
+        Serial.begin( 2400UL * bauds[i] ) ;
+        if( !btCommand( "AT", "" ) ) continue ;
+        code   = bauds[i] ;
+        status = 2 ;
+        if( btCommand( "AT+UART=115200,0,0", "" ) )
+        {
+            status = 0 ;
+            nameOk = btCommand( "AT+NAME=GPIOcore", name ) ;
+        }
+        break ;
+    }
+    Serial.flush() ;
+    delay( 20 ) ;                               // the rest of the HC-05's answer (CR LF) arrives
+    Serial.begin( 115200 ) ;
+    while( Serial.available() ) Serial.read() ;
+    Message m ;
+    m.command    = OPCODE_BT_RESULT ;
+    m.payload[0] = status ;
+    m.payload[1] = code ;
+    m.payload[2] = nameOk ;
+    transceiver.sendMessage( &m ) ;
+}
+
 void loop()
 {
     if( !serialIsIO ) transceiver.receive() ;
+    if( btSetupPending ) btSetup() ;
 
-    if( !configSession && !serialIsIO && millis() >= BOOT_WINDOW_MS )   // no HELLO: D0/D1 become I/O
-    {
-        Serial.flush() ;
-        Serial.end() ;
-        serialIsIO = 1 ;
-        for( uint8_t i = 0 ; i < 16 ; i++ )      // a sound effect output: TX (D1) at 9600 baud for the DFPlayer,
-        {                                        // RX stays off so D0 can be an input
-            if( output[i].eedata.type != soundEffect ) continue ;
-            Serial.begin( 9600 ) ;
-            UCSR0B &= ~_BV( RXEN0 ) ;
-            break ;
-        }
-        for( uint8_t i = 0 ; i < 16 ; i++ )
-        {
-            output[i].setPinModes() ;
-             input[i].setPinMode() ;
-        }
-    }
+    if( !configSession && !serialIsIO && millis() - serialWindowStart >= SERIAL_WINDOW_MS ) serialToIO() ;
 
     static uint8_t index ;
     if( ++ index == 16 ) index = 0 ;

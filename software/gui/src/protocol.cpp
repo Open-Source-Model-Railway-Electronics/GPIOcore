@@ -66,6 +66,8 @@ QString commandName(quint8 command)
     case SET_BOARD:              return QStringLiteral("SET_BOARD");
     case GET_ANALOG:             return QStringLiteral("GET_ANALOG");
     case ANALOG_VALUE:           return QStringLiteral("ANALOG_VALUE");
+    case BT_SETUP:               return QStringLiteral("BT_SETUP");
+    case BT_RESULT:              return QStringLiteral("BT_RESULT");
     }
     if ((command >> 4) == HELLO_GROUP)
         return QStringLiteral("HELLO_REPLY");
