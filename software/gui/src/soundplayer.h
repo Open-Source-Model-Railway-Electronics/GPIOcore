@@ -2,7 +2,8 @@
 // The DFPlayer Mini on the PC: in Simulate and Live test a sound effect output's track is played from a folder
 // laid out like the DFPlayer's SD card (0001.mp3, 0002.mp3, ...; also 001.mp3 / 1.mp3 and .wav).
 // Track 0 = stop; a new track interrupts the one that is playing, like the DFPlayer.
-// The folder and mute are kept in QSettings (sound/folder, sound/muted).
+// The folder and mute are kept in QSettings (sound/folder, sound/muted); by default the folder is
+// Documents/GPIOcore/sounds, next to the boards folder.
 
 #include <QObject>
 #include <QString>
@@ -24,6 +25,7 @@ public:
     ~SoundPlayer() override;
 
     void    setBackend(Backend *backend);       // takes ownership (tests); otherwise Qt Multimedia on first use
+    static QString defaultFolder();             // Documents/GPIOcore/sounds
     QString folder() const { return m_folder; }
     void    setFolder(const QString &dir);
     bool    isMuted() const { return m_muted; }

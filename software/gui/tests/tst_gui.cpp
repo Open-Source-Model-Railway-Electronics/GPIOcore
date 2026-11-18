@@ -812,6 +812,12 @@ private slots:
         player->setMuted(false);
         calls.clear();
         QCOMPARE(player->trackFile(7), QString());
+        {
+            SoundPlayer fresh;                                   // nothing chosen: Documents/GPIOcore/sounds
+            QCOMPARE(fresh.folder(), SoundPlayer::defaultFolder());
+            QVERIFY(fresh.folder().endsWith(QLatin1String("/GPIOcore/sounds")));
+            QCOMPARE(QFileInfo(fresh.folder()).dir(), QFileInfo(MainWindow::boardsDir()).dir());   // next to boards
+        }
 
         ConnectionView *view = startDemo(w);
         auto *link = w.findChild<DeviceLink *>();

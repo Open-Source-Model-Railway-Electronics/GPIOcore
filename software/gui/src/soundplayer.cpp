@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QMediaPlayer>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QUrl>
 
 namespace {
@@ -37,9 +38,17 @@ SoundPlayer::SoundPlayer(QObject *parent)
       m_folder(QSettings().value(kFolderKey).toString()),
       m_muted(QSettings().value(kMutedKey, false).toBool())
 {
+    if (m_folder.isEmpty())
+        m_folder = defaultFolder();
 }
 
 SoundPlayer::~SoundPlayer() = default;
+
+QString SoundPlayer::defaultFolder()
+{
+    return QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
+        .filePath(QStringLiteral("GPIOcore/sounds"));
+}
 
 void SoundPlayer::setBackend(Backend *backend)
 {

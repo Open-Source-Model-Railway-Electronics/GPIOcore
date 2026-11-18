@@ -815,6 +815,8 @@ void MainWindow::buildToolbar()
     });
     // Sound effect outputs: the tracks are played on the PC in Simulate and Live test
     m_actSoundFolder = view->addAction(tr("Sound folder…"), this, [this] {
+        if (m_sound->folder() == SoundPlayer::defaultFolder())
+            QDir().mkpath(m_sound->folder());              // the dialog opens in it
         const QString dir = QFileDialog::getExistingDirectory(this, tr("Sound folder: 0001.mp3, 0002.mp3 … as on the "
                                                                        "DFPlayer's SD card"), m_sound->folder());
         if (!dir.isEmpty())
