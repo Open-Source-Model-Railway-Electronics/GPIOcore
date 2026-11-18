@@ -103,7 +103,7 @@ def main():
     if Path(git("rev-parse", "--show-toplevel")).resolve() != ROOT:
         fail(f"{ROOT} is not the root of a git repository")
 
-    dirty = git("status", "--porcelain")
+    dirty = git("status", "--porcelain", "--untracked-files=no")   # untracked folders (e.g. hardware drafts) don't matter
     if dirty:
         print("[WARN] Uncommitted changes (they would be in the build, but not in the tag):\n" + dirty)
         if not dry and ask("Continue anyway? [y/N] ").lower() != "y":
@@ -121,6 +121,9 @@ def main():
     while (line := input()) != "":
         lines.append(line)
     notes = "\n".join(lines) or f"{REPO} {tag}"
+    pre_default = version.startswith("0.")                   # v0.x: not yet tested on enough hardware
+    answer = ask(f"Mark as pre-release (beta)? [{'Y/n' if pre_default else 'y/N'}] ").lower()
+    prerelease = answer == "y" or ( answer == "" and pre_default )
 
     changes = version_files(version)
     for p, text in changes:
@@ -140,8 +143,9 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         archive = make_zip(tag, Path(tmp))
         setup = make_setup(version, Path(tmp) / "setup")
-        print(f"\n  setup   : {setup.name if setup else '- (no Inno Setup or installer script)'}", end="")
-        print(f"\n  release : {REPO} {tag}\n  zip     : {archive.name} ({len(files)} files, {size:.1f} MB unpacked)"
+        print(f"\n  release : {REPO} {tag}{'  (pre-release)' if prerelease else ''}"
+              f"\n  zip     : {archive.name} ({len(files)} files, {size:.1f} MB unpacked)"
+              f"\n  setup   : {setup.name if setup else '- (no Inno Setup or installer script)'}"
               f"\n  also    : {', '.join(p.name for p in hexes) or '-'}\n  notes   : {notes.splitlines()[0]}")
         if dry:
             print("\n[DRY RUN] nothing committed, tagged, pushed or published")
@@ -157,7 +161,8 @@ def main():
         git("push", "origin", tag)
         assets = [str(archive)] + ([str(setup)] if setup else []) + [str(h) for h in hexes]
         res = subprocess.run(["gh", "release", "create", tag, *assets,
-                              "--title", f"{REPO} {tag}", "--notes", notes], cwd=ROOT)
+                              "--title", f"{REPO} {tag}", "--notes", notes,
+                              *(["--prerelease"] if prerelease else [])], cwd=ROOT)
         if res.returncode != 0:
             fail(f"GitHub release failed; the tag is pushed. Retry with: gh release create {tag} <zip>")
     print(f"\n[OK] {REPO} {tag} released")
