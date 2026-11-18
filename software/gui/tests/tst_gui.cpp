@@ -792,11 +792,11 @@ private slots:
     }
 
     // Simulate / Live test: OUTPUT_EVENT state 2 of a sound effect output plays that track from the sound folder
-    // (0001.mp3 as on the DFPlayer's SD card, also 007.wav), 0 stops it; a missing file is reported; mute.
+    // (0001.mp3 as in the MP3 folder on the DFPlayer's SD card; MP3 only), 0 stops it; a missing file is reported; mute.
     void soundPlaysTheTracks()
     {
         QTemporaryDir dir;
-        for (const char *name : { "0001.mp3", "007.wav", "notes.txt" })
+        for (const char *name : { "0001.mp3", "0007.mp3", "0002.wav", "003.mp3", "notes.txt" })
         {
             QFile f(dir.filePath(QLatin1String(name)));
             QVERIFY(f.open(QIODevice::WriteOnly));
@@ -849,11 +849,13 @@ private slots:
 
         player->setFolder(dir.path());
         calls.clear();
-        click(view, view->liveButtonRect(0, 1).center());       // the firmware reports track 7: 007.wav
-        QTRY_COMPARE_WITH_TIMEOUT(calls, QStringList{ QStringLiteral("007.wav") }, 2000);
+        click(view, view->liveButtonRect(0, 1).center());       // the firmware reports track 7: 0007.mp3
+        QTRY_COMPARE_WITH_TIMEOUT(calls, QStringList{ QStringLiteral("0007.mp3") }, 2000);
         click(view, view->liveButtonRect(0, 0).center());       // track 0 = stop
-        QTRY_COMPARE_WITH_TIMEOUT(calls, (QStringList{ QStringLiteral("007.wav"), QStringLiteral("stop") }), 2000);
+        QTRY_COMPARE_WITH_TIMEOUT(calls, (QStringList{ QStringLiteral("0007.mp3"), QStringLiteral("stop") }), 2000);
         QCOMPARE(player->trackFile(1), dir.filePath(QStringLiteral("0001.mp3")));
+        QCOMPARE(player->trackFile(2), QString());               // no WAV: the DFPlayer reads MP3/0001.mp3 only
+        QCOMPARE(player->trackFile(3), QString());               // 003.mp3: not a name the DFPlayer finds
 
         calls.clear();
         emit link->outputEvent(0, 2, 1);                        // track 1: 0001.mp3

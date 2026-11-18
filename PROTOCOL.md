@@ -136,8 +136,8 @@ through the normal state change (and reports it like any state change); checked 
 
 
 **Sound effect (type 14, HELLO bit4).** A DFPlayer Mini has its RX connected to the TX pin D1 of the Nano
-(through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: `7E FF 06 03 00 00 track csH csL EF`,
-`16` instead of `03` = stop) only if **no PC** is connected: in a configuration session D1 is the
+(through 1 kΩ). The firmware sends the DFPlayer frame (9600 baud, 10 bytes: `7E FF 06 12 00 00 track csH csL EF`:
+play `/MP3/<track>.mp3` by name, e.g. `/MP3/0001.mp3`; `16` instead of `12` = stop) only if **no PC** is connected: in a configuration session D1 is the
 USB line. Every time a track is started (or stopped), the output reports `OUTPUT_EVENT` with **state 2,
 value = track**, even if it could not play anything. Several sound outputs may share D1 (the GUI does not count that as a
 conflict); D1 together with another input or output is a conflict.

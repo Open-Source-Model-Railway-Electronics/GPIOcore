@@ -13,7 +13,7 @@ namespace {
 const QString kFolderKey = QStringLiteral("sound/folder");
 const QString kMutedKey  = QStringLiteral("sound/muted");
 
-// Qt Multimedia: on Windows the Windows Media Foundation plugin plays MP3 and WAV
+// Qt Multimedia: on Windows the Windows Media Foundation plugin plays MP3
 class MediaBackend : public SoundPlayer::Backend
 {
 public:
@@ -78,17 +78,11 @@ void SoundPlayer::setMuted(bool muted)
 
 QString SoundPlayer::trackFile(int track) const
 {
-    const QDir dir(folder());
     if (folder().isEmpty() || track <= 0)
         return QString();
-    const QString names[3] = { QStringLiteral("%1").arg(track, 4, 10, QLatin1Char('0')),
-                               QStringLiteral("%1").arg(track, 3, 10, QLatin1Char('0')),
-                               QString::number(track) };
-    for (const QString &name : names)
-        for (const char *ext : { ".mp3", ".wav" })
-            if (QFileInfo(dir.filePath(name + QLatin1String(ext))).isFile())
-                return dir.filePath(name + QLatin1String(ext));
-    return QString();
+    // only what the DFPlayer finds: 0001.mp3 (the case does not matter on Windows)
+    const QString file = QDir(folder()).filePath(QStringLiteral("%1.mp3").arg(track, 4, 10, QLatin1Char('0')));
+    return QFileInfo(file).isFile() ? file : QString();
 }
 
 void SoundPlayer::playTrack(int track)

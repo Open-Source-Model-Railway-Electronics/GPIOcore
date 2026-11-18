@@ -1,6 +1,6 @@
 #pragma once
 // The DFPlayer Mini on the PC: in Simulate and Live test a sound effect output's track is played from a folder
-// laid out like the DFPlayer's SD card (0001.mp3, 0002.mp3, ...; also 001.mp3 / 1.mp3 and .wav).
+// laid out like the MP3 folder on the DFPlayer's SD card: 0001.mp3, 0002.mp3, ... (the firmware plays them by name).
 // Track 0 = stop; a new track interrupts the one that is playing, like the DFPlayer.
 // The folder and mute are kept in QSettings (sound/folder, sound/muted); by default the folder is
 // Documents/GPIOcore/sounds, next to the boards folder.

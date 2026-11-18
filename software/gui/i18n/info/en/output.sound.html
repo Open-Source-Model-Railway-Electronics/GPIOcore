@@ -6,7 +6,8 @@
   speaker (3 W max.) DFPlayer SPK_1 / SPK_2</pre>
 <ul>
 <li>The <b>1 k&Omega; resistor</b> in the TX line protects the DFPlayer; nothing goes back to the Arduino.</li>
-<li>Files on the SD card: <b>0001.mp3</b>, <b>0002.mp3</b> … Track 1 is 0001.mp3.</li>
+<li>Files on the SD card: in a folder <b>MP3</b>, named <b>0001.mp3</b>, <b>0002.mp3</b> … Track 1 is
+/MP3/0001.mp3. The name counts, not the order in which you copy them. Only MP3, no WAV.</li>
 <li><b>The input chooses the track</b>, so one sound output can play many sounds: give a toggle or absolute
 input <b>Custom values</b> (a track for off and one for on), use a route step, or send a DCC extended value.
 Track 0 = stop. Without custom values: on = track 1, off = stop.</li>
@@ -15,7 +16,7 @@ Track 0 = stop. Without custom values: on = track 1, off = stop.</li>
 <li><b>Only without a PC:</b> D1 is also the USB line to the computer. With the GUI connected the board only
 reports the track (♪ on the canvas). Unplug the USB cable and power the board otherwise to hear it.</li>
 <li><b>Hear it on the PC</b> (Advanced level and up): <i>View &gt; Sound folder&hellip;</i> chooses a folder with the
-same files as the SD card (0001.mp3 &hellip;; 001.mp3, 1.mp3 and .wav work too). In Simulate and Live test the
+same files as the MP3 folder on the SD card (0001.mp3 &hellip;). In Simulate and Live test the
 program then plays the track the board reports; a new track interrupts the previous one, like the DFPlayer.
 <i>View &gt; Mute sounds</i> silences it.</li>
 <li>Not on a <b>DCCnext</b>: it has no D1 on its terminals, so this type is not offered there.</li>

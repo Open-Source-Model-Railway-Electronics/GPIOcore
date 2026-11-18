@@ -264,7 +264,7 @@ route …
 **Wiring:** DFPlayer RX ← **Nano TX (D1)** through a 1 kΩ resistor, VCC → 5 V, GND → GND, a small speaker
 on SPK1/SPK2.
 
-**SD card:** name the files `0001.mp3`, `0002.mp3`, … The number is the track number.
+**SD card:** a folder `MP3` with the files `0001.mp3`, `0002.mp3`, … The number is the track number (MP3 only).
 
 **In the program:** add one output of type **Sound effect**. It has no settings: the thing that starts the
 sound chooses the track:
@@ -356,7 +356,7 @@ Only on an Arduino **Nano**: the Uno and the DCCnext have no A7.
 | "Port busy" / can't connect | Close other programs that use the port (Arduino IDE, serial monitor). |
 | Servos twitch or the Nano restarts | Give the servos their own 5 V supply and connect its GND to the Nano's GND. |
 | A coil turnout doesn't throw | Make the pulse longer (start at 200 ms); check the coil supply and the driver. |
-| No sound | Sound only plays without the PC connected. Check the file names (`0001.mp3`) and the 1 kΩ resistor. |
+| No sound | Sound only plays without the PC connected. Check the folder and file names (`MP3/0001.mp3`) and the 1 kΩ resistor. |
 | A button on a resistor ladder triggers the wrong input | Use **Live reading** and **Use this value** for every button; keep at least ~40 between the values. |
 | The program warns that the firmware is too old | *Board → Flash firmware…* puts the newest version on the board. |
 

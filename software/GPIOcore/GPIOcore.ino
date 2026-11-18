@@ -400,7 +400,8 @@ void playSound( uint8_t index, uint8_t track )
 {
     reportOutput( index, 2, track ) ;
     if( !serialIsIO ) return ;
-    uint8_t f[10] = { 0x7E, 0xFF, 0x06, (uint8_t)( track ? 0x03 : 0x16 ), 0x00, 0x00, track, 0, 0, 0xEF } ;   // 03 play track, 16 stop
+    // 12 plays /MP3/<track>.mp3 by its name (0001.mp3), whatever order the files were copied in; 16 stops
+    uint8_t f[10] = { 0x7E, 0xFF, 0x06, (uint8_t)( track ? 0x12 : 0x16 ), 0x00, 0x00, track, 0, 0, 0xEF } ;
     uint16_t sum = 0 ;
     for( uint8_t i = 1 ; i < 7 ; i ++ ) sum += f[i] ;
     sum  = -sum ;

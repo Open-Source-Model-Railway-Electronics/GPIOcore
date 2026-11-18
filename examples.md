@@ -322,7 +322,8 @@ Set a slow servo **Speed** so the barriers move like the real thing.
 - **DFPlayer RX ← Nano TX (D1)**, with a **1 kΩ resistor** in between.
 - Speaker on SPK1 and SPK2.
 
-**SD card:** name the files `0001.mp3`, `0002.mp3`, `0003.mp3` … (in this order: the number is the track).
+**SD card:** put the files in a folder `MP3` and name them `0001.mp3`, `0002.mp3`, `0003.mp3` … The number is
+the track; the order in which you copy them does not matter. MP3 only.
 
 **In the program:** one output of type **Sound effect** (always on D1). Then choose the track where you
 start it:
