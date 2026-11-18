@@ -5,6 +5,7 @@
 // translator can edit and check texts without rebuilding.
 
 #include "infotexts.h"
+#include "i18n.h"
 
 #include <QCoreApplication>
 #include <QDialog>
@@ -29,13 +30,15 @@ static QString readFile(const QString &path)
 
 QString Info::text(const QString &key)
 {
-    // English only for now: the other languages' texts stay in i18n/info/ for later
     const QString local = QCoreApplication::applicationDirPath() + QStringLiteral("/i18n/info/");
-    for (const QString &base : { local, QStringLiteral(":/info/") })
+    for (const QString &lang : { Lang::current(), QStringLiteral("en") })
     {
-        const QString html = readFile(base + QStringLiteral("en/") + key + QStringLiteral(".html"));
-        if (!html.isEmpty())
-            return html;
+        for (const QString &base : { local, QStringLiteral(":/info/") })
+        {
+            const QString html = readFile(base + lang + QLatin1Char('/') + key + QStringLiteral(".html"));
+            if (!html.isEmpty())
+                return html;
+        }
     }
     return QCoreApplication::translate("Info", "No help text for '%1' yet.").arg(key);
 }

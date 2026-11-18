@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "i18n.h"
 
 #include "connections.h"
 #include "connectionview.h"
@@ -843,6 +844,30 @@ void MainWindow::buildToolbar()
             Ui::setThemeSetting(key);
             m_view->update();
         });
+    }
+
+    // Language: every language with a translation or help texts is listed
+    view->addSeparator();
+    QMenu *language = view->addMenu(tr("Language"));
+    auto *langGroup = new QActionGroup(language);
+    auto addLang = [this, language, langGroup](const QString &code, const QString &name) {
+        QAction *a = language->addAction(name);
+        a->setCheckable(true);
+        a->setChecked(Lang::configured() == code);
+        langGroup->addAction(a);
+        connect(a, &QAction::triggered, this, [this, code] {
+            Lang::setConfigured(code);
+            QMessageBox::information(this, windowTitle(),
+                                     tr("The language changes the next time you start the program."));
+        });
+    };
+    addLang(QString(), tr("Automatic (system language)"));
+    for (const QString &code : Lang::available())
+    {
+        const QLocale loc(code);
+        QString name = loc.nativeLanguageName();
+        if (!name.isEmpty()) name[0] = name[0].toUpper();
+        addLang(code, QStringLiteral("%1 (%2)").arg(name, code));
     }
 
     QMenu *help = menuBar()->addMenu(tr("&Help"));

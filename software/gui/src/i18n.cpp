@@ -3,9 +3,21 @@
 #include <QApplication>
 #include <QDir>
 #include <QLibraryInfo>
+#include <QLocale>
+#include <QSettings>
 #include <QTranslator>
 
 static QString g_current = QStringLiteral("en");
+
+QString Lang::configured()
+{
+    return QSettings().value(QStringLiteral("ui/language")).toString();
+}
+
+void Lang::setConfigured(const QString &code)
+{
+    QSettings().setValue(QStringLiteral("ui/language"), code);
+}
 
 QString Lang::current()
 {
@@ -29,7 +41,9 @@ QStringList Lang::available()
 
 void Lang::install(QApplication &app, const QString &force)
 {
-    QString code = force;                           // English only: no configured or system language
+    QString code = force.isEmpty() ? configured() : force;
+    if (code.isEmpty())
+        code = QLocale::system().name().section(QLatin1Char('_'), 0, 0);   // "nl_NL" -> "nl"
     if (!available().contains(code))
         code = QStringLiteral("en");
     g_current = code;

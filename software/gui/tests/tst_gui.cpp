@@ -15,6 +15,7 @@
 #include "qrcode.h"
 #include "webremote.h"
 
+#include <algorithm>
 #include <QApplication>
 #include <QFile>
 #include <QFileInfo>
@@ -2077,20 +2078,28 @@ private slots:
         QCOMPARE(int(b.inputs[0].outputId), 0);
         QCOMPARE(w.mode(), MainWindow::ModeConfigure);
         QVERIFY(!w.findChild<DeviceLink *>()->isOpen());     // offline
-        // one workspace without a tab bar; no Pin map, no Language menu, no wizard or next steps
+        // one workspace without a tab bar; no Pin map, no wizard or next steps
         QVERIFY(w.findChildren<QTabWidget *>().isEmpty());
         bool newBoard = false;
         for (QAction *a : w.findChildren<QAction *>())
         {
             const QString t = a->text();
-            QVERIFY2(!t.contains(QLatin1String("Pin map")) && !t.contains(QLatin1String("Language"))
+            QVERIFY2(!t.contains(QLatin1String("Pin map"))
                          && !t.contains(QLatin1String("izard")) && !t.contains(QLatin1String("ext steps")),
                      qPrintable(t));
             newBoard |= t == QStringLiteral("&New board (offline)…");
         }
         QVERIFY(newBoard);
+        // View > Language: system language first, then every translation (Dutch among them)
+        QMenu *language = nullptr;
         for (QMenu *m : w.findChildren<QMenu *>())
-            QVERIFY2(m->title() != QLatin1String("Language"), qPrintable(m->title()));
+            if (m->title() == QLatin1String("Language")) language = m;
+        QVERIFY(language);
+        const QList<QAction *> langs = language->actions();
+        QVERIFY(langs.size() >= 13);                         // automatic + 12 translations
+        QCOMPARE(langs.first()->text(), QStringLiteral("Automatic (system language)"));
+        QVERIFY(std::any_of(langs.begin(), langs.end(),
+                            [](QAction *a) { return a->text().endsWith(QLatin1String("(nl)")); }));
 
         // documentation: the start screen with the Preset list open (the list is a window of its own)
         const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");

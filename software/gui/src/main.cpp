@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     QCommandLineOption open(QStringLiteral("open"), QStringLiteral("Load this configuration file at start."), QStringLiteral("file"));
     QCommandLineOption size(QStringLiteral("size"), QStringLiteral("Window size, e.g. 1680x900 (for screenshots)."), QStringLiteral("WxH"));
     QCommandLineOption theme(QStringLiteral("theme"), QStringLiteral("auto, light or dark for this run (not saved)."), QStringLiteral("theme"));
-    QCommandLineOption lang(QStringLiteral("lang"), QStringLiteral("Language for this run, e.g. nl (screenshots; the GUI is English otherwise)."), QStringLiteral("code"));
+    QCommandLineOption lang(QStringLiteral("lang"), QStringLiteral("Language for this run, e.g. en or nl (not saved)."), QStringLiteral("code"));
     cli.addOptions({ demo, port, shot, tab, select, preset, open, size, theme, lang });
     cli.process(app);
     if (cli.isSet(theme))
