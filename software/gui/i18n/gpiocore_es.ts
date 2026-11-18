@@ -42,17 +42,17 @@
     <message>
         <location filename="../src/connectionview.cpp" line="1070"/>
         <source>Remove connection %1 → %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitar la conexión %1 → %2</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1090"/>
         <source>Remove all connections of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitar todas las conexiones de %1</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1113"/>
         <source>%1 → %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 → %2 (%3)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="689"/>
@@ -162,7 +162,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="401"/>
         <source>No answer: waiting for the board (short press on its config button)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin respuesta: esperando la placa (pulse brevemente su botón de configuración)</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="429"/>
@@ -177,7 +177,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="473"/>
         <source>%1 byte(s) of noise ignored during the Bluetooth set-up</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 byte(s) de ruido ignorados durante la configuración de Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="515"/>
@@ -197,7 +197,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="669"/>
         <source>The board announced itself</source>
-        <translation type="unfinished"></translation>
+        <translation>La placa se ha anunciado</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="686"/>
@@ -237,7 +237,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="719"/>
         <source>Bluetooth set-up</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="411"/>
@@ -714,12 +714,12 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="46"/>
         <source>Block signal</source>
-        <translation type="unfinished"></translation>
+        <translation>Señal de bloqueo</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="47"/>
         <source>Automatic signal with lamps A-D (B-D optional). The board chooses the aspect itself from two block detectors: its own block and the next one. Inputs, routes and DCC cannot set it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Señal automática con lámparas A-D (B-D opcionales). La placa elige el aspecto por sí misma a partir de dos detectores de bloque: el suyo propio y el siguiente. Las entradas, los itinerarios y el DCC no pueden modificarla.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="49"/>
@@ -868,7 +868,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/boardtools.cpp" line="72"/>
         <source>Not enough free slots: the file has %1 output(s) and %2 input(s) in use, this board has %3 free output(s) and %4 free input(s). Nothing was imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay suficientes huecos libres: el archivo tiene %1 salida(s) y %2 entrada(s) en uso, y esta placa tiene %3 salida(s) y %4 entrada(s) libres. No se importó nada.</translation>
     </message>
 </context>
 <context>
@@ -950,12 +950,12 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="71"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="75"/>
         <source>A block signal sets its own aspect from its detectors</source>
-        <translation type="unfinished"></translation>
+        <translation>Una señal de bloqueo fija su propio aspecto a partir de sus detectores</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="97"/>
@@ -1337,7 +1337,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="682"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Modificar la configuración: sin conexión, o conectado (marco rojo) para que cada cambio llegue a la placa de inmediato.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="685"/>
@@ -1413,69 +1413,69 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="790"/>
         <source>Servos, lights and turnout coils; buttons, DCC addresses and simple routes</source>
-        <translation type="unfinished"></translation>
+        <translation>Servos, luces y bobinas de desvío; pulsadores, direcciones DCC e itinerarios sencillos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="791"/>
         <source>Also light effects, signals, PWM, sound, frog relays, analog inputs and custom values</source>
-        <translation type="unfinished"></translation>
+        <translation>Además efectos de luz, señales, PWM, sonido, relés del corazón, entradas analógicas y valores propios</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="792"/>
         <source>Also automatic block signals, sensor inputs and semaphore arms</source>
-        <translation type="unfinished"></translation>
+        <translation>Además señales de bloqueo automáticas, entradas de sensor y brazos de semáforo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="803"/>
         <source>What do the levels offer?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Qué ofrece cada nivel?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="804"/>
         <location filename="../src/mainwindow.cpp" line="857"/>
         <source>User levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Niveles de usuario</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="816"/>
         <source>Sound folder…</source>
-        <translation type="unfinished"></translation>
+        <translation>Carpeta de sonidos…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="817"/>
         <source>Sound folder: 0001.mp3, 0002.mp3 … as on the DFPlayer&apos;s SD card</source>
-        <translation type="unfinished"></translation>
+        <translation>Carpeta de sonidos: 0001.mp3, 0002.mp3 … como en la tarjeta SD del DFPlayer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="822"/>
         <source>Plays a sound effect output&apos;s tracks in Simulate and Live test</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproduce las pistas de una salida de efecto de sonido en Simular y Prueba en vivo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="823"/>
         <source>Mute sounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenciar sonidos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="856"/>
         <source>&amp;User levels</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Niveles de usuario</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="865"/>
         <source>B&amp;luetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>B&amp;luetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="866"/>
         <location filename="../src/mainwindow.cpp" line="2760"/>
         <source>Bluetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="871"/>
         <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano, DCCnext) for model railways.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configura placas GPIOcore (Arduino Nano, DCCnext) para modelismo ferroviario.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1022"/>
@@ -1538,7 +1538,7 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1253"/>
         <source>Cannot read the preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede leer el preajuste %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1288"/>
@@ -1558,7 +1558,7 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2026"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
-        <translation type="unfinished"></translation>
+        <translation>La configuración tiene cambios que no están guardados en un archivo. ¿Guardarlos?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2121"/>
@@ -1649,7 +1649,7 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2414"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
-        <translation type="unfinished"></translation>
+        <translation>La placa es &quot;%1&quot;, la pantalla muestra &quot;%2&quot;. La prueba en vivo muestra el cableado de la pantalla, ¿leer antes la placa?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2420"/>
@@ -1710,109 +1710,109 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
     <message>
         <location filename="../src/mainwindow.cpp" line="1367"/>
         <source>Example opened. Save it under a name of your own (Ctrl+S); the example itself is never changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ejemplo abierto. Guárdelo con un nombre propio (Ctrl+S); el ejemplo en sí nunca se modifica.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1420"/>
         <source>%1 output(s), %2 input(s), %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 salida(s), %2 entrada(s), %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1431"/>
         <source>Open example</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir ejemplo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1433"/>
         <source>Start from an example. It opens like a board file, but without a file name: when you save, you choose a new name, so the example stays as it is.</source>
-        <translation type="unfinished"></translation>
+        <translation>Empiece a partir de un ejemplo. Se abre como un archivo de placa, pero sin nombre de archivo: al guardar, elige un nombre nuevo, así que el ejemplo queda como está.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1450"/>
         <source>No examples found in %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se encontraron ejemplos en %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1472"/>
         <source>Outputs (%1 in use)</source>
-        <translation type="unfinished"></translation>
+        <translation>Salidas (%1 en uso)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1473"/>
         <source>Inputs (%1 in use)</source>
-        <translation type="unfinished"></translation>
+        <translation>Entradas (%1 en uso)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1474"/>
         <source>Board settings (type, route timing, interlocking)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes de la placa (tipo, temporización de itinerarios, enclavamiento)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1517"/>
         <source>Exported to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportado a %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1528"/>
         <location filename="../src/mainwindow.cpp" line="1540"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1530"/>
         <source>Save the items in use of the parts you tick in a board file of their own, with their names, settings and routes, e.g. to make your own example. Import adds them to another board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Guarda en un archivo de placa propio los elementos en uso de las partes que marque, con sus nombres, ajustes e itinerarios, p. ej. para crear su propio ejemplo. Importar los añade a otra placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1536"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1548"/>
         <source>Import from a board file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar desde un archivo de placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1564"/>
         <source>Import from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar desde %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1566"/>
         <source>Add the items in use of the parts you tick to this board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Añade a esta placa los elementos en uso de las partes que marque.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1570"/>
         <source>Where to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Destino:</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1572"/>
         <source>Same numbers (replace): every item goes to its own number</source>
-        <translation type="unfinished"></translation>
+        <translation>Mismos números (reemplazar): cada elemento va a su propio número</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1573"/>
         <source>Into free slots: the first free outputs and inputs, links between the imported items are renumbered</source>
-        <translation type="unfinished"></translation>
+        <translation>En huecos libres: las primeras salidas y entradas libres; los vínculos entre los elementos importados se renumeran</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1581"/>
         <source>A pin that is already in use goes to the imported item: your own item keeps its function, but loses that pin. The items concerned are listed afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>Un pin que ya está en uso pasa al elemento importado: su propio elemento conserva su función, pero pierde ese pin. Los elementos afectados se listan después.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1586"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1616"/>
         <location filename="../src/mainwindow.cpp" line="1625"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1629"/>
@@ -1821,115 +1821,121 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
 %1
 
 Import?</source>
-        <translation type="unfinished"></translation>
+        <translation>Estos elementos suyos se reemplazan por los del archivo:
+
+%1
+
+¿Importar?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1651"/>
         <location filename="../src/mainwindow.cpp" line="1660"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1680"/>
         <source>Imported %1 output(s) and %2 input(s) from %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Importadas %1 salida(s) y %2 entrada(s) desde %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1683"/>
         <source>Some pins were already in use:
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Algunos pines ya estaban en uso:
+
+%1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1697"/>
         <source>This project uses %1 features (%2). The level is set to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este proyecto usa funciones del nivel %1 (%2). El nivel se ha fijado en %1.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1910"/>
         <source>%1 uses %2, which cannot be used here: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 usa %2, que aquí no se puede usar: %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1915"/>
         <source>%1 (%2) is also used by %3 (%4).</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) también lo usa %3 (%4).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1917"/>
         <source>%1 (%2) is also used by %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) también lo usa %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1926"/>
         <source>Detector %1 is not in use or has no pin: the board never sees that block occupied.</source>
-        <translation type="unfinished"></translation>
+        <translation>El detector %1 no está en uso o no tiene pin: la placa nunca ve ocupado ese bloque.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1937"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on %3 and %4 stops working as soon as at least one servo output exists. Use %5 for PWM, or remove the servo.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2): conflicto con los servos. La biblioteca Servo usa el temporizador 1, así que el PWM en %3 y %4 deja de funcionar en cuanto existe al menos una salida de servo. Use %5 para PWM, o elimine el servo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1958"/>
         <source>Pin %1 cannot be used here: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El pin %1 no se puede usar aquí: %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1962"/>
         <source>Pin %1 is also used by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El pin %1 también lo usa %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1971"/>
         <source>No pin is set: this sensor never reports its block occupied.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay ningún pin definido: este sensor nunca señala su bloque como ocupado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1978"/>
         <source>Route step %1 sets %2, which is not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>El paso %1 del itinerario ajusta %2, que no está en uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1981"/>
         <source>Route step %1 sets %2, a block signal: it ignores the step.</source>
-        <translation type="unfinished"></translation>
+        <translation>El paso %1 del itinerario ajusta %2, una señal de bloqueo: la señal ignora el paso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1989"/>
         <source>%1 is not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 no está en uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1991"/>
         <source>%1 is a block signal: it sets its own aspect and ignores this input.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 es una señal de bloqueo: fija su propio aspecto e ignora esta entrada.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1999"/>
         <source>D0/D1 are the USB serial pins: on the board they only work when no PC is connected (5 s after power-up without the GUI). In the simulator they always work.</source>
-        <translation type="unfinished"></translation>
+        <translation>D0/D1 son los pines serie USB: en la placa solo funcionan cuando no hay ningún PC conectado (5 s tras el encendido sin la GUI). En el simulador funcionan siempre.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2081"/>
         <source>The pin was in use: %1 keeps its settings, but has no pin there now.</source>
-        <translation type="unfinished"></translation>
+        <translation>El pin estaba en uso: %1 conserva sus ajustes, pero ahora no tiene pin ahí.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2120"/>
         <source>Phone: %1 %2 = %3°</source>
-        <translation type="unfinished"></translation>
+        <translation>Móvil: %1 %2 = %3°</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2239"/>
         <source>%1 has no DCC address, so it cannot receive a DCC extended command.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 no tiene dirección DCC, por lo que no puede recibir un comando DCC extendido.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2338"/>
         <source>%1: %2 %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2541"/>
@@ -2005,57 +2011,57 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2707"/>
         <source>%1 removed; %2 drove it and is now not in use as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 eliminado; %2 lo controlaba y ahora tampoco está en uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2737"/>
         <source>Set up Bluetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar Bluetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2740"/>
         <source>&lt;b&gt;Wiring&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 through a voltage divider: 1 kΩ from D1 to RXD, 2 kΩ from RXD to GND&lt;/li&gt;&lt;li&gt;TXD → D0 through a Schottky diode (BAT85 or 1N5819), &lt;b&gt;cathode (stripe) at the HC-05 TXD&lt;/b&gt;, so USB still works while the HC-05 is attached&lt;/li&gt;&lt;/ul&gt;Hold the button on the HC-05 while you plug in the USB cable (its LED blinks slowly), connect, then click &lt;b&gt;Start&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Cableado&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 a través de un divisor de tensión: 1 kΩ de D1 a RXD, 2 kΩ de RXD a GND&lt;/li&gt;&lt;li&gt;TXD → D0 a través de un diodo Schottky (BAT85 o 1N5819), &lt;b&gt;cátodo (franja) en el TXD del HC-05&lt;/b&gt;, para que el USB siga funcionando con el HC-05 conectado&lt;/li&gt;&lt;/ul&gt;Mantenga pulsado el botón del HC-05 mientras conecta el cable USB (su LED parpadea lentamente), conéctese y luego haga clic en &lt;b&gt;Iniciar&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2755"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2766"/>
         <source>Setting up the HC-05… (a few seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurando el HC-05… (unos segundos)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2778"/>
         <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in GPIOcore.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Listo:&lt;/b&gt; el HC-05 ahora funciona a 115200 baudios (respondió a %1 baudios). Desenchufe la placa y vuelva a enchufarla (sin mantener pulsado el botón). Empareje &apos;%2&apos; en los ajustes de Bluetooth de Windows (PIN 1234, o 0000 en algunos módulos); Windows crea un puerto COM para él: elija ese puerto en GPIOcore.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2782"/>
         <source>&lt;br&gt;The name could not be set: it keeps its old name.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br&gt;No se pudo establecer el nombre: conserva el anterior.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2785"/>
         <source>&lt;b&gt;No HC-05 answered.&lt;/b&gt; Likely causes: it is not in AT mode (hold its button while plugging in the USB cable: the LED blinks slowly, about every 2 s), the wiring (TXD → D0, RXD → D1 through the divider), or the diode is missing or the wrong way round (stripe at the HC-05).</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Ningún HC-05 respondió.&lt;/b&gt; Causas probables: no está en modo AT (mantenga pulsado su botón al conectar el cable USB: el LED parpadea lentamente, aproximadamente cada 2 s), el cableado (TXD → D0, RXD → D1 a través del divisor), o falta el diodo o está al revés (franja en el HC-05).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2791"/>
         <source>&lt;b&gt;The HC-05 answered at %1 baud but refused the new settings.&lt;/b&gt; It is probably not in AT mode: hold its button while plugging in the USB cable (the LED blinks slowly) and try again. Some other modules (HC-06, clones) do not know these commands.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;El HC-05 respondió a %1 baudios pero rechazó los nuevos ajustes.&lt;/b&gt; Probablemente no está en modo AT: mantenga pulsado su botón al conectar el cable USB (el LED parpadea lentamente) e inténtelo de nuevo. Algunos otros módulos (HC-06, clones) no conocen estos comandos.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2796"/>
         <source>&lt;b&gt;The board did not answer.&lt;/b&gt; Check the connection and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;La placa no respondió.&lt;/b&gt; Revise la conexión e inténtelo de nuevo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2814"/>
         <source>No preset &quot;%1&quot; in %2</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay ningún preajuste &quot;%1&quot; en %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="745"/>
@@ -2117,18 +2123,20 @@ Import?</source>
         <source>No GPIOcore board answered on %1.
 
 Check that the right port is chosen and that the board has the GPIOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguna placa GPIOcore respondió en %1.
+
+Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware GPIOcore (Placa &gt; Flashear firmware). Una placa que lleva más de 5 segundos funcionando sin el programa necesita una pulsación breve de su botón de configuración (Nano) o un reinicio (desenchufe y vuelva a enchufar el cable USB).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="202"/>
         <location filename="../src/mainwindow.cpp" line="1027"/>
         <source>◌ Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation type="unfinished"></translation>
+        <translation>◌ Esperando la placa — pulse brevemente su botón de configuración (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="203"/>
         <source>Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esperando la placa — pulse brevemente su botón de configuración (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="312"/>
@@ -2144,17 +2152,17 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="435"/>
         <source>%1 already drives %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ya controla %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="439"/>
         <source>The route of %1 already has %2 steps (maximum)</source>
-        <translation type="unfinished"></translation>
+        <translation>El itinerario de %1 ya tiene %2 pasos (máximo)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="449"/>
         <source>%1 is a block signal: it sets its own aspect from its detectors, an input cannot switch it.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 es una señal de bloqueo: fija su propio aspecto a partir de sus detectores, una entrada no puede conmutarla.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="681"/>
@@ -2174,7 +2182,7 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="722"/>
         <source>Ready-made configurations from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuraciones ya preparadas de %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="746"/>
@@ -2189,27 +2197,27 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="756"/>
         <source>Open &amp;example…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir &amp;ejemplo…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="758"/>
         <source>&amp;Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Exportar…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="759"/>
         <source>Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar algunas salidas, entradas o los ajustes de la placa en un archivo propio, p. ej. como su propio ejemplo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="760"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importar…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="761"/>
         <source>Add the outputs, inputs or board settings of another board file to this one</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir a esta placa las salidas, entradas o ajustes de otro archivo de placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="763"/>
@@ -2239,7 +2247,7 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="782"/>
         <source>Set up &amp;Bluetooth (HC-05)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar &amp;Bluetooth (HC-05)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="786"/>
@@ -2553,12 +2561,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="145"/>
         <source>Relays switch on LOW (inverted)</source>
-        <translation type="unfinished"></translation>
+        <translation>Los relés conmutan con LOW (invertido)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="146"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
-        <translation type="unfinished"></translation>
+        <translation>Para módulos de relé que conmutan cuando la entrada está en LOW: los pines de los relés se activan al revés</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="156"/>
@@ -2613,22 +2621,22 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="219"/>
         <source>Follows a detector (semaphore arm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sigue a un detector (brazo de semáforo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="227"/>
         <source>Detector</source>
-        <translation type="unfinished"></translation>
+        <translation>Detector</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="228"/>
         <source>Swap: occupied = straight</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertir: ocupado = recto</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="230"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocupado = posición 0 (desviado, brazo en parada), libre = posición 1 (recto, vía libre), a la velocidad indicada arriba.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="252"/>
@@ -2668,62 +2676,62 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="283"/>
         <source>Aspect numbers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Números de aspecto…</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="284"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
-        <translation type="unfinished"></translation>
+        <translation>Qué número DCC extendido enciende qué lámparas — para iTrain, Rocrail o su central</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Unsafe</source>
-        <translation type="unfinished"></translation>
+        <translation>Parada</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Caution</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuncio de parada</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Safe</source>
-        <translation type="unfinished"></translation>
+        <translation>Vía libre</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="310"/>
         <source>Aspect while its own block is occupied</source>
-        <translation type="unfinished"></translation>
+        <translation>Aspecto cuando su propio bloque está ocupado</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="311"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
-        <translation type="unfinished"></translation>
+        <translation>Aspecto cuando su propio bloque está libre y el siguiente está ocupado</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="312"/>
         <source>Aspect while both blocks are free</source>
-        <translation type="unfinished"></translation>
+        <translation>Aspecto cuando ambos bloques están libres</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="318"/>
         <source>aspect </source>
-        <translation type="unfinished">aspecto </translation>
+        <translation>aspecto </translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation type="unfinished">Elegir el aspecto lámpara por lámpara</translation>
+        <translation>Elegir el aspecto lámpara por lámpara</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="345"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
-        <translation type="unfinished"></translation>
+        <translation>La placa elige el aspecto por sí misma cada 50 ms: parada mientras su propio bloque está ocupado, anuncio de parada mientras lo está el siguiente, y vía libre en los demás casos. Las entradas, los itinerarios y el DCC no pueden modificarlo. Las lámparas intermitentes parpadean a 1 Hz.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="611"/>
         <source>Pins (PWM capable: %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pines (compatibles con PWM: %1)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="307"/>
@@ -2789,7 +2797,7 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="518"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="560"/>
@@ -2907,83 +2915,83 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Expert</source>
-        <translation type="unfinished"></translation>
+        <translation>Experto</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Avanzado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Beginner</source>
-        <translation type="unfinished"></translation>
+        <translation>Principiante</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="178"/>
         <source>block signals</source>
-        <translation type="unfinished"></translation>
+        <translation>señales de bloqueo</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="179"/>
         <source>4-aspect signals</source>
-        <translation type="unfinished"></translation>
+        <translation>señales de 4 aspectos</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="180"/>
         <source>PWM</source>
-        <translation type="unfinished">PWM</translation>
+        <translation>PWM</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="181"/>
         <source>sound effects</source>
-        <translation type="unfinished"></translation>
+        <translation>efectos de sonido</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="182"/>
         <source>light effects</source>
-        <translation type="unfinished"></translation>
+        <translation>efectos de luz</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="185"/>
         <source>semaphore arms</source>
-        <translation type="unfinished"></translation>
+        <translation>brazos de semáforo</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="187"/>
         <source>frog relays</source>
-        <translation type="unfinished"></translation>
+        <translation>relés del corazón</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="190"/>
         <location filename="../src/uihelpers.cpp" line="200"/>
         <source>D0 / D1</source>
-        <translation type="unfinished"></translation>
+        <translation>D0 / D1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="196"/>
         <source>sensors</source>
-        <translation type="unfinished"></translation>
+        <translation>sensores</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="197"/>
         <source>routes on straight or curved only</source>
-        <translation type="unfinished"></translation>
+        <translation>itinerarios solo en recto o desviado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="198"/>
         <source>analog inputs</source>
-        <translation type="unfinished"></translation>
+        <translation>entradas analógicas</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="199"/>
         <source>custom values</source>
-        <translation type="unfinished"></translation>
+        <translation>valores propios</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="201"/>
         <source>own wait time per route step</source>
-        <translation type="unfinished"></translation>
+        <translation>tiempo de espera propio por paso de itinerario</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="447"/>
@@ -2993,17 +3001,17 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="494"/>
         <source>Aspect numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Números de aspecto</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="496"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elija por lámpara lo que debe mostrar la señal. El número de abajo es el valor DCC extendido correspondiente: introdúzcalo en iTrain, Rocrail o su central. Aquí no cambia nada. La lámpara 1 es el pin A, la lámpara 2 el pin B, etc.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="519"/>
         <source>DCC extended number: %1  (0x%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Número DCC extendido: %1  (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="582"/>
@@ -3039,12 +3047,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/soundplayer.cpp" line="97"/>
         <source>Sound effect track %1: choose a sound folder (View &gt; Sound folder…) to hear it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista de efecto de sonido %1: elija una carpeta de sonidos (Ver &gt; Carpeta de sonidos…) para oírla.</translation>
     </message>
     <message>
         <location filename="../src/soundplayer.cpp" line="104"/>
         <source>%1 not found in %2</source>
-        <translation type="unfinished"></translation>
+        <translation>No se encontró %1 en %2</translation>
     </message>
 </context>
 </TS>

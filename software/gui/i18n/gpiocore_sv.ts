@@ -42,17 +42,17 @@
     <message>
         <location filename="../src/connectionview.cpp" line="1070"/>
         <source>Remove connection %1 → %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort anslutning %1 → %2</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1090"/>
         <source>Remove all connections of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort alla anslutningar för %1</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1113"/>
         <source>%1 → %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 → %2 (%3)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="689"/>
@@ -162,7 +162,7 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="401"/>
         <source>No answer: waiting for the board (short press on its config button)</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget svar: väntar på kortet (tryck kort på dess config-knapp)</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="429"/>
@@ -177,7 +177,7 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="473"/>
         <source>%1 byte(s) of noise ignored during the Bluetooth set-up</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 byte brus ignorerades under Bluetooth-inställningen</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="515"/>
@@ -197,7 +197,7 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="669"/>
         <source>The board announced itself</source>
-        <translation type="unfinished"></translation>
+        <translation>Kortet anmälde sig</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="686"/>
@@ -237,7 +237,7 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="719"/>
         <source>Bluetooth set-up</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth-inställning</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="411"/>
@@ -714,12 +714,12 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="46"/>
         <source>Block signal</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocksignal</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="47"/>
         <source>Automatic signal with lamps A-D (B-D optional). The board chooses the aspect itself from two block detectors: its own block and the next one. Inputs, routes and DCC cannot set it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisk signal med lampor A-D (B-D valfria). Kortet väljer själv signalbilden utifrån två beläggningsdetektorer: sitt eget block och nästa. Ingångar, tågvägar och DCC kan inte sätta den.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="49"/>
@@ -868,7 +868,7 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/boardtools.cpp" line="72"/>
         <source>Not enough free slots: the file has %1 output(s) and %2 input(s) in use, this board has %3 free output(s) and %4 free input(s). Nothing was imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inte tillräckligt många lediga platser: filen har %1 utgång(ar) och %2 ingång(ar) i bruk, det här kortet har %3 ledig(a) utgång(ar) och %4 ledig(a) ingång(ar). Inget importerades.</translation>
     </message>
 </context>
 <context>
@@ -950,12 +950,12 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="71"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="75"/>
         <source>A block signal sets its own aspect from its detectors</source>
-        <translation type="unfinished"></translation>
+        <translation>En blocksignal sätter själv sin signalbild utifrån sina detektorer</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="97"/>
@@ -1337,7 +1337,7 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="682"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra konfigurationen: offline, eller ansluten (röd ram) så att varje ändring går till kortet direkt.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="685"/>
@@ -1413,69 +1413,69 @@ steg %1: %2, vänta sedan %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="790"/>
         <source>Servos, lights and turnout coils; buttons, DCC addresses and simple routes</source>
-        <translation type="unfinished"></translation>
+        <translation>Servon, ljus och växelspolar; knappar, DCC-adresser och enkla tågvägar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="791"/>
         <source>Also light effects, signals, PWM, sound, frog relays, analog inputs and custom values</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessutom ljuseffekter, signaler, PWM, ljud, hjärtstycksreläer, analoga ingångar och egna värden</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="792"/>
         <source>Also automatic block signals, sensor inputs and semaphore arms</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessutom automatiska blocksignaler, sensoringångar och semaforarmar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="803"/>
         <source>What do the levels offer?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vad erbjuder nivåerna?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="804"/>
         <location filename="../src/mainwindow.cpp" line="857"/>
         <source>User levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Användarnivåer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="816"/>
         <source>Sound folder…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ljudmapp…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="817"/>
         <source>Sound folder: 0001.mp3, 0002.mp3 … as on the DFPlayer&apos;s SD card</source>
-        <translation type="unfinished"></translation>
+        <translation>Ljudmapp: 0001.mp3, 0002.mp3 … som på DFPlayerns SD-kort</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="822"/>
         <source>Plays a sound effect output&apos;s tracks in Simulate and Live test</source>
-        <translation type="unfinished"></translation>
+        <translation>Spelar upp spåren från en ljudeffektutgång i Simulera och Livetest</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="823"/>
         <source>Mute sounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng av ljud</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="856"/>
         <source>&amp;User levels</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Användarnivåer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="865"/>
         <source>B&amp;luetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>B&amp;luetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="866"/>
         <location filename="../src/mainwindow.cpp" line="2760"/>
         <source>Bluetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="871"/>
         <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano, DCCnext) for model railways.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Konfigurerar GPIOcore-kort (Arduino Nano, DCCnext) för modelljärnvägar.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1022"/>
@@ -1538,7 +1538,7 @@ Allt på kortet ersätts.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1253"/>
         <source>Cannot read the preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte läsa preset %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1288"/>
@@ -1558,7 +1558,7 @@ Allt på kortet ersätts.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2026"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfigurationen har ändringar som inte är sparade i en fil. Spara dem?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2121"/>
@@ -1649,7 +1649,7 @@ Allt på kortet ersätts.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2414"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
-        <translation type="unfinished"></translation>
+        <translation>Kortet är &quot;%1&quot;, skärmen visar &quot;%2&quot;. Livetestet visar skärmens kopplingar, så läs kortet först?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2420"/>
@@ -1710,109 +1710,109 @@ Namnet sparas på kortet; dina namn på ingångar och utgångar sparas i en fil 
     <message>
         <location filename="../src/mainwindow.cpp" line="1367"/>
         <source>Example opened. Save it under a name of your own (Ctrl+S); the example itself is never changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Exempel öppnat. Spara det under ett eget namn (Ctrl+S); själva exemplet ändras aldrig.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1420"/>
         <source>%1 output(s), %2 input(s), %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 utgång(ar), %2 ingång(ar), %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1431"/>
         <source>Open example</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna exempel</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1433"/>
         <source>Start from an example. It opens like a board file, but without a file name: when you save, you choose a new name, so the example stays as it is.</source>
-        <translation type="unfinished"></translation>
+        <translation>Börja från ett exempel. Det öppnas som en kortfil, men utan filnamn: när du sparar väljer du ett nytt namn, så exemplet förblir oförändrat.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1450"/>
         <source>No examples found in %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga exempel hittades i %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1472"/>
         <source>Outputs (%1 in use)</source>
-        <translation type="unfinished"></translation>
+        <translation>Utgångar (%1 i bruk)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1473"/>
         <source>Inputs (%1 in use)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingångar (%1 i bruk)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1474"/>
         <source>Board settings (type, route timing, interlocking)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kortinställningar (typ, tågvägstider, förregling)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1517"/>
         <source>Exported to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporterat till %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1528"/>
         <location filename="../src/mainwindow.cpp" line="1540"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Export</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1530"/>
         <source>Save the items in use of the parts you tick in a board file of their own, with their names, settings and routes, e.g. to make your own example. Import adds them to another board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara de använda objekten i de delar du kryssar i en egen kortfil, med namn, inställningar och tågvägar, t.ex. för att göra ett eget exempel. Import lägger till dem på ett annat kort.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1536"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportera…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1548"/>
         <source>Import from a board file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importera från en kortfil</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1564"/>
         <source>Import from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Importera från %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1566"/>
         <source>Add the items in use of the parts you tick to this board.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till de använda objekten i de delar du kryssar i på det här kortet.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1570"/>
         <source>Where to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vart:</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1572"/>
         <source>Same numbers (replace): every item goes to its own number</source>
-        <translation type="unfinished"></translation>
+        <translation>Samma nummer (ersätt): varje objekt går till sitt eget nummer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1573"/>
         <source>Into free slots: the first free outputs and inputs, links between the imported items are renumbered</source>
-        <translation type="unfinished"></translation>
+        <translation>Till lediga platser: de första lediga utgångarna och ingångarna, länkar mellan de importerade objekten numreras om</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1581"/>
         <source>A pin that is already in use goes to the imported item: your own item keeps its function, but loses that pin. The items concerned are listed afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>En pinne som redan används går till det importerade objektet: ditt eget objekt behåller sin funktion men förlorar den pinnen. De berörda objekten listas efteråt.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1586"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Import</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1616"/>
         <location filename="../src/mainwindow.cpp" line="1625"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1629"/>
@@ -1821,115 +1821,115 @@ Namnet sparas på kortet; dina namn på ingångar och utgångar sparas i en fil 
 %1
 
 Import?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessa objekt av dig ersätts av dem från filen:\n\n%1\n\nImportera?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1651"/>
         <location filename="../src/mainwindow.cpp" line="1660"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1680"/>
         <source>Imported %1 output(s) and %2 input(s) from %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Importerade %1 utgång(ar) och %2 ingång(ar) från %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1683"/>
         <source>Some pins were already in use:
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vissa pinnar användes redan:\n\n%1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1697"/>
         <source>This project uses %1 features (%2). The level is set to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Det här projektet använder %1-funktioner (%2). Nivån är satt till %1.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1910"/>
         <source>%1 uses %2, which cannot be used here: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 använder %2, vilket inte kan användas här: %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1915"/>
         <source>%1 (%2) is also used by %3 (%4).</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) används också av %3 (%4).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1917"/>
         <source>%1 (%2) is also used by %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) används också av %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1926"/>
         <source>Detector %1 is not in use or has no pin: the board never sees that block occupied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Detektor %1 används inte eller saknar pinne: kortet ser aldrig det blocket som belagt.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1937"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on %3 and %4 stops working as soon as at least one servo output exists. Use %5 for PWM, or remove the servo.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2): konflikt med servona. Servo-biblioteket använder timer 1, så PWM på %3 och %4 slutar fungera så snart det finns minst en servoutgång. Använd %5 för PWM, eller ta bort servot.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1958"/>
         <source>Pin %1 cannot be used here: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinne %1 kan inte användas här: %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1962"/>
         <source>Pin %1 is also used by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinne %1 används också av %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1971"/>
         <source>No pin is set: this sensor never reports its block occupied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen pinne är inställd: den här sensorn rapporterar aldrig sitt block som belagt.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1978"/>
         <source>Route step %1 sets %2, which is not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tågvägssteg %1 sätter %2, som inte används.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1981"/>
         <source>Route step %1 sets %2, a block signal: it ignores the step.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tågvägssteg %1 sätter %2, en blocksignal: den ignorerar steget.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1989"/>
         <source>%1 is not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 används inte.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1991"/>
         <source>%1 is a block signal: it sets its own aspect and ignores this input.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 är en blocksignal: den sätter själv sin signalbild och ignorerar den här ingången.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1999"/>
         <source>D0/D1 are the USB serial pins: on the board they only work when no PC is connected (5 s after power-up without the GUI). In the simulator they always work.</source>
-        <translation type="unfinished"></translation>
+        <translation>D0/D1 är de seriella USB-pinnarna: på kortet fungerar de bara när ingen PC är ansluten (5 s efter start utan programmet). I simulatorn fungerar de alltid.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2081"/>
         <source>The pin was in use: %1 keeps its settings, but has no pin there now.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinnen användes: %1 behåller sina inställningar men har ingen pinne där nu.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2120"/>
         <source>Phone: %1 %2 = %3°</source>
-        <translation type="unfinished"></translation>
+        <translation>Mobil: %1 %2 = %3°</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2239"/>
         <source>%1 has no DCC address, so it cannot receive a DCC extended command.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 har ingen DCC-adress, så den kan inte ta emot ett utökat DCC-kommando.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2338"/>
         <source>%1: %2 %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2541"/>
@@ -2005,57 +2005,57 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2707"/>
         <source>%1 removed; %2 drove it and is now not in use as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 borttagen; %2 styrde den och används nu inte heller.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2737"/>
         <source>Set up Bluetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ställ in Bluetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2740"/>
         <source>&lt;b&gt;Wiring&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 through a voltage divider: 1 kΩ from D1 to RXD, 2 kΩ from RXD to GND&lt;/li&gt;&lt;li&gt;TXD → D0 through a Schottky diode (BAT85 or 1N5819), &lt;b&gt;cathode (stripe) at the HC-05 TXD&lt;/b&gt;, so USB still works while the HC-05 is attached&lt;/li&gt;&lt;/ul&gt;Hold the button on the HC-05 while you plug in the USB cable (its LED blinks slowly), connect, then click &lt;b&gt;Start&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Koppling&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 via en spänningsdelare: 1 kΩ från D1 till RXD, 2 kΩ från RXD till GND&lt;/li&gt;&lt;li&gt;TXD → D0 via en Schottky-diod (BAT85 eller 1N5819), &lt;b&gt;katod (rand) vid HC-05 TXD&lt;/b&gt;, så att USB fortfarande fungerar medan HC-05 är ansluten&lt;/li&gt;&lt;/ul&gt;Håll in knappen på HC-05 medan du sätter i USB-kabeln (dess lysdiod blinkar långsamt), anslut och klicka sedan på &lt;b&gt;Start&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2755"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2766"/>
         <source>Setting up the HC-05… (a few seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ställer in HC-05… (några sekunder)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2778"/>
         <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in GPIOcore.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Klart:&lt;/b&gt; HC-05 körs nu med 115200 baud (den svarade vid %1 baud). Dra ur kortet och sätt i det igen (utan att hålla in knappen). Para &apos;%2&apos; i Windows Bluetooth-inställningar (PIN 1234, eller 0000 på vissa moduler); Windows skapar en COM-port för den — välj den porten i GPIOcore.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2782"/>
         <source>&lt;br&gt;The name could not be set: it keeps its old name.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br&gt;Namnet kunde inte ställas in: det behåller sitt gamla namn.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2785"/>
         <source>&lt;b&gt;No HC-05 answered.&lt;/b&gt; Likely causes: it is not in AT mode (hold its button while plugging in the USB cable: the LED blinks slowly, about every 2 s), the wiring (TXD → D0, RXD → D1 through the divider), or the diode is missing or the wrong way round (stripe at the HC-05).</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Ingen HC-05 svarade.&lt;/b&gt; Troliga orsaker: den är inte i AT-läge (håll in dess knapp medan du sätter i USB-kabeln: lysdioden blinkar långsamt, ungefär var 2:a s), kopplingen (TXD → D0, RXD → D1 via delaren), eller så saknas dioden eller sitter fel väg (randen vid HC-05).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2791"/>
         <source>&lt;b&gt;The HC-05 answered at %1 baud but refused the new settings.&lt;/b&gt; It is probably not in AT mode: hold its button while plugging in the USB cable (the LED blinks slowly) and try again. Some other modules (HC-06, clones) do not know these commands.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;HC-05 svarade vid %1 baud men avvisade de nya inställningarna.&lt;/b&gt; Den är troligen inte i AT-läge: håll in dess knapp medan du sätter i USB-kabeln (lysdioden blinkar långsamt) och försök igen. Vissa andra moduler (HC-06, kloner) känner inte till de här kommandona.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2796"/>
         <source>&lt;b&gt;The board did not answer.&lt;/b&gt; Check the connection and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Kortet svarade inte.&lt;/b&gt; Kontrollera anslutningen och försök igen.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2814"/>
         <source>No preset &quot;%1&quot; in %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget preset &quot;%1&quot; i %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="745"/>
@@ -2117,18 +2117,18 @@ Import?</source>
         <source>No GPIOcore board answered on %1.
 
 Check that the right port is chosen and that the board has the GPIOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget GPIOcore-kort svarade på %1.\n\nKontrollera att rätt port är vald och att kortet har GPIOcore-firmwaren (Kort &gt; Flasha firmware). Ett kort som har körts i mer än 5 sekunder utan programmet behöver ett kort tryck på sin config-knapp (Nano) eller en återställning (dra ur USB-kabeln och sätt i den igen).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="202"/>
         <location filename="../src/mainwindow.cpp" line="1027"/>
         <source>◌ Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation type="unfinished"></translation>
+        <translation>◌ Väntar på kortet — tryck kort på dess config-knapp (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="203"/>
         <source>Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Väntar på kortet — tryck kort på dess config-knapp (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="312"/>
@@ -2144,17 +2144,17 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="435"/>
         <source>%1 already drives %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 styr redan %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="439"/>
         <source>The route of %1 already has %2 steps (maximum)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tågvägen för %1 har redan %2 steg (maximum)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="449"/>
         <source>%1 is a block signal: it sets its own aspect from its detectors, an input cannot switch it.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 är en blocksignal: den sätter själv sin signalbild utifrån sina detektorer, en ingång kan inte växla den.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="681"/>
@@ -2174,7 +2174,7 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="722"/>
         <source>Ready-made configurations from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Färdiga konfigurationer från %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="746"/>
@@ -2189,27 +2189,27 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="756"/>
         <source>Open &amp;example…</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna &amp;exempel…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="758"/>
         <source>&amp;Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Exportera…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="759"/>
         <source>Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara några utgångar, ingångar eller kortinställningarna i en egen fil, t.ex. som ditt eget exempel</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="760"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importera…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="761"/>
         <source>Add the outputs, inputs or board settings of another board file to this one</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till utgångar, ingångar eller kortinställningar från en annan kortfil i den här</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="763"/>
@@ -2239,7 +2239,7 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="782"/>
         <source>Set up &amp;Bluetooth (HC-05)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ställ in &amp;Bluetooth (HC-05)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="786"/>
@@ -2553,12 +2553,12 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/outputeditor.cpp" line="145"/>
         <source>Relays switch on LOW (inverted)</source>
-        <translation type="unfinished"></translation>
+        <translation>Reläer slår till vid LOW (inverterat)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="146"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
-        <translation type="unfinished"></translation>
+        <translation>För relämoduler som slår till när ingången är LOW: relä-pinnarna styrs åt andra hållet</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="156"/>
@@ -2613,22 +2613,22 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/outputeditor.cpp" line="219"/>
         <source>Follows a detector (semaphore arm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Följer en detektor (semaforarm)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="227"/>
         <source>Detector</source>
-        <translation type="unfinished"></translation>
+        <translation>Detektor</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="228"/>
         <source>Swap: occupied = straight</source>
-        <translation type="unfinished"></translation>
+        <translation>Byt: belagd = rakt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="230"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
-        <translation type="unfinished"></translation>
+        <translation>Belagd = läge 0 (avvikande, arm på stopp), fri = läge 1 (rakt, kör), med hastigheten ovan.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="252"/>
@@ -2668,62 +2668,62 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/outputeditor.cpp" line="283"/>
         <source>Aspect numbers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Signalbildsnummer…</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="284"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
-        <translation type="unfinished"></translation>
+        <translation>Vilket utökat DCC-nummer som visar vilka lampor — för iTrain, Rocrail eller din central</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Unsafe</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopp</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Caution</source>
-        <translation type="unfinished"></translation>
+        <translation>Vänta stopp</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Safe</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="310"/>
         <source>Aspect while its own block is occupied</source>
-        <translation type="unfinished"></translation>
+        <translation>Signalbild medan det egna blocket är belagt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="311"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
-        <translation type="unfinished"></translation>
+        <translation>Signalbild medan det egna blocket är fritt och nästa block är belagt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="312"/>
         <source>Aspect while both blocks are free</source>
-        <translation type="unfinished"></translation>
+        <translation>Signalbild medan båda blocken är fria</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="318"/>
         <source>aspect </source>
-        <translation type="unfinished">signalbild </translation>
+        <translation>signalbild </translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation type="unfinished">Välj signalbilden lampa för lampa</translation>
+        <translation>Välj signalbilden lampa för lampa</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="345"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kortet väljer själv signalbilden var 50 ms: stopp medan det egna blocket är belagt, vänta stopp medan nästa är det, annars kör. Ingångar, tågvägar och DCC kan inte sätta den. Blinkande lampor blinkar med 1 Hz.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="611"/>
         <source>Pins (PWM capable: %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinnar (PWM-kapabla: %1)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="307"/>
@@ -2789,7 +2789,7 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/outputeditor.cpp" line="518"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="560"/>
@@ -2907,83 +2907,83 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Expert</source>
-        <translation type="unfinished"></translation>
+        <translation>Expert</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Avancerad</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Beginner</source>
-        <translation type="unfinished"></translation>
+        <translation>Nybörjare</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="178"/>
         <source>block signals</source>
-        <translation type="unfinished"></translation>
+        <translation>blocksignaler</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="179"/>
         <source>4-aspect signals</source>
-        <translation type="unfinished"></translation>
+        <translation>signaler med 4 signalbilder</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="180"/>
         <source>PWM</source>
-        <translation type="unfinished">PWM</translation>
+        <translation>PWM</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="181"/>
         <source>sound effects</source>
-        <translation type="unfinished"></translation>
+        <translation>ljudeffekter</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="182"/>
         <source>light effects</source>
-        <translation type="unfinished"></translation>
+        <translation>ljuseffekter</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="185"/>
         <source>semaphore arms</source>
-        <translation type="unfinished"></translation>
+        <translation>semaforarmar</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="187"/>
         <source>frog relays</source>
-        <translation type="unfinished"></translation>
+        <translation>hjärtstycksreläer</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="190"/>
         <location filename="../src/uihelpers.cpp" line="200"/>
         <source>D0 / D1</source>
-        <translation type="unfinished"></translation>
+        <translation>D0 / D1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="196"/>
         <source>sensors</source>
-        <translation type="unfinished"></translation>
+        <translation>sensorer</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="197"/>
         <source>routes on straight or curved only</source>
-        <translation type="unfinished"></translation>
+        <translation>tågvägar bara för rakt eller avvikande</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="198"/>
         <source>analog inputs</source>
-        <translation type="unfinished"></translation>
+        <translation>analoga ingångar</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="199"/>
         <source>custom values</source>
-        <translation type="unfinished"></translation>
+        <translation>egna värden</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="201"/>
         <source>own wait time per route step</source>
-        <translation type="unfinished"></translation>
+        <translation>egen väntetid per tågvägssteg</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="447"/>
@@ -2993,17 +2993,17 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/uihelpers.cpp" line="494"/>
         <source>Aspect numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Signalbildsnummer</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="496"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj per lampa vad signalen ska visa. Talet nedan är det utökade DCC-värdet för den: skriv in det i iTrain, Rocrail eller din central. Inget ändras här. Lampa 1 är pinne A, lampa 2 pinne B, och så vidare.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="519"/>
         <source>DCC extended number: %1  (0x%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Utökat DCC-nummer: %1  (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="582"/>
@@ -3039,12 +3039,12 @@ Detta ersätter alla utgångar och ingångar (och deras tågvägar).</translatio
     <message>
         <location filename="../src/soundplayer.cpp" line="97"/>
         <source>Sound effect track %1: choose a sound folder (View &gt; Sound folder…) to hear it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ljudeffektspår %1: välj en ljudmapp (Visa &gt; Ljudmapp…) för att höra det.</translation>
     </message>
     <message>
         <location filename="../src/soundplayer.cpp" line="104"/>
         <source>%1 not found in %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 hittades inte i %2</translation>
     </message>
 </context>
 </TS>

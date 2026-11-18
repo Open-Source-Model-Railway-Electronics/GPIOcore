@@ -42,17 +42,17 @@
     <message>
         <location filename="../src/connectionview.cpp" line="1070"/>
         <source>Remove connection %1 → %2</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1 → %2 kapcsolat eltávolítása</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1090"/>
         <source>Remove all connections of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 összes kapcsolatának eltávolítása</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1113"/>
         <source>%1 → %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 → %2 (%3)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="689"/>
@@ -162,7 +162,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/devicelink.cpp" line="401"/>
         <source>No answer: waiting for the board (short press on its config button)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nincs válasz: várakozás a panelre (nyomja meg röviden a konfiggombját)</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="429"/>
@@ -177,7 +177,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/devicelink.cpp" line="473"/>
         <source>%1 byte(s) of noise ignored during the Bluetooth set-up</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 bájtnyi zaj figyelmen kívül hagyva a Bluetooth beállítása közben</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="515"/>
@@ -197,7 +197,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/devicelink.cpp" line="669"/>
         <source>The board announced itself</source>
-        <translation type="unfinished"></translation>
+        <translation>A panel jelentkezett</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="686"/>
@@ -237,7 +237,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/devicelink.cpp" line="719"/>
         <source>Bluetooth set-up</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth beállítása</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="411"/>
@@ -714,12 +714,12 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/gpioconfig.cpp" line="46"/>
         <source>Block signal</source>
-        <translation type="unfinished"></translation>
+        <translation>Önműködő térközjelző</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="47"/>
         <source>Automatic signal with lamps A-D (B-D optional). The board chooses the aspect itself from two block detectors: its own block and the next one. Inputs, routes and DCC cannot set it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Önműködő jelző A-D lámpákkal (B-D opcionális). A panel a jelzési képet maga választja két foglaltságjelzőből: a saját térközéből és a következőéből. Bemenetek, vágányutak és DCC nem állíthatják.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="49"/>
@@ -868,7 +868,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/boardtools.cpp" line="72"/>
         <source>Not enough free slots: the file has %1 output(s) and %2 input(s) in use, this board has %3 free output(s) and %4 free input(s). Nothing was imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nincs elég szabad hely: a fájlban %1 kimenet és %2 bemenet van használatban, ezen a panelen %3 szabad kimenet és %4 szabad bemenet van. Semmi sem lett importálva.</translation>
     </message>
 </context>
 <context>
@@ -950,12 +950,12 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/inputeditor.cpp" line="71"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="75"/>
         <source>A block signal sets its own aspect from its detectors</source>
-        <translation type="unfinished"></translation>
+        <translation>Az önműködő térközjelző a jelzési képét maga állítja be a foglaltságjelzőiből</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="97"/>
@@ -1337,7 +1337,7 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="682"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>A konfiguráció módosítása: offline, vagy csatlakoztatva (piros keret), így minden módosítás azonnal a panelre kerül.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="685"/>
@@ -1413,69 +1413,69 @@ step %1: %2, then wait %3</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="790"/>
         <source>Servos, lights and turnout coils; buttons, DCC addresses and simple routes</source>
-        <translation type="unfinished"></translation>
+        <translation>Szervók, fények és váltótekercsek; gombok, DCC-címek és egyszerű vágányutak</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="791"/>
         <source>Also light effects, signals, PWM, sound, frog relays, analog inputs and custom values</source>
-        <translation type="unfinished"></translation>
+        <translation>Továbbá fényeffektek, jelzők, PWM, hang, szívrelék, analóg bemenetek és saját értékek</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="792"/>
         <source>Also automatic block signals, sensor inputs and semaphore arms</source>
-        <translation type="unfinished"></translation>
+        <translation>Továbbá önműködő térközjelzők, érzékelő bemenetek és alakjelzők (szemaforkarok)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="803"/>
         <source>What do the levels offer?</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit kínálnak a szintek?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="804"/>
         <location filename="../src/mainwindow.cpp" line="857"/>
         <source>User levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Felhasználói szintek</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="816"/>
         <source>Sound folder…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hangmappa…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="817"/>
         <source>Sound folder: 0001.mp3, 0002.mp3 … as on the DFPlayer&apos;s SD card</source>
-        <translation type="unfinished"></translation>
+        <translation>Hangmappa: 0001.mp3, 0002.mp3 … mint a DFPlayer SD-kártyáján</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="822"/>
         <source>Plays a sound effect output&apos;s tracks in Simulate and Live test</source>
-        <translation type="unfinished"></translation>
+        <translation>Lejátssza egy hangeffekt-kimenet számait a szimulációban és az élő tesztben</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="823"/>
         <source>Mute sounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Hangok némítása</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="856"/>
         <source>&amp;User levels</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Felhasználói szintek</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="865"/>
         <source>B&amp;luetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>B&amp;luetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="866"/>
         <location filename="../src/mainwindow.cpp" line="2760"/>
         <source>Bluetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="871"/>
         <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano, DCCnext) for model railways.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;GPIOcore paneleket (Arduino Nano, DCCnext) konfigurál modellvasutakhoz.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1022"/>
@@ -1538,7 +1538,7 @@ A panelen minden felülíródik.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1253"/>
         <source>Cannot read the preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1 preset nem olvasható</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1288"/>
@@ -1558,7 +1558,7 @@ A panelen minden felülíródik.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2026"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
-        <translation type="unfinished"></translation>
+        <translation>A konfigurációnak vannak fájlba nem mentett módosításai. Menti őket?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2121"/>
@@ -1649,7 +1649,7 @@ A panelen minden felülíródik.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2414"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
-        <translation type="unfinished"></translation>
+        <translation>A panel „%1”, a képernyőn „%2” látható. Az élő teszt a képernyő bekötését mutatja, ezért előbb beolvassa a panelt?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2420"/>
@@ -1710,109 +1710,109 @@ A név a panelen tárolódik; a bemenetek és kimenetek Ön által adott nevei e
     <message>
         <location filename="../src/mainwindow.cpp" line="1367"/>
         <source>Example opened. Save it under a name of your own (Ctrl+S); the example itself is never changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>A példa megnyílt. Mentse saját néven (Ctrl+S); maga a példa soha nem változik.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1420"/>
         <source>%1 output(s), %2 input(s), %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 kimenet, %2 bemenet, %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1431"/>
         <source>Open example</source>
-        <translation type="unfinished"></translation>
+        <translation>Példa megnyitása</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1433"/>
         <source>Start from an example. It opens like a board file, but without a file name: when you save, you choose a new name, so the example stays as it is.</source>
-        <translation type="unfinished"></translation>
+        <translation>Induljon egy példából. Úgy nyílik meg, mint egy panelfájl, de fájlnév nélkül: mentéskor új nevet választ, így a példa változatlan marad.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1450"/>
         <source>No examples found in %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nem található példa itt: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1472"/>
         <source>Outputs (%1 in use)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kimenetek (használatban: %1)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1473"/>
         <source>Inputs (%1 in use)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bemenetek (használatban: %1)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1474"/>
         <source>Board settings (type, route timing, interlocking)</source>
-        <translation type="unfinished"></translation>
+        <translation>Panelbeállítások (típus, vágányút-időzítés, reteszelés)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1517"/>
         <source>Exported to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportálva ide: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1528"/>
         <location filename="../src/mainwindow.cpp" line="1540"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportálás</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1530"/>
         <source>Save the items in use of the parts you tick in a board file of their own, with their names, settings and routes, e.g. to make your own example. Import adds them to another board.</source>
-        <translation type="unfinished"></translation>
+        <translation>A bejelölt részek használatban lévő elemeit külön panelfájlba menti, nevükkel, beállításaikkal és vágányútjaikkal, pl. saját példa készítéséhez. Az importálás hozzáadja őket egy másik panelhez.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1536"/>
         <source>Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportálás…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1548"/>
         <source>Import from a board file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importálás panelfájlból</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1564"/>
         <source>Import from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Importálás innen: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1566"/>
         <source>Add the items in use of the parts you tick to this board.</source>
-        <translation type="unfinished"></translation>
+        <translation>A bejelölt részek használatban lévő elemeinek hozzáadása ehhez a panelhez.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1570"/>
         <source>Where to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hova:</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1572"/>
         <source>Same numbers (replace): every item goes to its own number</source>
-        <translation type="unfinished"></translation>
+        <translation>Azonos számok (felülírás): minden elem a saját számára kerül</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1573"/>
         <source>Into free slots: the first free outputs and inputs, links between the imported items are renumbered</source>
-        <translation type="unfinished"></translation>
+        <translation>Szabad helyekre: az első szabad kimenetek és bemenetek, az importált elemek közötti kapcsolatok átszámozódnak</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1581"/>
         <source>A pin that is already in use goes to the imported item: your own item keeps its function, but loses that pin. The items concerned are listed afterwards.</source>
-        <translation type="unfinished"></translation>
+        <translation>Egy már használt láb az importált elemhez kerül: az Ön elemének megmarad a funkciója, de elveszíti ezt a lábat. Az érintett elemeket utána felsoroljuk.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1586"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importálás</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1616"/>
         <location filename="../src/mainwindow.cpp" line="1625"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1629"/>
@@ -1821,115 +1821,121 @@ A név a panelen tárolódik; a bemenetek és kimenetek Ön által adott nevei e
 %1
 
 Import?</source>
-        <translation type="unfinished"></translation>
+        <translation>Az Ön alábbi elemeit felülírják a fájlból származók:
+
+%1
+
+Importálja?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1651"/>
         <location filename="../src/mainwindow.cpp" line="1660"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1680"/>
         <source>Imported %1 output(s) and %2 input(s) from %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Importálva: %1 kimenet és %2 bemenet innen: %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1683"/>
         <source>Some pins were already in use:
 
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Néhány láb már használatban volt:
+
+%1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1697"/>
         <source>This project uses %1 features (%2). The level is set to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ez a projekt %1 szintű funkciókat használ (%2). A szint beállítva: %1.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1910"/>
         <source>%1 uses %2, which cannot be used here: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ezt használja: %2, ami itt nem használható: %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1915"/>
         <source>%1 (%2) is also used by %3 (%4).</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) használja még: %3 (%4).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1917"/>
         <source>%1 (%2) is also used by %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) használja még: %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1926"/>
         <source>Detector %1 is not in use or has no pin: the board never sees that block occupied.</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1 foglaltságjelző nincs használatban vagy nincs lába: a panel sosem látja foglaltnak ezt a térközt.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1937"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on %3 and %4 stops working as soon as at least one servo output exists. Use %5 for PWM, or remove the servo.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2): ütközés a szervókkal. A Servo könyvtár az 1-es időzítőt használja, így a PWM a(z) %3 és %4 lábon leáll, amint legalább egy szervókimenet létezik. Használja a(z) %5 lábat PWM-hez, vagy távolítsa el a szervót.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1958"/>
         <source>Pin %1 cannot be used here: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1 láb itt nem használható: %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1962"/>
         <source>Pin %1 is also used by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1 lábat használja még: %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1971"/>
         <source>No pin is set: this sensor never reports its block occupied.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nincs láb beállítva: ez az érzékelő soha nem jelzi foglaltnak a térközét.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1978"/>
         <source>Route step %1 sets %2, which is not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1. vágányút-lépés ezt állítja: %2, ami nincs használatban.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1981"/>
         <source>Route step %1 sets %2, a block signal: it ignores the step.</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1. vágányút-lépés ezt állítja: %2, ami önműködő térközjelző: figyelmen kívül hagyja a lépést.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1989"/>
         <source>%1 is not in use.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nincs használatban.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1991"/>
         <source>%1 is a block signal: it sets its own aspect and ignores this input.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 önműködő térközjelző: maga állítja be a jelzési képét, és figyelmen kívül hagyja ezt a bemenetet.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1999"/>
         <source>D0/D1 are the USB serial pins: on the board they only work when no PC is connected (5 s after power-up without the GUI). In the simulator they always work.</source>
-        <translation type="unfinished"></translation>
+        <translation>A D0/D1 az USB soros lábai: a panelen csak akkor működnek, ha nincs PC csatlakoztatva (bekapcsolás után 5 mp-ig program nélkül). A szimulátorban mindig működnek.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2081"/>
         <source>The pin was in use: %1 keeps its settings, but has no pin there now.</source>
-        <translation type="unfinished"></translation>
+        <translation>A láb használatban volt: %1 megtartja a beállításait, de most nincs ott lába.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2120"/>
         <source>Phone: %1 %2 = %3°</source>
-        <translation type="unfinished"></translation>
+        <translation>Telefon: %1 %2 = %3°</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2239"/>
         <source>%1 has no DCC address, so it cannot receive a DCC extended command.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nem rendelkezik DCC-címmel, ezért nem fogadhat DCC extended parancsot.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2338"/>
         <source>%1: %2 %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2541"/>
@@ -2005,57 +2011,57 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2707"/>
         <source>%1 removed; %2 drove it and is now not in use as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 eltávolítva; a(z) %2, amely vezérelte, szintén nincs már használatban.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2737"/>
         <source>Set up Bluetooth (HC-05)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bluetooth (HC-05) beállítása</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2740"/>
         <source>&lt;b&gt;Wiring&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 through a voltage divider: 1 kΩ from D1 to RXD, 2 kΩ from RXD to GND&lt;/li&gt;&lt;li&gt;TXD → D0 through a Schottky diode (BAT85 or 1N5819), &lt;b&gt;cathode (stripe) at the HC-05 TXD&lt;/b&gt;, so USB still works while the HC-05 is attached&lt;/li&gt;&lt;/ul&gt;Hold the button on the HC-05 while you plug in the USB cable (its LED blinks slowly), connect, then click &lt;b&gt;Start&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Bekötés&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 feszültségosztón át: 1 kΩ D1 és RXD között, 2 kΩ RXD és GND között&lt;/li&gt;&lt;li&gt;TXD → D0 Schottky-diódán át (BAT85 vagy 1N5819), &lt;b&gt;katód (csík) a HC-05 TXD lábánál&lt;/b&gt;, hogy az USB a HC-05 csatlakoztatva is működjön&lt;/li&gt;&lt;/ul&gt;Tartsa nyomva a HC-05 gombját, miközben csatlakoztatja az USB-kábelt (a LED lassan villog), csatlakozzon, majd kattintson a &lt;b&gt;Start&lt;/b&gt; gombra.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2755"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2766"/>
         <source>Setting up the HC-05… (a few seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>A HC-05 beállítása… (néhány másodperc)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2778"/>
         <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in GPIOcore.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Kész:&lt;/b&gt; a HC-05 most 115200 baudon fut (%1 baudon válaszolt). Húzza ki a panelt, és dugja vissza (a gomb nyomva tartása nélkül). Párosítsa a(z) &apos;%2&apos; eszközt a Windows Bluetooth-beállításaiban (PIN 1234, egyes moduloknál 0000); a Windows létrehoz hozzá egy COM-portot — ezt a portot válassza a GPIOcore-ban.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2782"/>
         <source>&lt;br&gt;The name could not be set: it keeps its old name.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br&gt;A nevet nem sikerült beállítani: a régi név marad.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2785"/>
         <source>&lt;b&gt;No HC-05 answered.&lt;/b&gt; Likely causes: it is not in AT mode (hold its button while plugging in the USB cable: the LED blinks slowly, about every 2 s), the wiring (TXD → D0, RXD → D1 through the divider), or the diode is missing or the wrong way round (stripe at the HC-05).</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Egy HC-05 sem válaszolt.&lt;/b&gt; Valószínű okok: nincs AT módban (tartsa nyomva a gombját, miközben csatlakoztatja az USB-kábelt: a LED lassan villog, kb. 2 másodpercenként), a bekötés (TXD → D0, RXD → D1 az osztón át), vagy a dióda hiányzik, illetve fordítva van beépítve (a csík a HC-05 felől).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2791"/>
         <source>&lt;b&gt;The HC-05 answered at %1 baud but refused the new settings.&lt;/b&gt; It is probably not in AT mode: hold its button while plugging in the USB cable (the LED blinks slowly) and try again. Some other modules (HC-06, clones) do not know these commands.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;A HC-05 %1 baudon válaszolt, de elutasította az új beállításokat.&lt;/b&gt; Valószínűleg nincs AT módban: tartsa nyomva a gombját, miközben csatlakoztatja az USB-kábelt (a LED lassan villog), és próbálja újra. Néhány más modul (HC-06, klónok) nem ismeri ezeket a parancsokat.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2796"/>
         <source>&lt;b&gt;The board did not answer.&lt;/b&gt; Check the connection and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;A panel nem válaszolt.&lt;/b&gt; Ellenőrizze a csatlakozást, és próbálja újra.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2814"/>
         <source>No preset &quot;%1&quot; in %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Nincs „%1” preset itt: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="745"/>
@@ -2117,18 +2123,20 @@ Import?</source>
         <source>No GPIOcore board answered on %1.
 
 Check that the right port is chosen and that the board has the GPIOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
-        <translation type="unfinished"></translation>
+        <translation>Egy GPIOcore panel sem válaszolt a(z) %1 porton.
+
+Ellenőrizze, hogy a megfelelő port van-e kiválasztva, és hogy a panelen van-e GPIOcore firmware (Panel &gt; Firmware feltöltése). Az a panel, amely 5 másodpercnél tovább fut program nélkül, a konfiggomb rövid megnyomását (Nano) vagy resetet igényel (húzza ki és dugja vissza az USB-kábelt).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="202"/>
         <location filename="../src/mainwindow.cpp" line="1027"/>
         <source>◌ Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation type="unfinished"></translation>
+        <translation>◌ Várakozás a panelre — nyomja meg röviden a konfiggombját (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="203"/>
         <source>Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation type="unfinished"></translation>
+        <translation>Várakozás a panelre — nyomja meg röviden a konfiggombját (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="312"/>
@@ -2144,17 +2152,17 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="435"/>
         <source>%1 already drives %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 már vezérli ezt: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="439"/>
         <source>The route of %1 already has %2 steps (maximum)</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1 vágányútja már %2 lépésből áll (maximum)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="449"/>
         <source>%1 is a block signal: it sets its own aspect from its detectors, an input cannot switch it.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 önműködő térközjelző: a jelzési képét maga állítja be a foglaltságjelzőiből, bemenet nem kapcsolhatja.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="681"/>
@@ -2174,7 +2182,7 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="722"/>
         <source>Ready-made configurations from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kész konfigurációk innen: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="746"/>
@@ -2189,27 +2197,27 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="756"/>
         <source>Open &amp;example…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Példa megnyitása…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="758"/>
         <source>&amp;Export…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Exportálás…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="759"/>
         <source>Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example</source>
-        <translation type="unfinished"></translation>
+        <translation>Egyes kimenetek, bemenetek vagy a panelbeállítások mentése külön fájlba, pl. saját példaként</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="760"/>
         <source>&amp;Import…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importálás…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="761"/>
         <source>Add the outputs, inputs or board settings of another board file to this one</source>
-        <translation type="unfinished"></translation>
+        <translation>Egy másik panelfájl kimeneteinek, bemeneteinek vagy panelbeállításainak hozzáadása ehhez</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="763"/>
@@ -2239,7 +2247,7 @@ Check that the right port is chosen and that the board has the GPIOcore firmware
     <message>
         <location filename="../src/mainwindow.cpp" line="782"/>
         <source>Set up &amp;Bluetooth (HC-05)…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bluetooth (HC-05) beállítása…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="786"/>
@@ -2553,12 +2561,12 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/outputeditor.cpp" line="145"/>
         <source>Relays switch on LOW (inverted)</source>
-        <translation type="unfinished"></translation>
+        <translation>A relék LOW jelre kapcsolnak (fordított)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="146"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
-        <translation type="unfinished"></translation>
+        <translation>Olyan relémodulokhoz, amelyek akkor kapcsolnak be, ha a bemenet LOW: a relélábakat fordítva vezérli</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="156"/>
@@ -2613,22 +2621,22 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/outputeditor.cpp" line="219"/>
         <source>Follows a detector (semaphore arm)</source>
-        <translation type="unfinished"></translation>
+        <translation>Foglaltságjelzőt követ (alakjelző)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="227"/>
         <source>Detector</source>
-        <translation type="unfinished"></translation>
+        <translation>Foglaltságjelző</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="228"/>
         <source>Swap: occupied = straight</source>
-        <translation type="unfinished"></translation>
+        <translation>Csere: foglalt = egyenes</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="230"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
-        <translation type="unfinished"></translation>
+        <translation>Foglalt = 0. helyzet (kitérő irány, a kar megállj állásban), szabad = 1. helyzet (egyenes, szabad), a fent megadott sebességgel.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="252"/>
@@ -2668,62 +2676,62 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/outputeditor.cpp" line="283"/>
         <source>Aspect numbers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Jelzésikép-számok…</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="284"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
-        <translation type="unfinished"></translation>
+        <translation>Melyik DCC extended szám mely lámpákat mutatja — iTrainhez, Rocrailhez vagy a központjához</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Unsafe</source>
-        <translation type="unfinished"></translation>
+        <translation>Megállj</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Caution</source>
-        <translation type="unfinished"></translation>
+        <translation>Vigyázat</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="309"/>
         <source>Safe</source>
-        <translation type="unfinished"></translation>
+        <translation>Szabad</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="310"/>
         <source>Aspect while its own block is occupied</source>
-        <translation type="unfinished"></translation>
+        <translation>Jelzési kép, amíg a saját térköz foglalt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="311"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
-        <translation type="unfinished"></translation>
+        <translation>Jelzési kép, amíg a saját térköz szabad és a következő foglalt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="312"/>
         <source>Aspect while both blocks are free</source>
-        <translation type="unfinished"></translation>
+        <translation>Jelzési kép, amíg mindkét térköz szabad</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="318"/>
         <source>aspect </source>
-        <translation type="unfinished">jelzési kép </translation>
+        <translation>jelzési kép </translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation type="unfinished">Jelzési kép választása lámpánként</translation>
+        <translation>Jelzési kép választása lámpánként</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="345"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
-        <translation type="unfinished"></translation>
+        <translation>A panel 50 ms-onként maga választja a jelzési képet: megállj, amíg a saját térköz foglalt, vigyázat, amíg a következő az, egyébként szabad. Bemenetek, vágányutak és DCC nem állíthatják. A villogó lámpák 1 Hz-cel villognak.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="611"/>
         <source>Pins (PWM capable: %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lábak (PWM-képes: %1)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="307"/>
@@ -2789,7 +2797,7 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/outputeditor.cpp" line="518"/>
         <source>%1 · %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 · %2</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="560"/>
@@ -2907,83 +2915,83 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Expert</source>
-        <translation type="unfinished"></translation>
+        <translation>Szakértő</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Haladó</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Beginner</source>
-        <translation type="unfinished"></translation>
+        <translation>Kezdő</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="178"/>
         <source>block signals</source>
-        <translation type="unfinished"></translation>
+        <translation>önműködő térközjelzők</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="179"/>
         <source>4-aspect signals</source>
-        <translation type="unfinished"></translation>
+        <translation>4 jelzési képes jelzők</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="180"/>
         <source>PWM</source>
-        <translation type="unfinished">PWM</translation>
+        <translation>PWM</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="181"/>
         <source>sound effects</source>
-        <translation type="unfinished"></translation>
+        <translation>hangeffektek</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="182"/>
         <source>light effects</source>
-        <translation type="unfinished"></translation>
+        <translation>fényeffektek</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="185"/>
         <source>semaphore arms</source>
-        <translation type="unfinished"></translation>
+        <translation>alakjelzők (szemaforkarok)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="187"/>
         <source>frog relays</source>
-        <translation type="unfinished"></translation>
+        <translation>szívrelék</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="190"/>
         <location filename="../src/uihelpers.cpp" line="200"/>
         <source>D0 / D1</source>
-        <translation type="unfinished"></translation>
+        <translation>D0 / D1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="196"/>
         <source>sensors</source>
-        <translation type="unfinished"></translation>
+        <translation>érzékelők</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="197"/>
         <source>routes on straight or curved only</source>
-        <translation type="unfinished"></translation>
+        <translation>vágányutak csak egyenes vagy csak kitérő irányra</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="198"/>
         <source>analog inputs</source>
-        <translation type="unfinished"></translation>
+        <translation>analóg bemenetek</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="199"/>
         <source>custom values</source>
-        <translation type="unfinished"></translation>
+        <translation>saját értékek</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="201"/>
         <source>own wait time per route step</source>
-        <translation type="unfinished"></translation>
+        <translation>saját várakozási idő minden vágányút-lépéshez</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="447"/>
@@ -2993,17 +3001,17 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/uihelpers.cpp" line="494"/>
         <source>Aspect numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Jelzésikép-számok</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="496"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Válassza ki lámpánként, mit mutasson a jelző. Az alatta lévő szám a hozzá tartozó DCC extended érték: ezt adja meg az iTrainben, a Rocrailban vagy a központjában. Itt semmi sem változik. Az 1. lámpa az A láb, a 2. lámpa a B láb, és így tovább.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="519"/>
         <source>DCC extended number: %1  (0x%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>DCC extended szám: %1  (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="582"/>
@@ -3039,12 +3047,12 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
     <message>
         <location filename="../src/soundplayer.cpp" line="97"/>
         <source>Sound effect track %1: choose a sound folder (View &gt; Sound folder…) to hear it.</source>
-        <translation type="unfinished"></translation>
+        <translation>A(z) %1. hangeffekt-szám: válasszon hangmappát (Nézet &gt; Hangmappa…), hogy meghallgathassa.</translation>
     </message>
     <message>
         <location filename="../src/soundplayer.cpp" line="104"/>
         <source>%1 not found in %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nem található itt: %2</translation>
     </message>
 </context>
 </TS>
