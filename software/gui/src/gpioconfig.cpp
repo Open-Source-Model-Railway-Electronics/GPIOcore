@@ -521,13 +521,6 @@ QJsonObject BoardConfig::toJson() const
     for (int i = 0; i < NumInputs; ++i)  { QJsonObject o = inputs[i].toJson();  o["index"] = i; ins.append(o); }
     root["outputs"] = outs;
     root["inputs"]  = ins;
-    if (!nextSteps.isEmpty())
-    {
-        QJsonArray steps;
-        for (const NextStep &s : nextSteps)
-            steps.append(QJsonObject{ { "text", s.text }, { "done", s.done } });
-        root["nextSteps"] = steps;
-    }
     return root;
 }
 
@@ -548,9 +541,6 @@ bool BoardConfig::fromJson(const QJsonObject &root, BoardConfig &out, QString *e
     for (int i = 0; i < NumOutputs; ++i) out.outputs[i] = OutputConfig::fromJson(outs.at(i).toObject());
     for (int i = 0; i < NumInputs;  ++i) out.inputs[i]  = InputConfig::fromJson(ins.at(i).toObject());
     out.board = root.contains("board") ? BoardSettings::fromJson(root["board"].toObject()) : BoardSettings();
-    out.nextSteps.clear();
-    for (const QJsonValue &v : root["nextSteps"].toArray())
-        out.nextSteps.append({ v.toObject()["text"].toString(), v.toObject()["done"].toBool() });
     return true;
 }
 
@@ -724,55 +714,6 @@ QString pinNote(quint8 pin)
     if (pin == 20 || pin == 21)
         return trGpio("analog input without pull-up: add a 10 kOhm resistor to 5 V");
     return QString();
-}
-
-BoardConfig presetBoard(int preset)
-{
-    BoardConfig b;                                 // everything 'not in use' to start with
-    quint8 pin = 3;
-    auto next = [&pin]() -> quint8 { if (pin == 13) ++pin; return pin++; };
-    auto out = [&b](int i, quint8 type, quint8 a, quint8 pb, quint8 ra, quint8 rb, quint8 rc) {
-        OutputConfig &c = b.outputs[i];
-        c.type = type; c.pinA = a; c.pinB = pb; c.relayA = ra; c.relayB = rb; c.relayC = rc; c.state = 0;
-        if (type == ServoType)                         c.data = { { 80, 100, 20, 0 } };
-        if (type == SinglePulse || type == DoublePulse) c.setSwitchTime(50);
-    };
-    const quint8 X = PinNA;
-    int used = 0;
-    switch (preset)
-    {
-    case 0: used = 16; for (int i = 0; i < used; ++i) { quint8 a = next(); out(i, ServoType, a, X, X, X, X); } break;
-    case 1: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), c = next(); out(i, ServoType, a, X, X, X, c); } break;
-    case 2: used = 5;  for (int i = 0; i < used; ++i) { quint8 a = next(), ra = next(), rb = next(); out(i, ServoType, a, X, ra, rb, X); } break;
-    case 3: used = 16; for (int i = 0; i < used; ++i) { quint8 a = next(); out(i, SingleSteady, a, X, X, X, X); } break;
-    case 4: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(); out(i, DoublePulse, a, p2, X, X, X); } break;
-    case 5: used = 5;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(), c = next(); out(i, DoublePulse, a, p2, X, X, c); } break;
-    case 6: used = 4;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(), ra = next(), rb = next(); out(i, DoublePulse, a, p2, ra, rb, X); } break;
-    case 7: used = 8;  for (int i = 0; i < used; ++i) { quint8 a = next(), p2 = next(); out(i, DoubleSteady, a, p2, X, X, X); } break;
-    case 8: used = 1;  out(0, SingleSteady, next(), X, X, X, X); break;    // empty: 1 input, 1 output
-    default: break;
-    }
-    for (int i = 0; i < used; ++i)
-    {
-        InputConfig &c = b.inputs[i];
-        c.type = Latching; c.address = quint16(1 + i); c.outputId = quint8(i);
-    }
-    return b;
-}
-
-QStringList presetNames()
-{
-    return {
-        trGpio("0 – 16 servos"),
-        trGpio("1 – 8 servos + unifrog relay"),
-        trGpio("2 – 5 servos + electrofrog relays"),
-        trGpio("3 – 16 single steady"),
-        trGpio("4 – 8 double pulse"),
-        trGpio("5 – 5 double pulse + unifrog relay"),
-        trGpio("6 – 4 double pulse + electrofrog relays"),
-        trGpio("7 – 8 double steady"),
-        trGpio("8 – Empty: 1 input, 1 output"),
-    };
 }
 
 } // namespace Gpio

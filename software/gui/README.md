@@ -1,9 +1,9 @@
 # GPIOcore Configurator (Qt)
 
 A desktop program to configure a GPIOcore board (Arduino Nano / Uno, or an ArCoMoRa DCCnext) for a model
-railway: outputs, inputs, routes, board settings, with a canvas to link inputs to outputs, a pin map with
+railway: outputs, inputs, routes, board settings, with a canvas to link inputs to outputs, pin
 conflict checking, a simulator that runs the real firmware, a live test on the real board and a phone remote
-for servos.
+for servos. The program is in English for now (the translations stay in `i18n/` for later).
 
 ## Opening and building
 
@@ -24,9 +24,10 @@ makes `gpiocore_fw_host`: the firmware in `../GPIOcore` compiled for the PC (wit
 
 ## The window
 
-The program opens straight into the workspace with two tabs, **Configuration** and **Pin map**.
+The program opens straight into the workspace, offline in *Configure*, with an empty board: one input (absolute,
+DCC address 1) that drives one output (single steady on D3), the *Empty* preset.
 
-- **Configuration**: the input settings on the left, the canvas in the middle (inputs | wires | outputs), the
+- The input settings on the left, the canvas in the middle (inputs | wires | outputs), the
   output settings on the right; drag the splitter handles to resize. **+ Add input / + Add output** take the
   next free one; **Remove** in a panel sets it to *not in use*. Unused blocks are hidden unless
   *View → Show unused inputs and outputs* is on.
@@ -34,7 +35,6 @@ The program opens straight into the workspace with two tabs, **Configuration** a
   *Route* gets a step per dragged output (up to 16 per route, within the board's step pool), each with a value
   (curved / straight, aspect, servo angle, PWM value, sound track) and, when the board setting is on, its own
   wait time. Every input has its own wire colour; an output takes the colour of the input that drives it.
-- **Pin map**: one card per pin with what uses it; red = conflict. Click a card to edit its user.
 - Every **(i)** button explains the thing next to it; *Help → Getting started* (F1) is a guide for beginners.
 
 ### Three modes (toolbar)
@@ -60,8 +60,7 @@ message); the level is never lowered by itself and never changes the configurati
 ### Board types
 
 *Arduino Nano* (A6 as analog input), *Arduino Uno* (no A6 / A7), *DCCnext* and *Jack of all trades*. On a DCCnext
-the program uses the board's own port names **P1–P16** everywhere (pin lists show "P1 (D3)", the pin map shows P1
-large with D3 small) and only offers those 16 ports. D2 (DCC) and D13 (config LED) are never offered; the config
+the program uses the board's own port names **P1–P16** everywhere (pin lists show "P1 (D3)") and only offers those 16 ports. D2 (DCC) and D13 (config LED) are never offered; the config
 button (A7) only exists on the Nano. A file with a pin the board type does not have keeps it, with a warning.
 
 ## Files (File menu)
@@ -70,10 +69,7 @@ button (A7) only exists on the Nano. A file with a pin the board type does not h
   `Documents/GPIOcore/boards/<name>.json` (readable JSON, explained in its `about` field). *Save* always asks
   for the file name; the previous version goes to `boards/backup/`. *Read board* takes the names of inputs and
   outputs from the board's file, the board wins for the settings.
-- **New board (offline)…**: an empty board or a preset. **New board wizard…**: five short pages (board type;
-  how many servo / coil / stall motor turnouts, lights and uncouplers; DCC addresses and buttons; pins in order or
-  empty; summary) build a Beginner configuration and a **Next steps** list (a tick list above the canvas, kept in
-  the board file as `nextSteps`; *File → Show next steps* reopens it).
+- **New board (offline)…**: a name and a preset to start with (default *Empty: 1 input, 1 output*).
 - **Open example…**: the files in `examples/` (next to the exe, or in the source tree for a development build)
   with a short description. An example opens without a file name, so *Save* asks for a new one.
 - **Export…**: the in-use outputs, inputs and / or board settings in a board file of their own (other slots
@@ -83,12 +79,25 @@ button (A7) only exists on the Nano. A file with a pin the board type does not h
   renumbered). A pin already in use goes to the imported item; your own item keeps its function, loses the pin,
   and is listed afterwards. The import is one edit: written live when connected, the file becomes unsaved.
 
+## Presets
+
+The toolbar's **Preset** list (and *File → New board*) shows the board files in `presets/`: next to the exe, or
+in the source tree (`software/gui/presets/`) for a development build; `build.py` copies them to `release/`.
+They are sorted by name; the name is the file's `presetName` field (otherwise the file name). *Apply* asks first
+(optionally clearing the names), then replaces all outputs and inputs; when connected they are written live. A
+preset that needs a higher user level raises it, as when opening a file. A preset only sets the board type when
+its `board` section has a `type`; the shipped presets have none, so they fit every board.
+
+The presets belong to the program: the GUI only reads them. To change one, edit its JSON file, or make the
+configuration in the GUI, save it (*Save as…* or *Export…*), add a `presetName` and replace the file by hand.
+A preset is a normal board file, so *File → Open* reads it too.
+
 ## Board menu and more
 
 *Connect / Disconnect*, *Read board*, *Write changes*, *Revert*, *Board settings…* (name, board type, wait time
 per step, route interlocking), *Apply a preset…*, *Flash firmware…* (avrdude in `tools/avrdude`, default
 `release/GPIOcore.hex`) and *Phone remote…* (a web page with a QR code to adjust servos from a phone on the same
-Wi-Fi). *View → Theme* (automatic, light, dark) and *View → Language* (see `i18n/README.md`).
+Wi-Fi). *View → Theme* (automatic, light, dark).
 
 Start options (handy for tests and documentation):
 
@@ -96,8 +105,8 @@ Start options (handy for tests and documentation):
 GPIOcoreGUI --demo                      start in Simulate
 GPIOcoreGUI --port COM5                 connect at start
 GPIOcoreGUI --open examples/routes-demo.json --demo
-GPIOcoreGUI --demo --preset 2 --screenshot out.png --tab outputs --select 1   (tab: outputs, inputs, pins)
-GPIOcoreGUI --size 1680x900 --theme dark --lang nl
+GPIOcoreGUI --demo --preset 16-servos --screenshot out.png --tab outputs --select 1   (tab: outputs, inputs)
+GPIOcoreGUI --size 1680x900 --theme dark --lang nl     (--lang: a translation for this run, e.g. screenshots)
 ```
 
 **Inputs and pins:** the pins are `INPUT_PULLUP`, a button or contact goes to GND (pressed = low).
@@ -111,15 +120,15 @@ command (any, or straight / curved only).
 | `src/protocol.*`             | framing (opcode / length nibble, checksum, ACK / NACK)                               |
 | `src/gpioconfig.*`           | output / input / board model, bitfield widths, JSON, pins and pin names per board    |
 | `src/connections.*`          | linking logic input → output(s): direct / route, steps                               |
-| `src/boardtools.*`           | partial export / import (renumbering) and the configuration the wizard builds        |
+| `src/boardtools.*`           | partial export / import (renumbering)                                                |
 | `src/devicelink.*`           | request / response queue, timeouts, retries, live writing                            |
 | `src/simulateddevice.*`      | the simulator: starts `gpiocore_fw_host` (the real firmware) and talks to it          |
 | `fwhost/`                    | Arduino shim and host program for the firmware on the PC                             |
-| `src/mainwindow.*`           | main window, modes, files, dirty tracking, warnings, next steps                      |
+| `src/mainwindow.*`           | main window, modes, files, presets, dirty tracking, warnings                         |
 | `src/connectionview.*`       | the canvas: blocks, wires, dragging, live buttons                                    |
-| `src/outputeditor.*`, `src/inputeditor.*`, `src/pinmapview.*` | editors and pin map                             |
-| `src/boardwizard.*`          | the new board wizard                                                                 |
+| `src/outputeditor.*`, `src/inputeditor.*` | the output and input editors                                        |
 | `src/uihelpers.*`            | style, theme, user levels, pin lists, aspect picker                                  |
-| `src/infotexts.*`, `i18n/info/` | help texts behind the (i) buttons and the Help menu                               |
+| `src/infotexts.*`, `i18n/info/` | help texts behind the (i) buttons and the Help menu (English: `i18n/info/en/`)  |
+| `presets/`                   | the presets: board files with a `presetName`                                         |
 | `src/flasher.*`, `src/webremote.*`, `src/qrcode.*` | firmware flashing, phone remote                            |
 | `tests/`                     | unit tests (protocol, model, link ↔ simulator) and GUI tests                          |

@@ -534,7 +534,7 @@ private slots:
         QCOMPARE(pinName(14), QStringLiteral("A0"));
     }
 
-    // ── Partial export / import, next steps, wizard ────────────────────────
+    // ── Partial export / import ─────────────────────────────────────────────
     void exportOnlyInUseItems()
     {
         const BoardConfig b = sampleBoard();
@@ -626,81 +626,15 @@ private slots:
         QVERIFY(full.inputs.count(-1) == NumInputs && full.outputs.count(-1) == NumOutputs);
     }
 
-    void nextStepsInTheBoardFile()
+    void oldNextStepsKeyIgnored()
     {
-        BoardConfig b;
-        b.nextSteps = { { QStringLiteral("Try it in Simulate"), true }, { QStringLiteral("Write all"), false } };
+        // board files of the former new board wizard have a "nextSteps" list: it is ignored
+        QJsonObject json = sampleBoard().toJson();
+        json["nextSteps"] = QJsonArray{ QJsonObject{ { "text", "Try it in Simulate" }, { "done", true } } };
         BoardConfig back;
-        QVERIFY(BoardConfig::fromJson(b.toJson(), back, nullptr));
-        QCOMPARE(back.nextSteps.size(), 2);
-        QCOMPARE(back.nextSteps[0].text, QStringLiteral("Try it in Simulate"));
-        QVERIFY(back.nextSteps[0].done && !back.nextSteps[1].done);
-        QVERIFY(!BoardConfig().toJson().contains(QLatin1String("nextSteps")));   // only written when there are steps
-    }
-
-    void wizardBuildsTheBoard()
-    {
-        WizardChoice c;                                  // 2 servos + 2 lights, DCC from 1, pins in order
-        c.servos = 2;
-        c.lights = 2;
-        c.dcc = true;
-        c.firstAddress = 1;
-        c.pinsInOrder = true;
-        QCOMPARE(c.pinsNeeded(), 4);
-        const BoardConfig b = wizardBoard(c);
-        QCOMPARE(int(b.outputs[0].type), int(ServoType));
-        QCOMPARE(int(b.outputs[1].type), int(ServoType));
-        QCOMPARE(int(b.outputs[2].type), int(SingleSteady));
-        QCOMPARE(int(b.outputs[3].type), int(SingleSteady));
-        QCOMPARE(int(b.outputs[4].type), int(OutputNotInUse));
-        QCOMPARE(QVector<int>({ b.outputs[0].pinA, b.outputs[1].pinA, b.outputs[2].pinA, b.outputs[3].pinA }),
-                 QVector<int>({ 3, 4, 5, 6 }));
-        QCOMPARE(b.outputs[0].servoMin(), quint8(80));
-        QCOMPARE(b.outputs[0].name, QStringLiteral("Servo turnout 1"));
-        QCOMPARE(b.outputs[3].name, QStringLiteral("Light 2"));
-        for (int i = 0; i < 4; ++i)
-        {
-            QCOMPARE(int(b.inputs[i].type), int(Latching));
-            QCOMPARE(int(b.inputs[i].address), i + 1);
-            QCOMPARE(int(b.inputs[i].outputId), i);
-            QCOMPARE(int(b.inputs[i].pin), int(PinNA));
-        }
-        QCOMPARE(int(b.inputs[4].type), int(InputNotInUse));
-        QStringList steps;
-        for (const NextStep &s : b.nextSteps) { steps << s.text; QVERIFY(!s.done); }
-        QCOMPARE(steps, QStringList({ "Wire Out 1–4 to D3–D6 (the Pin map tab shows which pin is which)",
-                                      "Set the end positions of servo Out 1–2 (Live slider, phone remote or loco 9999)",
-                                      "Set turnout addresses 1–4 in your command station / iTrain",
-                                      "Try it in Simulate",
-                                      "Connect the board and use Write all to put this configuration on it" }));
-        // Beginner features only
-        for (const OutputConfig &o : b.outputs) QVERIFY(o.relayA == PinNA && o.relayC == PinNA);
-
-        // a DCCnext with push buttons, a coil turnout, addresses from 10; then: pins left empty
-        c.boardType = BoardDccNext;
-        c.coils = 1;
-        c.buttons = WizardChoice::ToggleButtons;
-        c.firstAddress = 10;
-        QCOMPARE(c.pinsNeeded(), 11);
-        const BoardConfig d = wizardBoard(c);
-        QCOMPARE(int(d.board.type), int(BoardDccNext));
-        QCOMPARE(int(d.outputs[2].type), int(DoublePulse));
-        QCOMPARE(int(d.outputs[2].pinA), 5);
-        QCOMPARE(int(d.outputs[2].pinB), 6);
-        QCOMPARE(int(d.inputs[0].type), int(Momentary));
-        QCOMPARE(int(d.inputs[0].pin), 9);               // after the 6 output pins: P7
-        QCOMPARE(int(d.inputs[4].pin), 14);              // P11 = A0
-        QCOMPARE(int(d.inputs[4].address), 14);
-        QVERIFY(d.nextSteps[1].text == QStringLiteral("Wire the buttons to P7–P11 and GND"));
-        QVERIFY(d.nextSteps[2].text.endsWith(QLatin1String("(Live slider or phone remote)")));   // no config button
-        c.pinsInOrder = false;
-        c.firstAddress = 0;
-        const BoardConfig e = wizardBoard(c);
-        QCOMPARE(int(e.outputs[0].pinA), int(PinNA));
-        QCOMPARE(int(e.inputs[0].address), int(AddrNone));
-        QCOMPARE(e.nextSteps[0].text, QStringLiteral("Choose pins for Out 1–5 (output settings, or the Pin map tab)"));
-        QCOMPARE(e.nextSteps[1].text, QStringLiteral("Choose the button pins for In 1–5 (input settings)"));
-        QVERIFY(e.nextSteps[3].text.startsWith(QStringLiteral("Set the DCC addresses of In 1–5")));
+        QVERIFY(BoardConfig::fromJson(json, back, nullptr));
+        QVERIFY(back.outputs == sampleBoard().outputs);
+        QVERIFY(!back.toJson().contains(QLatin1String("nextSteps")));
     }
 
     // ── Protocol v2 ─────────────────────────────────────────────────────────
@@ -757,23 +691,6 @@ private slots:
         // names are not part of the board data: a named output equals the board's copy
         OutputConfig plain = b.outputs[2]; plain.name.clear();
         QVERIFY(plain == b.outputs[2]);
-    }
-
-    void presetsInTheGui()
-    {
-        const BoardConfig s16 = presetBoard(0);              // 16 servos: D3-D12, A0-A5, never D13
-        QCOMPARE(int(s16.outputs[0].pinA), 3);
-        QCOMPARE(int(s16.outputs[9].pinA), 12);
-        QCOMPARE(int(s16.outputs[10].pinA), 14);
-        QCOMPARE(int(s16.outputs[15].pinA), 19);
-        QCOMPARE(int(s16.outputs[15].type), int(ServoType));
-        QCOMPARE(int(s16.inputs[15].type), int(Latching));
-        QCOMPARE(int(s16.inputs[15].address), 16);
-        const BoardConfig e = presetBoard(6);                // 4 double pulse + electrofrog
-        QCOMPARE(int(e.outputs[3].relayB), 19);
-        QCOMPARE(int(e.outputs[4].type), int(OutputNotInUse));
-        QCOMPARE(int(e.inputs[4].type), int(InputNotInUse));
-        QCOMPARE(int(e.outputs[0].switchTime()), 50);
     }
 
     void helloTimeoutIsNoBoard()
@@ -1220,9 +1137,6 @@ private slots:
         QCOMPARE(int(d.data[1]), 30);
         QVERIFY(d == c);
         QVERIFY(OutputConfig::fromJson(c.toJson()) == c);
-        for (int p = 0; p < presetNames().size(); ++p)           // presets: no fading
-            for (const OutputConfig &o : presetBoard(p).outputs)
-                if (o.type == Pwm) QCOMPARE(int(o.data[1]), 0);
 
         // the board keeps the fade time
         Rig r; makeRig(r);

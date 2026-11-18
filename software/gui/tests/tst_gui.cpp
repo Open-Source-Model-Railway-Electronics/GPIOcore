@@ -20,7 +20,6 @@
 #include <QListWidget>
 #include <QRadioButton>
 #include <QTemporaryDir>
-#include <QWizard>
 #include <QCheckBox>
 #include <QDialog>
 #include <QDockWidget>
@@ -36,6 +35,8 @@
 #include <QSlider>
 #include <QStatusBar>
 #include <QStandardItemModel>
+#include <QMenuBar>
+#include <QPainter>
 #include <QTabWidget>
 #include <QTcpSocket>
 
@@ -106,6 +107,14 @@ static bool readBoard(const QString &path, BoardConfig &b)
     return f.open(QIODevice::ReadOnly) && BoardConfig::fromJson(QJsonDocument::fromJson(f.readAll()).object(), b, nullptr);
 }
 
+// A preset as shipped: presets/<file>.json
+static BoardConfig shippedPreset(const char *file)
+{
+    BoardConfig b;
+    readBoard(QDir(MainWindow::presetsDir()).filePath(QLatin1String(file) + QStringLiteral(".json")), b);
+    return b;
+}
+
 class TestGui : public QObject
 {
     Q_OBJECT
@@ -124,9 +133,18 @@ class TestGui : public QObject
         QVERIFY(done.wait(5000));
     }
 
-    // Shown main window connected to the demo simulator, board read.
+    // A factory-fresh board's configuration on screen, offline: what the simulated board in the tests holds
+    // (the start screen is an empty board with 1 input and 1 output)
+    static void factoryScreen(MainWindow &w)
+    {
+        QTemporaryDir dir;
+        QVERIFY(w.openExample(writeBoard(dir, "factory.json", SimulatedDevice::factoryDefaults())));
+    }
+
+    // Shown main window connected to the demo simulator, with the board's (factory) configuration on screen.
     ConnectionView *startDemo(MainWindow &w)
     {
+        factoryScreen(w);
         auto *link = w.findChild<DeviceLink *>();
         link->drainMs = 3;
         w.resize(1320, 900);
@@ -270,7 +288,7 @@ private slots:
         MainWindow w;
         auto *link = w.findChild<DeviceLink *>();
         link->drainMs = 3;
-        w.applyPresetOnStart(2);                  // 5 servos + electrofrog relays
+        w.applyPresetOnStart(QStringLiteral("5-servos-electrofrog"));
         ConnectionView *view = startDemo(w);      // read all
         QTest::qWaitFor([link] { return !link->isBusy(); }, 8000);
         QCOMPARE(int(view->board().outputs[2].type), int(ServoType));
@@ -831,18 +849,17 @@ private slots:
             if (a->text() == QLatin1String("Apply")) apply = a;
         QVERIFY(apply);
         QVERIFY(apply->isEnabled());
-        QComboBox *combo = nullptr;
-        for (QComboBox *c : w.findChildren<QComboBox *>())
-            if (c->count() == 9 && c->itemText(3).contains(QLatin1String("single"))) combo = c;
+        auto *combo = w.findChild<QComboBox *>(QStringLiteral("presetCombo"));
         QVERIFY(combo);
-        combo->setCurrentIndex(3);                          // 16 single steady
+        combo->setCurrentIndex(combo->findText(QStringLiteral("16 single steady")));
+        QVERIFY(combo->currentIndex() >= 0);
         QTimer::singleShot(200, [] {
             if (auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()))
                 box->button(QMessageBox::Yes)->click();
         });
         apply->trigger();
         for (int o = 0; o < NumOutputs; ++o)
-            QCOMPARE(int(view->board().outputs[o].type), int(presetBoard(3).outputs[o].type));
+            QCOMPARE(int(view->board().outputs[o].type), int(shippedPreset("16-single-steady").outputs[o].type));
         QTest::qWait(800);
         QTRY_VERIFY_WITH_TIMEOUT(!link->isBusy(), 10000);
         bool clean = false;                                  // live written: nothing left to write
@@ -937,7 +954,7 @@ private slots:
         MainWindow w;
         auto *link = w.findChild<DeviceLink *>();
         link->drainMs = 3;
-        w.applyPresetOnStart(2);                  // servos with electrofrog relays
+        w.applyPresetOnStart(QStringLiteral("5 servos + electrofrog relays"));   // by its name
         ConnectionView *view = startDemo(w);
         QTest::qWaitFor([link] { return !link->isBusy(); }, 8000);
         QVERIFY(view->board().outputs[1].relayA != PinNA);
@@ -1151,6 +1168,7 @@ private slots:
         MainWindow w;
         w.resize(1320, 900);
         w.show();
+        factoryScreen(w);
         ConnectionView *view = w.findChild<ConnectionView *>();
         auto *oed = w.findChild<OutputEditor *>();
         auto *ied = w.findChild<InputEditor *>();
@@ -1416,10 +1434,7 @@ private slots:
         QCOMPARE(pinA->currentText(), QStringLiteral("⚠ D13"));
         c.pinA = 4;
         emit oed->changed(0, c);
-        w.findChild<QTabWidget *>()->setCurrentIndex(0);
         maybeScreenshot(w, "dccnext-overlay.png");
-        w.findChild<QTabWidget *>()->setCurrentIndex(1);
-        maybeScreenshot(w, "dccnext-pinmap.png");
 
         // Uno: no A6 / A7; Nano: A6 back, D-names again
         chooseBoardType(w, BoardUno);
@@ -1488,21 +1503,15 @@ private slots:
     // ── Workspace, user levels ──────────────────────────────────────────────
     void opensStraightIntoTheWorkspace()
     {
-        // no welcome page, no serial log, no payload bytes: Configuration and Pin map tabs at every level
+        // no welcome page, no serial log, no payload bytes, no tabs: the configuration at every level
         for (int level : { Ui::Beginner, Ui::Advanced, Ui::Expert })
         {
             Ui::setLevel(level);
             MainWindow w;
             w.resize(1320, 900);
             w.show();
-            auto *tabs = qobject_cast<QTabWidget *>(w.centralWidget());
-            QVERIFY(tabs);
-            QCOMPARE(tabs->count(), 2);
-            QCOMPARE(tabs->tabText(0), QStringLiteral("Configuration"));
-            QCOMPARE(tabs->tabText(1), QStringLiteral("Pin map"));
-            QVERIFY(tabs->isTabVisible(1) && tabs->isTabEnabled(1));
-            QVERIFY(tabs->tabBar()->isVisible());
-            QCOMPARE(tabs->currentIndex(), 0);
+            QCOMPARE(w.centralWidget()->objectName(), QStringLiteral("configArea"));
+            QVERIFY(w.findChildren<QTabWidget *>().isEmpty());
             QVERIFY(w.findChild<ConnectionView *>()->isVisible());
             QVERIFY(!w.findChild<QWidget *>(QStringLiteral("startPage")));
             QVERIFY(w.findChildren<QDockWidget *>().isEmpty());
@@ -1572,11 +1581,9 @@ private slots:
         QVERIFY(!visibleLabel(ied, QStringLiteral("Route starts on")));
         QVERIFY(!visibleLabel(ied, QStringLiteral("Uses ")));      // all Beginner: editable
         QVERIFY(fn->isEnabled() && type->isEnabled());
-        QComboBox *preset = nullptr;
-        for (QComboBox *c : w.findChildren<QComboBox *>())
-            if (c->count() == 9 && c->itemText(3).contains(QLatin1String("single"))) preset = c;
+        auto *preset = w.findChild<QComboBox *>(QStringLiteral("presetCombo"));
         QVERIFY(preset);
-        QCOMPARE(offered(preset), QList<int>({ 0, 3, 4, 7, 8 }));   // no frog relay presets
+        QCOMPARE(offered(preset).size(), 9);                 // every preset: one above the level raises it
         maybeScreenshot(w, "level-beginner.png");
 
         // Advanced: + effects, signal, PWM, sound, frog relays, analog, custom values, 'Route starts on', D0 / D1
@@ -1939,92 +1946,147 @@ private slots:
         QVERIFY(!w.filePath().isEmpty());                     // an ordinary open keeps its path
     }
 
-    // ── New board wizard, next steps ────────────────────────────────────────
-    void wizardAndNextSteps()
+    // ── Start screen, presets ───────────────────────────────────────────────
+    void startScreenIsAnEmptyBoard()
     {
-        QTemporaryDir dir;
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
+        const BoardConfig &b = w.findChild<ConnectionView *>()->board();
+        int outs = 0, ins = 0;
+        for (const OutputConfig &o : b.outputs) outs += o.type != OutputNotInUse;
+        for (const InputConfig &i : b.inputs)   ins  += i.type != InputNotInUse;
+        QCOMPARE(outs, 1);
+        QCOMPARE(ins, 1);
+        QCOMPARE(int(b.outputs[0].type), int(SingleSteady));
+        QCOMPARE(int(b.outputs[0].pinA), 3);                 // the first free pin
+        QCOMPARE(int(b.inputs[0].type), int(Latching));      // absolute, DCC 1 drives output 1
+        QCOMPARE(int(b.inputs[0].address), 1);
+        QCOMPARE(int(b.inputs[0].outputId), 0);
+        QCOMPARE(w.mode(), MainWindow::ModeConfigure);
+        QVERIFY(!w.findChild<DeviceLink *>()->isOpen());     // offline
+        // one workspace without a tab bar; no Pin map, no Language menu, no wizard or next steps
+        QVERIFY(w.findChildren<QTabWidget *>().isEmpty());
+        bool newBoard = false;
+        for (QAction *a : w.findChildren<QAction *>())
+        {
+            const QString t = a->text();
+            QVERIFY2(!t.contains(QLatin1String("Pin map")) && !t.contains(QLatin1String("Language"))
+                         && !t.contains(QLatin1String("izard")) && !t.contains(QLatin1String("ext steps")),
+                     qPrintable(t));
+            newBoard |= t == QStringLiteral("&New board (offline)…");
+        }
+        QVERIFY(newBoard);
+        for (QMenu *m : w.findChildren<QMenu *>())
+            QVERIFY2(m->title() != QLatin1String("Language"), qPrintable(m->title()));
+
+        // documentation: the start screen with the Preset list open (the list is a window of its own)
+        const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");
+        if (!shots.isEmpty())
+        {
+            auto *combo = w.findChild<QComboBox *>(QStringLiteral("presetCombo"));
+            combo->showPopup();
+            QTest::qWait(400);
+            QPixmap shot = w.grab();
+            QWidget *popup = combo->view()->window();
+            QPainter painter(&shot);
+            painter.drawPixmap(w.mapFromGlobal(popup->mapToGlobal(QPoint(0, 0))), popup->grab());
+            painter.end();
+            shot.save(QString::fromLocal8Bit(shots) + QStringLiteral("/start-screen-presets.png"));
+            combo->hidePopup();
+        }
+    }
+
+    void presetsListedFromTheFolder()
+    {
+        MainWindow w;
+        auto *combo = w.findChild<QComboBox *>(QStringLiteral("presetCombo"));
+        QVERIFY(combo);
+        const QDir dir(MainWindow::presetsDir());
+        const QStringList files = dir.entryList({ QStringLiteral("*.json") }, QDir::Files);
+        QCOMPARE(files.size(), 9);
+        QCOMPARE(combo->count(), files.size());
+        QStringList names;
+        for (int k = 0; k < combo->count(); ++k)
+        {
+            names << combo->itemText(k);
+            QCOMPARE(QFileInfo(combo->itemData(k).toString()).absolutePath(), dir.absolutePath());
+            QVERIFY(files.contains(QFileInfo(combo->itemData(k).toString()).fileName()));
+        }
+        // "presetName" from the file, sorted by name with the numbers in order
+        QCOMPARE(names, QStringList({ "4 double pulse + electrofrog relays", "5 double pulse + unifrog relay",
+                                      "5 servos + electrofrog relays", "8 double pulse", "8 double steady",
+                                      "8 servos + unifrog relay", "16 servos", "16 single steady",
+                                      "Empty: 1 input, 1 output" }));
+
+        // what is in them: pins from D3 upwards (D3-D12, A0-A5, never D13), input n -> output n from DCC 1
+        const BoardConfig s16 = shippedPreset("16-servos");
+        QCOMPARE(int(s16.outputs[0].pinA), 3);
+        QCOMPARE(int(s16.outputs[9].pinA), 12);
+        QCOMPARE(int(s16.outputs[10].pinA), 14);
+        QCOMPARE(int(s16.outputs[15].pinA), 19);
+        QCOMPARE(int(s16.outputs[15].type), int(ServoType));
+        QCOMPARE(int(s16.inputs[15].type), int(Latching));
+        QCOMPARE(int(s16.inputs[15].address), 16);
+        const BoardConfig e = shippedPreset("4-double-pulse-electrofrog");
+        QCOMPARE(int(e.outputs[3].relayB), 19);
+        QCOMPARE(int(e.outputs[4].type), int(OutputNotInUse));
+        QCOMPARE(int(e.inputs[4].type), int(InputNotInUse));
+        QCOMPARE(int(e.outputs[0].switchTime()), 50);
+
+        // a preset is a normal board file: File > Open reads it too
+        QVERIFY(w.loadFile(dir.filePath(QStringLiteral("16-servos.json"))));
+        QVERIFY(w.findChild<ConnectionView *>()->board().outputs == s16.outputs);
+    }
+
+    void presetAboveTheLevelRaisesIt()
+    {
         Ui::setLevel(Ui::Beginner);
         MainWindow w;
         w.resize(1320, 900);
         w.show();
-        ConnectionView *view = w.findChild<ConnectionView *>();
-        // File > New board wizard…: 2 servos + 2 lights, DCC from 1, pins in order
+        chooseBoardType(w, BoardDccNext);
+        auto *combo = w.findChild<QComboBox *>(QStringLiteral("presetCombo"));
+        QCOMPARE(offered(combo).size(), combo->count());       // every preset is offered at every level
+        combo->setCurrentIndex(combo->findText(QStringLiteral("5 servos + electrofrog relays")));
+        QAction *apply = nullptr;
+        for (QAction *a : w.findChildren<QAction *>())
+            if (a->text() == QLatin1String("Apply")) apply = a;
+        QVERIFY(apply && apply->isEnabled());                   // offline too
+        Popups popups;                                          // "Apply preset?" Yes, then the level message
+        apply->trigger();
+        const BoardConfig &b = w.findChild<ConnectionView *>()->board();
+        QVERIFY(b.outputs == shippedPreset("5-servos-electrofrog").outputs);
+        QVERIFY(b.inputs == shippedPreset("5-servos-electrofrog").inputs);
+        QCOMPARE(int(b.board.type), int(BoardDccNext));         // the file names no board type: it stays
+        QCOMPARE(Ui::level(), int(Ui::Advanced));               // frog relays
+        QCOMPARE(popups.texts.size(), 2);
+        QVERIFY(popups.texts[0].startsWith(QLatin1String("Apply preset \"5 servos + electrofrog relays\"?")));
+        QVERIFY(popups.texts[1].contains(QLatin1String("The level is set to Advanced")));
+    }
+
+    void newBoardStartsFromAPreset()
+    {
+        MainWindow w;
+        w.resize(1320, 900);
+        w.show();
         Popups popups;
-        bool finished = false, tooMany = false, said = false, fitsAgain = false, summary = false;
+        bool listed = false;
         popups.onDialog = [&](QDialog *d) {
-            auto *wiz = qobject_cast<QWizard *>(d);
-            if (!wiz) return false;
-            wiz->next();                                      // board: Nano
-            wiz->findChild<QSpinBox *>(QStringLiteral("servos"))->setValue(2);
-            wiz->findChild<QSpinBox *>(QStringLiteral("lights"))->setValue(2);
-            const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");
-            if (!shots.isEmpty()) wiz->grab().save(QString::fromLocal8Bit(shots) + QStringLiteral("/wizard-page2.png"));
-            wiz->findChild<QSpinBox *>(QStringLiteral("lights"))->setValue(16);
-            tooMany = !wiz->button(QWizard::NextButton)->isEnabled();   // 18 items: does not fit
-            said = visibleLabel(wiz->currentPage(), QStringLiteral("a board has 16 outputs"));
-            wiz->findChild<QSpinBox *>(QStringLiteral("lights"))->setValue(2);
-            fitsAgain = wiz->button(QWizard::NextButton)->isEnabled();
-            wiz->next();                                      // DCC from 1, no buttons (the defaults)
-            wiz->next();                                      // pins in order
-            wiz->next();                                      // summary
-            summary = wiz->findChild<QLabel *>(QStringLiteral("wizardSummary"))->text().contains(QLatin1String("Servo turnout 1"));
-            wiz->button(QWizard::FinishButton)->click();
-            finished = true;
+            auto *start = d->findChild<QComboBox *>();
+            if (!start || d->windowTitle() != QLatin1String("New board")) return false;
+            listed = start->count() == 9 && start->currentText() == QLatin1String("Empty: 1 input, 1 output");
+            start->setCurrentIndex(start->findText(QStringLiteral("8 double steady")));
+            d->findChild<QLineEdit *>()->setText(QStringLiteral("Yard"));
+            d->accept();
             return true;
         };
         for (QAction *a : w.findChildren<QAction *>())
-            if (a->text() == QStringLiteral("New board &wizard…")) { a->trigger(); break; }
-        QVERIFY(finished && tooMany && said && fitsAgain && summary);
-        QVERIFY(popups.texts.isEmpty());                     // the start screen counts as empty: no question
-        const BoardConfig &b = view->board();
-        QCOMPARE(int(b.outputs[0].type), int(ServoType));
-        QCOMPARE(int(b.outputs[3].type), int(SingleSteady));
-        QCOMPARE(int(b.outputs[3].pinA), 6);
-        QCOMPARE(int(b.outputs[4].type), int(OutputNotInUse));
-        QCOMPARE(int(b.inputs[2].address), 3);
-        QCOMPARE(Ui::level(), int(Ui::Beginner));
-
-        // the Next steps panel: one tick box per step, ticks kept in the board file
-        QWidget *panel = nullptr;
-        for (QToolButton *t : w.findChildren<QToolButton *>(QStringLiteral("nextStepsToggle"))) panel = t->parentWidget();
-        QVERIFY(panel && panel->isVisible());
-        QList<QCheckBox *> boxes = panel->findChildren<QCheckBox *>();
-        QCOMPARE(boxes.size(), b.nextSteps.size());
-        QCOMPARE(boxes[0]->text(), QStringLiteral("Wire Out 1–4 to D3–D6 (the Pin map tab shows which pin is which)"));
-        maybeScreenshot(w, "next-steps.png");
-        boxes[3]->setChecked(true);                           // "Try it in Simulate"
-        QVERIFY(w.windowTitle().endsWith(QLatin1String(" *")));
-        const QString path = dir.filePath(QStringLiteral("wizard.json"));
-        popups.file = path;                                   // Ctrl+S: Save asks for a name (no file yet)
-        for (QAction *a : w.findChildren<QAction *>())
-            if (a->text() == QStringLiteral("&Save")) { a->trigger(); break; }
-        BoardConfig saved;
-        QVERIFY(readBoard(path, saved));
-        QCOMPARE(saved.nextSteps.size(), b.nextSteps.size());
-        QVERIFY(saved.nextSteps[3].done && !saved.nextSteps[0].done);
-
-        // closed, reopened from the File menu; a new window loads the ticks
-        for (QToolButton *t : panel->findChildren<QToolButton *>(QStringLiteral("panelClose"))) t->click();
-        QVERIFY(!panel->isVisible());
-        for (QAction *a : w.findChildren<QAction *>())
-            if (a->text() == QStringLiteral("Show &next steps")) { QVERIFY(a->isEnabled()); a->trigger(); }
-        QVERIFY(panel->isVisible());
-        MainWindow w2;
-        w2.resize(1320, 900);
-        w2.show();
-        QVERIFY(w2.loadFile(path));
-        QCheckBox *ticked = nullptr;
-        for (QCheckBox *c : w2.findChildren<QCheckBox *>())
-            if (c->text() == QStringLiteral("Try it in Simulate")) ticked = c;
-        QVERIFY(ticked && ticked->isChecked() && ticked->isVisible());
-
-        // the wizard replaces work of your own only after a question
-        popups.button = QMessageBox::No;
-        WizardChoice c;
-        c.lights = 1;
-        w2.applyWizard(c);
-        QTRY_VERIFY(popups.texts.last().startsWith(QLatin1String("Replace the configuration")));
-        QCOMPARE(int(w2.findChild<ConnectionView *>()->board().outputs[0].type), int(ServoType));   // unchanged
+            if (a->text() == QStringLiteral("&New board (offline)…")) { a->trigger(); break; }
+        QVERIFY(listed);
+        const BoardConfig &b = w.findChild<ConnectionView *>()->board();
+        QVERIFY(b.outputs == shippedPreset("8-double-steady").outputs);
+        QCOMPARE(b.board.name, QStringLiteral("Yard"));
     }
 };
 

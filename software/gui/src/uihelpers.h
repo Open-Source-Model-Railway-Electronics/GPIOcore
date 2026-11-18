@@ -37,7 +37,6 @@ int     inputTypeLevel(quint8 type);
 // The lowest level that can edit this output / input (timing: board setting, own wait per route step)
 int     outputLevel(const Gpio::OutputConfig &c);
 int     inputLevel(const Gpio::InputConfig &c, bool timing);
-int     presetLevel(int preset);
 // The lowest level that shows everything this configuration uses, and the features it uses above 'level'
 // ("block signals", "sensors")
 int         configLevel(const Gpio::BoardConfig &board);

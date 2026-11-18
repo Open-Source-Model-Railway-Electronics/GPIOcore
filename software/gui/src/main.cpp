@@ -20,13 +20,13 @@ int main(int argc, char *argv[])
     QCommandLineOption demo(QStringLiteral("demo"), QStringLiteral("Connect to the built-in firmware simulator."));
     QCommandLineOption port(QStringLiteral("port"), QStringLiteral("Connect to this serial port at start."), QStringLiteral("name"));
     QCommandLineOption shot(QStringLiteral("screenshot"), QStringLiteral("Save a screenshot after reading the board, then quit."), QStringLiteral("file"));
-    QCommandLineOption tab(QStringLiteral("tab"), QStringLiteral("Tab for --screenshot: outputs, inputs, pins."), QStringLiteral("tab"), QStringLiteral("outputs"));
+    QCommandLineOption tab(QStringLiteral("tab"), QStringLiteral("Panel for --screenshot: outputs or inputs."), QStringLiteral("tab"), QStringLiteral("outputs"));
     QCommandLineOption select(QStringLiteral("select"), QStringLiteral("Row to select for --screenshot."), QStringLiteral("n"), QStringLiteral("0"));
-    QCommandLineOption preset(QStringLiteral("preset"), QStringLiteral("Apply this preset after connecting (no confirmation)."), QStringLiteral("n"));
+    QCommandLineOption preset(QStringLiteral("preset"), QStringLiteral("Apply this preset after connecting (no confirmation): its name or file name, e.g. 16-servos."), QStringLiteral("name"));
     QCommandLineOption open(QStringLiteral("open"), QStringLiteral("Load this configuration file at start."), QStringLiteral("file"));
     QCommandLineOption size(QStringLiteral("size"), QStringLiteral("Window size, e.g. 1680x900 (for screenshots)."), QStringLiteral("WxH"));
     QCommandLineOption theme(QStringLiteral("theme"), QStringLiteral("auto, light or dark for this run (not saved)."), QStringLiteral("theme"));
-    QCommandLineOption lang(QStringLiteral("lang"), QStringLiteral("Language for this run, e.g. en or nl (not saved)."), QStringLiteral("code"));
+    QCommandLineOption lang(QStringLiteral("lang"), QStringLiteral("Language for this run, e.g. nl (screenshots; the GUI is English otherwise)."), QStringLiteral("code"));
     cli.addOptions({ demo, port, shot, tab, select, preset, open, size, theme, lang });
     cli.process(app);
     if (cli.isSet(theme))
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     if (cli.isSet(preset))
-        w.applyPresetOnStart(cli.value(preset).toInt());
+        w.applyPresetOnStart(cli.value(preset));
     if (cli.isSet(shot))
         w.scheduleScreenshot(cli.value(shot), cli.value(tab), cli.value(select).toInt());
     if (cli.isSet(size))

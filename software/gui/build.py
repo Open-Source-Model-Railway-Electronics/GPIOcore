@@ -6,6 +6,7 @@ Build the GUI for end users into <repo>/release/:
     gpiocore_fw_host.exe  the firmware compiled for the PC: the GUI's simulator runs it
     tools/avrdude/        the upload program the GUI uses to put the firmware on a Nano
     examples/             example board files
+    presets/              the presets of the toolbar's Preset list (board files)
 
     python software/gui/build.py         (the root build.py also builds the firmware)
 
@@ -89,7 +90,7 @@ def build_gui():
     finally:
         shutil.rmtree(build_dir, ignore_errors=True)
 
-    for sub in ("tools", "examples"):
+    for sub in ("tools", "examples", "presets"):
         if (GUI_DIR / sub).is_dir():
             shutil.copytree(GUI_DIR / sub, RELEASE_DIR / sub, dirs_exist_ok=True)
     print(f"[OK] GUI -> {RELEASE_DIR / EXE}")

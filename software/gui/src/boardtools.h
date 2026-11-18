@@ -1,6 +1,5 @@
 #pragma once
-// Whole-configuration tools without UI: partial export / import (File menu) and the configuration the
-// new board wizard builds.
+// Whole-configuration tools without UI: partial export / import (File menu).
 
 #include "gpioconfig.h"
 
@@ -37,31 +36,5 @@ ImportResult planImport(const BoardConfig &board, const BoardConfig &file, int s
 // references to items that were not imported stay as they are.
 OutputConfig importedOutput(const BoardConfig &file, int index, const ImportResult &plan);
 InputConfig  importedInput(const BoardConfig &file, int index, const ImportResult &plan);
-
-// ── New board wizard ────────────────────────────────────────────────────────
-struct WizardChoice
-{
-    quint8  boardType  = BoardNano;
-    QString name;                       // board name, may be empty
-    int     servos = 0;                 // turnouts with a servo
-    int     coils = 0;                  // coil turnouts: two coils, double pulse
-    int     stallMotors = 0;            // MP1 / Tortoise: double steady
-    int     lights = 0;                 // single steady
-    int     uncouplers = 0;             // single pulse
-    bool    dcc = true;                 // a DCC accessory address per item
-    int     firstAddress = 1;           // numbered on over all items; 0 = leave the addresses empty
-    enum Buttons { NoButtons, ToggleButtons, SwitchButtons };
-    int     buttons = NoButtons;        // one button (or switch) per item
-    bool    pinsInOrder = true;         // false: leave the pins empty
-
-    int items() const { return servos + coils + stallMotors + lights + uncouplers; }
-    int pinsNeeded() const;             // outputs plus buttons
-};
-
-// The pins a beginner can use on this board type, in the board's own order (D3-D12, A0-A5 = P1-P16).
-QVector<quint8> wizardPins(quint8 boardType);
-
-// The configuration for the choice (Beginner features only), and its "Next steps" list.
-BoardConfig wizardBoard(const WizardChoice &choice);
 
 } // namespace Gpio

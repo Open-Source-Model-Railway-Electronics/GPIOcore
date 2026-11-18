@@ -157,15 +157,6 @@ int inputLevel(const InputConfig &c, bool timing)
     return l;
 }
 
-int presetLevel(int preset)
-{
-    const BoardConfig b = presetBoard(preset);
-    int l = Beginner;
-    for (const OutputConfig &o : b.outputs) l = qMax(l, outputLevel(o));
-    for (const InputConfig &i : b.inputs)   l = qMax(l, inputLevel(i, false));
-    return l;
-}
-
 int configLevel(const BoardConfig &b)
 {
     int l = Beginner;

@@ -232,18 +232,11 @@ QByteArray encodeBoard(const BoardSettings &b);       // payload without the len
 bool       decodeBoard(const QByteArray &payload, BoardSettings &b);
 
 // ── Whole board ─────────────────────────────────────────────────────────────
-struct NextStep                         // an item of the "Next steps" list (GUI only, kept in the board file)
-{
-    QString text;
-    bool    done = false;
-};
-
 struct BoardConfig
 {
     BoardSettings board;
     std::array<OutputConfig, NumOutputs> outputs;
     std::array<InputConfig,  NumInputs>  inputs;
-    QVector<NextStep> nextSteps;        // GUI only: the to-do list the new board wizard made ("nextSteps")
 
     QJsonObject toJson() const;
     static bool fromJson(const QJsonObject &o, BoardConfig &out, QString *error);
@@ -270,11 +263,5 @@ QString pinReservedReason(quint8 pin);  // non-empty: the pin cannot be used (co
 QString pinNote(quint8 pin);            // non-empty: usable, but with a caveat (D0/D1)
 QString pinOutputReason(quint8 pin);    // non-empty: the pin cannot be an output (A6/A7)
 bool    isServoTimerPin(quint8 pin);    // D9/D10: no PWM while a servo exists (Servo library, timer 1)
-
-// ── Presets ─────────────────────────────────────────────────────────────────
-QStringList presetNames();
-// A preset as a complete set of outputs and inputs (computed by the GUI, written as normal data).
-// Pins from D3 upwards, skipping D13 (config LED); used inputs: absolute, DCC 1.., input n -> output n.
-BoardConfig presetBoard(int preset);
 
 } // namespace Gpio

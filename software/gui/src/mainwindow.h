@@ -12,7 +12,6 @@ class DeviceLink;
 class WebRemote;
 class InputEditor;
 class OutputEditor;
-class PinMapView;
 class QAction;
 class QCheckBox;
 class QComboBox;
@@ -21,7 +20,6 @@ class QProgressBar;
 class QLineEdit;
 class QTimer;
 class QToolButton;
-class QTabWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -42,11 +40,11 @@ public:
     bool openExample(const QString &path);    // like loadFile, but without a file path: Save asks for a name
     QString filePath() const { return m_filePath; }   // the board file on screen; empty: Save asks for a name
     static QString examplesDir();             // examples/ next to the exe, or in the source tree
-    void applyWizard(const Gpio::WizardChoice &choice);   // the new board wizard's configuration and next steps
     void setLevel(int level);                 // user level (Ui::Level): what the GUI offers, never the configuration
     static QString boardsDir();               // where <board name>.json files are kept
-    // Apply a preset (without asking) once the first read-all has finished.
-    void applyPresetOnStart(int preset);
+    static QString presetsDir();              // presets/ next to the exe, or in the source tree (read only)
+    // Apply a preset (without asking) once the first read-all has finished: its name or file name.
+    void applyPresetOnStart(const QString &preset);
     // Save a screenshot once reading (and the start preset) has finished, then quit.
     void scheduleScreenshot(const QString &path, const QString &tab, int select);
 
@@ -67,15 +65,13 @@ private:
     void writeChanges();
     void revertChanges();
     void applyPreset();
-    void applyPresetNow(int preset, bool clearNames = true);   // replace the configuration, then live write
+    void applyPresetNow(const QString &path, bool clearNames = true);   // replace the configuration, then live write
     void openFile();
     void saveFile();
     void exportDialog();
     void importDialog();
     void openExampleDialog();
-    void runWizard();
     void raiseLevelFor();                    // the configuration needs a higher level: raise it, say so
-    void refreshNextSteps();                 // rebuild the "Next steps" panel from m_edit.nextSteps
     void testOutput(int index, int state);
 
     void selectOutput(int index);
@@ -149,16 +145,14 @@ private:
     Gpio::BoardConfig m_shadow;           // m_edit before the last user edit (to see what was touched)
     bool              m_readingBoard = false;   // 'Read board' in progress: names from the file, board wins
     bool              m_keepEdits = false; // after opening a file: keep it over board data
-    int               m_startPreset = -1;
+    bool              m_startPreset = false;
 
-    QTabWidget     *m_tabs = nullptr;
     ConnectionView *m_view = nullptr;
     QWidget        *m_leftPanel = nullptr;     // input settings, slides in on the left
     QWidget        *m_rightPanel = nullptr;    // output settings, slides in on the right
     OpenPanel       m_open = OpenNone;
     OutputEditor   *m_outEd = nullptr;
     InputEditor    *m_inEd = nullptr;
-    PinMapView     *m_pinMap = nullptr;
 
     QComboBox      *m_port = nullptr;
     QComboBox      *m_preset = nullptr;
@@ -172,11 +166,6 @@ private:
     void            refreshLampRow();
     QList<QAction *> m_actLevel;                // View menu: Beginner, Advanced, Expert
     QAction        *m_actShowUnused = nullptr;
-    QAction        *m_actNextSteps = nullptr;   // File menu: show the "Next steps" panel again
-    QWidget        *m_stepsBox = nullptr;       // "Next steps" panel above the canvas
-    QWidget        *m_stepsBody = nullptr;
-    QToolButton    *m_stepsToggle = nullptr;    // collapse / expand
-    bool            m_stepsClosed = false;
     QAction        *m_actBoardSettings = nullptr;
     QAction        *m_actLive = nullptr;
     QAction        *m_actConfigure = nullptr;   // mode button: connected to a real board

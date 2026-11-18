@@ -76,14 +76,12 @@ add_library(gpiocore_ui STATIC
     src/mainwindow.h      src/mainwindow.cpp
     src/outputeditor.h    src/outputeditor.cpp
     src/inputeditor.h     src/inputeditor.cpp
-    src/pinmapview.h      src/pinmapview.cpp
     src/connectionview.h  src/connectionview.cpp
     src/uihelpers.h       src/uihelpers.cpp
     src/flasher.h         src/flasher.cpp
     src/qrcode.h          src/qrcode.cpp
     src/webremote.h       src/webremote.cpp
     src/infotexts.h       src/infotexts.cpp
-    src/boardwizard.h     src/boardwizard.cpp
     src/i18n.h            src/i18n.cpp
 )
 target_link_libraries(gpiocore_ui PUBLIC gpiocore_core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)

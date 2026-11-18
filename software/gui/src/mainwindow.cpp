@@ -6,14 +6,11 @@
 #include "flasher.h"
 #include "qrcode.h"
 #include "webremote.h"
-#include "i18n.h"
 #include "infotexts.h"
 #include "inputeditor.h"
 #include "outputeditor.h"
-#include "pinmapview.h"
 #include "simulateddevice.h"
 #include "uihelpers.h"
-#include "boardwizard.h"
 
 #include <QAction>
 #include <QListWidget>
@@ -38,6 +35,7 @@
 #include <QLocale>
 #include <QBoxLayout>
 #include <QCheckBox>
+#include <QCollator>
 #include <QPropertyAnimation>
 #include <QSettings>
 #include <QShortcut>
@@ -64,14 +62,58 @@
 #include <QSplitter>
 #include <QStatusBar>
 #include <QStyle>
-#include <QTabWidget>
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
 
+#include <algorithm>
 #include <memory>
 
 using namespace Gpio;
+
+// ── Presets: board files shipped in presets/ next to the program (read only) ─
+static const char *const kEmptyPreset = "empty-1-input-1-output.json";   // also the start screen
+
+struct PresetFile
+{
+    QString     name;              // "presetName" in the file, otherwise the file name
+    QString     path;
+    BoardConfig board;
+    bool        hasType = false;   // the file names a board type; otherwise the current type stays
+};
+
+static bool readPreset(const QString &path, PresetFile &p)
+{
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly))
+        return false;
+    const QJsonObject root = QJsonDocument::fromJson(f.readAll()).object();
+    if (!BoardConfig::fromJson(root, p.board, nullptr))
+        return false;
+    p.path    = path;
+    p.name    = root["presetName"].toString(QFileInfo(path).completeBaseName());
+    p.hasType = root["board"].toObject().contains(QLatin1String("type"));
+    return true;
+}
+
+// All presets, sorted by name ("4 ..." before "16 ...")
+static QVector<PresetFile> presetFiles()
+{
+    QVector<PresetFile> list;
+    const QDir dir(MainWindow::presetsDir());
+    for (const QString &f : dir.entryList({ QStringLiteral("*.json") }, QDir::Files))
+    {
+        PresetFile p;
+        if (readPreset(dir.filePath(f), p))
+            list << p;
+    }
+    QCollator byName;
+    byName.setNumericMode(true);
+    byName.setCaseSensitivity(Qt::CaseInsensitive);
+    std::sort(list.begin(), list.end(),
+              [&byName](const PresetFile &a, const PresetFile &b) { return byName.compare(a.name, b.name) < 0; });
+    return list;
+}
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -81,10 +123,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     m_link = new DeviceLink(this);
 
-    // Start with what a factory-fresh board contains, so the GUI is useful offline.
-    const BoardConfig defaults = SimulatedDevice::factoryDefaults();
-    m_edit.outputs = defaults.outputs;
-    m_edit.inputs  = defaults.inputs;
+    // Start screen, offline in Configure: an empty board with 1 input and 1 output (the "Empty" preset).
+    PresetFile empty;
+    if (readPreset(QDir(presetsDir()).filePath(QLatin1String(kEmptyPreset)), empty))
+    {
+        m_edit.outputs = empty.board.outputs;
+        m_edit.inputs  = empty.board.inputs;
+    }
     m_edit.board.type = quint8(QSettings().value(QStringLiteral("board/type"), int(BoardNano)).toInt());
     m_shadow = m_edit;
     Gpio::setBoardType(m_edit.board.type);
@@ -165,6 +210,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     updateConnState();
     updateEditing();
     refreshAll();
+    showOutput(m_outEd->index());           // the panels show the start screen's input and output
+    showInput(m_inEd->index());
     onConnectionChanged();
 }
 
@@ -181,9 +228,6 @@ static QScrollArea *scrollWrap(QWidget *w, int minWidth)
 
 void MainWindow::buildUi()
 {
-    m_tabs = new QTabWidget;
-    m_tabs->setDocumentMode(true);
-
     // Configuration: input settings slide in on the left, output settings on the
     // right, the canvas (inputs | wires | outputs) in between. Only one is open.
     m_view  = new ConnectionView;
@@ -296,44 +340,6 @@ void MainWindow::buildUi()
     addRow->addStretch(1);
     addRow->addWidget(addOut);
     cv->addLayout(addRow);
-    // "Next steps": the to-do list of the new board wizard, ticks are kept in the board file
-    m_stepsBox = new QWidget;
-    m_stepsBox->setObjectName(QStringLiteral("sidePanel"));
-    m_stepsBox->setAttribute(Qt::WA_StyledBackground);
-    auto *sv = new QVBoxLayout(m_stepsBox);
-    sv->setContentsMargins(8, 4, 4, 6);
-    auto *stepsHead = new QHBoxLayout;
-    m_stepsToggle = new QToolButton;
-    m_stepsToggle->setObjectName(QStringLiteral("nextStepsToggle"));
-    m_stepsToggle->setCheckable(true);
-    m_stepsToggle->setChecked(true);
-    m_stepsToggle->setAutoRaise(true);
-    m_stepsToggle->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    m_stepsToggle->setArrowType(Qt::DownArrow);
-    m_stepsToggle->setToolTip(tr("Show or hide the list"));
-    auto *stepsClose = new QToolButton;
-    stepsClose->setObjectName(QStringLiteral("panelClose"));
-    stepsClose->setText(QStringLiteral("✕"));
-    stepsClose->setToolTip(tr("Close (File > Show next steps opens it again)"));
-    stepsHead->addWidget(m_stepsToggle);
-    stepsHead->addStretch(1);
-    stepsHead->addWidget(Info::button(QStringLiteral("wizard")));
-    stepsHead->addWidget(stepsClose);
-    sv->addLayout(stepsHead);
-    m_stepsBody = new QWidget;
-    new QVBoxLayout(m_stepsBody);
-    m_stepsBody->layout()->setContentsMargins(6, 0, 0, 0);
-    sv->addWidget(m_stepsBody);
-    connect(m_stepsToggle, &QToolButton::toggled, this, [this](bool open) {
-        m_stepsBody->setVisible(open);
-        m_stepsToggle->setArrowType(open ? Qt::DownArrow : Qt::RightArrow);
-    });
-    connect(stepsClose, &QToolButton::clicked, this, [this] {
-        m_stepsClosed = true;
-        m_stepsBox->hide();
-    });
-    m_stepsBox->hide();
-    cv->addWidget(m_stepsBox);
     cv->addWidget(viewScroll, 1);
 
     auto *config = new QWidget;
@@ -358,16 +364,11 @@ void MainWindow::buildUi()
         QSettings().setValue(QStringLiteral("ui/configSplitter"), split->saveState());
     });
     h->addWidget(split);
-    m_tabs->addTab(config, tr("Configuration"));
 
     auto *esc = new QShortcut(QKeySequence(Qt::Key_Escape), config);
     connect(esc, &QShortcut::activated, this, &MainWindow::closePanels);
 
-    // Pin map
-    m_pinMap = new PinMapView;
-    m_tabs->addTab(m_pinMap, tr("Pin map"));
-
-    setCentralWidget(m_tabs);              // straight into the workspace: Configuration | Pin map
+    setCentralWidget(config);              // straight into the workspace
 
     // Status bar
     m_connChip   = new QLabel;
@@ -488,8 +489,6 @@ void MainWindow::buildUi()
         userEdited();
     });
     connect(m_outEd, &OutputEditor::testRequested, this, &MainWindow::testOutput);
-    connect(m_pinMap, &PinMapView::outputActivated, this, [this](int i) { m_tabs->setCurrentIndex(0); selectOutput(i); });
-    connect(m_pinMap, &PinMapView::inputActivated,  this, [this](int i) { m_tabs->setCurrentIndex(0); selectInput(i); });
 }
 
 void MainWindow::userEdited()
@@ -523,7 +522,6 @@ void MainWindow::boardEdited()
     showInput(m_inEd->index());   // the panel is always visible
     updateInputEditorLimits();
     refreshWarnings();
-    m_pinMap->setBoard(m_edit);
     updateActions();
 }
 
@@ -695,8 +693,10 @@ void MainWindow::buildToolbar()
     tb->addSeparator();
 
     m_preset = new QComboBox;
-    for (const QString &name : presetNames())
-        m_preset->addItem(name, m_preset->count());
+    m_preset->setObjectName(QStringLiteral("presetCombo"));
+    for (const PresetFile &p : presetFiles())
+        m_preset->addItem(p.name, p.path);
+    m_preset->setToolTip(tr("Ready-made configurations from %1").arg(QDir::toNativeSeparators(presetsDir())));
     tb->addWidget(new QLabel(tr(" Preset ")));
     tb->addWidget(m_preset);
     m_actPreset = tb->addAction(tr("Apply"), this, &MainWindow::applyPreset);
@@ -721,7 +721,6 @@ void MainWindow::buildToolbar()
     // Menus
     QMenu *file = menuBar()->addMenu(tr("&File"));
     file->addAction(tr("&New board (offline)…"), this, &MainWindow::newOfflineBoard);
-    file->addAction(tr("New board &wizard…"), this, &MainWindow::runWizard);
     m_actOpen = file->addAction(style()->standardIcon(QStyle::SP_DialogOpenButton), tr("&Open configuration…"),
                                 this, &MainWindow::openFile);
     m_actOpen->setShortcut(QKeySequence::Open);
@@ -737,12 +736,6 @@ void MainWindow::buildToolbar()
         ->setToolTip(tr("Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example"));
     file->addAction(tr("&Import…"), this, &MainWindow::importDialog)
         ->setToolTip(tr("Add the outputs, inputs or board settings of another board file to this one"));
-    m_actNextSteps = file->addAction(tr("Show &next steps"), this, [this] {
-        m_stepsClosed = false;
-        refreshNextSteps();
-        m_stepsToggle->setChecked(true);
-    });
-    m_actNextSteps->setEnabled(false);
     file->addSeparator();
     file->addAction(tr("Open the boards folder"), this, [] {
         QDir().mkpath(boardsDir());
@@ -813,32 +806,7 @@ void MainWindow::buildToolbar()
         connect(a, &QAction::triggered, this, [this, key] {
             Ui::setThemeSetting(key);
             m_view->update();
-            m_pinMap->update();
         });
-    }
-
-    // Language: every language with a translation or help texts is listed
-    view->addSeparator();
-    QMenu *language = view->addMenu(tr("Language"));
-    auto *langGroup = new QActionGroup(language);
-    auto addLang = [this, language, langGroup](const QString &code, const QString &name) {
-        QAction *a = language->addAction(name);
-        a->setCheckable(true);
-        a->setChecked(Lang::configured() == code);
-        langGroup->addAction(a);
-        connect(a, &QAction::triggered, this, [this, code] {
-            Lang::setConfigured(code);
-            QMessageBox::information(this, windowTitle(),
-                                     tr("The language changes the next time you start the program."));
-        });
-    };
-    addLang(QString(), tr("Automatic (system language)"));
-    for (const QString &code : Lang::available())
-    {
-        const QLocale loc(code);
-        QString name = loc.nativeLanguageName();
-        if (!name.isEmpty()) name[0] = name[0].toUpper();
-        addLang(code, QStringLiteral("%1 (%2)").arg(name, code));
     }
 
     QMenu *help = menuBar()->addMenu(tr("&Help"));
@@ -848,9 +816,6 @@ void MainWindow::buildToolbar()
     start->setShortcut(QKeySequence::HelpContents);
     help->addAction(tr("&Configure, simulate and live test"), this, [this] {
         Info::showDialog(QStringLiteral("modes"), tr("Configure, simulate and live test"), this);
-    });
-    help->addAction(tr("New board &wizard and next steps"), this, [this] {
-        Info::showDialog(QStringLiteral("wizard"), tr("New board wizard"), this);
     });
     help->addAction(tr("&User levels"), this, [this] {
         Info::showDialog(QStringLiteral("levels"), tr("User levels"), this);
@@ -865,8 +830,8 @@ void MainWindow::buildToolbar()
     help->addAction(tr("&About"), this, [this] {
         QMessageBox::about(this, windowTitle(),
                            tr("<b>GPIOcore Configurator</b> %1<br><br>Configures GPIOcore boards (Arduino Nano / Uno, "
-                              "DCCnext) for model railways.<br>Language: %2")
-                               .arg(QApplication::applicationVersion(), Lang::current()));
+                              "DCCnext) for model railways.")
+                               .arg(QApplication::applicationVersion()));
     });
 }
 
@@ -1103,7 +1068,6 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
     if (m_outEd->index() == i && !keep)
         showOutput(i);
     m_inEd->setOutputs(outputNames(), outputTypes());
-    m_pinMap->setBoard(m_edit);
     refreshWarnings();
     updateActions();
 }
@@ -1122,7 +1086,6 @@ void MainWindow::onInputReceived(int i, const InputConfig &received)
     refreshRows();
     if (m_inEd->index() == i && !keep)
         showInput(i);
-    m_pinMap->setBoard(m_edit);
     refreshWarnings();
     updateActions();
 }
@@ -1225,6 +1188,9 @@ void MainWindow::revertChanges()
 void MainWindow::applyPreset()
 {
     const QString name = m_preset->currentText();
+    const QString path = m_preset->currentData().toString();
+    if (path.isEmpty())
+        return;
     QMessageBox box(QMessageBox::Question, windowTitle(),
                     tr("Apply preset \"%1\"?\n\nThis replaces all outputs and inputs (and their routes).").arg(name),
                     QMessageBox::Yes | QMessageBox::No, this);
@@ -1233,14 +1199,26 @@ void MainWindow::applyPreset()
     box.setCheckBox(clear);
     if (box.exec() != QMessageBox::Yes)
         return;
-    applyPresetNow(m_preset->currentIndex(), clear->isChecked());
+    applyPresetNow(path, clear->isChecked());
 }
 
-void MainWindow::applyPresetNow(int preset, bool clearNames)
+void MainWindow::applyPresetNow(const QString &path, bool clearNames)
 {
-    // The GUI computes the preset; it reaches the board as normal output / input data (live write),
-    // so it also works offline and in a simulation.
-    const BoardConfig p = presetBoard(preset);
+    // A preset is a board file; only its outputs, inputs and board type are used. It reaches the board
+    // as normal output / input data (live write), so it also works offline and in a simulation.
+    PresetFile file;
+    if (!readPreset(path, file))
+    {
+        QMessageBox::warning(this, windowTitle(), tr("Cannot read the preset %1").arg(QDir::toNativeSeparators(path)));
+        return;
+    }
+    if (file.hasType && file.board.board.type != m_edit.board.type)
+    {
+        setBoardType(file.board.board.type);
+        if (m_link->isReady() && m_link->caps().boardSettings)
+            m_link->writeBoard(m_edit.board);
+    }
+    const BoardConfig &p = file.board;
     for (int i = 0; i < NumOutputs; ++i)
     {
         OutputConfig c = p.outputs[i];
@@ -1267,6 +1245,7 @@ void MainWindow::applyPresetNow(int preset, bool clearNames)
     userEdited();
     markFileDirty();
     statusBar()->showMessage(tr("Preset applied"), 4000);
+    raiseLevelFor();
 }
 
 void MainWindow::testOutput(int index, int state)
@@ -1334,8 +1313,6 @@ bool MainWindow::loadFile(const QString &path)
     showInput(m_inEd->index());
     m_filePath = path;
     m_fileDirty = false;
-    m_stepsClosed = false;
-    refreshNextSteps();
     statusBar()->showMessage(tr("Loaded %1").arg(path), 6000);
     raiseLevelFor();
     return true;
@@ -1357,6 +1334,16 @@ QString MainWindow::examplesDir()
 #ifdef GPIOCORE_SOURCE_DIR
     if (!QFileInfo(local).isDir())
         return QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/examples");   // dev build: the source tree
+#endif
+    return local;
+}
+
+QString MainWindow::presetsDir()
+{
+    const QString local = QCoreApplication::applicationDirPath() + QStringLiteral("/presets");
+#ifdef GPIOCORE_SOURCE_DIR
+    if (!QFileInfo(local).isDir())
+        return QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/presets");   // dev build: the source tree
 #endif
     return local;
 }
@@ -1655,82 +1642,6 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
     return true;
 }
 
-// ── New board wizard, next steps ────────────────────────────────────────────
-void MainWindow::runWizard()
-{
-    BoardWizard wizard(m_edit.board.type, this);
-    if (wizard.exec() == QDialog::Accepted)
-        applyWizard(wizard.choice());
-}
-
-void MainWindow::applyWizard(const WizardChoice &choice)
-{
-    // nothing in use, or the start screen (a factory-fresh board), counts as empty: no question
-    const BoardConfig fresh = SimulatedDevice::factoryDefaults();
-    bool empty = true, factory = true;
-    for (int o = 0; o < NumOutputs; ++o)
-    {
-        empty   &= m_edit.outputs[o].type == OutputNotInUse;
-        factory &= m_edit.outputs[o] == fresh.outputs[o] && m_edit.outputs[o].name.isEmpty();
-    }
-    for (int i = 0; i < NumInputs; ++i)
-    {
-        empty   &= m_edit.inputs[i].type == InputNotInUse;
-        factory &= m_edit.inputs[i] == fresh.inputs[i] && m_edit.inputs[i].name.isEmpty();
-    }
-    if (!empty && !factory
-        && QMessageBox::question(this, windowTitle(), tr("Replace the configuration on screen with the new board?"))
-               != QMessageBox::Yes)
-        return;
-    if (m_link->isOpen())
-        m_link->close();                     // a new board: offline, like New board
-    const BoardConfig b = wizardBoard(choice);
-    m_edit = m_dev = b;
-    m_shadow = b;
-    setBoardType(b.board.type);
-    showOutput(m_outEd->index());
-    showInput(m_inEd->index());
-    m_outName->setText(m_edit.outputs[m_outEd->index()].name);
-    m_inName->setText(m_edit.inputs[m_inEd->index()].name);
-    refreshAll();
-    m_filePath.clear();
-    markFileDirty();
-    m_stepsClosed = false;
-    refreshNextSteps();
-    statusBar()->showMessage(tr("New board ready. The Next steps list above the canvas shows what is left to do."), 8000);
-}
-
-void MainWindow::refreshNextSteps()
-{
-    QLayout *lay = m_stepsBody->layout();
-    while (QLayoutItem *item = lay->takeAt(0))
-    {
-        delete item->widget();
-        delete item;
-    }
-    const int n = m_edit.nextSteps.size();
-    auto title = [this] {
-        int done = 0;
-        for (const NextStep &s : m_edit.nextSteps) done += s.done;
-        m_stepsToggle->setText(tr("Next steps (%1 of %2 done)").arg(done).arg(m_edit.nextSteps.size()));
-    };
-    for (int k = 0; k < n; ++k)
-    {
-        auto *box = new QCheckBox(m_edit.nextSteps[k].text);
-        box->setChecked(m_edit.nextSteps[k].done);
-        lay->addWidget(box);
-        connect(box, &QCheckBox::toggled, this, [this, k, title](bool on) {
-            if (k >= m_edit.nextSteps.size()) return;
-            m_edit.nextSteps[k].done = on;   // kept in the board file
-            markFileDirty();
-            title();
-        });
-    }
-    title();
-    m_stepsBox->setVisible(n > 0 && !m_stepsClosed);
-    m_actNextSteps->setEnabled(n > 0);
-}
-
 // ── User level raised by a configuration ────────────────────────────────────
 void MainWindow::raiseLevelFor()
 {
@@ -1811,7 +1722,7 @@ void MainWindow::updateActions()
     m_actWrite->setEnabled(ready && !busy && dirty > 0);
     m_actWrite->setText(dirty ? tr("Write %1 change(s)").arg(dirty) : tr("Write changes"));
     m_actRevert->setEnabled(dirty > 0);
-    m_actPreset->setEnabled(m_mode == ModeConfigure && !m_simulating);   // presets are computed by the GUI: also offline
+    m_actPreset->setEnabled(m_mode == ModeConfigure && !m_simulating);   // presets are files read by the GUI: also offline
     m_port->setEnabled(!m_link->isOpen());
     m_actRefresh->setEnabled(!m_link->isOpen());
     if (m_link->isReady())
@@ -1863,7 +1774,6 @@ void MainWindow::refreshAll()
 {
     refreshRows();
     m_inEd->setOutputs(outputNames(), outputTypes());
-    m_pinMap->setBoard(m_edit);
     refreshWarnings();
     updateActions();
 }
@@ -2425,7 +2335,6 @@ void MainWindow::setLevel(int level)
     Ui::setLevel(level);
     for (int l = 0; l < m_actLevel.size(); ++l)
         m_actLevel[l]->setChecked(l == Ui::level());
-    Ui::offerItems(m_preset, [](int p) { return Ui::presetLevel(p) <= Ui::level(); });
     m_outEd->refreshPinCombos();             // D0 / D1, offered types, boxes, read-only above the level
     m_inEd->refreshPinCombos();
     refreshWarnings();
@@ -2655,11 +2564,9 @@ void MainWindow::newOfflineBoard()
     nameEdit->setMaxLength(MaxBoardName);
     nameEdit->setPlaceholderText(tr("max. 16 letters, e.g. Station-left"));
     auto *start = new QComboBox;
-    const QStringList presets = presetNames();
-    start->addItem(tr("Empty (1 input, 1 output)"), 8);
-    for (int k = 0; k < 8; ++k)
-        start->addItem(tr("Preset: %1").arg(presets.value(k)), k);
-    Ui::offerItems(start, [](int p) { return Ui::presetLevel(p) <= Ui::level(); });
+    for (const PresetFile &p : presetFiles())
+        start->addItem(p.name, p.path);
+    start->setCurrentIndex(qMax(0, start->findData(QDir(presetsDir()).filePath(QLatin1String(kEmptyPreset)))));
     form->addRow(tr("Name"), nameEdit);
     form->addRow(tr("Start with"), start);
     auto *hint = new QLabel(tr("When you later connect a board and give it this name, these settings belong to it. "
@@ -2670,22 +2577,16 @@ void MainWindow::newOfflineBoard()
     auto *bb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(bb, &QDialogButtonBox::accepted, &d, &QDialog::accept);
     connect(bb, &QDialogButtonBox::rejected, &d, &QDialog::reject);
-    QPushButton *wizard = bb->addButton(tr("Use the wizard…"), QDialogButtonBox::ActionRole);
-    wizard->setToolTip(tr("Answer a few questions: what you want to control and how; the wizard sets it up"));
-    connect(wizard, &QPushButton::clicked, &d, [&d] { d.done(2); });
     form->addRow(bb);
-    const int result = d.exec();
-    if (result == 2)
-    {
-        runWizard();
-        return;
-    }
-    if (result != QDialog::Accepted)
+    if (d.exec() != QDialog::Accepted)
         return;
     const QString name = cleanBoardName(nameEdit->text());
-    BoardConfig b = presetBoard(start->currentData().toInt());
+    PresetFile p;                            // no preset found: nothing in use
+    readPreset(start->currentData().toString(), p);
+    BoardConfig b = p.board;
     b.board.name = name;
-    b.board.type = m_edit.board.type;
+    if (!p.hasType)
+        b.board.type = m_edit.board.type;
     m_edit = m_dev = b;
     m_shadow = b;
     setBoardType(b.board.type);
@@ -2693,7 +2594,7 @@ void MainWindow::newOfflineBoard()
     showInput(m_inEd->index());
     refreshAll();
     markFileDirty();
-    refreshNextSteps();
+    raiseLevelFor();
 }
 
 void MainWindow::addBlock(bool output)
@@ -2778,27 +2679,37 @@ void MainWindow::flashFirmware()
 }
 
 // ── Screenshot mode (for documentation / automated checks) ──────────────────
-void MainWindow::applyPresetOnStart(int preset)
+void MainWindow::applyPresetOnStart(const QString &preset)
 {
-    m_startPreset = preset;
+    // by its name or file name, e.g. "16 servos" or "16-servos"
+    QString path;
+    for (const PresetFile &p : presetFiles())
+        if (p.name.compare(preset, Qt::CaseInsensitive) == 0
+            || QFileInfo(p.path).completeBaseName().compare(preset, Qt::CaseInsensitive) == 0)
+            path = p.path;
+    if (path.isEmpty())
+    {
+        statusBar()->showMessage(tr("No preset \"%1\" in %2").arg(preset, QDir::toNativeSeparators(presetsDir())), 8000);
+        return;
+    }
+    m_startPreset = true;
     auto *once = new QObject(this);
-    connect(m_link, &DeviceLink::finished, once, [this, preset, once] {
+    connect(m_link, &DeviceLink::finished, once, [this, path, once] {
         once->deleteLater();
-        applyPresetNow(preset);
+        applyPresetNow(path);
     });
 }
 
 void MainWindow::scheduleScreenshot(const QString &path, const QString &tab, int select)
 {
     auto *once = new QObject(this);
-    auto remaining = std::make_shared<int>(m_startPreset >= 0 ? 2 : 1);
+    auto remaining = std::make_shared<int>(m_startPreset ? 2 : 1);
     connect(m_link, &DeviceLink::finished, once, [this, path, tab, select, once, remaining] {
         if (--*remaining > 0)
             return;
         once->deleteLater();
-        if      (tab == QLatin1String("inputs")) { m_tabs->setCurrentIndex(0); selectInput(select); }
-        else if (tab == QLatin1String("pins"))   { m_tabs->setCurrentIndex(1); }
-        else                                     { m_tabs->setCurrentIndex(0); selectOutput(select); }
+        if (tab == QLatin1String("inputs")) selectInput(select);
+        else                                selectOutput(select);
         QTimer::singleShot(300, this, [this, path] {
             grab().save(path);
             qApp->exit(0);
