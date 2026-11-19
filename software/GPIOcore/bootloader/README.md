@@ -6,11 +6,7 @@ update the firmware with the GPIOcore program (*Board > Flash firmware…*, "Ard
 
 ## What you need
 
-- A programmer: an Arduino with the **ArduinoISP** sketch (Arduino IDE: *File > Examples > ArduinoISP*), or a
-  **USBasp**.
-- Six wires to the ICSP header of your board: MISO, MOSI, SCK, RESET, 5 V, GND. With ArduinoISP on an Uno or
-  Nano: D12 = MISO, D11 = MOSI, D13 = SCK, D10 = RESET of the target; a 10 µF capacitor between RESET and GND
-  of the *programmer* stops it from resetting itself.
+- A programmer on the ICSP header of your board: an Arduino with the **ArduinoISP** sketch, or a **USBasp**.
 - A 16 MHz crystal on your board (the fuses select it).
 
 ## Burning

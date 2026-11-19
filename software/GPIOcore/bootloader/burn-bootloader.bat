@@ -46,9 +46,7 @@ exit /b 0
 
 :failed
 echo.
-echo FAILED. Check the six ICSP wires (MISO, MOSI, SCK, RESET, 5 V, GND), that the board has power,
-echo and the programmer: its COM port, or for ArduinoISP a 10 uF capacitor between RESET and GND
-echo of the programmer Arduino.
+echo FAILED. Check the ICSP connection, that the board has power, and the programmer's port.
 exit /b 1
 
 :noavrdude
