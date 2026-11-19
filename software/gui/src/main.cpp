@@ -1,10 +1,13 @@
 #include "i18n.h"
 #include "mainwindow.h"
+#include "soundplayer.h"
 #include "uihelpers.h"
 
 #include <QApplication>
-#include <QIcon>
 #include <QCommandLineParser>
+#include <QDir>
+#include <QIcon>
+#include <QSettings>
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +40,12 @@ int main(int argc, char *argv[])
         Ui::applyAppStyle(app);
     }
     Lang::install(app, cli.value(lang)); // before any window is created
+
+    // The user's folders in Documents\GPIOcore, so they are there to find from the first start
+    // (here and not in the installer: it runs as administrator, maybe as another user)
+    QDir().mkpath(MainWindow::boardsDir());
+    if (QSettings().value(QStringLiteral("sound/folder")).toString().isEmpty())
+        QDir().mkpath(SoundPlayer::defaultFolder());
 
     MainWindow w;
     if (cli.isSet(preset))
