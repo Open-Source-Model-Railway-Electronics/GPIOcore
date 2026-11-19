@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Build the GPIOcore firmware and put the hex straight in <repo>/release/GPIOcore.hex.
+Also fills <repo>/release/bootloader/ for boards burnt through ICSP: the Nano bootloader, the firmware
+with that bootloader (GPIOcore_with_bootloader.hex) and burn-bootloader.bat (see bootloader/README.md).
 
     python src/build.py            (from software/GPIOcore, or from anywhere)
 
@@ -21,6 +23,9 @@ SKETCH_DIR = Path(__file__).resolve().parent.parent      # software/GPIOcore
 REPO_ROOT = SKETCH_DIR.parent.parent                     # the GPIOcore repository
 RELEASE_DIR = REPO_ROOT / "release"
 HEX_NAME = "GPIOcore.hex"
+BOOT_SRC = SKETCH_DIR / "bootloader"                     # optiboot hex, burn script, README
+BOOT_DIR = RELEASE_DIR / "bootloader"
+BOOT_HEX_NAME = "GPIOcore_with_bootloader.hex"
 
 
 def find_arduino_cli():
@@ -44,7 +49,12 @@ def build():
         RELEASE_DIR.mkdir(exist_ok=True)
         target = RELEASE_DIR / HEX_NAME
         shutil.copy2(hex_file, target)
+        boot_hex = out_dir / f"{SKETCH_DIR.name}.ino.with_bootloader.hex"   # firmware + Optiboot (ICSP)
+        shutil.copytree(BOOT_SRC, BOOT_DIR, dirs_exist_ok=True)
+        if boot_hex.is_file():
+            shutil.copy2(boot_hex, BOOT_DIR / BOOT_HEX_NAME)
         print(f"[OK] BUILD SUCCESS!!! -> {target}")
+        print(f"[OK] bootloader files -> {BOOT_DIR}")
         return target
     finally:
         shutil.rmtree(out_dir, ignore_errors=True)

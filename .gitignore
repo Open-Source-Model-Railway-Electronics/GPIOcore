@@ -11,6 +11,7 @@ date.h
 io.cpp
 io.h
 *.hex
+!software/GPIOcore/bootloader/optiboot_atmega328.hex
 *.bin
 *.elf
 *.eep
