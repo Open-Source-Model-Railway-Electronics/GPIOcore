@@ -1555,6 +1555,39 @@ private slots:
         QCOMPARE(r.errors, 0);
     }
 
+    // Board-to-board link without extra firmware: a second block signal with only lamp A on TX (D1) watches the
+    // same detector. Occupied = D1 LOW (all lamps off), free = D1 HIGH (lamp A on); D1 sinks the LED of an
+    // optocoupler on the next board, whose RX (D0) is a Sensor input there. One extra output, no extra input.
+    void blockSignalRelayOnTx()
+    {
+        SimulatedDevice sim;
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        OutputConfig none;
+        for (int o = 0; o < NumOutputs; ++o)
+            sim.setOutput(o, none);
+        InputConfig det;
+        det.type = Sensor; det.pin = 5;
+        sim.setInput(4, det);
+        sim.setOutput(0, makeBlockSignal(4, -1, 3, PinNA, 6));   // the signal itself: green D3, red D6
+        OutputConfig relay = makeBlockSignal(4, -1, 1, PinNA, PinNA);
+        relay.data[0] = 0x00;                                    // own block occupied: off = LOW
+        relay.data[1] = 0x01;                                    // (no next block)
+        relay.data[2] = 0x01;                                    // free: lamp A on = HIGH
+        sim.setOutput(1, relay);
+        sim.advanceClock(5100);                                  // no GUI: after the window D0/D1 are I/O
+        QTRY_VERIFY(sim.serialIsIO());
+        QTRY_COMPARE(int(sim.pin(1).level), 1);                  // free
+        QCOMPARE(int(sim.pin(3).level), 1);                      // green
+        QTest::qWait(150);
+        sim.setPinLevel(5, false);                               // a train in the block
+        QTRY_COMPARE(int(sim.pin(1).level), 0);
+        QCOMPARE(int(sim.pin(6).level), 1);                      // red at the same time
+        QCOMPARE(int(sim.pin(3).level), 0);
+        sim.setPinLevel(5, true);
+        QTRY_COMPARE(int(sim.pin(1).level), 1);
+        QCOMPARE(int(sim.pin(3).level), 1);
+    }
+
     // Block signals blink at the board's rate (board flags bits 4-7), 1 Hz by default
     void firmwareBlockSignalBlinkRate()
     {
