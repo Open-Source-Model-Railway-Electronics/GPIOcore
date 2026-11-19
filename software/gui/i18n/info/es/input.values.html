@@ -1,0 +1,16 @@
+<h3>Valores propios: más que encendido y apagado</h3>
+<p>Normalmente una entrada de conmutar o absoluta pone su salida en <b>desviado / apagado</b> (0) o <b>recto / encendido</b> (1).
+Con <b>Valores propios</b>, cada uno de los dos estados envía en su lugar su propio valor, igual que un paso de itinerario:</p>
+<ul>
+<li><b>Servo</b> — un ángulo, p. ej. apagado = 45&deg;, encendido = 135&deg; (o desviado / recto como siempre).</li>
+<li><b>Señal de 4 aspectos</b> — un aspecto por estado, elegido lámpara a lámpara con &#9662;.</li>
+<li><b>PWM</b> — un brillo por estado, p. ej. apagado = 20 (atenuado), encendido = 255.</li>
+<li><b>Efecto de sonido</b> — una pista por estado; <i>parar</i> (0) detiene la reproducción. Una salida de sonido puede
+reproducir muchas pistas, cada una elegida por su propia entrada.</li>
+<li>Otras salidas — desviado o recto por estado, por ejemplo al revés.</li>
+</ul>
+<p><b>Apagado / desviado</b> se usa cuando el estado de la entrada pasa a 0 (una entrada absoluta: botón pulsado o una orden DCC
+'desviado'), <b>Encendido / recto</b> cuando pasa a 1. Una entrada de conmutar alterna entre los dos.</p>
+<p>Los dos valores se guardan como 2 pasos en la memoria de itinerario de la entrada, así que cuentan en el total de
+itinerarios de la placa. Las órdenes DCC extendidas siguen enviando su propio valor.</p>
+<p>Conecte una entrada a una salida de sonido y los valores propios se activan solos: apagado = parar, encendido = pista 1.</p>

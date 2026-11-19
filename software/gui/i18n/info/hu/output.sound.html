@@ -1,0 +1,23 @@
+<h3>Hangeffekt: DFPlayer Mini MP3-lejátszó</h3>
+<p>Ez a kimenet MP3-fájlokat játszik le egy DFPlayer Mini modul micro SD-kártyájáról: harangszó, sípszó, bemondás.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  hangszóró, max 3 W DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>A TX-vezetékben lévő <b>1 k&Omega;-os ellenállás</b> védi a DFPlayert; az Arduino felé semmi sem megy vissza.</li>
+<li>Fájlok az SD-kártyán: egy <b>MP3</b> mappában, <b>0001.mp3</b>, <b>0002.mp3</b> … névvel. Az 1. szám a
+/MP3/0001.mp3. A név számít, nem a másolás sorrendje. Csak MP3, WAV nem.</li>
+<li><b>A bemenet választja ki a számot</b>, így egy hangkimenet sok hangot játszhat le: adjon egy váltás vagy abszolút típusú
+bemenetnek <b>Saját értékek</b> beállítást (egy szám a ki és egy a be állapothoz), használjon vágányút-lépést, vagy küldjön DCC extended értéket.
+0. szám = leállítás. Saját értékek nélkül: be = 1. szám, ki = leállítás.</li>
+<li>Ha egy bemenetet hangkimenetre köt, az magától saját értékeket kap: ki = leállítás, be = 1. szám.</li>
+<li>Több hangkimenet is használhatja együtt a D1-et, de általában egy is elég.</li>
+<li><b>Csak PC nélkül:</b> a D1 egyben a számítógép felé menő USB-vezeték is. Csatlakoztatott programnál a panel csak
+jelenti a számot (♪ a munkaterületen). A hang meghallgatásához húzza ki az USB-kábelt, és lássa el a panelt más módon tápellátással.</li>
+<li><b>Meghallgatás a PC-n</b> (Haladó szinttől): a <i>Nézet &gt; Hangmappa&hellip;</i> kiválaszt egy mappát, amelyben ugyanazok a
+fájlok vannak, mint az SD-kártya MP3 mappájában (0001.mp3 &hellip;). Szimuláció és Élő teszt módban a
+program ekkor lejátssza a panel által jelentett számot; egy új szám megszakítja az előzőt, mint a DFPlayernél.
+A <i>Nézet &gt; Hangok némítása</i> elnémítja.</li>
+<li><b>DCCnext</b> panelen nem: annak sorkapcsain nincs D1, ezért ott ez a típus nem érhető el.</li>
+</ul>

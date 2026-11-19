@@ -1,0 +1,19 @@
+<h3>Szív polaritása — electrofrog vagy unifrog?</h3>
+<p>A <b>szív</b> a váltónak az a pontja, ahol a két sín keresztezi egymást. Az “áram alatti szívű” váltóknál ez a rész
+fémből van, és <b>ugyanazt a polaritást kell kapnia, mint a beállított irány</b>. Ha rossz polaritást kap, a mozdonyok megállnak, vagy
+rövidzárat okoznak. Egy relé kapcsolja a szívet, amikor a váltó átáll.</p>
+<p>Nézze meg a váltóját, és válasszon <b>egyet</b>:</p>
+<ul>
+<li><b>Nincs (szigetelt szív)</b> — a szív műanyag (Peco <i>Insulfrog</i>, a legtöbb ágyazott kezdőkészlet-sín). Nincs teendő.</li>
+<li><b>Electrofrog — 2 relé</b> (Peco <i>Electrofrog</i> és hasonlók). Az A relé
+“egyenes”, a B relé “kitérő irány” állásnál kapcsol be. Amíg a váltó mozog, egy pillanatra <b>mindkettő ki van kapcsolva</b>, így soha nem lesz
+rövidzár (bontás zárás előtt).</li>
+<li><b>Unifrog — 1 váltóérintkezős relé</b> (Peco <i>Unifrog</i>). A szívnek egy vezetéke van. Egy váltóérintkezős relé köti a
+megfelelő sínhez. Szervóval pontosan akkor vált, amikor a szervó áthalad a középhelyzeten; tekercses váltóállítóval az impulzus
+végén.</li>
+</ul>
+<p>A kettő közül csak az egyiket használhatja. Az egyik kiválasztása eltávolítja a másik lábait.</p>
+<p><b>Bekötés:</b> relé<i>modult</i> használjon (tranzisztorral és diódával) — egy Arduino láb nem tud közvetlenül relét meghajtani.</p>
+<p><b>A relék LOW jelre kapcsolnak (fordított)</b>: jelölje be ezt az olyan relémoduloknál, amelyek LOW bemenetnél kapcsolnak be
+(sok olcsó, optocsatolós modul). A panel ekkor fordítva vezérli a relélábakat; a relék
+jelentése (egyenes / kitérő irány) nem változik.</p>

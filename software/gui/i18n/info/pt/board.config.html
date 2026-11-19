@@ -1,0 +1,28 @@
+<h3>Botão de configuração (A7) e ajuste de servos com o seu comando</h3>
+<p>Sem computador pode definir as posições finais dos servos com o botão de configuração e o seu comando DCC.</p>
+<p><b>Nota:</b> o botão de configuração (A7) só existe num Arduino <b>Nano</b>. Um DCCnext não tem
+A7, por isso não tem botão de configuração: defina as posições finais dos servos no programa (ou com o comando pelo telemóvel).</p>
+<p><b>Ligações:</b> um botão de pressão de <b>A7</b> a <b>GND</b>, mais uma resistência de 10 k&Omega; de A7 a <b>5 V</b>
+(A7 não tem pull-up interno). Um LED com resistência em <b>D13</b> mostra o modo (a maioria dos Arduinos já tem um).</p>
+<ol>
+<li>Mantenha o botão de configuração premido durante <b>2 segundos</b>: o LED começa a piscar. Está no modo de configuração.</li>
+<li>Prima-o <b>brevemente</b>: o servo seguinte é seleccionado e muda de posição, para ver qual é. Prima novamente
+para o servo seguinte.</li>
+<li>No seu comando seleccione o <b>endereço de locomotiva 9999</b>.
+  <ul>
+  <li>Rode o <b>botão de velocidade</b>: o servo seleccionado move-se. O botão de sentido decide para que lado, o botão de velocidade a que velocidade.</li>
+  <li><b>F1</b> = guardar este ângulo como <i>desviado</i>, <b>F2</b> = guardá-lo como <i>directo</i>.</li>
+  <li><b>F3</b> = mudar o servo de posição (para verificar), <b>F5</b> = servo seguinte.</li>
+  <li><b>F4</b> = inverter os relés do coração do servo seleccionado, para módulos de relés que comutam com LOW.
+  Cada pressão alterna entre normal e invertido.</li>
+  </ul></li>
+<li>Mantenha de novo o botão de configuração premido durante 2 segundos: o LED fica aceso. De volta ao normal.</li>
+</ol>
+<p>As novas posições são guardadas de imediato. Ligue o programa mais tarde e ele volta a lê-las.</p>
+<p><b>Pressão breve fora do modo de configuração = modo programa.</b> 5 segundos após o arranque a placa fecha a sua porta série
+quando nenhum programa se ligou e a configuração usa D0 ou D1 (passam a ser pinos normais; caso contrário a porta fica
+aberta). Uma pressão <b>breve</b> no botão de configuração (LED fixo, fora do
+modo de configuração) volta a abri-la durante 5 segundos e a placa anuncia-se, para que o programa se possa ligar sem
+reiniciar, por exemplo por Bluetooth (ver <i>Ajuda &gt; Bluetooth (HC-05)</i>). Quando o programa diz <i>"A aguardar
+a placa"</i>, é o momento de o premir.</p>
+<p>Por isso, <b>D13</b> e <b>A7</b> nunca podem ser usados para entradas ou saídas.</p>

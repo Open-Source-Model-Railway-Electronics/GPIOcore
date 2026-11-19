@@ -1,0 +1,13 @@
+<h3>Panelbeállítások</h3>
+<ul>
+<li><b>Név</b>: legfeljebb 16 karakter, a panelen tárolva. A program e név alapján találja meg a panel fájlját (a bemenetek és
+kimenetek neveivel), ezért minden panelnek adjon saját nevet.</li>
+<li><b>Paneltípus</b>: Arduino Nano, DCCnext vagy Jack of all trades. Ez határozza meg, mely lábak léteznek.</li>
+<li><b>Saját várakozási idő minden vágányút-lépéshez</b> (Haladó szinttől): ki = minden lépés ugyanannyit vár (lent állítható), és a vágányutak
+fele annyi memóriát igényelnek. Be = minden lépésnek saját várakozási ideje van.</li>
+<li><b>Vágányutak kizárása</b> (Haladó szinttől): mi történik, ha egy vágányutat akkor indítanak, amikor egy másik még fut.
+<i>Ki</i> = mindkettő fut, <i>be</i> = a második figyelmen kívül marad, <i>automatikus</i> = a váltót állító vágányutak egymás
+után futnak, a csak világítást kapcsoló vágányutak futhatnak egyszerre.</li>
+</ul>
+<p>Minden panelen rögzített feladatú lábak: <b>D2</b> (DCC-bemenet), <b>D13</b> (konfig-LED) és <b>A7</b>
+(konfiggomb).</p>

@@ -15,6 +15,12 @@ mémorisé tout de suite.</li>
 </ol>
 <p><b>Astuce :</b> ne poussez pas la lame trop fort contre le rail : le servo bourdonne et chauffe.
 Revenez de 2&ndash;3&deg; à partir du point de contact.</p>
+<h4>Sémaphore à bras : suivre un détecteur</h4>
+<p>Cochez <b>Suit un détecteur (sémaphore)</b> et choisissez l'entrée du détecteur : la carte bouge alors le servo
+elle-même, sans commandes. Quand ce block est occupé, le servo va en <i>Position 0 (dévié)</i> = le bras à
+l'arrêt ; quand il est libre, en <i>Position 1 (direct)</i> = voie libre. Il bouge à sa propre vitesse. <b>Inverser : occupé =
+direct</b> fait l'inverse. Toute entrée utilisée qui a une broche peut servir de détecteur, idéalement une entrée
+<b>Capteur (occupation)</b> ; sur le plan de travail, une ligne pointillée la relie au servo.</p>
 <h4>Bon à savoir</h4>
 <ul>
 <li>À la mise sous tension, les servos démarrent <b>un par un</b>, à une demi-seconde d'intervalle, chacun vers sa

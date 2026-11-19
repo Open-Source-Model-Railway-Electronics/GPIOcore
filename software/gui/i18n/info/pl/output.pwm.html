@@ -1,0 +1,12 @@
+<h3>PWM: jasność i płynne przejście</h3>
+<p>Wyjście PWM ściemnia żarówkę lub łańcuch LED na pinie PWM (D3, D5, D6, D9, D10, D11): <b>0</b> = wyłączone,
+<b>255</b> = pełna jasność. Przy prądzie powyżej ok. 20 mA użyj modułu z tranzystorem lub MOSFET-em.</p>
+<ul>
+<li><b>Wypełnienie</b> — jasność po włączeniu zasilania, dopóki własne wartości, krok przebiegu lub DCC extended nie ustawią innej.</li>
+<li><b>Czas przejścia</b> — ile sekund trwa pełna zmiana od 0 do 255; połowa zmiany trwa o połowę krócej.
+<i>od razu</i> (0) przełącza natychmiast. Każda nowa jasność zmienia się w tym tempie: z własnych wartości, z kroku
+przebiegu lub z polecenia DCC extended. Po włączeniu zasilania wyjście płynnie rozjaśnia się od ciemności.</li>
+</ul>
+<p><b>Przykład — dzień i noc:</b> wejście typu Bezwzględny (przełącznik lub adres DCC) z opcją <b>Własne wartości</b>
+wył. = 0 i wł. = 255 oraz czasem przejścia 60 s. Przełączenie na noc ściemnia światła w ciągu minuty;
+przełączenie z powrotem przywraca dzień równie powoli.</p>

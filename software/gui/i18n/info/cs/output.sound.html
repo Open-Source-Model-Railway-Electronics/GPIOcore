@@ -1,0 +1,23 @@
+<h3>Zvukový efekt: MP3 přehrávač DFPlayer Mini</h3>
+<p>Tento výstup přehrává soubory MP3 z karty micro SD v modulu DFPlayer Mini: zvonek, píšťalu, hlášení.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  reproduktor (≤3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li><b>Rezistor 1 k&Omega;</b> v lince TX chrání DFPlayer; nic se nevrací do Arduina.</li>
+<li>Soubory na SD kartě: ve složce <b>MP3</b>, pojmenované <b>0001.mp3</b>, <b>0002.mp3</b> … Skladba 1 je
+/MP3/0001.mp3. Rozhoduje název, ne pořadí, v jakém je kopírujete. Jen MP3, žádné WAV.</li>
+<li><b>Skladbu volí vstup</b>, takže jeden zvukový výstup může přehrávat mnoho zvuků: dejte vstupu typu Přepínání nebo
+Absolutní <b>Vlastní hodnoty</b> (skladbu pro vyp a jednu pro zap), použijte krok jízdní cesty nebo pošlete hodnotu DCC extended.
+Skladba 0 = stop. Bez vlastních hodnot: zap = skladba 1, vyp = stop.</li>
+<li>Vstup, který připojíte ke zvukovému výstupu, dostane vlastní hodnoty sám: vyp = stop, zap = skladba 1.</li>
+<li>Několik zvukových výstupů může používat D1 společně, ale obvykle stačí jeden.</li>
+<li><b>Jen bez PC:</b> D1 je zároveň USB linka do počítače. S připojeným GUI deska skladbu jen
+hlásí (♪ na plátně). Odpojte USB kabel a napájejte desku jinak, abyste zvuk slyšeli.</li>
+<li><b>Poslech na PC</b> (úroveň Pokročilý a vyšší): <i>Zobrazení &gt; Složka se zvuky&hellip;</i> zvolí složku se
+stejnými soubory jako složka MP3 na SD kartě (0001.mp3 &hellip;). V režimech Simulovat a Živý test pak
+program přehraje skladbu, kterou deska hlásí; nová skladba přeruší předchozí, stejně jako u DFPlayeru.
+<i>Zobrazení &gt; Ztlumit zvuky</i> zvuk vypne.</li>
+<li>Ne u <b>DCCnext</b>: nemá D1 na svorkách, proto se tam tento typ nenabízí.</li>
+</ul>

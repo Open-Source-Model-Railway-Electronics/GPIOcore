@@ -1,0 +1,28 @@
+<h3>Config-knap (A7) og indlæring af servoer med din håndkontrol</h3>
+<p>Uden computer kan du indstille servoernes endestillinger med config-knappen og din DCC-håndkontrol.</p>
+<p><b>Bemærk:</b> config-knappen (A7) findes kun på en Arduino <b>Nano</b>. Et DCCnext har ingen
+A7 og derfor ingen config-knap: indstil servoernes endestillinger i programmet (eller med telefon-fjernbetjeningen) i stedet.</p>
+<p><b>Tilslutning:</b> en trykknap fra <b>A7</b> til <b>GND</b>, plus en 10 k&Omega;-modstand fra A7 til <b>5 V</b>
+(A7 har ingen indbygget pull-up). En LED med modstand på <b>D13</b> viser tilstanden (de fleste Arduinoer har allerede en).</p>
+<ol>
+<li>Hold config-knappen inde i <b>2 sekunder</b>: LED'en begynder at blinke. Du er i config-tilstand.</li>
+<li>Tryk <b>kort</b> på den: den næste servo vælges og slår om, så du kan se, hvilken det er. Tryk igen
+for den næste servo.</li>
+<li>Vælg <b>lokadresse 9999</b> på din håndkontrol.
+  <ul>
+  <li>Drej <b>hastighedsknappen</b>: den valgte servo bevæger sig. Retningsknappen bestemmer hvilken vej, knappen hvor hurtigt.</li>
+  <li><b>F1</b> = gem denne vinkel som <i>afvigende</i>, <b>F2</b> = gem den som <i>lige</i>.</li>
+  <li><b>F3</b> = slå servoen om (for at kontrollere), <b>F5</b> = næste servo.</li>
+  <li><b>F4</b> = invertér hjertestykkerelæerne for den valgte servo, til relæmoduler, der skifter ved LOW.
+  Hvert tryk skifter mellem normal og inverteret.</li>
+  </ul></li>
+<li>Hold config-knappen inde i 2 sekunder igen: LED'en lyser konstant. Tilbage til normal.</li>
+</ol>
+<p>De nye positioner gemmes med det samme. Forbind programmet senere, så læser det dem tilbage.</p>
+<p><b>Kort tryk uden for config-tilstand = GUI-tilstand.</b> 5 sekunder efter opstart lukker printet sin serielle port,
+når intet program har forbundet, og konfigurationen bruger D0 eller D1 (de bliver normale pins; ellers forbliver porten
+åben). Et <b>kort</b> tryk på config-knappen (LED konstant, ikke i
+config-tilstand) åbner den igen i 5 sekunder, og printet melder sig, så programmet kan forbinde uden
+nulstilling, for eksempel via Bluetooth (se <i>Hjælp &gt; Bluetooth (HC-05)</i>). Når programmet viser <i>"Venter på
+printet"</i>, er det tidspunktet at trykke.</p>
+<p>Derfor kan <b>D13</b> og <b>A7</b> aldrig bruges til indgange eller udgange.</p>

@@ -1,0 +1,12 @@
+<h3>PWM: brilho e transição</h3>
+<p>Uma saída PWM regula a intensidade de uma lâmpada ou fita de LEDs num pino PWM (D3, D5, D6, D9, D10, D11): <b>0</b> = apagado,
+<b>255</b> = brilho máximo. Use um módulo com transístor ou MOSFET para mais de cerca de 20 mA.</p>
+<ul>
+<li><b>Ciclo de trabalho</b> — o brilho após ligar a alimentação, até que valores próprios, um passo de itinerário ou DCC estendido definam outro.</li>
+<li><b>Tempo de transição</b> — quantos segundos demora uma mudança completa de 0 a 255; uma mudança de metade demora metade.
+<i>de imediato</i> (0) muda logo. Cada novo brilho transita a este ritmo: a partir de valores próprios, de um
+passo de itinerário ou de um comando DCC estendido. Ao ligar a alimentação a saída acende gradualmente a partir do escuro.</li>
+</ul>
+<p><b>Exemplo — dia e noite:</b> uma entrada Absoluto (um interruptor, ou um endereço DCC) com <b>Valores próprios</b>
+desligado = 0 e ligado = 255, e um tempo de transição de 60 s. Mudar para noite atenua as luzes num minuto;
+voltar traz o dia igualmente devagar.</p>

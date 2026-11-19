@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Mit einem <b>HC-05</b>-Bluetooth-Modul auf der Platine können Sie sie ohne USB-Kabel konfigurieren. Das Programm
+richtet das Modul über die Platine für Sie ein (<i>Platine &gt; Bluetooth (HC-05) einrichten</i>, Stufe Fortgeschritten
+oder höher). Nur Arduino <b>Nano</b>: Für das spätere Verbinden brauchen Sie den Konfig-Taster.</p>
+<p><b>Verdrahtung</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> über einen Spannungsteiler: 1 k&Omega; von D1 nach RXD, 2 k&Omega; von RXD nach GND
+(der HC-05 verträgt an seinem RXD nur 3,3 V).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> über eine <b>Schottky-Diode</b> (BAT85 oder 1N5819), mit der <b>Kathode (dem Ring)
+am TXD des HC-05</b>. Die Diode lässt den HC-05 D0 auf Low ziehen, arbeitet aber nie gegen den USB-Chip, so
+funktioniert USB weiter, während der HC-05 angeschlossen ist.</li>
+</ul>
+<p><b>Einrichten</b> (einmalig):</p>
+<ol>
+<li>Halten Sie den Taster am HC-05 gedrückt, während Sie das USB-Kabel einstecken. Seine LED blinkt jetzt <b>langsam</b>
+(etwa alle 2 Sekunden): Das Modul ist im <b>AT-Modus</b>.</li>
+<li>Verbinden Sie das Programm per USB mit der Platine.</li>
+<li>Wählen Sie <i>Platine &gt; Bluetooth (HC-05) einrichten</i> und klicken Sie auf <b>Start</b>. Die Platine probiert die
+üblichen Geschwindigkeiten und stellt das Modul auf <b>115200 Baud</b> und den Namen <b>GPIOcore-&lt;Platinenname&gt;</b> ein.
+Die PIN bleibt, wie sie ist. Das dauert einige Sekunden.</li>
+<li>Ziehen Sie die Platine ab und stecken Sie sie wieder an, <b>ohne</b> den Taster zu halten.</li>
+<li>Koppeln Sie <b>GPIOcore&hellip;</b> in den Bluetooth-Einstellungen von Windows (PIN <b>1234</b>, bei manchen Modulen 0000).
+Windows legt dafür einen COM-Port an (manchmal zwei: Nehmen Sie den "ausgehenden"). Wählen Sie diesen Port in GPIOcore.</li>
+</ol>
+<p>Wenn es nicht klappt: Das Modul ist nicht im AT-Modus (schnelles Blinken = normaler Modus), die Verdrahtung stimmt
+nicht, oder die Diode fehlt oder ist falsch herum eingebaut. Andere Module (HC-06, manche Klone) kennen diese Befehle nicht.</p>
+<p><b>Verbinden über Bluetooth</b>: Das Öffnen des Bluetooth-COM-Ports setzt die Platine nicht zurück. Benutzt nichts auf
+der Platine D0 oder D1, bleibt ihre serielle Schnittstelle offen und das Programm verbindet sich einfach. Benutzt etwas
+diese Pins (ein Eingang oder Ausgang an D0/D1 oder ein Soundeffekt), schließt die Platine ihre serielle Schnittstelle
+5 Sekunden nach dem Start (D0/D1 werden normale Pins). Wenn Sie dann auf <i>Verbinden</i> klicken, zeigt das Programm
+<i>"Warte auf die Platine &mdash; Konfig-Taster kurz drücken"</i>. Drücken Sie den Konfig-Taster (A7) <b>kurz</b>:
+Die Platine öffnet ihre serielle Schnittstelle wieder für 5 Sekunden und meldet sich, und das Programm verbindet sich.
+Das Programm wartet darauf bis zu 30 Sekunden.</p>
+<p>Solange das Programm verbunden ist, gehören D0 und D1 der seriellen Schnittstelle: Verwenden Sie sie auf einer
+Platine mit HC-05 nicht für Eingänge oder Ausgänge.</p>

@@ -1,0 +1,36 @@
+<h3>A vágányút lépései</h3>
+<p>A vágányút teendők listája, fentről lefelé. Minden sor (lépés) <b>egy kimenetet</b> állít be, majd
+<b>vár</b> egy kicsit a következő lépés előtt.</p>
+
+<h4>Mikor indul a vágányút?</h4>
+<p>Amikor a bemeneti lábon lévő nyomógombot <b>megnyomják</b>, vagy a bemenet címére érkező DCC-parancsra. Az <b>A vágányút indítója</b>
+mezőben válassza ki, melyik DCC-parancsra:</p>
+<ul>
+<li><b>bármely parancs</b>: az egyenes és a kitérő irány is elindítja;</li>
+<li><b>csak egyenes</b> vagy <b>csak kitérő irány</b>: így két vágányút osztozhat egy címen. Példa: egy vasúti átjáró az
+1-es címen: az A vágányút <i>csak kitérő irány</i> parancsra bekapcsolja a fényeket és leengedi a sorompókat, a B vágányút
+<i>csak egyenes</i> parancsra újra felnyitja őket.</li>
+</ul>
+<p>A digitális központ egy parancsot többször megismétel; a vágányút az elsőt veszi át.</p>
+
+<h4>Az oszlopok</h4>
+<ul>
+<li><b>Kimenet</b>: mit működtet ez a lépés.</li>
+<li><b>Érték</b>: mit tegyen a kimenet:
+  <ul>
+  <li>váltó, világítás, relé: <b>kitérő irány (0)</b> vagy <b>egyenes (1)</b>;</li>
+  <li>4 jelzési képes jelző: egy <b>jelzésikép-szám</b> (0&ndash;255);</li>
+  <li>szervó: kitérő irány, egyenes vagy egy pontos <b>szög</b> 10&deg; és 170&deg; között;</li>
+  <li>PWM: fényerő- / sebességérték 0&ndash;255.</li>
+  </ul></li>
+<li><b>Utána vár</b>: csak ha a panelbeállításokban be van kapcsolva a <i>Saját várakozási idő minden vágányút-lépéshez</i>; különben minden
+lépés a panel rögzített idejét várja (alapértelmezés szerint 0,3 s).</li>
+</ul>
+
+<h4>Hogyan készítsen egyet</h4>
+<ol>
+<li>Válasszon egy kimenetet az első sorban, <i>vagy</i> húzzon egy kimenetet erre a bemenetre.</li>
+<li>Kattintson a <b>+ Lépés hozzáadása</b> gombra (vagy húzzon újra) a következőhöz.</li>
+<li>A &#9650; &#9660; gombokkal módosíthatja a sorrendet, a <b>kukával</b> törölhet egy lépést.</li>
+</ol>
+<p>Ugyanaz a kimenet többször is szerepelhet, például egy szervó, amely először 45&deg;-ra, majd 135&deg;-ra áll.</p>

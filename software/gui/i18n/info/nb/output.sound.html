@@ -1,0 +1,23 @@
+<h3>Lydeffekt: en DFPlayer Mini MP3-spiller</h3>
+<p>Denne utgangen spiller MP3-filer fra micro-SD-kortet i en DFPlayer Mini-modul: en bjelle, en fløyte, en kunngjøring.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  høyttaler (maks. 3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li><b>1 k&Omega;-motstanden</b> i TX-ledningen beskytter DFPlayeren; ingenting går tilbake til Arduinoen.</li>
+<li>Filer på SD-kortet: i en mappe <b>MP3</b>, med navnene <b>0001.mp3</b>, <b>0002.mp3</b> … Spor 1 er
+/MP3/0001.mp3. Det er navnet som teller, ikke rekkefølgen du kopierer dem i. Bare MP3, ikke WAV.</li>
+<li><b>Inngangen velger sporet</b>, så én lydutgang kan spille mange lyder: gi en veksle- eller absolutt-inngang
+<b>Egne verdier</b> (et spor for av og ett for på), bruk et togveitrinn, eller send en DCC extended-verdi.
+Spor 0 = stopp. Uten egne verdier: på = spor 1, av = stopp.</li>
+<li>En inngang du kobler til en lydutgang, får egne verdier av seg selv: av = stopp, på = spor 1.</li>
+<li>Flere lydutganger kan dele D1, men vanligvis er én nok.</li>
+<li><b>Bare uten PC:</b> D1 er også USB-linjen til datamaskinen. Når programmet er tilkoblet, melder kortet bare
+sporet (♪ på lerretet). Koble fra USB-kabelen og forsyn kortet på annen måte for å høre det.</li>
+<li><b>Hør det på PC-en</b> (nivå Avansert og oppover): <i>Vis &gt; Lydmappe&hellip;</i> velger en mappe med de
+samme filene som MP3-mappen på SD-kortet (0001.mp3 &hellip;). I Simuler og Live-test spiller
+programmet da sporet kortet melder; et nytt spor avbryter det forrige, som på DFPlayeren.
+<i>Vis &gt; Demp lyder</i> gjør det stille.</li>
+<li>Ikke på et <b>DCCnext</b>: det har ingen D1 på terminalene, så denne typen tilbys ikke der.</li>
+</ul>

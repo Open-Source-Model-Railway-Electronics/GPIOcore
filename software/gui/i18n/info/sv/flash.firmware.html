@@ -1,0 +1,35 @@
+<h2>Uppdatera firmware</h2>
+<p><b>Firmware</b> är programmet som körs på Arduinon i ditt GPIOcore-kort. Ibland finns det en nyare
+version med rättningar eller nya funktioner. Det här fönstret lägger in den på ditt kort.</p>
+
+<h3>Steg för steg</h3>
+<ol>
+<li><b>Koppla in kortet</b> med en USB-kabel.</li>
+<li><b>Port:</b> välj kortet. Där står oftast CH340, USB Serial eller Arduino. Syns det inte? Kontrollera kabeln och
+klicka på <b>Uppdatera</b>.</li>
+<li><b>Firmwarefil:</b> det här är filen med det nya programmet (den slutar på <i>.hex</i>). Normalt är rätt fil
+redan ifylld. Om inte, klicka på <b>Bläddra…</b> och välj <i>GPIOcore.hex</i>.</li>
+<li><b>Korttyp:</b> de flesta kort fungerar med <i>Arduino Uno / Nano (ny bootloader)</i>. Billigare eller äldre Nano-kort
+behöver ofta <i>Arduino Nano (gammal bootloader)</i>. Osäker? Börja bara med den första: om kortet
+inte svarar provar programmet den andra av sig självt.</li>
+<li>Klicka på <b>Flasha</b> och vänta tills stapeln är full. Det tar ungefär 10 till 30 sekunder. <b>Koppla inte ur
+kortet</b> medan det pågår.</li>
+</ol>
+
+<h3>Bra att veta</h3>
+<ul>
+<li>Programmet släpper kortet under uppladdningen och ansluter igen efteråt. Du behöver inte göra något.</li>
+<li>Dina inställningar på kortet (utgångar, ingångar, anslutningar) behålls normalt. För säkerhets skull, använd
+<b>Arkiv → Spara</b> först.</li>
+<li>Andra program som använder kortet, som seriemonitorn i Arduino IDE, måste stängas först.</li>
+<li>Gick något fel? Läs det röda meddelandet: det talar om vad du kan prova. <b>Visa detaljer</b> visar hela rapporten,
+vilket är praktiskt när du ber någon om hjälp.</li>
+<li>En misslyckad uppladdning förstör inte kortet. Försök bara igen.</li>
+</ul>
+
+<h3>Via ArduinoISP-programmerare (avancerat)</h3>
+<p>Bara för kort utan USB-bootloader, eller ett kort som inte längre svarar. Du behöver en andra Arduino som kör
+sketchen <i>ArduinoISP</i>, kopplad till de sex ICSP-pinnarna på ditt kort. Välj porten för den <i>programmerande</i>
+Arduinon. Det här ställer också in chipets inställningar (fuses) och tar bort USB-bootloadern, så efteråt kan du bara uppdatera
+det här kortet med programmeraren. Det <b>raderar också dina inställningar</b> på kortet: spara dem med <b>Arkiv → Spara</b>
+först, och skriv tillbaka dem efteråt.</p>

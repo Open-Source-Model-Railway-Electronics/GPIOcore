@@ -1,0 +1,41 @@
+<h3>Konfigurálás, Szimuláció és Élő teszt</h3>
+<p>A program mindig a három mód egyikében van: ezek a színes gombok felül. A kapcsolat ettől független:
+<b>Csatlakozás / Bontás</b> a port mellett, mellette az állapot (Offline, Csatlakoztatva: <i>név</i>,
+Szimuláció).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Mód</th><th>Keret</th><th>Mit tehet</th></tr>
+<tr><td><b>&#9679; Konfigurálás</b></td><td>offline nincs, csatlakoztatva <span style="color:#DC2626">piros</span></td><td>Mindent
+módosíthat. Offline egy panelt készít elő; csatlakoztatva minden változás azonnal a panelre kerül. A program semmit sem olvas be
+automatikusan a panelről: használja a <b>Panel olvasása</b> vagy az <b>Összes írása</b> gombot.</td></tr>
+<tr><td><b>&#9679; Szimuláció</b></td><td style="color:#A16207">sárga</td><td>A konfiguráció egy virtuális panelen fut.
+Nyomja meg a bemenetek gombjait, és figyeljen; semmi sem módosítható.</td></tr>
+<tr><td><b>&#9679; Élő teszt</b></td><td>csatlakoztatva <span style="color:#15803D">zöld</span></td><td>Magától
+csatlakozik. Nyomja meg a bemenetek gombjait, és nézze meg, mit csinál a valódi panel; semmi sem módosítható. Ha a panel
+neve eltér a képernyőn láthatótól, a program felajánlja, hogy előbb beolvassa a panelt.</td></tr>
+</table>
+<p>Semmi sem kerül magától fájlba: a <b>Mentés</b> (Ctrl+S) mindig megkérdezi, hová, és a program bezárásakor
+rákérdez a nem mentett változásokra.</p>
+
+<h4>A bemenetek gombjai</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (abszolút bemenetek): &#9664; = kitérő irány / ki, &#9654; = egyenes / be.</li>
+<li><b>&#9654; nyomás</b> (váltás) és <b>&#9654; indít</b> (vágányút): mintha megnyomná a gombot vagy DCC-parancsot küldene.</li>
+<li><b>jelzési kép &#9662; / érték &#9662;</b>: jelzőt vagy PWM-kimenetet vezérlő bemenethez. Lámpánként válasszon: ki, be,
+villog vagy villog, ellenfázisban.</li>
+</ul>
+<p>A gomb úgy viselkedik, mint egy DCC-parancs: a fél másodpercen belüli második kattintás figyelmen kívül marad, akárcsak a digitális központ
+ismételt csomagja.</p>
+<p>A <b>Szimuláció</b> módban a lábbal rendelkező (nem analóg) bemenet ezen a lábon működik, mint a valódi nyomógomb vagy kapcsoló:
+a <b>&#9654; nyomás</b> / <b>&#9654; indít</b> alacsonyra húzza a lábat, majd elengedi, a &#9664; az abszolút bemenet lábát
+alacsonyan, a &#9654; magasan tartja (a tartott oldal ki van emelve). Így minden, ami a lábat olvassa, szintén reagál, például
+egy szervó, amely foglaltságjelzőként követi a bemenetet. A láb nélküli bemenetek DCC-parancsként viselkednek.</p>
+
+<h4>Mit mutatnak a kimenetek</h4>
+<ul>
+<li><b>Kék pont</b> = egyenes / be, <b>piros pont</b> = kitérő irány / ki, szürke = még ismeretlen.</li>
+<li><b>Szervó</b>: számlap a szöggel; fokról fokra fordul, ahogy a panel jelenti.</li>
+<li><b>Jelző</b>: négy lámpa a saját színében, úgy villogva, mint a panelen.</li>
+<li><b>Szívrelék</b>: kis relérajz. A kar és a szív mutatja, melyik érintkező kap feszültséget (piros = kitérő irány,
+kék = egyenes). Az electrofrog szürke (feszültségmentes), amíg a váltó mozog; az unifrog azonnal átvált.</li>
+</ul>
+<p>Az élő teszthez semminek sem kell a panelre csatlakoznia: azt látja, amit a panel <i>kapcsolna</i>.</p>

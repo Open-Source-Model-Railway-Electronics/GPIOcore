@@ -5,6 +5,10 @@ pueden usarlos igualmente para su maqueta:</p>
 <li>Al arrancar, la placa espera <b>5 segundos</b> a este programa.</li>
 <li>Si el programa se conecta, D0 / D1 quedan reservados para el USB mientras configura. Lo que esté conectado a esos
 pines <b>no</b> funciona entonces.</li>
-<li>Si no se conecta nada (uso normal en la maqueta), D0 / D1 pasan a ser pines normales.</li>
+<li>Si no se conecta nada (uso normal en la maqueta), D0 / D1 pasan a ser pines normales. Si no hay nada en
+D0 / D1 (ninguna entrada o salida, ningún efecto de sonido), siguen siendo cables USB: el programa puede conectarse en
+cualquier momento.</li>
+<li>Una pulsación breve del botón de configuración (Nano) los vuelve a convertir en cables USB durante 5 segundos, para
+que el programa pueda conectarse sin reiniciar la placa.</li>
 </ul>
 <p>Úselos para cosas sencillas como LED. Evite cargas grandes en D0: pueden interferir al cargar un firmware nuevo.</p>

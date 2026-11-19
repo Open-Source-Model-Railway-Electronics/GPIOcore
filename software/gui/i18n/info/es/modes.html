@@ -1,16 +1,20 @@
 <h3>Configurar, simular y probar en vivo</h3>
-<p>Los tres botones de colores de arriba muestran lo que está haciendo el programa. El mismo color enmarca el centro
-de la pantalla, para que siempre sepa dónde está.</p>
+<p>El programa está siempre en uno de tres modos: los botones de colores de arriba. La conexión va aparte:
+<b>Conectar / Desconectar</b> junto al puerto, con el estado indicado al lado (Sin conexión, Conectado: <i>nombre</i>,
+Simulación).</p>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Botón</th><th>Marco</th><th>Qué ocurre</th></tr>
-<tr><td><b>&#9679; Configurar</b></td><td style="color:#DC2626">rojo</td><td>Conectado a una placa real. Cada cambio va a la
-placa al instante y se vuelve a leer para comprobarlo.</td></tr>
-<tr><td><b>&#9679; Simular</b></td><td style="color:#A16207">amarillo</td><td>Una placa simulada ejecuta <i>sus</i> ajustes (los de
-la placa que tenía conectada, un archivo de placa o una placa nueva). Los botones de las entradas están activos. Los
-cambios se guardan en el archivo de placa, así que puede preparar una placa en casa.</td></tr>
-<tr><td><b>&#9679; Prueba en vivo</b></td><td style="color:#15803D">verde</td><td>En una placa real: las entradas reciben botones y
-las salidas muestran lo que informa la placa.</td></tr>
+<tr><th>Modo</th><th>Marco</th><th>Qué puede hacer</th></tr>
+<tr><td><b>&#9679; Configurar</b></td><td>ninguno sin conexión, <span style="color:#DC2626">rojo</span> si está conectado</td><td>Cambiar
+todo. Sin conexión prepara una placa; conectado, cada cambio va a la placa al instante. No se lee nada de la placa
+automáticamente: use <b>Leer placa</b> o <b>Escribir todo</b>.</td></tr>
+<tr><td><b>&#9679; Simular</b></td><td style="color:#A16207">amarillo</td><td>Su configuración funciona en una placa simulada.
+Pulse los botones de las entradas y observe; no se puede cambiar nada.</td></tr>
+<tr><td><b>&#9679; Prueba en vivo</b></td><td><span style="color:#15803D">verde</span> si está conectado</td><td>Se conecta
+sola. Pulse los botones de las entradas y vea lo que hace la placa real; no se puede cambiar nada. Si la placa tiene
+otro nombre que el de la pantalla, el programa ofrece leer primero la placa.</td></tr>
 </table>
+<p>Nada se guarda en un archivo por sí solo: <b>Guardar</b> (Ctrl+S) siempre pregunta dónde, y al cerrar el programa
+se le pregunta por los cambios sin guardar.</p>
 
 <h4>Los botones de las entradas</h4>
 <ul>
@@ -21,6 +25,10 @@ apagada, encendida, intermitente o intermitente en contrafase.</li>
 </ul>
 <p>Un botón actúa como una orden DCC: un segundo clic antes de medio segundo se ignora, igual que un paquete repetido
 de una central.</p>
+<p>En <b>Simular</b>, una entrada con pin (no analógico) actúa sobre ese pin, como el pulsador o el interruptor real:
+<b>&#9654; pulsar</b> / <b>&#9654; iniciar</b> pone el pin a nivel bajo y lo vuelve a soltar, &#9664; mantiene a nivel bajo el
+pin de una entrada absoluta y &#9654; a nivel alto (el lado mantenido aparece resaltado). Así reacciona también todo lo
+que lee el pin, por ejemplo un servo que sigue a la entrada como detector. Las entradas sin pin actúan como una orden DCC.</p>
 
 <h4>Qué muestran las salidas</h4>
 <ul>

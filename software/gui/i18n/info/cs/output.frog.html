@@ -1,0 +1,19 @@
+<h3>Polarita srdcovky — electrofrog, nebo unifrog?</h3>
+<p><b>Srdcovka</b> je místo výhybky, kde se kříží dvě kolejnice. U výhybek s „živou“ (napájenou) srdcovkou je tento díl
+kovový a musí dostat <b>stejnou polaritu jako nastavená cesta</b>. Pokud dostane špatnou, lokomotivy se zastaví nebo
+způsobí zkrat. Relé přepíná srdcovku, když se výhybka přestavuje.</p>
+<p>Prohlédněte si svou výhybku a zvolte <b>jednu</b> možnost:</p>
+<ul>
+<li><b>Žádná (izolovaná srdcovka)</b> — srdcovka je z plastu (Peco <i>Insulfrog</i>, většina kolejí ze startovacích sad). Není co dělat.</li>
+<li><b>Electrofrog — 2 relé</b> (Peco <i>Electrofrog</i> a podobné). Relé A se sepne pro
+„přímo“, relé B pro „do odbočky“. Během přestavování výhybky jsou <b>obě na okamžik vypnutá</b>, takže nikdy
+nevznikne zkrat (nejdřív rozepnout, pak sepnout).</li>
+<li><b>Unifrog — 1 přepínací relé</b> (Peco <i>Unifrog</i>). Srdcovka má jeden vodič. Jedno přepínací relé ho připojí ke
+správné kolejnici. Se servem přepne přesně ve chvíli, kdy servo míjí střed; s elektromagnetickým přestavníkem na konci
+impulsu.</li>
+</ul>
+<p>Použít lze jen jednu z obou možností. Zvolením jedné se odstraní piny té druhé.</p>
+<p><b>Zapojení:</b> použijte reléový <i>modul</i> (s tranzistorem a diodou) — pin Arduina nedokáže budit samotné relé.</p>
+<p><b>Relé spínají na LOW (invertováno)</b>: zaškrtněte u reléových modulů, které sepnou, když je vstup v úrovni LOW
+(mnoho levných modulů s optočlenem). Deska pak řídí piny relé obráceně; význam relé
+(přímo / do odbočky) zůstává stejný.</p>

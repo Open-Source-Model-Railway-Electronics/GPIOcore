@@ -1,5 +1,8 @@
 <h3>Konfig-Taster (A7) und Servos mit dem Handregler einlernen</h3>
 <p>Ohne Computer können Sie die Endlagen von Servos mit dem Konfig-Taster und Ihrem DCC-Handregler einstellen.</p>
+<p><b>Hinweis:</b> Den Konfig-Taster (A7) gibt es nur auf einem Arduino <b>Nano</b>. Ein DCCnext hat kein
+A7 und damit keinen Konfig-Taster: Stellen Sie die Endlagen der Servos stattdessen im Programm ein (oder mit der
+Smartphone-Fernbedienung).</p>
 <p><b>Verdrahtung:</b> ein Taster von <b>A7</b> nach <b>GND</b>, dazu ein 10-k&Omega;-Widerstand von A7 nach <b>5 V</b>
 (A7 hat keinen eingebauten Pull-up). Eine LED mit Vorwiderstand an <b>D13</b> zeigt den Modus (die meisten Arduinos haben schon eine).</p>
 <ol>
@@ -10,9 +13,17 @@ drücken für den nächsten Servo.</li>
   <ul>
   <li>Drehen Sie am <b>Fahrregler</b>: Der gewählte Servo bewegt sich. Die Richtungstaste bestimmt die Richtung, der Regler die Geschwindigkeit.</li>
   <li><b>F1</b> = diesen Winkel als <i>Abzweig</i> speichern, <b>F2</b> = als <i>Gerade</i> speichern.</li>
-  <li><b>F3</b> = den Servo umstellen (zur Kontrolle), <b>F4</b> = nächster Servo.</li>
+  <li><b>F3</b> = den Servo umstellen (zur Kontrolle), <b>F5</b> = nächster Servo.</li>
+  <li><b>F4</b> = die Herzstück-Relais des gewählten Servos invertieren, für Relaismodule, die bei LOW schalten.
+  Jeder Druck wechselt zwischen normal und invertiert.</li>
   </ul></li>
 <li>Halten Sie den Konfig-Taster erneut 2 Sekunden gedrückt: Die LED leuchtet dauerhaft. Zurück im Normalbetrieb.</li>
 </ol>
 <p>Die neuen Stellungen werden sofort gespeichert. Verbinden Sie später das Programm, liest es sie zurück.</p>
+<p><b>Kurzer Druck außerhalb des Konfigurationsmodus = GUI-Modus.</b> 5 Sekunden nach dem Start schließt die Platine
+ihre serielle Schnittstelle, wenn sich kein Programm verbunden hat und die Konfiguration D0 oder D1 benutzt (sie werden
+dann normale Pins; sonst bleibt die Schnittstelle offen). Ein <b>kurzer</b> Druck auf den Konfig-Taster (LED leuchtet
+dauerhaft, nicht im Konfigurationsmodus) öffnet sie wieder für 5 Sekunden und die Platine meldet sich, sodass das
+Programm sich ohne Reset verbinden kann, zum Beispiel über Bluetooth (siehe <i>Hilfe &gt; Bluetooth (HC-05)</i>).
+Wenn das Programm <i>„Warte auf die Platine“</i> anzeigt, ist das der Moment zum Drücken.</p>
 <p>Deshalb können <b>D13</b> und <b>A7</b> nie für Eingänge oder Ausgänge benutzt werden.</p>

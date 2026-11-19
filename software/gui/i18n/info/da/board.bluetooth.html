@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Med et <b>HC-05</b>-Bluetooth-modul på printet kan du konfigurere det uden USB-kabel. Programmet sætter
+modulet op for dig via printet (<i>Print &gt; Opsæt Bluetooth (HC-05)</i>, niveau Avanceret eller højere).
+Kun Arduino <b>Nano</b>: du skal bruge config-knappen for at forbinde senere.</p>
+<p><b>Tilslutning</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> via en spændingsdeler: 1 k&Omega; fra D1 til RXD, 2 k&Omega; fra RXD til GND
+(HC-05 tager 3,3 V på sin RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> via en <b>schottkydiode</b> (BAT85 eller 1N5819), med <b>katoden (stregen)
+ved HC-05's TXD</b>. Dioden lader HC-05 trække D0 lav, men kæmper aldrig mod USB-chippen, så USB stadig virker, mens
+HC-05 er tilsluttet.</li>
+</ul>
+<p><b>Opsætning</b> (én gang):</p>
+<ol>
+<li>Hold knappen på HC-05 inde, mens du sætter USB-kablet i. Dens LED blinker nu <b>langsomt</b> (ca. hvert
+2. sekund): modulet er i <b>AT-tilstand</b>.</li>
+<li>Forbind programmet med printet via USB.</li>
+<li>Vælg <i>Print &gt; Opsæt Bluetooth (HC-05)</i>, og klik på <b>Start</b>. Printet prøver de almindelige hastigheder og
+sætter modulet til <b>115200 baud</b> og navnet <b>GPIOcore-&lt;printets navn&gt;</b>. PIN-koden forbliver uændret.
+Det tager et par sekunder.</li>
+<li>Tag printet ud, og sæt det i igen, <b>uden</b> at holde knappen inde.</li>
+<li>Par <b>GPIOcore&hellip;</b> i Windows' Bluetooth-indstillinger (PIN <b>1234</b>, eller 0000 på nogle moduler).
+Windows opretter en COM-port til det (nogle gange to: brug den "udgående"). Vælg den port i GPIOcore.</li>
+</ol>
+<p>Hvis det ikke lykkes: modulet er ikke i AT-tilstand (hurtig blink = normal tilstand), tilslutningen er forkert, eller dioden
+mangler eller vender forkert. Andre moduler (HC-06, nogle kloner) kender ikke disse kommandoer.</p>
+<p><b>Forbinde via Bluetooth</b>: når Bluetooth-COM-porten åbnes, nulstilles printet ikke. Når intet på
+printet bruger D0 eller D1, forbliver dets serielle port åben, og programmet forbinder bare. Når noget bruger dem
+(en indgang eller udgang på D0/D1, eller en lydeffekt), lukker printet sin serielle port 5 sekunder efter opstart
+(D0/D1 bliver normale pins). Når du så klikker på <i>Forbind</i>, viser programmet
+<i>"Venter på printet &mdash; tryk kort på dets config-knap"</i>. Tryk <b>kort</b> på config-knappen (A7):
+printet åbner sin serielle port igen i 5 sekunder og melder sig, og programmet forbinder.
+Programmet venter op til 30 sekunder på det.</p>
+<p>Mens programmet er forbundet, hører D0 og D1 til den serielle port: brug dem ikke til indgange eller udgange på et
+print med HC-05.</p>

@@ -1,0 +1,12 @@
+<h3>PWM: lysstyrke og overgang</h3>
+<p>En PWM-utgang dimmer en lampe eller LED-stripe på en PWM-pinne (D3, D5, D6, D9, D10, D11): <b>0</b> = av,
+<b>255</b> = full lysstyrke. Bruk en transistor- eller MOSFET-modul for mer enn omtrent 20 mA.</p>
+<ul>
+<li><b>Driftssyklus</b> — lysstyrken etter oppstart, til egne verdier, et togveitrinn eller DCC extended setter en annen.</li>
+<li><b>Overgangstid</b> — hvor mange sekunder en full endring fra 0 til 255 tar; en halv endring tar halvparten så lang tid.
+<i>straks</i> (0) bytter med en gang. Hver ny lysstyrke går over i dette tempoet: fra egne verdier, et
+togveitrinn eller en DCC extended-kommando. Ved oppstart tones utgangen opp fra mørke.</li>
+</ul>
+<p><b>Eksempel — dag og natt:</b> en absolutt-inngang (en bryter, eller en DCC-adresse) med <b>Egne verdier</b>
+av = 0 og på = 255, og en overgangstid på 60 s. Å bytte til natt demper lyset på ett minutt;
+å bytte tilbake henter dagen inn like sakte.</p>

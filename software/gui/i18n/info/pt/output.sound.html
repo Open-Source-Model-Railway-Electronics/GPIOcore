@@ -1,0 +1,23 @@
+<h3>Efeito sonoro: um leitor de MP3 DFPlayer Mini</h3>
+<p>Esta saída reproduz ficheiros MP3 do cartão micro SD de um módulo DFPlayer Mini: uma campainha, um apito, um anúncio.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  altifalante (≤3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>A <b>resistência de 1 k&Omega;</b> na linha TX protege o DFPlayer; nada volta para o Arduino.</li>
+<li>Ficheiros no cartão SD: numa pasta <b>MP3</b>, com os nomes <b>0001.mp3</b>, <b>0002.mp3</b> … A faixa 1 é
+/MP3/0001.mp3. O que conta é o nome, não a ordem em que os copia. Só MP3, sem WAV.</li>
+<li><b>A entrada escolhe a faixa</b>, por isso uma saída de som pode tocar muitos sons: dê a uma entrada Comutar ou Absoluto
+<b>Valores próprios</b> (uma faixa para desligado e outra para ligado), use um passo de itinerário, ou envie um valor DCC estendido.
+Faixa 0 = parar. Sem valores próprios: ligado = faixa 1, desligado = parar.</li>
+<li>Uma entrada que ligue a uma saída de som recebe valores próprios automaticamente: desligado = parar, ligado = faixa 1.</li>
+<li>Várias saídas de som podem usar D1 em conjunto, mas normalmente uma basta.</li>
+<li><b>Só sem PC:</b> D1 é também a linha USB para o computador. Com o programa ligado a placa apenas
+comunica a faixa (♪ na área de trabalho). Desligue o cabo USB e alimente a placa de outra forma para a ouvir.</li>
+<li><b>Ouvir no PC</b> (nível Avançado e superior): <i>Ver &gt; Pasta de sons&hellip;</i> escolhe uma pasta com os
+mesmos ficheiros da pasta MP3 do cartão SD (0001.mp3 &hellip;). Em Simular e Teste em directo o
+programa reproduz então a faixa que a placa comunica; uma faixa nova interrompe a anterior, como no DFPlayer.
+<i>Ver &gt; Silenciar sons</i> desliga o som.</li>
+<li>Não numa <b>DCCnext</b>: não tem D1 nos seus terminais, por isso este tipo não é oferecido aí.</li>
+</ul>

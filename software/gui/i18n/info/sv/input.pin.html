@@ -1,0 +1,14 @@
+<h3>Ingångspinne: där knappen är ansluten</h3>
+<p>Välj den Arduino-pinne som knappen, strömbrytaren eller sensorn är ansluten till.</p>
+<p><b>Så kopplar du:</b> den ena tråden från knappen till pinnen, den andra tråden till <b>GND</b> (minus, 0 V).
+Inget motstånd behövs: kortet slår på sitt eget inbyggda "pull-up"-motstånd.</p>
+<pre>  pinne D7 ---[ knapp ]--- GND</pre>
+<ul>
+<li>Anslut <b>inte</b> en knapp till 5 V eller 12 V: det kan skada Arduinon.</li>
+<li><b>D2</b> (DCC-ingång), <b>D13</b> (config-lysdiod) och <b>A7</b> (config-knapp) kan inte användas.</li>
+<li><b>A6</b> (bara Arduino Nano) är en ren analog ingång utan pull-up: lägg till ett 10 k&Omega; motstånd från pinnen till 5 V.</li>
+<li>Pinnar som redan används visas <b>röda</b>. Väljer du en sådan tas den från den andra ingången eller utgången, som då
+blir <i>används inte</i>.</li>
+</ul>
+<p>Flera knappar på en analog pinne, eller en sensor? Ställ in <b>Läs som</b> på ett analogt val.</p>
+<p>Bara DCC, ingen knapp? Välj "används inte".</p>

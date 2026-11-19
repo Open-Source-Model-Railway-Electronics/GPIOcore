@@ -1,0 +1,36 @@
+<h3>Passos do itinerário</h3>
+<p>Um itinerário é uma lista de coisas a fazer, de cima para baixo. Cada linha (passo) define <b>uma saída</b> e depois
+<b>espera</b> um momento antes do passo seguinte.</p>
+
+<h4>Quando arranca o itinerário?</h4>
+<p>Quando o botão no pino de entrada é <b>premido</b>, ou com um comando DCC para o endereço da entrada. Escolha qual
+comando DCC em <b>O itinerário arranca com</b>:</p>
+<ul>
+<li><b>qualquer comando</b>: directo e desviado arrancam-no ambos;</li>
+<li><b>só directo</b> ou <b>só desviado</b>: assim dois itinerários podem partilhar um endereço. Exemplo, uma passagem de nível no
+endereço 1: o itinerário A em <i>só desviado</i> acende as luzes e fecha as cancelas, o itinerário B em
+<i>só directo</i> volta a abri-las.</li>
+</ul>
+<p>Uma central repete um comando algumas vezes; o itinerário aceita o primeiro.</p>
+
+<h4>As colunas</h4>
+<ul>
+<li><b>Saída</b>: o que este passo comanda.</li>
+<li><b>Valor</b>: o que a saída deve fazer:
+  <ul>
+  <li>agulha, luz, relé: <b>desviado (0)</b> ou <b>directo (1)</b>;</li>
+  <li>sinal de 4 aspectos: um <b>número de aspecto</b> (0&ndash;255);</li>
+  <li>servo: desviado, directo, ou um <b>ângulo</b> exacto entre 10&deg; e 170&deg;;</li>
+  <li>PWM: um valor de brilho / velocidade 0&ndash;255.</li>
+  </ul></li>
+<li><b>Esperar depois</b>: só quando <i>Tempo de espera próprio por passo do itinerário</i> está ligado nas definições da placa; caso contrário cada
+passo espera o tempo fixo da placa (0,3 s por predefinição).</li>
+</ul>
+
+<h4>Como criar um</h4>
+<ol>
+<li>Escolha uma saída na primeira linha, <i>ou</i> arraste uma saída para esta entrada.</li>
+<li>Clique em <b>+ Adicionar passo</b> (ou arraste de novo) para o seguinte.</li>
+<li>Use &#9650; &#9660; para mudar a ordem, e o <b>caixote do lixo</b> para eliminar um passo.</li>
+</ol>
+<p>A mesma saída pode aparecer mais de uma vez, por exemplo um servo que primeiro vai para 45&deg; e depois para 135&deg;.</p>

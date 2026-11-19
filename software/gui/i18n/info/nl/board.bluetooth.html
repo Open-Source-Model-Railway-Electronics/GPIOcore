@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Met een <b>HC-05</b> Bluetooth-module op het board kun je het zonder USB-kabel configureren. Het programma stelt
+de module voor je in via het board (<i>Board &gt; Bluetooth (HC-05) instellen</i>, niveau Gevorderd of hoger).
+Alleen Arduino <b>Nano</b>: je hebt de config-knop nodig om later te verbinden.</p>
+<p><b>Bedrading</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> via een spanningsdeler: 1 k&Omega; van D1 naar RXD, 2 k&Omega; van RXD naar GND
+(de HC-05 verwacht 3,3 V op zijn RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> via een <b>schottkydiode</b> (BAT85 of 1N5819), met de <b>kathode (de streep)
+aan de TXD van de HC-05</b>. De diode laat de HC-05 D0 laag trekken, maar vecht nooit met de USB-chip, zodat USB
+blijft werken terwijl de HC-05 is aangesloten.</li>
+</ul>
+<p><b>Instellen</b> (eenmalig):</p>
+<ol>
+<li>Houd de knop op de HC-05 ingedrukt terwijl je de USB-kabel insteekt. De led knippert nu <b>langzaam</b> (ongeveer
+elke 2 seconden): de module staat in <b>AT-modus</b>.</li>
+<li>Verbind het programma via USB met het board.</li>
+<li>Kies <i>Board &gt; Bluetooth (HC-05) instellen</i> en klik op <b>Start</b>. Het board probeert de gangbare snelheden
+en stelt de module in op <b>115200 baud</b> en de naam <b>GPIOcore-&lt;boardnaam&gt;</b>. De pincode blijft zoals hij is.
+Dit duurt een paar seconden.</li>
+<li>Haal het board los en sluit het opnieuw aan, <b>zonder</b> de knop ingedrukt te houden.</li>
+<li>Koppel <b>GPIOcore&hellip;</b> in de Bluetooth-instellingen van Windows (pincode <b>1234</b>, of 0000 bij sommige modules).
+Windows maakt er een COM-poort voor aan (soms twee: gebruik de "uitgaande"). Kies die poort in GPIOcore.</li>
+</ol>
+<p>Lukt het niet? Dan staat de module niet in AT-modus (snel knipperen = normale modus), klopt de bedrading niet, of
+ontbreekt de diode of zit hij verkeerd om. Andere modules (HC-06, sommige klonen) kennen deze commando's niet.</p>
+<p><b>Verbinden via Bluetooth</b>: het openen van de Bluetooth-COM-poort reset het board niet. Als niets op het
+board D0 of D1 gebruikt, blijft de seriële poort open en verbindt het programma gewoon. Als er wel iets gebruik van
+maakt (een ingang of uitgang op D0/D1, of een geluidseffect), sluit het board zijn seriële poort 5 seconden na het
+opstarten (D0/D1 worden gewone pinnen). Klik je dan op <i>Verbinden</i>, dan toont het programma
+<i>"Wachten op het board &mdash; druk kort op de config-knop"</i>. Druk <b>kort</b> op de config-knop (A7):
+het board opent zijn seriële poort weer 5 seconden en meldt zich, en het programma verbindt.
+Het programma wacht daar maximaal 30 seconden op.</p>
+<p>Zolang het programma verbonden is, horen D0 en D1 bij de seriële poort: gebruik ze niet voor ingangen of uitgangen
+op een board met een HC-05.</p>

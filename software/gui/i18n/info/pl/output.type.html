@@ -1,0 +1,21 @@
+<h3>Co jest podłączone do tego wyjścia?</h3>
+<ul>
+<li><b>Pojedyncze stałe</b> — jeden pin wł. lub wył. Diody LED, moduł przekaźnika, żarówki (przez tranzystor lub przekaźnik).</li>
+<li><b>Pojedynczy impuls</b> — jeden pin dostaje krótki impuls. Do rozprzęgacza lub urządzenia z jedną cewką.</li>
+<li><b>Pojedyncze miganie</b> — jeden pin miga, gdy jest włączony. Światło ostrzegawcze.</li>
+<li><b>Podwójne stałe</b> — dwa piny: A wł. i B wył. albo odwrotnie. Semafory dwukolorowe, dwa przekaźniki.</li>
+<li><b>Podwójny impuls</b> — dwa piny, jeden z nich dostaje krótki impuls. Do <b>elektromagnetycznych napędów zwrotnic</b>
+(Peco, Roco, Fleischmann …): A = jedna cewka, B = druga cewka.</li>
+<li><b>Podwójne miganie</b> — dwa piny migają na przemian.</li>
+<li><b>Światła przemienne</b> — dwa światła zapalają się na zmianę z przerwą: sygnalizacja na przejeździe kolejowym.</li>
+<li><b>Ognisko / Świetlówka / Spawarka</b> — efekty świetlne: migoczący ogień, świetlówka, która migocze przy
+zapalaniu, błyski spawania. (Ognisko i Świetlówka wymagają pinów PWM.)</li>
+<li><b>Semafor 4-komorowy</b> — cztery diody LED (zielona, żółta, czerwona, biała …), ustawiane poleceniami sygnałowymi DCC lub przebiegiem.</li>
+<li><b>Serwo</b> — serwo modelarskie jako napęd zwrotnicy. Powolny, realistyczny ruch.</li>
+<li><b>PWM</b> — jasność żarówki lub łańcucha LED, opcjonalnie z powolnym przejściem (dzień i noc).</li>
+<li><b>Semafor odstępowy</b> — samoczynny semafor (lampy A–D): płytka sama wybiera sygnał na podstawie detektorów własnego i następnego odstępu.</li>
+<li><b>Efekt dźwiękowy</b> — odtwarzacz MP3 (DFPlayer Mini) na D1: dzwonek, gwizdek, zapowiedź. Wejście wybiera utwór. Gra tylko wtedy, gdy nie jest podłączony komputer.</li>
+<li><b>Nieużywane</b> — nic nie jest podłączone.</li>
+</ul>
+<p><b>Ważne dla cewek:</b> pin Arduino nie może bezpośrednio sterować cewką. Między pinem a cewką użyj płytki sterownika
+(na przykład z ULN2803 lub modułu MOSFET).</p>

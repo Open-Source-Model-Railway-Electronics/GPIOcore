@@ -1,0 +1,35 @@
+<h2>Opdatering af firmwaren</h2>
+<p><b>Firmwaren</b> er det program, der kører på Arduinoen på dit GPIOcore-print. Nogle gange findes der en nyere
+version med rettelser eller nye funktioner. Dette vindue lægger den på dit print.</p>
+
+<h3>Trin for trin</h3>
+<ol>
+<li><b>Tilslut printet</b> med et USB-kabel.</li>
+<li><b>Port:</b> vælg printet. Der står som regel CH340, USB Serial eller Arduino. Kan du ikke se det? Kontrollér kablet, og
+klik på <b>Opdater</b>.</li>
+<li><b>Firmwarefil:</b> det er filen med det nye program (den ender på <i>.hex</i>). Normalt er den rigtige fil
+allerede udfyldt. Hvis ikke, så klik på <b>Gennemse…</b>, og vælg <i>GPIOcore.hex</i>.</li>
+<li><b>Printtype:</b> de fleste print virker med <i>Arduino Uno / Nano (ny bootloader)</i>. Billigere eller ældre Nano-print
+kræver ofte <i>Arduino Nano (gammel bootloader)</i>. Usikker? Start bare med den første: hvis printet
+ikke svarer, prøver programmet selv den anden.</li>
+<li>Klik på <b>Flash</b>, og vent, til bjælken er fuld. Det tager ca. 10 til 30 sekunder. <b>Tag ikke
+printet ud</b>, mens det arbejder.</li>
+</ol>
+
+<h3>Godt at vide</h3>
+<ul>
+<li>Programmet slipper printet under upload og forbinder igen bagefter. Du behøver ikke gøre noget.</li>
+<li>Dine indstillinger på printet (udgange, indgange, forbindelser) bevares normalt. For en sikkerheds skyld kan du først bruge
+<b>Filer → Gem</b>.</li>
+<li>Andre programmer, der bruger printet, som f.eks. Arduino IDE's serielle monitor, skal lukkes først.</li>
+<li>Gik noget galt? Læs den røde besked: den fortæller, hvad du kan prøve. <b>Vis detaljer</b> viser hele rapporten,
+hvilket er praktisk, når du beder nogen om hjælp.</li>
+<li>En mislykket upload ødelægger ikke printet. Prøv bare igen.</li>
+</ul>
+
+<h3>Via ArduinoISP-programmer (avanceret)</h3>
+<p>Kun til print uden USB-bootloader eller et print, der ikke længere svarer. Du skal bruge en ekstra Arduino, der kører
+sketchen <i>ArduinoISP</i>, forbundet til de seks ICSP-pins på dit print. Vælg porten på den <i>programmer</i>-Arduino.
+Det sætter også chipindstillingerne (fuses) og fjerner USB-bootloaderen, så du bagefter kun kan opdatere
+dette print med programmeren. Det <b>sletter også dine indstillinger</b> på printet: gem dem med <b>Filer → Gem</b>
+først, og skriv dem tilbage bagefter.</p>

@@ -1,0 +1,29 @@
+<h3>Sette opp en servo</h3>
+<p>En servo dreier til en vinkel mellom 0&deg; og 180&deg;. Som sporvekselmotor beveger den seg mellom to posisjoner:</p>
+<ul>
+<li><b>Posisjon 0 (avvikende)</b>: vinkelen for "avvikende".</li>
+<li><b>Posisjon 1 (rett)</b>: vinkelen for "rett".</li>
+<li><b>Hastighet</b>: millisekunder per grad. 20 ms/&deg; er rolig og realistisk; 5 er raskt; 50 er svært sakte.</li>
+</ul>
+<h4>Finne de riktige posisjonene</h4>
+<ol>
+<li>Med kortet tilkoblet krysser du av for <b>Live</b> og drar sakte i glidebryteren <i>Posisjon 0</i>. Servoen følger med.
+Stopp når tungen akkurat berører skinnen, og gjør så det samme for <i>Posisjon 1</i>. Det lagres med en gang.</li>
+<li>Eller uten datamaskin: bruk <b>config-knappen</b> og lokadresse 9999 på håndkontrollen (se
+<i>Hjelp &rarr; Config-knapp og innlæring av servoer</i>).</li>
+</ol>
+<p><b>Tips:</b> ikke press tungen for hardt mot skinnen: servoen vil summe og bli varm.
+Gå 2&ndash;3&deg; tilbake fra punktet der den berører.</p>
+<h4>Semaforarm: følge en beleggsmelder</h4>
+<p>Kryss av for <b>Følger en beleggsmelder (semaforarm)</b> og velg inngangen til beleggsmelderen: kortet beveger da servoen
+selv, uten kommandoer. Når den blokken er opptatt, går servoen til <i>Posisjon 0 (avvikende)</i> = armen på
+stopp; når den er fri, til <i>Posisjon 1 (rett)</i> = kjør. Den beveger seg med sin egen hastighet. <b>Bytt om: opptatt =
+rett</b> snur dette. Enhver inngang som er i bruk og har en pinne, kan være beleggsmelderen, helst en
+<b>Sensor (beleggsmelder)</b>-inngang; på lerretet kobler en prikket linje den til servoen.</p>
+<h4>Greit å vite</h4>
+<ul>
+<li>Ved oppstart starter servoene <b>én etter én</b>, med et halvt sekunds mellomrom, hver til sin siste posisjon. Det unngår en
+stor strømtopp.</li>
+<li>Maks. 6 servoer beveger seg samtidig; de andre venter på tur.</li>
+<li>Kobling: brun/svart = GND, rød = 5 V (fra en egen 5 V-forsyning ved flere servoer!), oransje/gul = signal.</li>
+</ul>

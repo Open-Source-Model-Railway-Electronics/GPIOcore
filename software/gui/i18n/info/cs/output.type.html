@@ -1,0 +1,21 @@
+<h3>Co je připojeno k tomuto výstupu?</h3>
+<ul>
+<li><b>Jednoduchý trvalý</b> — jeden pin zap nebo vyp. LED, reléový modul, žárovky (přes tranzistor nebo relé).</li>
+<li><b>Jednoduchý impuls</b> — jeden pin dostane krátký impuls. Pro rozpojovač nebo zařízení s jednou cívkou.</li>
+<li><b>Jednoduché blikání</b> — jeden pin bliká, dokud je zapnutý. Výstražné světlo.</li>
+<li><b>Dvojitý trvalý</b> — dva piny: A zap a B vyp, nebo obráceně. Dvoubarevná návěstidla, dvě relé.</li>
+<li><b>Dvojitý impuls</b> — dva piny, jeden z nich dostane krátký impuls. Pro <b>elektromagnetické přestavníky výhybek</b>
+(Peco, Roco, Fleischmann …): A = jedna cívka, B = druhá cívka.</li>
+<li><b>Dvojité blikání</b> — dva piny blikají střídavě.</li>
+<li><b>Střídavé světlo</b> — dvě světla se střídají s pauzou: výstražná světla na železničním přejezdu.</li>
+<li><b>Krb / Zářivka / Svářeč</b> — světelné efekty: mihotavý oheň, zářivka, která při rozsvěcování
+poblikává, záblesky sváření. (Krb a Zářivka potřebují PWM piny.)</li>
+<li><b>Návěstidlo se 4 návěstmi</b> — čtyři LED (zelená, žlutá, červená, bílá …), nastavované DCC povely pro návěstidla nebo jízdní cestou.</li>
+<li><b>Servo</b> — modelářské servo jako přestavník výhybky. Pomalý, realistický pohyb.</li>
+<li><b>PWM</b> — jas pro žárovku nebo řetězec LED, volitelně s pomalým přechodem (den a noc).</li>
+<li><b>Autoblokové návěstidlo</b> — automatické návěstidlo (světla A–D): deska sama volí návěst podle hlásičů vlastního a následujícího oddílu.</li>
+<li><b>Zvukový efekt</b> — MP3 přehrávač (DFPlayer Mini) na D1: zvonek, píšťala, hlášení. Skladbu volí vstup. Hraje jen tehdy, když není připojen počítač.</li>
+<li><b>Nepoužito</b> — nic není připojeno.</li>
+</ul>
+<p><b>Důležité pro cívky:</b> pin Arduina nemůže budit cívku přímo. Mezi pin a cívku zapojte budič (například
+ULN2803 nebo MOSFET modul).</p>

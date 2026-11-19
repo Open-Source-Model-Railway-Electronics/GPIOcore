@@ -1,17 +1,20 @@
 <h3>Konfigurieren, Simulieren und Live-Test</h3>
-<p>Die drei farbigen Knöpfe oben zeigen, was das Programm gerade tut. Dieselbe Farbe umrahmt die Mitte des
-Bildschirms, so wissen Sie immer, wo Sie sind.</p>
+<p>Das Programm ist immer in einem von drei Modi: die farbigen Knöpfe oben. Die Verbindung ist davon getrennt:
+<b>Verbinden / Trennen</b> neben dem Port, mit dem Zustand daneben (Offline, Verbunden: <i>Name</i>,
+Simulation).</p>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Knopf</th><th>Rahmen</th><th>Was passiert</th></tr>
-<tr><td><b>&#9679; Konfigurieren</b></td><td style="color:#DC2626">rot</td><td>Mit einer echten Platine verbunden. Jede
-Änderung geht sofort an die Platine und wird zur Kontrolle zurückgelesen.</td></tr>
-<tr><td><b>&#9679; Simulieren</b></td><td style="color:#A16207">gelb</td><td>Eine simulierte Platine führt <i>Ihre</i>
-Einstellungen aus (von der zuletzt verbundenen Platine, einer Platinendatei oder einer neuen Platine). Die Tasten der
-Eingänge sind aktiv. Änderungen werden in der Platinendatei gespeichert, so können Sie eine Platine zu Hause
-vorbereiten.</td></tr>
-<tr><td><b>&#9679; Live-Test</b></td><td style="color:#15803D">grün</td><td>An einer echten Platine: Die Eingänge bekommen
-Tasten und die Ausgänge zeigen, was die Platine zurückmeldet.</td></tr>
+<tr><th>Modus</th><th>Rahmen</th><th>Was Sie tun können</th></tr>
+<tr><td><b>&#9679; Konfigurieren</b></td><td>keiner offline, <span style="color:#DC2626">rot</span> wenn verbunden</td><td>Alles
+ändern. Offline bereiten Sie eine Platine vor; verbunden geht jede Änderung sofort an die Platine. Von der Platine
+wird nichts automatisch gelesen: Verwenden Sie <b>Platine lesen</b> oder <b>Alles schreiben</b>.</td></tr>
+<tr><td><b>&#9679; Simulieren</b></td><td style="color:#A16207">gelb</td><td>Ihre Konfiguration läuft auf einer simulierten
+Platine. Drücken Sie die Tasten der Eingänge und beobachten Sie; nichts kann geändert werden.</td></tr>
+<tr><td><b>&#9679; Live-Test</b></td><td><span style="color:#15803D">grün</span> wenn verbunden</td><td>Verbindet sich
+selbst. Drücken Sie die Tasten der Eingänge und sehen Sie, was die echte Platine tut; nichts kann geändert werden. Hat
+die Platine einen anderen Namen als der Bildschirm, bietet das Programm an, zuerst die Platine zu lesen.</td></tr>
 </table>
+<p>Nichts wird von selbst in einer Datei gespeichert: <b>Speichern</b> (Ctrl+S) fragt immer nach dem Ort, und beim
+Schließen fragt das Programm nach ungespeicherten Änderungen.</p>
 
 <h4>Die Tasten der Eingänge</h4>
 <ul>
@@ -22,6 +25,10 @@ pro Lampe aus, ein, blinkend oder gegenphasig blinkend.</li>
 </ul>
 <p>Eine Taste wirkt wie ein DCC-Befehl: Ein zweiter Klick innerhalb einer halben Sekunde wird ignoriert, genau wie ein
 wiederholtes Paket einer Zentrale.</p>
+<p>Beim <b>Simulieren</b> wirkt ein Eingang mit Pin (nicht analog) auf diesen Pin, wie der echte Taster oder Schalter:
+<b>&#9654; drücken</b> / <b>&#9654; Start</b> zieht den Pin auf low und lässt ihn wieder los, &#9664; hält den Pin eines
+absoluten Eingangs auf low und &#9654; auf high (die gehaltene Seite ist hervorgehoben). So reagiert auch alles, was den
+Pin liest, zum Beispiel ein Servo, der dem Eingang als Melder folgt. Eingänge ohne Pin wirken wie ein DCC-Befehl.</p>
 
 <h4>Was die Ausgänge zeigen</h4>
 <ul>

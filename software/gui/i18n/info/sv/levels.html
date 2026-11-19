@@ -1,0 +1,19 @@
+<h3>Användarnivåer</h3>
+<p><b>Visa &rarr; Nybörjare / Avancerad / Expert</b> bestämmer vad programmet erbjuder. Börja med Nybörjare och
+gå upp en nivå när du behöver mer. Nivån ändrar eller tar aldrig bort något i din konfiguration.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Nivå</th><th>Utgångar</th><th>Ingångar och kort</th></tr>
+<tr><td><b>Nybörjare</b></td><td>Servo, enkel / dubbel fast, enkel / dubbel puls</td><td>Direkt styrning (växla eller
+absolut) med en knapp-pinne och / eller en DCC-adress; tågvägar med kortets fasta väntetid. Kortinställningar: namn och
+korttyp.</td></tr>
+<tr><td><b>Avancerad</b></td><td>+ ljuseffekter (blink, växelblink, brasa, lysrör, svetsare), signal med 4 signalbilder,
+PWM med övergång, ljudeffekt, hjärtstycksreläer</td><td>+ analoga ingångar, egna värden, &ldquo;Tågväg startar vid&rdquo;,
+D0 / D1, egen väntetid för varje tågvägssteg och tågvägsförregling</td></tr>
+<tr><td><b>Expert</b></td><td>+ automatisk blocksignal, servo som följer en detektor (semaforarm)</td><td>+ Sensor
+(beläggning)-ingångar</td></tr>
+</table>
+<p>Funktioner över din nivå <b>visas inte</b>: de finns inte i listorna och deras rutor är dolda.</p>
+<p>När du öppnar en fil eller ett exempel, importerar eller läser ett kort som använder mer än din nivå erbjuder (till
+exempel en blocksignal i en fil som någon annan har gjort) säger programmet till och <b>höjer nivån</b> till vad
+projektet behöver. Det sänker aldrig nivån av sig självt och ändrar aldrig din konfiguration. Om du själv sänker nivån
+efteråt döljs de funktionerna igen, men de finns kvar i konfigurationen och fortsätter att fungera.</p>

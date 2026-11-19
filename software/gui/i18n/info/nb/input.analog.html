@@ -1,0 +1,27 @@
+<h3>Analoge innganger: en motstandsstige eller en sensor</h3>
+<p>I stedet for en knapp til GND kan en analog pinne (A0–A6) måle en spenning: <b>0 = 0 V, 1023 = 5 V</b>.
+Inngangen regnes som <i>trykket</i> så lenge verdien oppfyller betingelsen, og virker da akkurat som en trykket
+knapp: veksle, absolutt og togveier virker alle.</p>
+<ul>
+<li><b>Under en verdi</b> — trykket under terskelen, sluppet igjen 20 høyere. For eksempel en lyssensor (LDR)
+som blir mørk, eller en enkelt knapp.</li>
+<li><b>Over en verdi</b> — trykket over terskelen, sluppet igjen 20 lavere.</li>
+<li><b>Ved en verdi</b> — trykket innenfor terskelen &plusmn; 10: én knapp i en <b>motstandsstige</b>.
+Flere innganger kan dele én pinne, hver med sin egen verdi.</li>
+</ul>
+<p><b>Motstandsstige:</b> flere knapper på én pinne. En 10 k&Omega;-motstand fra 5 V til pinnen holder den på 1023
+mens ingenting er trykket; hver knapp kobler pinnen til GND gjennom sin egen motstand, så hver knapp gir en
+annen verdi.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ knapp 1 ]--- GND    ca. 0
+                 +--[1k]---[ knapp 2 ]--- GND    ca. 93
+                 +--[3k3]--[ knapp 3 ]--- GND    ca. 254
+                 +--[10k]--[ knapp 4 ]--- GND    ca. 512</pre>
+<p><b>Les av de ekte verdiene:</b> motstander har toleranser og kontakter har motstand, så praksis avviker fra
+teorien. Koble til kortet, velg inngangen og følg med på <b>Nå:</b> mens du holder inne hver knapp; <b>Bruk denne verdien</b>
+tar den som terskel. Hold minst omtrent 40 mellom to knapper.</p>
+<ul>
+<li>Terskelen lagres i trinn på 8. Kortet leser pinnen hvert 50. ms og reagerer bare når to målinger stemmer overens.</li>
+<li><b>A7</b> er config-knappen og kan ikke brukes; <b>A6</b> finnes bare på en Arduino Nano.</li>
+<li>I <b>Simuler</b> klikker du på <i>verdi ▾</i> på inngangen for å skrive inn en verdi for pinnen: alle innganger på den pinnen reagerer.</li>
+</ul>

@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>S modulem Bluetooth <b>HC-05</b> na desce ji můžete konfigurovat bez USB kabelu. Program modul nastaví
+za vás přes desku (<i>Deska &gt; Nastavit Bluetooth (HC-05)</i>, úroveň Pokročilý nebo vyšší).
+Jen Arduino <b>Nano</b>: pro pozdější připojení potřebujete tlačítko konfigurace.</p>
+<p><b>Zapojení</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> přes dělič napětí: 1 k&Omega; z D1 na RXD, 2 k&Omega; z RXD na GND
+(HC-05 snese na svém RXD 3,3 V).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> přes <b>Schottkyho diodu</b> (BAT85 nebo 1N5819), <b>katodou (proužkem)
+k TXD modulu HC-05</b>. Dioda umožní HC-05 stáhnout D0 do nízké úrovně, ale nikdy nebojuje s USB čipem, takže USB
+funguje dál, i když je HC-05 připojen.</li>
+</ul>
+<p><b>Nastavení</b> (jednou):</p>
+<ol>
+<li>Držte tlačítko na HC-05 a přitom zapojte USB kabel. Jeho LED nyní bliká <b>pomalu</b> (asi každé
+2 sekundy): modul je v <b>režimu AT</b>.</li>
+<li>Připojte program k desce přes USB.</li>
+<li>Zvolte <i>Deska &gt; Nastavit Bluetooth (HC-05)</i> a klikněte na <b>Start</b>. Deska vyzkouší obvyklé rychlosti
+a nastaví modul na <b>115200 Bd</b> a název <b>GPIOcore-&lt;název desky&gt;</b>. PIN zůstane beze změny.
+Trvá to několik sekund.</li>
+<li>Odpojte desku a znovu ji zapojte, <b>bez</b> držení tlačítka.</li>
+<li>V nastavení Bluetooth ve Windows spárujte <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, u některých modulů 0000).
+Windows pro něj vytvoří COM port (někdy dva: použijte „odchozí“). Tento port zvolte v GPIOcore.</li>
+</ol>
+<p>Pokud to nefunguje: modul není v režimu AT (rychlé blikání = normální režim), zapojení je špatně, nebo dioda
+chybí či je zapojená obráceně. Jiné moduly (HC-06, některé klony) tyto příkazy neznají.</p>
+<p><b>Připojení přes Bluetooth</b>: otevření Bluetooth COM portu desku neresetuje. Když nic na
+desce nepoužívá D0 ani D1, její sériový port zůstává otevřený a program se jednoduše připojí. Když je něco používá
+(vstup nebo výstup na D0/D1, nebo zvukový efekt), deska 5 sekund po startu svůj sériový port zavře
+(z D0/D1 se stanou běžné piny). Když pak kliknete na <i>Připojit</i>, program
+zobrazí <i>„Čekám na desku &mdash; krátce stiskněte její tlačítko konfigurace (Nano)&hellip;“</i>. Stiskněte tlačítko konfigurace (A7)
+<b>krátce</b>: deska znovu otevře sériový port na 5 sekund a ohlásí se, a program se připojí.
+Program na to čeká až 30 sekund.</p>
+<p>Dokud je program připojen, D0 a D1 patří sériovému portu: na desce s HC-05 je nepoužívejte pro vstupy ani
+výstupy.</p>

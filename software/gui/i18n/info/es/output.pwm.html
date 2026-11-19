@@ -1,0 +1,12 @@
+<h3>PWM: brillo y fundido</h3>
+<p>Una salida PWM regula una lámpara o una tira de LED en un pin PWM (D3, D5, D6, D9, D10, D11): <b>0</b> = apagado,
+<b>255</b> = brillo máximo. Use un transistor o un módulo MOSFET para más de unos 20 mA.</p>
+<ul>
+<li><b>Ciclo de trabajo</b> — el brillo tras el encendido, hasta que unos valores propios, un paso de itinerario o un DCC extendido fijen otro.</li>
+<li><b>Tiempo de fundido</b> — cuántos segundos tarda un cambio completo de 0 a 255; un cambio a medias tarda la mitad.
+<i>al instante</i> (0) cambia inmediatamente. Cada nuevo brillo se alcanza con un fundido a este ritmo: desde valores propios,
+un paso de itinerario o una orden DCC extendida. Al encenderse, la salida aparece en fundido desde la oscuridad.</li>
+</ul>
+<p><b>Ejemplo — día y noche:</b> una entrada absoluta (un interruptor o una dirección DCC) con <b>Valores propios</b>
+apagado = 0 y encendido = 255, y un tiempo de fundido de 60 s. Pasar a noche atenúa las luces en un minuto;
+volver trae el día igual de despacio.</p>

@@ -1,0 +1,29 @@
+<h3>Szervó beállítása</h3>
+<p>A szervó 0&deg; és 180&deg; közötti szögre fordul. Váltóállítóként két helyzet között mozog:</p>
+<ul>
+<li><b>0. helyzet (kitérő irány)</b>: a "kitérő irány" szöge.</li>
+<li><b>1. helyzet (egyenes)</b>: az "egyenes" szöge.</li>
+<li><b>Sebesség</b>: milliszekundum fokonként. A 20 ms/&deg; nyugodt és valósághű; az 5 gyors; az 50 nagyon lassú.</li>
+</ul>
+<h4>A megfelelő helyzetek megkeresése</h4>
+<ol>
+<li>Csatlakoztatott panelnél jelölje be az <b>Élő</b> négyzetet, és lassan húzza a <i>0. helyzet</i> csúszkát. A szervó követi.
+Álljon meg, amikor a váltócsúcssín éppen a tősínhez ér, majd ugyanezt tegye az <i>1. helyzet</i> esetén is. A tárolás azonnal megtörténik.</li>
+<li>Vagy számítógép nélkül: használja a <b>konfiggombot</b> és a 9999-es mozdonycímet a kézi szabályzón (lásd
+<i>Súgó &rarr; Konfiggomb és szervók betanítása</i>).</li>
+</ol>
+<p><b>Tipp:</b> ne nyomja a csúcssínt túl erősen a tősínhez: a szervó zúgni fog és felmelegszik.
+Menjen vissza 2&ndash;3&deg;-ot attól a ponttól, ahol hozzáér.</p>
+<h4>Alakjelző: foglaltságjelző követése</h4>
+<p>Jelölje be a <b>Foglaltságjelzőt követ (alakjelző)</b> négyzetet, és válassza ki a foglaltságjelző bemenetet: a panel ekkor
+magától, parancsok nélkül mozgatja a szervót. Ha a térköz foglalt, a szervó a <i>0. helyzetbe (kitérő irány)</i> megy = a kar
+megállj állásban; ha szabad, az <i>1. helyzetbe (egyenes)</i> = szabad. A saját sebességével mozog. A <b>Csere: foglalt =
+egyenes</b> ezt megfordítja. Bármely használatban lévő, lábbal rendelkező bemenet lehet foglaltságjelző, legjobb egy
+<b>Érzékelő (foglaltság)</b> bemenet; a munkaterületen pontozott vonal köti össze a szervóval.</p>
+<h4>Jó tudni</h4>
+<ul>
+<li>Bekapcsoláskor a szervók <b>egyenként</b> indulnak, fél másodperces különbséggel, mindegyik az utolsó helyzetébe. Ez elkerüli a
+nagy áramcsúcsot.</li>
+<li>Egyszerre legfeljebb 6 szervó mozog; a többi kivárja a sorát.</li>
+<li>Bekötés: barna/fekete = GND, piros = 5 V (több szervóhoz külön 5 V-os tápegységről!), narancs/sárga = jel.</li>
+</ul>

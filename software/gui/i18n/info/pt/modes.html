@@ -1,0 +1,41 @@
+<h3>Configurar, Simular e Teste em directo</h3>
+<p>O programa está sempre num de três modos: os botões coloridos no topo. A ligação é independente:
+<b>Ligar / Desligar</b> junto à porta, com o estado indicado ao lado (Sem ligação, Ligado: <i>nome</i>,
+Simulação).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Modo</th><th>Moldura</th><th>O que pode fazer</th></tr>
+<tr><td><b>&#9679; Configurar</b></td><td>nenhuma sem ligação, <span style="color:#DC2626">vermelha</span> quando ligado</td><td>Alterar
+tudo. Sem ligação prepara uma placa; ligado, cada alteração vai de imediato para a placa. Nada é lido
+automaticamente da placa: use <b>Ler placa</b> ou <b>Escrever tudo</b>.</td></tr>
+<tr><td><b>&#9679; Simular</b></td><td style="color:#A16207">amarela</td><td>A sua configuração corre numa placa fictícia.
+Prima os botões das entradas e observe; não é possível alterar nada.</td></tr>
+<tr><td><b>&#9679; Teste em directo</b></td><td><span style="color:#15803D">verde</span> quando ligado</td><td>Liga-se
+sozinho. Prima os botões das entradas e veja o que a placa real faz; não é possível alterar nada. Se a placa tiver
+um nome diferente do do ecrã, o programa propõe ler primeiro a placa.</td></tr>
+</table>
+<p>Nada é guardado num ficheiro automaticamente: <b>Guardar</b> (Ctrl+S) pergunta sempre onde, e ao fechar o programa é perguntado
+o que fazer com as alterações não guardadas.</p>
+
+<h4>Os botões das entradas</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (entradas Absoluto): &#9664; = desviado / desligado, &#9654; = directo / ligado.</li>
+<li><b>&#9654; premir</b> (Comutar) e <b>&#9654; iniciar</b> (itinerário): como premir o botão ou enviar um comando DCC.</li>
+<li><b>aspecto &#9662; / valor &#9662;</b>: para uma entrada que comanda um sinal ou uma saída PWM. Escolha por lâmpada apagada, acesa,
+intermitente ou intermitente em oposição de fase.</li>
+</ul>
+<p>Um botão funciona como um comando DCC: um segundo clique dentro de meio segundo é ignorado, tal como um pacote repetido
+de uma central.</p>
+<p>Em <b>Simular</b>, uma entrada com pino (não analógico) actua nesse pino, como o botão ou interruptor real:
+<b>&#9654; premir</b> / <b>&#9654; iniciar</b> põe o pino em nível baixo e solta-o de novo, &#9664; mantém o pino de uma entrada
+Absoluto em nível baixo e &#9654; em nível alto (o lado mantido fica realçado). Assim, tudo o que lê o pino também reage, por exemplo
+um servo que segue a entrada como detector. As entradas sem pino funcionam como um comando DCC.</p>
+
+<h4>O que as saídas mostram</h4>
+<ul>
+<li><b>Ponto azul</b> = directo / ligado, <b>ponto vermelho</b> = desviado / desligado, cinzento = ainda desconhecido.</li>
+<li><b>Servo</b>: um mostrador com o ângulo; roda grau a grau à medida que a placa o comunica.</li>
+<li><b>Sinal</b>: quatro lâmpadas nas suas cores, a piscar como na placa.</li>
+<li><b>Relés do coração</b>: um pequeno desenho de relés. O braço e o coração mostram que contacto tem tensão (vermelho = desviado,
+azul = directo). Um electrofrog fica cinzento (sem tensão) enquanto a agulha se move; um unifrog muda de imediato.</li>
+</ul>
+<p>Não é preciso ligar nada à placa para um teste em directo: vê o que a placa <i>comutaria</i>.</p>

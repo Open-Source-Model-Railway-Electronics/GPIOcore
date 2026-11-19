@@ -1,0 +1,12 @@
+<h3>PWM: lysstyrke og overgang</h3>
+<p>En PWM-udgang dæmper en lampe eller LED-kæde på en PWM-pin (D3, D5, D6, D9, D10, D11): <b>0</b> = slukket,
+<b>255</b> = fuld lysstyrke. Brug et transistor- eller MOSFET-modul til mere end ca. 20 mA.</p>
+<ul>
+<li><b>Duty cycle</b> — lysstyrken efter opstart, indtil egne værdier, et togvejstrin eller DCC extended sætter en anden.</li>
+<li><b>Overgangstid</b> — hvor mange sekunder en fuld ændring fra 0 til 255 tager; en halv ændring tager halvt så lang tid.
+<i>straks</i> (0) skifter med det samme. Hver ny lysstyrke glider over med denne hastighed: fra egne værdier, et
+togvejstrin eller en DCC extended-kommando. Ved opstart tones udgangen op fra mørke.</li>
+</ul>
+<p><b>Eksempel — dag og nat:</b> en absolut-indgang (en kontakt eller en DCC-adresse) med <b>Egne værdier</b>
+fra = 0 og til = 255 og en overgangstid på 60 s. Skift til nat dæmper lyset på et minut;
+skift tilbage bringer dagen ind lige så langsomt.</p>

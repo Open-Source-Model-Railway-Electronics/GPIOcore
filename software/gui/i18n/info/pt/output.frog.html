@@ -1,0 +1,19 @@
+<h3>Polarização do coração — electrofrog ou unifrog?</h3>
+<p>O <b>coração</b> é o ponto de uma agulha onde os dois carris se cruzam. Nas agulhas com “coração eléctrico” esta peça é
+metálica e tem de receber a <b>mesma polaridade que o percurso definido</b>. Se receber a errada, as locomotivas param ou
+provocam um curto-circuito. Um relé comuta o coração quando a agulha se move.</p>
+<p>Observe a sua agulha e escolha <b>uma</b> opção:</p>
+<ul>
+<li><b>Nenhuma (coração isolado)</b> — o coração é de plástico (Peco <i>Insulfrog</i>, a maioria das vias de conjunto). Nada a fazer.</li>
+<li><b>Electrofrog — 2 relés</b> (Peco <i>Electrofrog</i> e semelhantes). O relé A é activado para
+“directo”, o relé B para “desviado”. Enquanto a agulha se move <b>ambos ficam desligados</b> por um instante, para que nunca haja
+curto-circuito (desligar antes de ligar).</li>
+<li><b>Unifrog — 1 relé inversor</b> (Peco <i>Unifrog</i>). O coração tem um fio. Um relé inversor liga-o ao
+carril correcto. Com um servo comuta exactamente quando o servo passa pelo meio; com um motor de bobinas no fim
+do impulso.</li>
+</ul>
+<p>Só pode usar uma das duas. Escolher uma remove os pinos da outra.</p>
+<p><b>Ligações:</b> use um <i>módulo</i> de relés (com transístor e díodo) — um pino do Arduino não consegue comandar um relé simples.</p>
+<p><b>Os relés comutam com LOW (invertido)</b>: assinale isto para módulos de relés que ligam quando a entrada está em LOW
+(muitos módulos baratos com optoacoplador). A placa comanda então os pinos dos relés ao contrário; o que os
+relés significam (directo / desviado) mantém-se.</p>

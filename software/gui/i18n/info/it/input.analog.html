@@ -1,0 +1,27 @@
+<h3>Ingressi analogici: una scala di resistenze o un sensore</h3>
+<p>Invece di un pulsante verso GND, un pin analogico (A0–A6) può misurare una tensione: <b>0 = 0 V, 1023 = 5 V</b>.
+L'ingresso conta come <i>premuto</i> finché il valore soddisfa la condizione, e allora funziona esattamente come un pulsante
+premuto: commuta, assoluto e itinerari funzionano tutti.</p>
+<ul>
+<li><b>Sotto un valore</b> — premuto sotto la soglia, rilasciato di nuovo 20 più in alto. Per esempio un sensore di luce
+(LDR) che va al buio, o un singolo pulsante.</li>
+<li><b>Sopra un valore</b> — premuto sopra la soglia, rilasciato di nuovo 20 più in basso.</li>
+<li><b>A un valore</b> — premuto entro la soglia &plusmn; 10: un pulsante di una <b>scala di resistenze</b>.
+Più ingressi possono condividere un pin, ognuno con il proprio valore.</li>
+</ul>
+<p><b>Scala di resistenze:</b> più pulsanti su un pin. Una resistenza da 10 k&Omega; dai 5 V al pin lo tiene a 1023 finché
+non è premuto niente; ogni pulsante collega il pin a GND tramite la propria resistenza, così ogni pulsante dà un valore
+diverso.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ pulsante 1 ]--- GND    circa 0
+                 +--[1k]---[ pulsante 2 ]--- GND    circa 93
+                 +--[3k3]--[ pulsante 3 ]--- GND    circa 254
+                 +--[10k]--[ pulsante 4 ]--- GND    circa 512</pre>
+<p><b>Leggi i valori reali:</b> le resistenze hanno tolleranze e i contatti hanno una resistenza, quindi la pratica differisce
+dalla teoria. Collega la scheda, scegli l'ingresso e guarda <b>Ora:</b> mentre tieni premuto ogni pulsante; <b>Usa questo
+valore</b> lo prende come soglia. Lascia almeno circa 40 tra due pulsanti.</p>
+<ul>
+<li>La soglia viene memorizzata a passi di 8. La scheda legge il pin ogni 50 ms e reagisce solo quando due letture coincidono.</li>
+<li><b>A7</b> è il pulsante di configurazione e non può essere usato; <b>A6</b> esiste solo su un Arduino Nano.</li>
+<li>In <b>Simula</b>, clicca <i>valore ▾</i> sull'ingresso per digitare un valore per il suo pin: ogni ingresso su quel pin reagisce.</li>
+</ul>

@@ -1,0 +1,14 @@
+<h3>Pins: hvor ledningerne skal hen</h3>
+<p>Vælg Arduino-pin(s) til denne udgang. Pinnavnene er trykt på printet: <b>D3 &hellip; D12</b> og
+<b>A0 &hellip; A5</b>.</p>
+<ul>
+<li>Pins, der allerede er i brug, vises med <b>rødt</b> sammen med, hvem der bruger dem ("i brug: Ud 3"). Vælger du en alligevel, bliver den anden
+indgang eller udgang <i>ikke i brug</i>.</li>
+<li><b>D2</b> er DCC-indgangen, <b>D13</b> config-LED'en og <b>A7</b> config-knappen: aldrig ledige.
+<b>D0 / D1</b> er USB-forbindelsen; de virker kun som I/O, når ingen computer er forbundet.</li>
+<li><b>~PWM</b>-pins (D3, D5, D6, D9, D10, D11) kan dæmpe. Lyseffekter kræver en af dem.
+Så længe en servo er i brug, kan D9 og D10 <i>ikke</i> dæmpe.</li>
+<li>På et <b>DCCnext</b> viser listen også det portnummer, der er trykt på det print.</li>
+</ul>
+<p>En Arduino-pin giver kun lidt strøm (maks. 20 mA). Fint til én LED med modstand eller en servos
+signalledning. Til relæer, spoler og pærer skal der et driver- eller relæmodul imellem.</p>

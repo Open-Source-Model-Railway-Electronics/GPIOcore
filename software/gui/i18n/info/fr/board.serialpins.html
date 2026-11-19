@@ -5,7 +5,10 @@ les utiliser pour votre réseau :</p>
 <li>Au démarrage, la carte attend ce programme pendant <b>5 secondes</b>.</li>
 <li>Si le programme se connecte, D0 / D1 restent réservées à l'USB pendant la configuration. Ce qui est branché sur ces
 broches ne fonctionne <b>pas</b> à ce moment-là.</li>
-<li>Si rien ne se connecte (utilisation normale sur le réseau), D0 / D1 deviennent des broches normales.</li>
+<li>Si rien ne se connecte (utilisation normale sur le réseau), D0 / D1 deviennent des broches normales. Quand rien
+n'est sur D0 / D1 (ni entrée ni sortie, ni effet sonore), elles restent des fils USB : le programme peut se connecter à tout moment.</li>
+<li>Un appui bref sur le bouton de config (Nano) en refait des fils USB pendant 5 secondes, pour que le programme puisse
+se connecter sans reset.</li>
 </ul>
 <p>Utilisez-les pour des choses simples comme des LED. Évitez les charges lourdes sur D0 : elles peuvent perturber le
 téléversement d'un nouveau firmware.</p>

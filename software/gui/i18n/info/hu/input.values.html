@@ -1,0 +1,16 @@
+<h3>Saját értékek: több mint be és ki</h3>
+<p>Normál esetben egy váltás vagy abszolút típusú bemenet a kimenetét <b>kitérő irány / ki</b> (0) vagy <b>egyenes / be</b> (1) állapotba kapcsolja.
+A <b>Saját értékek</b> beállítással a két állapot mindegyike saját értéket küld helyette, pontosan úgy, mint egy vágányút-lépés:</p>
+<ul>
+<li><b>Szervó</b> — egy szög, pl. ki = 45&deg;, be = 135&deg; (vagy a szokásos kitérő irány / egyenes).</li>
+<li><b>4 jelzési képes jelző</b> — állapotonként egy jelzési kép, lámpánként kiválasztva a &#9662; gombbal.</li>
+<li><b>PWM</b> — állapotonként egy fényerő, pl. ki = 20 (tompított), be = 255.</li>
+<li><b>Hangeffekt</b> — állapotonként egy szám; a <i>leállítás</i> (0) leállítja a lejátszást. Egy hangkimenet sok
+számot játszhat le, mindegyiket a saját bemenete választja ki.</li>
+<li>Egyéb kimenetek — állapotonként kitérő irány vagy egyenes, például fordítva.</li>
+</ul>
+<p>A <b>Ki / kitérő irány</b> akkor érvényes, amikor a bemenet állapota 0 lesz (abszolút bemenetnél: lenyomott gomb vagy DCC
+'kitérő irány' parancs), a <b>Be / egyenes</b>, amikor 1 lesz. A váltás típusú bemenet a kettő között vált.</p>
+<p>A két érték 2 lépésként tárolódik a bemenet vágányút-memóriájában, így beleszámít a panel összes
+vágányút-lépésébe. A DCC extended parancsok továbbra is a saját értéküket küldik.</p>
+<p>Ha egy bemenetet hangkimenetre köt, a saját értékek maguktól bekapcsolnak: ki = leállítás, be = 1. szám.</p>

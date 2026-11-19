@@ -1,0 +1,12 @@
+<h3>PWM : luminosité et fondu</h3>
+<p>Une sortie PWM fait varier une lampe ou une guirlande de LED sur une broche PWM (D3, D5, D6, D9, D10, D11) : <b>0</b> = éteint,
+<b>255</b> = pleine luminosité. Utilisez un transistor ou un module MOSFET au-delà d'environ 20 mA.</p>
+<ul>
+<li><b>Rapport cyclique</b> — la luminosité après la mise sous tension, jusqu'à ce que des valeurs personnalisées, une étape d'itinéraire ou une commande DCC étendue en fixent une autre.</li>
+<li><b>Temps de fondu</b> — combien de secondes dure un changement complet de 0 à 255 ; un demi-changement dure moitié moins.
+<i>immédiat</i> (0) commute tout de suite. Chaque nouvelle luminosité est atteinte en fondu à cette vitesse : depuis des valeurs
+personnalisées, une étape d'itinéraire ou une commande DCC étendue. À la mise sous tension, la sortie s'allume en fondu depuis le noir.</li>
+</ul>
+<p><b>Exemple — jour et nuit :</b> une entrée en absolu (un interrupteur ou une adresse DCC) avec <b>Valeurs personnalisées</b>
+arrêt = 0 et marche = 255, et un temps de fondu de 60 s. Passer à la nuit atténue les lumières en une minute ;
+revenir ramène le jour tout aussi lentement.</p>

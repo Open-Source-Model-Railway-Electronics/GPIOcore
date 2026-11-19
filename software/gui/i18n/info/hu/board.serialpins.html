@@ -1,0 +1,13 @@
+<h3>A D0 és D1 láb</h3>
+<p>A D0 és a D1 azok a vezetékek, amelyeken az Arduino USB-n keresztül kommunikál ezzel a programmal. Az újabb panelek ennek ellenére
+használhatják őket a terepasztalhoz:</p>
+<ul>
+<li>Induláskor a panel <b>5 másodpercig</b> vár erre a programra.</li>
+<li>Ha a program csatlakozik, a D0 / D1 a konfigurálás idejére az USB számára foglalt marad. Az ezekre a lábakra kötött dolgok
+ekkor <b>nem</b> működnek.</li>
+<li>Ha semmi sem csatlakozik (normál üzem a terepasztalon), a D0 / D1 normál lábbá válik. Ha semmi sincs a
+D0 / D1-en (sem bemenet, sem kimenet, sem hangeffekt), USB-vezeték marad: a program bármikor csatlakozhat.</li>
+<li>A konfiggomb rövid megnyomása (Nano) 5 másodpercre újra USB-vezetékké teszi őket, így a program
+újraindítás nélkül csatlakozhat.</li>
+</ul>
+<p>Egyszerű dolgokra használja őket, például LED-ekre. Kerülje a nagy terhelést a D0-n: zavarhatja az új firmware feltöltését.</p>

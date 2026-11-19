@@ -1,0 +1,12 @@
+<h3>PWM: jas a plynulý přechod</h3>
+<p>PWM výstup stmívá žárovku nebo řetězec LED na PWM pinu (D3, D5, D6, D9, D10, D11): <b>0</b> = vypnuto,
+<b>255</b> = plný jas. Pro víc než asi 20 mA použijte modul s tranzistorem nebo MOSFETem.</p>
+<ul>
+<li><b>Střída</b> — jas po zapnutí napájení, dokud vlastní hodnoty, krok jízdní cesty nebo DCC extended nenastaví jiný.</li>
+<li><b>Doba přechodu</b> — kolik sekund trvá plná změna z 0 na 255; poloviční změna trvá polovinu.
+<i>ihned</i> (0) přepne okamžitě. Každý nový jas se mění touto rychlostí: z vlastních hodnot, z kroku
+jízdní cesty nebo z povelu DCC extended. Po zapnutí napájení se výstup plynule rozsvítí ze tmy.</li>
+</ul>
+<p><b>Příklad — den a noc:</b> absolutní vstup (přepínač nebo DCC adresa) s volbou <b>Vlastní hodnoty</b>
+vyp = 0 a zap = 255 a dobou přechodu 60 s. Přepnutí na noc ztlumí světla během jedné minuty;
+přepnutí zpět přivede den stejně pomalu.</p>

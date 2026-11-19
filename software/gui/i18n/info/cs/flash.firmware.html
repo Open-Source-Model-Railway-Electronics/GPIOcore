@@ -1,0 +1,35 @@
+<h2>Aktualizace firmwaru</h2>
+<p><b>Firmware</b> je program, který běží v Arduinu vaší desky GPIOcore. Občas vyjde novější
+verze s opravami nebo novými funkcemi. Toto okno ji nahraje do desky.</p>
+
+<h3>Krok za krokem</h3>
+<ol>
+<li><b>Připojte desku</b> USB kabelem.</li>
+<li><b>Port:</b> zvolte desku. Obvykle je u ní CH340, USB Serial nebo Arduino. Nevidíte ji? Zkontrolujte kabel a
+klikněte na <b>Obnovit</b>.</li>
+<li><b>Soubor firmwaru:</b> soubor s novým programem (končí na <i>.hex</i>). Obvykle je správný soubor
+už vyplněný. Pokud ne, klikněte na <b>Procházet…</b> a zvolte <i>GPIOcore.hex</i>.</li>
+<li><b>Typ desky:</b> většina desek funguje s <i>Arduino Uno / Nano (nový bootloader)</i>. Levnější nebo starší desky
+Nano často potřebují <i>Arduino Nano (starý bootloader)</i>. Nejste si jistí? Začněte prostě s prvním: pokud deska
+neodpoví, program sám zkusí druhý.</li>
+<li>Klikněte na <b>Nahrát</b> a počkejte, až se pruh zaplní. Trvá to asi 10 až 30 sekund. <b>Neodpojujte
+desku</b>, dokud nahrávání probíhá.</li>
+</ol>
+
+<h3>Dobré vědět</h3>
+<ul>
+<li>Program během nahrávání desku uvolní a potom se znovu připojí. Nemusíte nic dělat.</li>
+<li>Vaše nastavení v desce (výstupy, vstupy, propojení) se obvykle zachovají. Pro jistotu nejprve použijte
+<b>Soubor → Uložit</b>.</li>
+<li>Jiné programy, které desku používají, například sériový monitor Arduino IDE, musíte nejprve zavřít.</li>
+<li>Něco se nepovedlo? Přečtěte si červenou zprávu: říká, co zkusit. <b>Zobrazit podrobnosti</b> ukáže celý výpis,
+který se hodí, když někoho žádáte o pomoc.</li>
+<li>Nepovedené nahrání desku nepoškodí. Prostě to zkuste znovu.</li>
+</ul>
+
+<h3>Přes programátor ArduinoISP (pokročilé)</h3>
+<p>Jen pro desky bez USB bootloaderu nebo pro desku, která už neodpovídá. Potřebujete druhé Arduino se
+sketchem <i>ArduinoISP</i>, propojené se šesti piny ICSP vaší desky. Zvolte port tohoto Arduina, které slouží jako
+<i>programátor</i>. Tím se nastaví i konfigurace čipu (fuses) a odstraní se USB bootloader, takže potom můžete tuto
+desku aktualizovat jen programátorem. Také se tím <b>smažou vaše nastavení</b> v desce: nejprve je uložte přes
+<b>Soubor → Uložit</b> a potom je zapište zpět.</p>

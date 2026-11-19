@@ -1,5 +1,5 @@
 <h2>Primi passi</h2>
-<p>Questo programma configura una <b>scheda GPIOcore</b>: un piccolo Arduino (Nano / Uno, o un DCCnext) che sta sotto il
+<p>Questo programma configura una <b>scheda GPIOcore</b>: un piccolo Arduino (Nano, o un DCCnext) che sta sotto il
 tuo plastico e comanda varie cose: scambi, luci, segnali, relè. Dici alla scheda <i>cosa</i> è collegato a <i>quale</i>
 pin, e <i>cosa</i> deve farlo muovere.</p>
 
@@ -13,20 +13,26 @@ tuo quadro di comando, o un comando della tua centrale DCC (il tuo sistema digit
 <p>Le impostazioni dell'ingresso selezionato sono sempre a <b>sinistra</b>, quelle dell'uscita selezionata a
 <b>destra</b>.</p>
 
-<h3>Tre modi di lavorare: i pulsanti colorati in alto</h3>
+<h3>Tre modalità: i pulsanti colorati in alto</h3>
 <ul>
-<li><b style="color:#DC2626">&#9679; Configura</b> (cornice rossa): si collega alla scheda sulla porta scelta. Tutto ciò che
-modifichi va alla scheda <b>subito</b>; non c'è un pulsante di salvataggio separato.</li>
-<li><b style="color:#A16207">&#9679; Simula</b> (cornice gialla): non serve una scheda. Le tue impostazioni girano su una scheda
-simulata; clicca i pulsanti degli ingressi e osserva le uscite. Non si può rompere niente.</li>
-<li><b style="color:#15803D">&#9679; Test dal vivo</b> (cornice verde): su una scheda vera, clicca i pulsanti degli ingressi e
-guarda cosa fa la scheda, anche se non è ancora cablato niente.</li>
+<li><b style="color:#DC2626">&#9679; Configura</b>: modificare le cose. Offline, o collegato (cornice rossa): allora ogni
+modifica va alla scheda <b>subito</b>.</li>
+<li><b style="color:#A16207">&#9679; Simula</b> (cornice gialla): prova le tue impostazioni su una scheda simulata, premi i
+pulsanti degli ingressi e guarda le uscite. Qui non si può modificare nulla.</li>
+<li><b style="color:#15803D">&#9679; Test dal vivo</b> (cornice verde): si collega da solo; premi i pulsanti e guarda cosa fa
+la scheda vera. Qui non si può modificare nulla.</li>
 </ul>
+<p><b>Connetti / Disconnetti</b>, accanto alla porta, mostra se una scheda è collegata.</p>
+
+<h3>L'avvio più rapido</h3>
+<p>Il programma parte con una scheda vuota: un ingresso (indirizzo DCC 1) che commuta un'uscita (su D3). Scegli una
+configurazione pronta nell'elenco <b>Preset</b> in alto (per esempio <i>16 servos</i>) e clicca <b>Applica</b>,
+oppure parti da un esempio: <b>File &rarr; Apri esempio&hellip;</b>.</p>
 
 <h3>Passo dopo passo</h3>
 <ol>
 <li><b>Collegare.</b> Inserisci la scheda nella porta USB, scegli la sua porta in alto (di solito c'è scritto CH340,
-USB Serial o Arduino) e clicca <b>&#9679; Configura</b>. La prima volta il programma chiede un <b>nome</b> per la scheda.</li>
+USB Serial o Arduino) e clicca <b>Connetti</b>. Usa <b>Leggi scheda</b> per caricare ciò che contiene. La prima volta il programma chiede un <b>nome</b> per la scheda.</li>
 <li><b>Aggiungere un'uscita.</b> Clicca <b>+ Aggiungi uscita</b>, oppure clicca un'uscita. Scegli il <b>tipo</b> (per
 esempio <i>Servo</i>) e il <b>pin</b> a cui va il filo.</li>
 <li><b>Aggiungere un ingresso.</b> Clicca <b>+ Aggiungi ingresso</b>, oppure clicca un ingresso. Scegli cosa lo avvia:
@@ -34,6 +40,7 @@ un <b>pin del pulsante</b>, un <b>indirizzo DCC</b>, o entrambi.</li>
 <li><b>Collegali.</b> Trascina l'uscita sull'ingresso. Compare una linea colorata: quell'ingresso ora comanda quell'uscita.
 L'uscita prende il colore del suo ingresso.</li>
 <li><b>Provalo.</b> Clicca <b>&#9679; Test dal vivo</b> e premi i pulsanti dell'ingresso.</li>
+<li><b>Salva</b> (Ctrl+S) la configurazione in un file; il programma non salva niente da solo.</li>
 </ol>
 
 <h3>Buono a sapersi</h3>
@@ -42,8 +49,11 @@ L'uscita prende il colore del suo ingresso.</li>
 <li>Dai un <b>nome</b> a ingressi e uscite (campo in cima a ogni pannello). I nomi e tutte le impostazioni sono
 conservati su questo computer in <i>Documenti\GPIOcore\boards\&lt;nome della scheda&gt;.json</i>, un file per scheda.</li>
 <li>Un pin già usato appare in <b>rosso</b> nell'elenco dei pin. Se lo scegli comunque, l'ingresso o l'uscita che lo
-aveva diventa <i>non usato</i>.</li>
+aveva mantiene la sua funzione, ma perde quel pin.</li>
 <li>Gli ingressi e le uscite non usati sono nascosti; <b>Visualizza &rarr; Mostra ingressi e uscite non usati</b> li mostra tutti.</li>
-<li><b>Visualizza &rarr; Modalità esperto</b> mostra i byte, il log seriale e i preset. <b>Visualizza &rarr; Tema</b> passa allo scuro.</li>
+<li><b>Visualizza &rarr; Principiante / Avanzato / Esperto</b> decide quanto offre il programma; parte da Principiante e
+non modifica mai la tua configurazione. <b>Visualizza &rarr; Tema</b> passa allo scuro.</li>
+<li><b>File &rarr; Esporta&hellip;</b> salva alcune delle tue uscite, ingressi o impostazioni della scheda in un file a sé
+(un tuo esempio); <b>File &rarr; Importa&hellip;</b> li aggiunge a un'altra scheda, con gli stessi numeri o in posti liberi.</li>
 <li><b>Scheda &rarr; Flash del firmware&hellip;</b> carica un nuovo firmware sull'Arduino.</li>
 </ul>

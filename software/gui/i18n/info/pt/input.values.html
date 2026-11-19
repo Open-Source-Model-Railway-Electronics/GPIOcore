@@ -1,0 +1,16 @@
+<h3>Valores próprios: mais do que ligado e desligado</h3>
+<p>Normalmente uma entrada Comutar ou Absoluto põe a sua saída em <b>desviado / desligado</b> (0) ou <b>directo / ligado</b> (1).
+Com <b>Valores próprios</b> cada um dos dois estados envia antes o seu próprio valor, tal como um passo de itinerário:</p>
+<ul>
+<li><b>Servo</b> — um ângulo, p. ex. desligado = 45&deg;, ligado = 135&deg; (ou desviado / directo como habitualmente).</li>
+<li><b>Sinal de 4 aspectos</b> — um aspecto por estado, escolhido lâmpada a lâmpada com &#9662;.</li>
+<li><b>PWM</b> — um brilho por estado, p. ex. desligado = 20 (atenuado), ligado = 255.</li>
+<li><b>Efeito sonoro</b> — uma faixa por estado; <i>parar</i> (0) pára a reprodução. Uma saída de som pode tocar muitas
+faixas, cada uma escolhida pela sua própria entrada.</li>
+<li>Outras saídas — desviado ou directo por estado, por exemplo ao contrário.</li>
+</ul>
+<p><b>Desligado / desviado</b> é usado quando o estado da entrada passa a 0 (uma entrada Absoluto: botão premido ou um comando DCC
+'desviado'), <b>Ligado / directo</b> quando passa a 1. Uma entrada Comutar alterna entre os dois.</p>
+<p>Os dois valores são guardados como 2 passos na memória de itinerário da entrada, por isso contam para o total de
+itinerários da placa. Os comandos DCC estendidos continuam a enviar o seu próprio valor.</p>
+<p>Ligue uma entrada a uma saída de som e os valores próprios são activados automaticamente: desligado = parar, ligado = faixa 1.</p>

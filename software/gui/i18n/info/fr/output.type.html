@@ -10,9 +10,11 @@ bobines</b> (Peco, Roco, Fleischmann …) : A = une bobine, B = l'autre bobine.<
 <li><b>Feux alternés</b> — deux feux à tour de rôle avec une pause : feux de passage à niveau.</li>
 <li><b>Feu de cheminée / tube néon / soudeur</b> — effets lumineux : feu vacillant, tube fluorescent qui s'allume en
 clignotant, éclairs de soudure. (Feu de cheminée et tube néon ont besoin de broches PWM.)</li>
-<li><b>Signal 4 feux</b> — quatre LED (rouge, vert, jaune, blanc …), positionnées par des commandes de signal DCC ou par un itinéraire.</li>
+<li><b>Signal 4 feux</b> — quatre LED (vert, jaune, rouge, blanc …), positionnées par des commandes de signal DCC ou par un itinéraire.</li>
 <li><b>Servo</b> — un servo de modélisme comme moteur d'aiguillage. Mouvement lent et réaliste.</li>
-<li><b>PWM</b> — une luminosité fixe pour une lampe ou un ruban de LED.</li>
+<li><b>PWM</b> — une luminosité pour une lampe ou un ruban de LED, éventuellement avec un fondu lent (jour et nuit).</li>
+<li><b>Signal de block</b> — un signal automatique (feux A–D) : la carte choisit elle-même l'aspect à partir des détecteurs de son propre block et du block suivant.</li>
+<li><b>Effet sonore</b> — un lecteur MP3 (DFPlayer Mini) sur D1 : une cloche, un sifflet, une annonce. L'entrée choisit la piste. Ne joue que si aucun PC n'est connecté.</li>
 <li><b>Non utilisé</b> — rien n'est branché.</li>
 </ul>
 <p><b>Important pour les bobines :</b> une broche Arduino ne peut pas piloter une bobine directement. Utilisez une carte

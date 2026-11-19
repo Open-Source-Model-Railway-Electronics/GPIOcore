@@ -1,0 +1,27 @@
+<h3>Analoge indgange: en modstandsstige eller en sensor</h3>
+<p>I stedet for en knap til GND kan en analog pin (A0–A6) måle en spænding: <b>0 = 0 V, 1023 = 5 V</b>.
+Indgangen regnes som <i>trykket</i>, så længe værdien opfylder betingelsen, og virker så præcis som en trykket
+knap: skift, absolut og togveje virker alle.</p>
+<ul>
+<li><b>Under en værdi</b> — trykket under tærsklen, sluppet igen 20 højere. For eksempel en lyssensor (LDR),
+der bliver mørk, eller en enkelt knap.</li>
+<li><b>Over en værdi</b> — trykket over tærsklen, sluppet igen 20 lavere.</li>
+<li><b>Ved en værdi</b> — trykket inden for tærsklen &plusmn; 10: én knap i en <b>modstandsstige</b>.
+Flere indgange kan dele én pin, hver med sin egen værdi.</li>
+</ul>
+<p><b>Modstandsstige:</b> flere knapper på én pin. En 10 k&Omega;-modstand fra 5 V til pinnen holder den på 1023,
+mens intet er trykket; hver knap forbinder pinnen til GND gennem sin egen modstand, så hver knap giver en
+anden værdi.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ knap 1 ]--- GND    ca. 0
+                 +--[1k]---[ knap 2 ]--- GND    ca. 93
+                 +--[3k3]--[ knap 3 ]--- GND    ca. 254
+                 +--[10k]--[ knap 4 ]--- GND    ca. 512</pre>
+<p><b>Aflæs de rigtige værdier:</b> modstande har tolerancer, og kontakter har modstand, så praksis afviger fra
+teorien. Forbind printet, vælg indgangen, og hold øje med <b>Nu:</b>, mens du holder hver knap nede; <b>Brug denne værdi</b>
+tager den som tærskel. Hold mindst ca. 40 mellem to knapper.</p>
+<ul>
+<li>Tærsklen gemmes i trin af 8. Printet læser pinnen hvert 50. ms og reagerer først, når to målinger stemmer overens.</li>
+<li><b>A7</b> er config-knappen og kan ikke bruges; <b>A6</b> findes kun på en Arduino Nano.</li>
+<li>I <b>Simulér</b> klikker du på <i>værdi ▾</i> ved indgangen for at indtaste en værdi for dens pin: alle indgange på den pin reagerer.</li>
+</ul>

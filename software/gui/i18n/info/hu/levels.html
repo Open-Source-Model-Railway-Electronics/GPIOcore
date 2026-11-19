@@ -1,0 +1,19 @@
+<h3>Felhasználói szintek</h3>
+<p>A <b>Nézet &rarr; Kezdő / Haladó / Szakértő</b> határozza meg, mit kínál a program. Kezdje a Kezdő szinttel, és
+lépjen feljebb, ha többre van szüksége. A szint soha nem változtat meg és nem töröl semmit a konfigurációban.</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Szint</th><th>Kimenetek</th><th>Bemenetek és panel</th></tr>
+<tr><td><b>Kezdő</b></td><td>Szervó, egyszeres / kettős folyamatos, egyszeres / kettős impulzus</td><td>Közvetlen vezérlés (váltás vagy
+abszolút) nyomógomb-lábbal és / vagy DCC-címmel; vágányutak a panel rögzített várakozási idejével. Panelbeállítások: név és
+paneltípus.</td></tr>
+<tr><td><b>Haladó</b></td><td>+ fényeffektek (villogó, váltakozó fény, kandalló, fénycső, hegesztő), 4 jelzési képes jelző,
+PWM áttűnéssel, hangeffekt, szívrelék</td><td>+ analóg bemenetek, saját értékek, &ldquo;A vágányút indítója&rdquo;,
+D0 / D1, saját várakozási idő minden vágányút-lépéshez és vágányutak kizárása</td></tr>
+<tr><td><b>Szakértő</b></td><td>+ önműködő térközjelző, foglaltságjelzőt követő szervó (alakjelző)</td><td>+ Érzékelő
+(foglaltság) bemenetek</td></tr>
+</table>
+<p>Az Ön szintje feletti funkciók <b>nem jelennek meg</b>: nincsenek a listákban, és a mezőik rejtve vannak.</p>
+<p>Ha olyan fájlt vagy példát nyit meg, importál, vagy olyan panelt olvas be, amely többet használ, mint amit az Ön szintje kínál (például
+egy más által készített fájlban lévő önműködő térközjelzőt), a program jelzi ezt, és a projekt igényeinek megfelelően <b>megemeli a szintet</b>.
+Magától soha nem csökkenti a szintet, és soha nem változtatja meg a konfigurációt. Ha később Ön maga csökkenti a szintet,
+ezek a funkciók újra rejtve lesznek, de a konfigurációban megmaradnak, és tovább működnek.</p>

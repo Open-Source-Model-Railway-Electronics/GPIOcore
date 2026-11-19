@@ -1,0 +1,16 @@
+<h3>Egna värden: mer än på och av</h3>
+<p>Normalt ställer en växla- eller absolut ingång sin utgång på <b>avvikande / av</b> (0) eller <b>rakt / på</b> (1).
+Med <b>Egna värden</b> skickar i stället vart och ett av de två lägena sitt eget värde, precis som ett tågvägssteg:</p>
+<ul>
+<li><b>Servo</b> — en vinkel, t.ex. av = 45&deg;, på = 135&deg; (eller avvikande / rakt som vanligt).</li>
+<li><b>Signal med 4 signalbilder</b> — en signalbild per läge, vald lampa för lampa med &#9662;.</li>
+<li><b>PWM</b> — en ljusstyrka per läge, t.ex. av = 20 (dimmat), på = 255.</li>
+<li><b>Ljudeffekt</b> — ett spår per läge; <i>stopp</i> (0) stoppar uppspelningen. En ljudutgång kan spela många
+spår, vart och ett valt av sin egen ingång.</li>
+<li>Andra utgångar — avvikande eller rakt per läge, till exempel tvärtom.</li>
+</ul>
+<p><b>Av / avvikande</b> används när ingångens läge blir 0 (en absolut ingång: knappen nedtryckt eller ett DCC-kommando
+'avvikande'), <b>På / rakt</b> när det blir 1. En växla-ingång växlar mellan de två.</p>
+<p>De två värdena sparas som 2 steg i ingångens tågvägsminne, så de räknas in i kortets totala antal
+tågvägssteg. Utökade DCC-kommandon (DCC extended) skickar fortfarande sitt eget värde.</p>
+<p>Ansluter du en ingång till en ljudutgång slås egna värden på av sig självt: av = stopp, på = spår 1.</p>

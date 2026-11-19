@@ -1,0 +1,8 @@
+<h3>Tilstand og testing</h3>
+<p>Hver utgang har en <b>tilstand</b>: 0 eller 1. Hva det betyr, avhenger av utgangen: for en sporveksel er
+0 = avvikende og 1 = rett; for et lys er 0 = av og 1 = på.</p>
+<p><b>Lagret tilstand</b>: kortet husker den siste tilstanden, også når strømmen er av. Etter innkobling går utgangen
+tilbake til den (unntatt sporveksler med spolemotor: de får ingen puls ved oppstart, så de ikke alle slår om samtidig).</p>
+<p><b>▶ Test: avvikende / av og ▶ Test: rett / på</b> sender denne utgangen til kortet med en gang og kobler den. Bruk dette til å
+sjekke koblingen din: legges riktig sporveksel om, i riktig retning? Hvis «rett» og «avvikende» er byttet om,
+bytt de to posisjonene (servo) eller de to ledningene / pinnene (spolemotor).</p>

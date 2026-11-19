@@ -1,0 +1,16 @@
+<h3>Egne verdier: mer enn på og av</h3>
+<p>Vanligvis setter en veksle- eller absolutt-inngang utgangen sin til <b>avvikende / av</b> (0) eller <b>rett / på</b> (1).
+Med <b>Egne verdier</b> sender hver av de to tilstandene i stedet sin egen verdi, akkurat som et togveitrinn:</p>
+<ul>
+<li><b>Servo</b> — en vinkel, f.eks. av = 45&deg;, på = 135&deg; (eller avvikende / rett som vanlig).</li>
+<li><b>Signal med 4 signalbilder</b> — et signalbilde per tilstand, valgt lampe for lampe med &#9662;.</li>
+<li><b>PWM</b> — en lysstyrke per tilstand, f.eks. av = 20 (dempet), på = 255.</li>
+<li><b>Lydeffekt</b> — et spor per tilstand; <i>stopp</i> (0) stopper avspillingen. Én lydutgang kan spille mange
+spor, hvert valgt av sin egen inngang.</li>
+<li>Andre utganger — avvikende eller rett per tilstand, for eksempel omvendt.</li>
+</ul>
+<p><b>Av / avvikende</b> brukes når tilstanden til inngangen blir 0 (en absolutt-inngang: knapp trykket eller en DCC-kommando
+'avvikende'), <b>På / rett</b> når den blir 1. En veksle-inngang veksler mellom de to.</p>
+<p>De to verdiene lagres som 2 trinn i togveiminnet til inngangen, så de teller med i kortets totale antall
+togveitrinn. Utvidede DCC-kommandoer (DCC extended) sender fortsatt sin egen verdi.</p>
+<p>Koble en inngang til en lydutgang, og egne verdier slås på av seg selv: av = stopp, på = spor 1.</p>

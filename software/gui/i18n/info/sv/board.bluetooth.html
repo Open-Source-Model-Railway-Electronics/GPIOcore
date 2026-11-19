@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Med en <b>HC-05</b> Bluetooth-modul på kortet kan du konfigurera det utan USB-kabel. Programmet ställer in
+modulen åt dig via kortet (<i>Kort &gt; Ställ in Bluetooth (HC-05)</i>, nivå Avancerad eller högre).
+Bara för Arduino <b>Nano</b>: du behöver config-knappen för att ansluta senare.</p>
+<p><b>Koppling</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> via en spänningsdelare: 1 k&Omega; från D1 till RXD, 2 k&Omega; från RXD till GND
+(HC-05 tål 3,3 V på sin RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> via en <b>schottkydiod</b> (BAT85 eller 1N5819), med <b>katoden (ringen)
+mot HC-05:ans TXD</b>. Dioden låter HC-05 dra D0 låg men kämpar aldrig mot USB-kretsen, så USB fortsätter att fungera medan
+HC-05 sitter i.</li>
+</ul>
+<p><b>Inställning</b> (en gång):</p>
+<ol>
+<li>Håll inne knappen på HC-05 medan du kopplar in USB-kabeln. Dess lysdiod blinkar nu <b>långsamt</b> (ungefär var
+2:a sekund): modulen är i <b>AT-läge</b>.</li>
+<li>Anslut programmet till kortet via USB.</li>
+<li>Välj <i>Kort &gt; Ställ in Bluetooth (HC-05)</i> och klicka på <b>Start</b>. Kortet provar de vanliga hastigheterna och
+ställer in modulen på <b>115200 baud</b> och namnet <b>GPIOcore-&lt;kortnamn&gt;</b>. PIN-koden förblir som den är.
+Det tar några sekunder.</li>
+<li>Koppla ur kortet och koppla in det igen, <b>utan</b> att hålla inne knappen.</li>
+<li>Para ihop <b>GPIOcore&hellip;</b> i Windows Bluetooth-inställningar (PIN <b>1234</b>, eller 0000 på vissa moduler).
+Windows skapar en COM-port för den (ibland två: använd den "utgående"). Välj den porten i GPIOcore.</li>
+</ol>
+<p>Om det inte fungerar: modulen är inte i AT-läge (snabb blinkning = normalt läge), kopplingen är fel, eller dioden
+saknas eller sitter åt fel håll. Andra moduler (HC-06, vissa kloner) känner inte till dessa kommandon.</p>
+<p><b>Ansluta via Bluetooth</b>: att öppna Bluetooth-COM-porten återställer inte kortet. När inget på
+kortet använder D0 eller D1 förblir dess serieport öppen och programmet ansluter helt enkelt. När något använder dem
+(en ingång eller utgång på D0/D1, eller en ljudeffekt) stänger kortet sin serieport 5 sekunder efter start
+(D0/D1 blir vanliga pinnar). När du då klickar på <i>Anslut</i> visar programmet
+<i>"Väntar på kortet &mdash; tryck kort på dess config-knapp (Nano)&hellip;"</i>. Tryck <b>kort</b> på config-knappen (A7):
+kortet öppnar sin serieport igen i 5 sekunder och anmäler sig, och programmet ansluter.
+Programmet väntar upp till 30 sekunder på det.</p>
+<p>Medan programmet är anslutet hör D0 och D1 till serieporten: använd dem inte för ingångar eller utgångar på ett
+kort med HC-05.</p>

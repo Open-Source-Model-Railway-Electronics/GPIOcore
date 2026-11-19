@@ -1,0 +1,13 @@
+<h3>Piny D0 a D1</h3>
+<p>D0 a D1 jsou vodiče, kterými Arduino komunikuje s tímto programem přes USB. Novější desky je přesto mohou
+využít pro kolejiště:</p>
+<ul>
+<li>Po startu deska čeká <b>5 sekund</b> na tento program.</li>
+<li>Pokud se program připojí, D0 / D1 zůstanou během konfigurace vyhrazeny pro USB. Věci na těchto pinech pak
+<b>nefungují</b>.</li>
+<li>Pokud se nic nepřipojí (normální provoz na kolejišti), stanou se z D0 / D1 běžné piny. Když na
+D0 / D1 nic není (žádný vstup ani výstup, žádný zvukový efekt), zůstanou vodiči USB: program se může připojit kdykoli.</li>
+<li>Krátký stisk tlačítka konfigurace (Nano) z nich na 5 sekund opět udělá vodiče USB, takže se program může
+připojit bez resetu.</li>
+</ul>
+<p>Používejte je pro jednoduché věci, jako jsou LED. Nepřipojujte na D0 velkou zátěž: může rušit nahrávání nového firmwaru.</p>

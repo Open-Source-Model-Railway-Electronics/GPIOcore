@@ -1,0 +1,35 @@
+<h2>Oppdatere fastvaren</h2>
+<p><b>Fastvaren</b> er programmet som kjører på Arduinoen på GPIOcore-kortet ditt. Noen ganger finnes det en nyere
+versjon med rettelser eller nye funksjoner. Dette vinduet legger den på kortet ditt.</p>
+
+<h3>Steg for steg</h3>
+<ol>
+<li><b>Koble til kortet</b> med en USB-kabel.</li>
+<li><b>Port:</b> velg kortet. Det står som regel CH340, USB Serial eller Arduino. Ser du det ikke? Sjekk kabelen og
+klikk på <b>Oppdater</b>.</li>
+<li><b>Fastvarefil:</b> dette er filen med det nye programmet (den slutter på <i>.hex</i>). Vanligvis er riktig fil
+allerede fylt inn. Hvis ikke, klikk på <b>Bla gjennom…</b> og velg <i>GPIOcore.hex</i>.</li>
+<li><b>Korttype:</b> de fleste kort virker med <i>Arduino Uno / Nano (ny bootloader)</i>. Billigere eller eldre Nano-kort
+trenger ofte <i>Arduino Nano (gammel bootloader)</i>. Usikker? Bare start med den første: hvis kortet
+ikke svarer, prøver programmet den andre av seg selv.</li>
+<li>Klikk på <b>Flash</b> og vent til linjen er full. Dette tar omtrent 10 til 30 sekunder. <b>Ikke koble fra
+kortet</b> mens det arbeider.</li>
+</ol>
+
+<h3>Greit å vite</h3>
+<ul>
+<li>Programmet slipper kortet under opplastingen og kobler til igjen etterpå. Du trenger ikke gjøre noe.</li>
+<li>Innstillingene dine på kortet (utganger, innganger, forbindelser) beholdes vanligvis. For sikkerhets skyld kan du bruke
+<b>Fil → Lagre</b> først.</li>
+<li>Andre programmer som bruker kortet, som seriellmonitoren i Arduino IDE, må lukkes først.</li>
+<li>Gikk noe galt? Les den røde meldingen: den sier hva du kan prøve. <b>Vis detaljer</b> viser hele rapporten,
+noe som er nyttig når du ber noen om hjelp.</li>
+<li>En mislykket opplasting ødelegger ikke kortet. Bare prøv igjen.</li>
+</ul>
+
+<h3>Via ArduinoISP-programmerer (avansert)</h3>
+<p>Bare for kort uten USB-bootloader, eller et kort som ikke svarer lenger. Du trenger en ekstra Arduino som kjører
+skissen <i>ArduinoISP</i>, koblet til de seks ICSP-pinnene på kortet ditt. Velg porten til den <i>programmerer</i>-Arduinoen.
+Dette setter også brikkeinnstillingene (fuses) og fjerner USB-bootloaderen, så etterpå kan du bare oppdatere
+dette kortet med programmereren. Det <b>sletter også innstillingene dine</b> på kortet: lagre dem med <b>Fil → Lagre</b>
+først, og skriv dem tilbake etterpå.</p>

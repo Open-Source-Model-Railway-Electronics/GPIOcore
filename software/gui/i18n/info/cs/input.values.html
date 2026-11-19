@@ -1,0 +1,16 @@
+<h3>Vlastní hodnoty: víc než zap a vyp</h3>
+<p>Normálně vstup typu Přepínání nebo Absolutní přepíná svůj výstup na <b>do odbočky / vyp</b> (0) nebo <b>přímo / zap</b> (1).
+S volbou <b>Vlastní hodnoty</b> posílá každý z obou stavů místo toho vlastní hodnotu, stejně jako krok jízdní cesty:</p>
+<ul>
+<li><b>Servo</b> — úhel, např. vyp = 45&deg;, zap = 135&deg; (nebo jako obvykle do odbočky / přímo).</li>
+<li><b>Návěstidlo se 4 návěstmi</b> — návěst pro každý stav, volená světlo po světle pomocí &#9662;.</li>
+<li><b>PWM</b> — jas pro každý stav, např. vyp = 20 (ztlumeno), zap = 255.</li>
+<li><b>Zvukový efekt</b> — skladba pro každý stav; <i>stop</i> (0) zastaví přehrávání. Jeden zvukový výstup může přehrávat mnoho
+skladeb, každou zvolenou vlastním vstupem.</li>
+<li>Ostatní výstupy — do odbočky nebo přímo pro každý stav, například obráceně.</li>
+</ul>
+<p><b>Vyp / do odbočky</b> se použije, když stav vstupu přejde na 0 (absolutní vstup: tlačítko stisknuto nebo DCC
+povel „do odbočky“), <b>Zap / přímo</b>, když přejde na 1. Vstup typu Přepínání je střídá.</p>
+<p>Obě hodnoty se ukládají jako 2 kroky v paměti jízdní cesty vstupu, takže se započítávají do celkového počtu kroků
+jízdních cest desky. Povely DCC extended dál posílají svou vlastní hodnotu.</p>
+<p>Připojte vstup ke zvukovému výstupu a vlastní hodnoty se zapnou samy: vyp = stop, zap = skladba 1.</p>

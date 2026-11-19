@@ -1,0 +1,29 @@
+<h3>Configurar um servo</h3>
+<p>Um servo roda até um ângulo entre 0&deg; e 180&deg;. Como motor de agulha move-se entre duas posições:</p>
+<ul>
+<li><b>Posição 0 (desviado)</b>: o ângulo para "desviado".</li>
+<li><b>Posição 1 (directo)</b>: o ângulo para "directo".</li>
+<li><b>Velocidade</b>: milissegundos por grau. 20 ms/&deg; é calmo e realista; 5 é rápido; 50 é muito lento.</li>
+</ul>
+<h4>Encontrar as posições certas</h4>
+<ol>
+<li>Com a placa ligada, assinale <b>Em directo</b> e arraste devagar o cursor de <i>Posição 0</i>. O servo acompanha.
+Pare quando a lâmina da agulha encostar ao carril e faça o mesmo para <i>Posição 1</i>. Fica guardado de imediato.</li>
+<li>Ou sem computador: use o <b>botão de configuração</b> e o endereço de locomotiva 9999 no seu comando (ver
+<i>Ajuda &rarr; Botão de configuração e ajuste de servos</i>).</li>
+</ol>
+<p><b>Dica:</b> não force demasiado a lâmina contra o carril: o servo vai zumbir e aquecer.
+Recue 2&ndash;3&deg; a partir do ponto em que toca.</p>
+<h4>Braço de semáforo: seguir um detector</h4>
+<p>Assinale <b>Segue um detector (braço de semáforo)</b> e escolha a entrada do detector: a placa move então o servo
+sozinha, sem comandos. Quando esse cantão está ocupado o servo vai para <i>Posição 0 (desviado)</i> = o braço em
+paragem; quando está livre, para <i>Posição 1 (directo)</i> = via livre. Move-se à sua própria velocidade. <b>Inverter: ocupado =
+directo</b> troca isto. Qualquer entrada que esteja em uso e tenha um pino pode ser o detector, de preferência uma entrada
+<b>Sensor (ocupação)</b>; na área de trabalho uma linha pontilhada liga-a ao servo.</p>
+<h4>Bom saber</h4>
+<ul>
+<li>Ao ligar a alimentação os servos arrancam <b>um a um</b>, com meio segundo de intervalo, cada um para a sua última posição. Isso evita um
+grande pico de corrente.</li>
+<li>No máximo 6 servos movem-se ao mesmo tempo; os outros esperam pela sua vez.</li>
+<li>Ligações: castanho/preto = GND, vermelho = 5 V (de uma fonte de 5 V separada para vários servos!), laranja/amarelo = sinal.</li>
+</ul>

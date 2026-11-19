@@ -1,0 +1,16 @@
+<h3>Valori personalizzati: più di acceso e spento</h3>
+<p>Normalmente un ingresso commuta o assoluto porta la sua uscita su <b>deviato / spento</b> (0) o <b>dritto / acceso</b> (1).
+Con <b>Valori personalizzati</b> ciascuno dei due stati invia invece un proprio valore, proprio come un passo di itinerario:</p>
+<ul>
+<li><b>Servo</b> — un angolo, p. es. spento = 45&deg;, acceso = 135&deg; (o deviato / dritto come al solito).</li>
+<li><b>Segnale a 4 aspetti</b> — un aspetto per stato, scelto lampada per lampada con &#9662;.</li>
+<li><b>PWM</b> — una luminosità per stato, p. es. spento = 20 (attenuato), acceso = 255.</li>
+<li><b>Effetto sonoro</b> — una traccia per stato; <i>stop</i> (0) ferma la riproduzione. Un'uscita sonora può riprodurre
+molte tracce, ognuna scelta dal proprio ingresso.</li>
+<li>Altre uscite — deviato o dritto per stato, per esempio al contrario.</li>
+</ul>
+<p><b>Spento / deviato</b> viene usato quando lo stato dell'ingresso diventa 0 (un ingresso assoluto: pulsante premuto o un
+comando DCC 'deviato'), <b>Acceso / dritto</b> quando diventa 1. Un ingresso commuta alterna tra i due.</p>
+<p>I due valori vengono memorizzati come 2 passi nella memoria itinerari dell'ingresso, quindi contano nel totale degli
+itinerari della scheda. I comandi DCC estesi continuano a inviare il proprio valore.</p>
+<p>Collega un ingresso a un'uscita sonora e i valori personalizzati si attivano da soli: spento = stop, acceso = traccia 1.</p>

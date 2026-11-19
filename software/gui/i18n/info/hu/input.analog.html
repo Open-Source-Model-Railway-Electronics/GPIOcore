@@ -1,0 +1,27 @@
+<h3>Analóg bemenetek: ellenálláslétra vagy érzékelő</h3>
+<p>A GND-re kötött nyomógomb helyett egy analóg láb (A0–A6) feszültséget is mérhet: <b>0 = 0 V, 1023 = 5 V</b>.
+A bemenet addig számít <i>lenyomottnak</i>, amíg az érték teljesíti a feltételt, és ekkor pontosan úgy működik, mint egy lenyomott
+nyomógomb: a váltás, az abszolút mód és a vágányutak is működnek.</p>
+<ul>
+<li><b>Egy érték alatt</b> — a küszöb alatt lenyomott, 20-szal feljebb újra felengedett. Például egy fényérzékelő (LDR),
+amely sötétbe kerül, vagy egyetlen nyomógomb.</li>
+<li><b>Egy érték felett</b> — a küszöb felett lenyomott, 20-szal lejjebb újra felengedett.</li>
+<li><b>Egy értéknél</b> — a küszöb &plusmn; 10 tartományban lenyomott: egy <b>ellenálláslétra</b> egyik gombja.
+Több bemenet is osztozhat egy lábon, mindegyik a saját értékével.</li>
+</ul>
+<p><b>Ellenálláslétra:</b> több nyomógomb egy lábon. Egy 10 k&Omega;-os ellenállás az 5 V és a láb között 1023-on tartja a lábat,
+amíg semmi sincs lenyomva; minden gomb a saját ellenállásán keresztül köti a lábat a GND-re, így minden gomb
+más értéket ad.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ gomb 1 ]--- GND    kb. 0
+                 +--[1k]---[ gomb 2 ]--- GND    kb. 93
+                 +--[3k3]--[ gomb 3 ]--- GND    kb. 254
+                 +--[10k]--[ gomb 4 ]--- GND    kb. 512</pre>
+<p><b>Olvassa le a valódi értékeket:</b> az ellenállásoknak tűrésük, az érintkezőknek ellenállásuk van, így a gyakorlat eltér
+az elmélettől. Csatlakoztassa a panelt, válassza ki a bemenetet, és figyelje a <b>Most:</b> értéket, miközben egyenként nyomva tartja a gombokat; az <b>Ezt az értéket használja</b>
+küszöbként átveszi. Két gomb között hagyjon legalább kb. 40 különbséget.</p>
+<ul>
+<li>A küszöb 8-as lépésekben tárolódik. A panel 50 ms-onként olvassa a lábat, és csak akkor reagál, ha két mérés egyezik.</li>
+<li>Az <b>A7</b> a konfiggomb, ezért nem használható; az <b>A6</b> csak Arduino Nanón létezik.</li>
+<li>A <b>Szimuláció</b> módban kattintson a bemenet <i>érték ▾</i> gombjára, és írjon be egy értéket a lábához: az adott láb minden bemenete reagál.</li>
+</ul>

@@ -1,0 +1,38 @@
+<h3>Bloksein</h3>
+<p><i>Niveau Expert (menu Beeld).</i></p>
+<p>Een bloksein stelt zichzelf in, zonder centrale of computer. Het board kijkt elke 50 ms naar twee
+<b>blokmelders</b> (ingangen) en toont een van drie seinbeelden:</p>
+<ul>
+<li><b>Onveilig</b> — als de melder van het eigen blok een trein meldt (meestal rood),</li>
+<li><b>Langzaam rijden</b> — als het eigen blok vrij is maar het volgende blok bezet (meestal geel),</li>
+<li><b>Veilig</b> — als beide blokken vrij zijn (meestal groen).</li>
+</ul>
+<p>Elk seinbeeld kies je lamp voor lamp met <b>▾</b>, net als bij een rijwegstap: elke lamp kan uit, aan of knipperend zijn.
+Knipperende lampen knipperen op 1 Hz. De lampen zitten op pinnen A–D; alleen pin A is verplicht, dus bij een sein met twee of
+drie lampen staan de andere pinnen gewoon op “niet gebruikt”.</p>
+<p>Een melder is elke ingang die in gebruik is en een pin heeft: het liefst een <b>Sensor (bezetmelder)</b>-ingang, bijvoorbeeld
+een stroomdetector, een reedcontact of een lichtsluis (ingedrukt = LOW = bezet), of een analoge voorwaarde. Eén
+melder mag meerdere seinen aansturen.</p>
+<p>Het seinbeeld wordt alleen berekend, nooit opgeslagen. Ingangen, rijwegen en DCC-commando's kunnen een bloksein niet
+zetten, dus je kunt het in het ingangenpaneel niet als doel kiezen en je kunt er geen ingang op slepen.</p>
+
+<h4>Voorbeeld 1: Nederlandse 3-beelden seinen achter elkaar</h4>
+<p>Lampen: A groen, B geel, C rood. Sein 1 dekt blok 1 (eigen blok = zijn melder) en kijkt naar blok 2
+(volgend blok), sein 2 dekt blok 2 en kijkt naar blok 3, enzovoort. Seinbeelden: onveilig = C aan, langzaam rijden = B aan,
+veilig = A aan (de standaardinstelling). Een trein in blok 2 geeft sein 2 rood, sein 1
+geel en sein 3 groen.</p>
+
+<h4>Voorbeeld 2: een hoofdsein zonder gekoppeld volgend blok</h4>
+<p>Alleen rood / groen: laat <b>Volgend blok</b> op “geen” staan. Onveilig = rood, veilig = groen; het seinbeeld
+langzaam rijden wordt niet gebruikt.</p>
+
+<h4>Voorbeeld 3: een voorsein</h4>
+<p>Een voorsein staat vóór een hoofdsein en kondigt aan wat dat hoofdsein toont. Maak er een bloksein van waarvan het
+<b>eigen blok</b> de melder is van het blok achter het volgende hoofdsein (het blok dat dat hoofdsein dekt), volgend blok
+“geen”: bezet = geel (het hoofdsein toont rood), vrij = groen. Het hoofdsein gebruikt dezelfde melder als zijn eigen
+blok, dus één melder stuurt ze allebei aan.</p>
+
+<h4>Een blok op het volgende board</h4>
+<p>De melder van het volgende blok mag op een ander board zitten. Leid zijn signaal via een optocoupler naar een ingang
+hier, bijvoorbeeld D0 (RX): op het board werkt D0 alleen als er geen pc verbonden is (5 s na het inschakelen zonder de GUI);
+in de simulator werkt het altijd.</p>

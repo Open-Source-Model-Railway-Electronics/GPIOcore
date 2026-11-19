@@ -1,0 +1,13 @@
+<h3>Pins D0 og D1</h3>
+<p>D0 og D1 er de ledninger, Arduinoen bruger til at tale med dette program via USB. Nyere print kan stadig bruge dem til
+dit anlæg:</p>
+<ul>
+<li>Når printet starter, venter det <b>5 sekunder</b> på dette program.</li>
+<li>Hvis programmet forbinder, forbliver D0 / D1 reserveret til USB, mens du konfigurerer. Ting på disse pins virker
+<b>ikke</b> imens.</li>
+<li>Hvis intet forbinder (normal drift på anlægget), bliver D0 / D1 normale pins. Når intet er tilsluttet
+D0 / D1 (ingen indgang eller udgang, ingen lydeffekt), forbliver de USB-ledninger: programmet kan forbinde når som helst.</li>
+<li>Et kort tryk på config-knappen (Nano) gør dem til USB-ledninger igen i 5 sekunder, så programmet kan
+forbinde uden nulstilling.</li>
+</ul>
+<p>Brug dem til enkle ting som LED'er. Undgå tung belastning på D0: det kan forstyrre upload af ny firmware.</p>

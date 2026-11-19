@@ -1,0 +1,38 @@
+<h3>Sinal de bloco</h3>
+<p><i>Nível Especialista (menu Ver).</i></p>
+<p>Um sinal de bloco define-se sozinho, sem central nem computador. A placa observa dois
+<b>detectores de cantão</b> (entradas) a cada 50 ms e mostra um de três aspectos:</p>
+<ul>
+<li><b>Paragem</b> — quando o detector do seu próprio cantão indica um comboio (normalmente vermelho),</li>
+<li><b>Aviso</b> — quando o seu próprio cantão está livre mas o cantão seguinte está ocupado (normalmente amarelo),</li>
+<li><b>Via livre</b> — quando ambos os cantões estão livres (normalmente verde).</li>
+</ul>
+<p>Cada aspecto é escolhido lâmpada a lâmpada com <b>▾</b>, como num passo de itinerário: cada lâmpada pode estar apagada, acesa ou intermitente.
+As lâmpadas intermitentes piscam a 1 Hz. As lâmpadas estão nos pinos A–D; só o pino A é obrigatório, por isso um sinal com duas ou três
+lâmpadas deixa simplesmente os outros pinos em “não utilizado”.</p>
+<p>Um detector é qualquer entrada que esteja em uso e tenha um pino: de preferência uma entrada <b>Sensor (ocupação)</b>, por exemplo um
+detector de corrente, um contacto reed ou uma barreira óptica (premido = LOW = ocupado), ou uma condição analógica. Um
+detector pode comandar vários sinais.</p>
+<p>O aspecto é apenas calculado, nunca guardado. Entradas, itinerários e comandos DCC não podem definir um sinal de bloco, por isso ele
+não pode ser escolhido como destino no painel da entrada e não é possível arrastar uma entrada para ele.</p>
+
+<h4>Exemplo 1: sinais neerlandeses de 3 aspectos em sequência</h4>
+<p>Lâmpadas: A verde, B amarela, C vermelha. O sinal 1 protege o cantão 1 (cantão próprio = o seu detector) e observa o cantão 2
+(cantão seguinte), o sinal 2 protege o cantão 2 e observa o cantão 3, e assim por diante. Aspectos: paragem = C acesa, aviso = B acesa,
+via livre = A acesa (os valores predefinidos). Um comboio no cantão 2 põe o sinal 2 a vermelho, o sinal 1
+a amarelo e o sinal 3 a verde.</p>
+
+<h4>Exemplo 2: um sinal principal sem cantão seguinte associado</h4>
+<p>Só vermelho / verde: deixe <b>Cantão seguinte</b> em “nenhum”. Paragem = vermelho, via livre = verde; o aspecto de aviso
+não é usado.</p>
+
+<h4>Exemplo 3: um sinal avançado</h4>
+<p>Um sinal avançado fica antes de um sinal principal e anuncia o que esse sinal principal mostra. Faça dele um sinal
+de bloco cujo <b>cantão próprio</b> seja o detector do cantão depois do sinal principal à frente (o cantão que esse sinal principal
+protege), cantão seguinte “nenhum”: ocupado = amarelo (o sinal principal mostra vermelho), livre = verde. O sinal principal usa
+o mesmo detector como cantão próprio, por isso um detector comanda ambos.</p>
+
+<h4>Um cantão na placa seguinte</h4>
+<p>O detector do cantão seguinte pode estar noutra placa. Ligue o seu sinal através de um optoacoplador a uma entrada desta placa, por
+exemplo D0 (RX): na placa, D0 só funciona quando não há nenhum PC ligado (5 s após ligar a alimentação sem o programa); no
+simulador funciona sempre.</p>

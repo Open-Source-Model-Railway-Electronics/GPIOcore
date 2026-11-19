@@ -1,5 +1,5 @@
 <h2>Aan de slag</h2>
-<p>Dit programma stelt een <b>GPIOcore board</b> in: een kleine Arduino (Nano / Uno, of een DCCnext) die onder je
+<p>Dit programma stelt een <b>GPIOcore board</b> in: een kleine Arduino (Nano, of een DCCnext) die onder je
 baan zit en dingen schakelt: wissels, verlichting, seinen, relais. Je vertelt het board <i>wat</i> er op
 <i>welke</i> pin is aangesloten, en <i>waardoor</i> het moet bewegen.</p>
 
@@ -10,22 +10,29 @@ een puls geven, een LED laten branden, een relais schakelen. Er zijn er 16.</li>
 <li><b>Ingangen</b> (midden, linkerkolom) zijn dingen die <i>het board opdracht geven</i>: een drukknop op je
 bedieningspaneel, of een commando van je DCC-centrale (je digitale systeem / handregelaar). Er zijn er 16.</li>
 </ul>
-<p>De instellingen van de gekozen ingang staan altijd <b>links</b>, die van de gekozen uitgang <b>rechts</b>.</p>
+<p>De instellingen van de gekozen ingang staan altijd <b>links</b>, die van de gekozen uitgang
+<b>rechts</b>.</p>
 
 <h3>Drie manieren van werken: de gekleurde knoppen bovenaan</h3>
 <ul>
-<li><b style="color:#DC2626">&#9679; Configureren</b> (rode rand): verbinden met het board op de gekozen poort. Alles wat je
-verandert, gaat <b>meteen</b> naar het board; er is geen aparte knop om op te slaan.</li>
-<li><b style="color:#A16207">&#9679; Simuleren</b> (gele rand): geen board nodig. Je eigen instellingen draaien op een
-nagebootst board; klik op de knoppen van de ingangen en kijk naar de uitgangen. Er kan niets kapot.</li>
-<li><b style="color:#15803D">&#9679; Live test</b> (groene rand): klik op een echt board op de knoppen van de ingangen en
-zie wat het board doet, ook als er nog niets is aangesloten.</li>
+<li><b style="color:#DC2626">&#9679; Configureren</b>: dingen veranderen. Offline, of verbonden (rode rand): dan gaat elke
+wijziging <b>meteen</b> naar het board.</li>
+<li><b style="color:#A16207">&#9679; Simuleren</b> (gele rand): probeer je instellingen uit op een nagebootst board, druk op de
+knoppen van de ingangen en kijk naar de uitgangen. Hier kun je niets veranderen.</li>
+<li><b style="color:#15803D">&#9679; Live test</b> (groene rand): verbindt vanzelf; druk op de knoppen en zie wat het
+echte board doet. Hier kun je niets veranderen.</li>
 </ul>
+<p><b>Verbinden / Verbinding verbreken</b> naast de poort laat zien of er een board verbonden is.</p>
+
+<h3>De snelste start</h3>
+<p>Het programma start met een leeg board: één ingang (DCC-adres 1) die één uitgang (op D3) schakelt. Kies een
+kant-en-klare configuratie in de lijst <b>Preset</b> bovenaan (bijvoorbeeld <i>16 servos</i>) en klik op <b>Toepassen</b>,
+of begin met een voorbeeld: <b>Bestand &rarr; Voorbeeld openen&hellip;</b>.</p>
 
 <h3>Stap voor stap</h3>
 <ol>
 <li><b>Verbinden.</b> Steek het board in de USB-poort, kies bovenaan de poort (meestal staat er CH340, USB Serial of
-Arduino bij) en klik op <b>&#9679; Configureren</b>. De eerste keer vraagt het programma om een <b>naam</b> voor het board.</li>
+Arduino bij) en klik op <b>Verbinden</b>. Met <b>Board uitlezen</b> laad je wat erop staat. De eerste keer vraagt het programma om een <b>naam</b> voor het board.</li>
 <li><b>Een uitgang toevoegen.</b> Klik op <b>+ Uitgang toevoegen</b>, of klik op een uitgang. Kies het <b>type</b>
 (bijvoorbeeld <i>Servo</i>) en de <b>pin</b> waar de draad op zit.</li>
 <li><b>Een ingang toevoegen.</b> Klik op <b>+ Ingang toevoegen</b>, of klik op een ingang. Kies waardoor hij start:
@@ -33,6 +40,7 @@ een <b>knop-pin</b>, een <b>DCC-adres</b>, of allebei.</li>
 <li><b>Verbind ze.</b> Sleep de uitgang naar de ingang. Er verschijnt een gekleurde lijn: die ingang bedient nu die
 uitgang. De uitgang krijgt de kleur van zijn ingang.</li>
 <li><b>Probeer het.</b> Klik op <b>&#9679; Live test</b> en druk op de knoppen van de ingang.</li>
+<li><b>Opslaan</b> (Ctrl+S) bewaart de configuratie in een bestand; het programma slaat niet vanzelf op.</li>
 </ol>
 
 <h3>Goed om te weten</h3>
@@ -40,10 +48,13 @@ uitgang. De uitgang krijgt de kleur van zijn ingang.</li>
 <li>Elk <b>(i)</b>-knopje legt uit wat ernaast staat.</li>
 <li>Geef ingangen en uitgangen een <b>naam</b> (veld bovenaan elk paneel). Namen en alle instellingen worden op
 deze computer bewaard in <i>Documenten\GPIOcore\boards\&lt;naam van het board&gt;.json</i>, één bestand per board.</li>
-<li>Een pin die al gebruikt wordt, is <b>rood</b> in de pinlijst. Kies je hem toch, dan wordt de ingang of uitgang
-die hem had <i>niet in gebruik</i>.</li>
+<li>Een pin die al gebruikt wordt, is <b>rood</b> in de pinlijst. Kies je hem toch, dan houdt de ingang of uitgang
+die hem had zijn functie, maar raakt hij die pin kwijt.</li>
 <li>Ongebruikte ingangen en uitgangen zijn verborgen; <b>Beeld &rarr; Ongebruikte ingangen en uitgangen tonen</b>
 laat ze allemaal zien.</li>
-<li><b>Beeld &rarr; Expertmodus</b> toont de bytes, de seriële log en de presets. <b>Beeld &rarr; Thema</b> schakelt naar donker.</li>
+<li><b>Beeld &rarr; Beginner / Gevorderd / Expert</b> bepaalt hoeveel het programma aanbiedt; het start bij Beginner en
+verandert nooit je configuratie. <b>Beeld &rarr; Thema</b> schakelt naar donker.</li>
+<li><b>Bestand &rarr; Exporteren&hellip;</b> bewaart een deel van je uitgangen, ingangen of boardinstellingen in een eigen
+bestand (je eigen voorbeeld); <b>Bestand &rarr; Importeren&hellip;</b> voegt ze toe aan een ander board, op dezelfde nummers of op vrije plekken.</li>
 <li><b>Board &rarr; Firmware flashen&hellip;</b> zet nieuwe firmware op de Arduino.</li>
 </ul>

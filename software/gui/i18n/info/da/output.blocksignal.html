@@ -1,0 +1,38 @@
+<h3>Bloksignal</h3>
+<p><i>Niveau Ekspert (menuen Vis).</i></p>
+<p>Et bloksignal stiller sig selv, uden digitalcentral eller computer. Printet ser på to
+<b>besat-meldere</b> (indgange) hvert 50. ms og viser et af tre signalbilleder:</p>
+<ul>
+<li><b>Stop</b> — når besat-melderen for dets egen blok melder et tog (som regel rødt),</li>
+<li><b>Stop forventes</b> — når dets egen blok er fri, men den næste blok er besat (som regel gult),</li>
+<li><b>Kør</b> — når begge blokke er fri (som regel grønt).</li>
+</ul>
+<p>Hvert signalbillede vælges lampe for lampe med <b>▾</b>, ligesom et togvejstrin: hver lampe kan være slukket, tændt eller blinkende.
+Blinkende lamper blinker med 1 Hz. Lamperne sidder på pin A–D; kun pin A er påkrævet, så et signal med to eller tre
+lamper bare lader de andre pins stå på »ikke brugt«.</p>
+<p>En besat-melder er enhver indgang, der er i brug og har en pin: helst en <b>Sensor (besat-melder)</b>-indgang, for eksempel en
+strømdetektor, en reedkontakt eller en lysbarriere (trykket = LOW = besat), eller en analog betingelse. Én
+besat-melder kan styre flere signaler.</p>
+<p>Signalbilledet beregnes kun, det gemmes aldrig. Indgange, togveje og DCC-kommandoer kan ikke stille et bloksignal, så det
+kan ikke vælges som mål i indgangspanelet, og en indgang kan ikke trækkes hen på det.</p>
+
+<h4>Eksempel 1: hollandske signaler med 3 signalbilleder efter hinanden</h4>
+<p>Lamper: A grøn, B gul, C rød. Signal 1 dækker blok 1 (egen blok = dens besat-melder) og ser på blok 2
+(næste blok), signal 2 dækker blok 2 og ser på blok 3, og så videre. Signalbilleder: Stop = C tændt, Stop forventes = B tændt,
+Kør = A tændt (standardværdierne). Et tog i blok 2 giver signal 2 rødt, signal 1
+gult og signal 3 grønt.</p>
+
+<h4>Eksempel 2: et hovedsignal uden tilknyttet næste blok</h4>
+<p>Kun rød / grøn: lad <b>Næste blok</b> stå på »ingen«. Stop = rød, Kør = grøn; signalbilledet Stop forventes
+bruges ikke.</p>
+
+<h4>Eksempel 3: et fremskudt signal</h4>
+<p>Et fremskudt signal står foran et hovedsignal og varsler, hvad det hovedsignal viser. Lav det som et bloksignal,
+hvis <b>egen blok</b> er besat-melderen for blokken bag det forreste hovedsignal (den blok, som hovedsignalet
+dækker), næste blok »ingen«: besat = gult (hovedsignalet viser rødt), fri = grønt. Hovedsignalet bruger
+den samme besat-melder som sin egen blok, så én besat-melder styrer begge.</p>
+
+<h4>En blok på det næste print</h4>
+<p>Besat-melderen for den næste blok kan sidde på et andet print. Før dens signal gennem en optokobler til en indgang her, for
+eksempel D0 (RX): på printet virker D0 kun, når ingen pc er forbundet (5 s efter opstart uden programmet); i
+simulatoren virker den altid.</p>

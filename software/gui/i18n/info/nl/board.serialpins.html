@@ -5,7 +5,10 @@ je baan gebruiken:</p>
 <li>Als het board opstart, wacht het <b>5 seconden</b> op dit programma.</li>
 <li>Als het programma verbindt, blijven D0 / D1 gereserveerd voor USB zolang je instelt. Wat op die pinnen zit werkt
 dan <b>niet</b>.</li>
-<li>Als er niets verbindt (normaal gebruik op de baan), worden D0 / D1 gewone pinnen.</li>
+<li>Als er niets verbindt (normaal gebruik op de baan), worden D0 / D1 gewone pinnen. Zit er niets op
+D0 / D1 (geen ingang of uitgang, geen geluidseffect), dan blijven het USB-draden: het programma kan altijd verbinden.</li>
+<li>Een korte druk op de config-knop (Nano) maakt ze weer 5 seconden lang USB-draden, zodat het programma zonder
+reset kan verbinden.</li>
 </ul>
 <p>Gebruik ze voor eenvoudige dingen zoals LED's. Zet geen zware belasting op D0: dat kan het uploaden van nieuwe
 firmware verstoren.</p>

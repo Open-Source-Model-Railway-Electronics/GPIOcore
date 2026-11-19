@@ -1,0 +1,12 @@
+<h3>PWM: Helligkeit und Überblenden</h3>
+<p>Ein PWM-Ausgang dimmt eine Lampe oder eine LED-Kette an einem PWM-Pin (D3, D5, D6, D9, D10, D11): <b>0</b> = aus,
+<b>255</b> = volle Helligkeit. Verwenden Sie für mehr als etwa 20 mA einen Transistor oder ein MOSFET-Modul.</p>
+<ul>
+<li><b>Tastgrad</b> — die Helligkeit nach dem Einschalten, bis eigene Werte, ein Fahrstraßen-Schritt oder DCC extended eine andere setzen.</li>
+<li><b>Überblendzeit</b> — wie viele Sekunden eine volle Änderung von 0 auf 255 dauert; eine halbe Änderung dauert halb so lange.
+<i>sofort</i> (0) schaltet direkt um. Jede neue Helligkeit wird mit dieser Geschwindigkeit überblendet: aus eigenen Werten, einem
+Fahrstraßen-Schritt oder einem DCC-extended-Befehl. Beim Einschalten blendet der Ausgang aus dem Dunkeln auf.</li>
+</ul>
+<p><b>Beispiel — Tag und Nacht:</b> ein absoluter Eingang (ein Schalter oder eine DCC-Adresse) mit <b>Eigene Werte</b>
+aus = 0 und ein = 255 und einer Überblendzeit von 60 s. Das Umschalten auf Nacht dimmt das Licht in einer Minute;
+zurückschalten bringt den Tag genauso langsam zurück.</p>

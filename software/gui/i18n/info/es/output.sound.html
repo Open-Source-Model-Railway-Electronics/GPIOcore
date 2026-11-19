@@ -1,0 +1,23 @@
+<h3>Efecto de sonido: un reproductor MP3 DFPlayer Mini</h3>
+<p>Esta salida reproduce archivos MP3 de la tarjeta micro SD de un módulo DFPlayer Mini: una campana, un silbato, un aviso.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  altavoz (3 W máx.) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>La <b>resistencia de 1 k&Omega;</b> en la línea TX protege el DFPlayer; nada vuelve al Arduino.</li>
+<li>Archivos en la tarjeta SD: en una carpeta <b>MP3</b>, con los nombres <b>0001.mp3</b>, <b>0002.mp3</b> … La pista 1 es
+/MP3/0001.mp3. Cuenta el nombre, no el orden en que los copie. Solo MP3, nada de WAV.</li>
+<li><b>La entrada elige la pista</b>, así que una salida de sonido puede reproducir muchos sonidos: dé a una entrada de conmutar
+o absoluta <b>Valores propios</b> (una pista para apagado y otra para encendido), use un paso de itinerario o envíe un valor
+DCC extendido. Pista 0 = parar. Sin valores propios: encendido = pista 1, apagado = parar.</li>
+<li>Una entrada que conecte a una salida de sonido recibe valores propios por sí sola: apagado = parar, encendido = pista 1.</li>
+<li>Varias salidas de sonido pueden usar D1 a la vez, pero normalmente basta con una.</li>
+<li><b>Solo sin PC:</b> D1 es también la línea USB hacia el ordenador. Con la GUI conectada, la placa solo informa
+de la pista (♪ en el lienzo). Desconecte el cable USB y alimente la placa de otra forma para oírlo.</li>
+<li><b>Oírlo en el PC</b> (nivel Avanzado o superior): <i>Ver &gt; Carpeta de sonidos&hellip;</i> elige una carpeta con los
+mismos archivos que la carpeta MP3 de la tarjeta SD (0001.mp3 &hellip;). En Simular y Prueba en vivo el
+programa reproduce entonces la pista que informa la placa; una pista nueva interrumpe la anterior, como el DFPlayer.
+<i>Ver &gt; Silenciar sonidos</i> lo silencia.</li>
+<li>No en una <b>DCCnext</b>: no tiene D1 en sus bornes, así que este tipo no se ofrece allí.</li>
+</ul>

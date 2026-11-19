@@ -1,0 +1,8 @@
+<h3>Állapot és tesztelés</h3>
+<p>Minden kimenetnek van egy <b>állapota</b>: 0 vagy 1. Hogy ez mit jelent, az a kimenettől függ: váltónál
+0 = kitérő irány és 1 = egyenes; világításnál 0 = ki és 1 = be.</p>
+<p><b>Tárolt állapot</b>: a panel megjegyzi az utolsó állapotot, kikapcsolt tápnál is. Bekapcsolás után a kimenet
+visszaáll erre (kivéve a tekercses váltókat: ezek bekapcsoláskor nem kapnak impulzust, így nem kapcsolnak egyszerre mind).</p>
+<p>A <b>▶ Teszt: kitérő irány / ki</b> és a <b>▶ Teszt: egyenes / be</b> azonnal elküldi ezt a kimenetet a panelre, és átkapcsolja. Ezzel
+ellenőrizheti a bekötést: a megfelelő váltó mozdul, a megfelelő irányba? Ha az “egyenes” és a “kitérő irány” fel van cserélve,
+cserélje fel a két helyzetet (szervó) vagy a két vezetéket / lábat (tekercses váltóállító).</p>

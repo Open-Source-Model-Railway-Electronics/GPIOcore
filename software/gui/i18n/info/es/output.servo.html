@@ -14,6 +14,12 @@ a la vez. Pare cuando la aguja apenas toque el carril y haga lo mismo con <i>Pos
 </ol>
 <p><b>Consejo:</b> no apriete la aguja demasiado contra el carril: el servo zumba y se calienta.
 Retroceda 2&ndash;3&deg; desde el punto en que toca.</p>
+<h4>Brazo de semáforo: seguir a un detector</h4>
+<p>Marque <b>Sigue a un detector (brazo de semáforo)</b> y elija la entrada del detector: la placa mueve entonces el
+servo por sí misma, sin órdenes. Cuando ese cantón está ocupado, el servo va a <i>Posición 0 (desviado)</i> = brazo en
+parada; cuando está libre, a <i>Posición 1 (recto)</i> = vía libre. Se mueve a su propia velocidad. <b>Invertir: ocupado =
+recto</b> lo hace al revés. Cualquier entrada que esté en uso y tenga un pin puede ser el detector, mejor una entrada
+<b>Sensor (ocupación)</b>; en el lienzo, una línea de puntos la une al servo.</p>
 <h4>Conviene saber</h4>
 <ul>
 <li>Al encender, los servos arrancan <b>uno a uno</b>, con medio segundo de diferencia, cada uno hacia su última

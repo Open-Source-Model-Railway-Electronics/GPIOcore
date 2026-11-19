@@ -1,0 +1,35 @@
+<h2>A firmware frissítése</h2>
+<p>A <b>firmware</b> az a program, amely a GPIOcore panel Arduinóján fut. Időnként megjelenik egy újabb
+verzió javításokkal vagy új funkciókkal. Ez az ablak tölti fel a panelre.</p>
+
+<h3>Lépésről lépésre</h3>
+<ol>
+<li><b>Csatlakoztassa a panelt</b> USB-kábellel.</li>
+<li><b>Port:</b> válassza ki a panelt. Általában CH340, USB Serial vagy Arduino a neve. Nem látja? Ellenőrizze a kábelt, és
+kattintson a <b>Frissítés</b> gombra.</li>
+<li><b>Firmware-fájl:</b> ez a fájl tartalmazza az új programot (<i>.hex</i> a vége). Általában a megfelelő fájl
+már be van írva. Ha nem, kattintson a <b>Tallózás…</b> gombra, és válassza a <i>GPIOcore.hex</i> fájlt.</li>
+<li><b>Paneltípus:</b> a legtöbb panel az <i>Arduino Uno / Nano (új bootloader)</i> beállítással működik. Az olcsóbb vagy régebbi Nano
+panelekhez gyakran az <i>Arduino Nano (régi bootloader)</i> kell. Nem biztos benne? Kezdje az elsővel: ha a panel
+nem válaszol, a program magától kipróbálja a másikat.</li>
+<li>Kattintson a <b>Feltöltés</b> gombra, és várjon, amíg a sáv megtelik. Ez kb. 10–30 másodpercig tart. <b>Ne húzza ki a
+panelt</b>, amíg dolgozik.</li>
+</ol>
+
+<h3>Jó tudni</h3>
+<ul>
+<li>A program a feltöltés idejére elengedi a panelt, utána pedig újra csatlakozik. Önnek semmit sem kell tennie.</li>
+<li>A panelen lévő beállítások (kimenetek, bemenetek, kapcsolatok) általában megmaradnak. A biztonság kedvéért előbb használja a
+<b>Fájl → Mentés</b> parancsot.</li>
+<li>A panelt használó más programokat, például az Arduino IDE soros monitorát, előbb be kell zárni.</li>
+<li>Valami nem sikerült? Olvassa el a piros üzenetet: megmondja, mit érdemes kipróbálni. A <b>Részletek</b> megmutatja a teljes jelentést,
+ami hasznos, ha valakitől segítséget kér.</li>
+<li>Egy sikertelen feltöltés nem teszi tönkre a panelt. Egyszerűen próbálja újra.</li>
+</ul>
+
+<h3>ArduinoISP programozóval (haladó)</h3>
+<p>Csak USB-bootloader nélküli panelekhez, vagy olyan panelhez, amely már nem válaszol. Szükség van egy második Arduinóra, amelyen
+az <i>ArduinoISP</i> vázlat (sketch) fut, és amely a panel hat ICSP-lábára van kötve. Ennek a <i>programozó</i>
+Arduinónak a portját válassza ki. Ez beállítja a chip beállításait (fuse-okat) is, és eltávolítja az USB-bootloadert, így ezt a panelt
+ezután csak a programozóval lehet frissíteni. Ez <b>törli a beállításait</b> is a panelről: előbb mentse őket a <b>Fájl → Mentés</b>
+paranccsal, és utána írja vissza őket.</p>

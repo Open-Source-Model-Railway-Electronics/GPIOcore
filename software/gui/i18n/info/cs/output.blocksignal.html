@@ -1,0 +1,38 @@
+<h3>Autoblokové návěstidlo</h3>
+<p><i>Úroveň Expert (nabídka Zobrazení).</i></p>
+<p>Autoblokové návěstidlo se nastavuje samo, bez centrály a počítače. Deska každých 50 ms kontroluje dva
+<b>hlásiče oddílů</b> (vstupy) a zobrazuje jednu ze tří návěstí:</p>
+<ul>
+<li><b>Stůj</b> — když hlásič vlastního oddílu hlásí vlak (obvykle červená),</li>
+<li><b>Výstraha</b> — když je vlastní oddíl volný, ale následující oddíl obsazený (obvykle žlutá),</li>
+<li><b>Volno</b> — když jsou oba oddíly volné (obvykle zelená).</li>
+</ul>
+<p>Každá návěst se volí světlo po světle pomocí <b>▾</b>, jako krok jízdní cesty: každé světlo může být zhasnuté,
+rozsvícené nebo blikat. Blikající světla blikají s frekvencí 1 Hz. Světla jsou na pinech A–D; povinný je jen pin A,
+takže návěstidlo se dvěma nebo třemi světly prostě nechá ostatní piny na „nepoužito“.</p>
+<p>Hlásičem může být jakýkoli používaný vstup s pinem: nejlépe vstup <b>Snímač (obsazení)</b>, například
+proudový hlásič, jazýčkový kontakt nebo světelná závora (stisknuto = LOW = obsazeno), nebo analogová podmínka. Jeden
+hlásič může řídit několik návěstidel.</p>
+<p>Návěst se pouze vypočítává, nikdy neukládá. Vstupy, jízdní cesty a DCC povely nemohou autoblokové návěstidlo nastavit,
+proto ho nelze zvolit jako cíl v panelu vstupu a nelze na něj přetáhnout vstup.</p>
+
+<h4>Příklad 1: nizozemská návěstidla se 3 návěstmi za sebou</h4>
+<p>Světla: A zelená, B žlutá, C červená. Návěstidlo 1 kryje oddíl 1 (vlastní oddíl = jeho hlásič) a dívá se na oddíl 2
+(následující oddíl), návěstidlo 2 kryje oddíl 2 a dívá se na oddíl 3 atd. Návěsti: Stůj = C svítí,
+Výstraha = B svítí, Volno = A svítí (výchozí nastavení). Vlak v oddílu 2 dá na návěstidle 2 červenou, na návěstidle 1
+žlutou a na návěstidle 3 zelenou.</p>
+
+<h4>Příklad 2: hlavní návěstidlo bez navázaného následujícího oddílu</h4>
+<p>Jen červená / zelená: nechte <b>Následující oddíl</b> na „žádný“. Stůj = červená, Volno = zelená; návěst
+Výstraha se nepoužívá.</p>
+
+<h4>Příklad 3: předvěst</h4>
+<p>Předvěst stojí před hlavním návěstidlem a předvěstí, co toto hlavní návěstidlo ukazuje. Udělejte z ní autoblokové
+návěstidlo, jehož <b>vlastním oddílem</b> je hlásič oddílu za následujícím hlavním návěstidlem (oddílu, který toto hlavní
+návěstidlo kryje), následující oddíl „žádný“: obsazeno = žlutá (hlavní návěstidlo ukazuje červenou), volno = zelená.
+Hlavní návěstidlo používá stejný hlásič jako svůj vlastní oddíl, takže jeden hlásič řídí obě návěstidla.</p>
+
+<h4>Oddíl na další desce</h4>
+<p>Hlásič následujícího oddílu může být na jiné desce. Zapojte jeho signál přes optočlen na vstup zde, například
+D0 (RX): na desce D0 funguje jen tehdy, když není připojen počítač (5 s po zapnutí bez GUI); v
+simulátoru funguje vždy.</p>

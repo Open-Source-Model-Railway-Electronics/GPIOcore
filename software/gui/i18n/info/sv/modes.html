@@ -1,0 +1,41 @@
+<h3>Konfigurera, Simulera och Livetest</h3>
+<p>Programmet är alltid i ett av tre lägen: de färgade knapparna högst upp. Anslutningen är separat:
+<b>Anslut / Koppla från</b> bredvid porten, med statusen bredvid (Offline, Ansluten: <i>namn</i>,
+Simulering).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Läge</th><th>Ram</th><th>Vad du kan göra</th></tr>
+<tr><td><b>&#9679; Konfigurera</b></td><td>ingen offline, <span style="color:#DC2626">röd</span> när ansluten</td><td>Ändra
+allt. Offline förbereder du ett kort; ansluten går varje ändring till kortet direkt. Inget läses automatiskt från
+kortet: använd <b>Läs kortet</b> eller <b>Skriv allt</b>.</td></tr>
+<tr><td><b>&#9679; Simulera</b></td><td style="color:#A16207">gul</td><td>Din konfiguration körs på ett låtsaskort.
+Tryck på ingångarnas knappar och titta; inget kan ändras.</td></tr>
+<tr><td><b>&#9679; Livetest</b></td><td><span style="color:#15803D">grön</span> när ansluten</td><td>Ansluter av
+sig självt. Tryck på ingångarnas knappar och se vad det riktiga kortet gör; inget kan ändras. Om kortet har
+ett annat namn än skärmen erbjuder programmet att läsa kortet först.</td></tr>
+</table>
+<p>Inget sparas i en fil av sig självt: <b>Spara</b> (Ctrl+S) frågar alltid var, och när du stänger programmet frågar det
+om osparade ändringar.</p>
+
+<h4>Ingångarnas knappar</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absoluta ingångar): &#9664; = avvikande / av, &#9654; = rakt / på.</li>
+<li><b>&#9654; tryck</b> (växla) och <b>&#9654; start</b> (tågväg): som att trycka på knappen eller skicka ett DCC-kommando.</li>
+<li><b>signalbild &#9662; / värde &#9662;</b>: för en ingång som styr en signal eller en PWM-utgång. Välj per lampa av, på,
+blinkande eller blinkande i motfas.</li>
+</ul>
+<p>En knapp fungerar som ett DCC-kommando: ett andra klick inom en halv sekund ignoreras, precis som ett upprepat paket
+från en centralenhet.</p>
+<p>I <b>Simulera</b> fungerar en ingång med en pinne (inte analog) på den pinnen, som den riktiga knappen eller strömbrytaren:
+<b>&#9654; tryck</b> / <b>&#9654; start</b> drar pinnen låg och släpper den igen, &#9664; håller pinnen på en absolut
+ingång låg och &#9654; hög (den hållna sidan är markerad). Så allt som läser pinnen reagerar också, till exempel
+ett servo som följer ingången som detektor. Ingångar utan pinne fungerar som ett DCC-kommando.</p>
+
+<h4>Vad utgångarna visar</h4>
+<ul>
+<li><b>Blå prick</b> = rakt / på, <b>röd prick</b> = avvikande / av, grå = ännu okänt.</li>
+<li><b>Servo</b>: en visartavla med vinkeln; den vrider sig grad för grad allteftersom kortet rapporterar.</li>
+<li><b>Signal</b>: fyra lampor i sina färger, som blinkar som på kortet.</li>
+<li><b>Hjärtstycksreläer</b>: en liten reläritning. Armen och hjärtstycket visar vilken kontakt som är strömförande (röd = avvikande,
+blå = rakt). Ett electrofrog är grått (strömlöst) medan växeln lägger om; ett unifrog slår om direkt.</li>
+</ul>
+<p>Inget behöver vara anslutet till kortet för ett livetest: du ser vad kortet <i>skulle</i> manövrera.</p>

@@ -1,0 +1,19 @@
+<h3>Paneltípus</h3>
+<p>A paneltípus határozza meg, hogy a program mely lábakat kínálja, és hogyan nevezi őket.</p>
+<ul>
+<li><b>Arduino Nano</b>: a D3&ndash;D12 és A0&ndash;A5 lábak, a D0 / D1 Haladó szinttől, és az <b>A6</b> (csak analóg
+bemenet).</li>
+<li><b>DCCnext</b> (az ArCoMoRa-tól): kész panel DCC-bemenettel és csavaros sorkapcsokkal. A program mindenhol a panelre
+nyomtatott <b>P1&ndash;P16 portszámokat</b> használja: a láblistákban (&ldquo;P1 (D3)&rdquo;), a
+munkaterületen és a figyelmeztetésekben. Csak ez a 16 port érhető el: nincs D0, D1, D2, D13, A6 vagy A7.</li>
+<li><b>Jack of all trades</b>: a saját panelünk.</li>
+</ul>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>DCCnext port</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
+<tr><th>Arduino láb</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
+</table>
+<p>A <b>D2</b> (DCC) és a <b>D13</b> (konfig-LED) minden panelen foglalt. A konfiggomb (<b>A7</b>) csak a
+Nanón létezik: a DCCnext-nek nincs konfiggombja.
+A fényerő-szabályozás (PWM) a D3, D5, D6, D9, D10 és D11 lábon működik (DCCnext: P1, P3, P4, P7, P8 és P9).</p>
+<p>Egy másik paneltípushoz készült fájl megtartja az összes lábát. Az a láb, amely ezen a panelen nincs meg, figyelmeztetéssel jelenik meg,
+mint bármely más nem használható láb: válasszon helyette másik lábat.</p>

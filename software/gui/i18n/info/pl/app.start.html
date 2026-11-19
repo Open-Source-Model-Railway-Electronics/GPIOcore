@@ -1,0 +1,58 @@
+<h2>Pierwsze kroki</h2>
+<p>Ten program konfiguruje <b>płytkę GPIOcore</b>: małe Arduino (Nano lub DCCnext), które siedzi pod makietą
+i przełącza różne rzeczy: zwrotnice, oświetlenie, semafory, przekaźniki. Mówisz płytce, <i>co</i> jest podłączone
+do <i>którego</i> pinu i <i>co</i> ma to uruchamiać.</p>
+
+<h3>Dwa rodzaje elementów</h3>
+<ul>
+<li><b>Wyjścia</b> (środek, prawa kolumna) to rzeczy, które płytka <i>robi</i>: porusza serwem, podaje impuls na
+cewkę zwrotnicy, zapala diodę LED, przełącza przekaźnik. Jest ich 16.</li>
+<li><b>Wejścia</b> (środek, lewa kolumna) to rzeczy, które <i>każą płytce coś zrobić</i>: przycisk na pulpicie
+sterowniczym albo polecenie z centrali DCC (twojego systemu cyfrowego / ręcznego sterownika). Jest ich 16.</li>
+</ul>
+<p>Ustawienia wybranego wejścia są zawsze po <b>lewej</b>, a wybranego wyjścia po <b>prawej</b>.</p>
+
+<h3>Trzy tryby: kolorowe przyciski u góry</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Konfiguruj</b>: zmieniasz ustawienia. Offline albo po połączeniu (czerwona ramka):
+wtedy każda zmiana trafia do płytki <b>od razu</b>.</li>
+<li><b style="color:#A16207">&#9679; Symuluj</b> (żółta ramka): wypróbuj ustawienia na udawanej płytce, naciskaj
+przyciski wejść i obserwuj wyjścia. Tutaj nic nie można zmienić.</li>
+<li><b style="color:#15803D">&#9679; Test na żywo</b> (zielona ramka): łączy się sam; naciskaj przyciski i zobacz, co
+robi prawdziwa płytka. Tutaj nic nie można zmienić.</li>
+</ul>
+<p><b>Połącz / Rozłącz</b> obok portu pokazuje, czy płytka jest podłączona.</p>
+
+<h3>Najszybszy start</h3>
+<p>Program startuje z pustą płytką: jedno wejście (adres DCC 1), które przełącza jedno wyjście (na D3). Wybierz
+gotową konfigurację z listy <b>Preset</b> u góry (na przykład <i>16 servos</i>) i kliknij <b>Zastosuj</b>,
+albo zacznij od przykładu: <b>Plik &rarr; Otwórz przykład&hellip;</b>.</p>
+
+<h3>Krok po kroku</h3>
+<ol>
+<li><b>Połącz.</b> Podłącz płytkę do portu USB, wybierz jej port u góry (zwykle z opisem CH340, USB Serial
+lub Arduino) i kliknij <b>Połącz</b>. Przyciskiem <b>Odczytaj płytkę</b> wczytasz to, co na niej jest. Za pierwszym razem program zapyta o <b>nazwę</b> płytki.</li>
+<li><b>Dodaj wyjście.</b> Kliknij <b>+ Dodaj wyjście</b> albo kliknij wyjście. Wybierz <b>typ</b> (na przykład
+<i>Serwo</i>) i <b>pin</b>, do którego idzie przewód.</li>
+<li><b>Dodaj wejście.</b> Kliknij <b>+ Dodaj wejście</b> albo kliknij wejście. Wybierz, co je uruchamia: <b>pin przycisku</b>,
+<b>adres DCC</b> lub oba.</li>
+<li><b>Połącz je.</b> Przeciągnij wyjście na wejście. Pojawi się kolorowa linia: to wejście steruje teraz tym
+wyjściem. Wyjście dostaje kolor swojego wejścia.</li>
+<li><b>Wypróbuj.</b> Kliknij <b>&#9679; Test na żywo</b> i naciskaj przyciski na wejściu.</li>
+<li><b>Zapisz</b> (Ctrl+S) konfigurację w pliku; program nie zapisuje sam.</li>
+</ol>
+
+<h3>Warto wiedzieć</h3>
+<ul>
+<li>Każdy przycisk <b>(i)</b> wyjaśnia element obok niego.</li>
+<li>Nadaj wejściom i wyjściom <b>nazwę</b> (pole u góry każdego panelu). Nazwy i wszystkie ustawienia są przechowywane
+na tym komputerze w <i>Documents\GPIOcore\boards\&lt;nazwa płytki&gt;.json</i>, jeden plik na płytkę.</li>
+<li>Pin, który jest już zajęty, jest na liście pinów <b>czerwony</b>. Jeśli mimo to go wybierzesz, wejście lub wyjście,
+które go miało, zachowa swoją funkcję, ale straci ten pin.</li>
+<li>Nieużywane wejścia i wyjścia są ukryte; <b>Widok &rarr; Pokaż nieużywane wejścia i wyjścia</b> pokazuje wszystkie.</li>
+<li><b>Widok &rarr; Początkujący / Zaawansowany / Ekspert</b> decyduje, ile program oferuje; startuje od poziomu
+Początkujący i nigdy nie zmienia twojej konfiguracji. <b>Widok &rarr; Motyw</b> przełącza na ciemny.</li>
+<li><b>Plik &rarr; Eksportuj&hellip;</b> zapisuje wybrane wyjścia, wejścia lub ustawienia płytki w osobnym pliku (twój
+własny przykład); <b>Plik &rarr; Importuj&hellip;</b> dodaje je do innej płytki, pod te same numery lub na wolne miejsca.</li>
+<li><b>Płytka &rarr; Wgraj firmware&hellip;</b> wgrywa nowy firmware do Arduino.</li>
+</ul>

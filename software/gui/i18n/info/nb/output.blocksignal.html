@@ -1,0 +1,38 @@
+<h3>Blokksignal</h3>
+<p><i>Nivå Ekspert (menyen Vis).</i></p>
+<p>Et blokksignal stiller seg selv, uten sentral eller datamaskin. Kortet ser på to
+<b>beleggsmeldere</b> (innganger) hvert 50. ms og viser ett av tre signalbilder:</p>
+<ul>
+<li><b>Stopp</b> — når beleggsmelderen for sin egen blokk melder et tog (vanligvis rødt),</li>
+<li><b>Vent stopp</b> — når den egne blokken er fri, men neste blokk er opptatt (vanligvis gult),</li>
+<li><b>Kjør</b> — når begge blokkene er frie (vanligvis grønt).</li>
+</ul>
+<p>Hvert signalbilde velges lampe for lampe med <b>▾</b>, som et togveitrinn: hver lampe kan være av, på eller blinkende.
+Blinkende lamper blinker med 1 Hz. Lampene sitter på pinne A–D; bare pinne A er påkrevd, så et signal med to eller tre
+lamper lar bare de andre pinnene stå på «ikke brukt».</p>
+<p>En beleggsmelder er enhver inngang som er i bruk og har en pinne: helst en <b>Sensor (beleggsmelder)</b>-inngang, for eksempel en
+strømdetektor, en reedkontakt eller en lysbarriere (trykket = LOW = opptatt), eller en analog betingelse. Én
+beleggsmelder kan styre flere signaler.</p>
+<p>Signalbildet blir bare beregnet, aldri lagret. Innganger, togveier og DCC-kommandoer kan ikke stille et blokksignal, så det
+kan ikke velges som mål i inngangspanelet, og en inngang kan ikke dras over på det.</p>
+
+<h4>Eksempel 1: nederlandske signaler med 3 signalbilder etter hverandre</h4>
+<p>Lamper: A grønn, B gul, C rød. Signal 1 dekker blokk 1 (egen blokk = beleggsmelderen dens) og ser på blokk 2
+(neste blokk), signal 2 dekker blokk 2 og ser på blokk 3, og så videre. Signalbilder: Stopp = C på, Vent stopp = B på,
+Kjør = A på (standardverdiene). Et tog i blokk 2 gir signal 2 rødt, signal 1
+gult og signal 3 grønt.</p>
+
+<h4>Eksempel 2: et hovedsignal uten tilknyttet neste blokk</h4>
+<p>Bare rødt / grønt: la <b>Neste blokk</b> stå på «ingen». Stopp = rødt, Kjør = grønt; signalbildet Vent stopp
+brukes ikke.</p>
+
+<h4>Eksempel 3: et forsignal</h4>
+<p>Et forsignal står foran et hovedsignal og varsler hva det hovedsignalet viser. Lag det som et blokksignal
+der <b>egen blokk</b> er beleggsmelderen for blokken bak hovedsignalet foran (blokken som det hovedsignalet
+dekker), neste blokk «ingen»: opptatt = gult (hovedsignalet viser rødt), fri = grønt. Hovedsignalet bruker
+den samme beleggsmelderen som sin egen blokk, så én beleggsmelder styrer begge.</p>
+
+<h4>En blokk på neste kort</h4>
+<p>Beleggsmelderen for neste blokk kan sitte på et annet kort. Før signalet dens gjennom en optokobler til en inngang her, for
+eksempel D0 (RX): på kortet virker D0 bare når ingen PC er tilkoblet (5 s etter oppstart uten programmet); i
+simulatoren virker den alltid.</p>

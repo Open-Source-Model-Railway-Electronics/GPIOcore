@@ -1,0 +1,38 @@
+<h3>Semafor odstępowy</h3>
+<p><i>Poziom Ekspert (menu Widok).</i></p>
+<p>Semafor odstępowy ustawia się sam, bez centrali i komputera. Płytka co 50 ms sprawdza dwa
+<b>detektory odstępów</b> (wejścia) i pokazuje jeden z trzech sygnałów:</p>
+<ul>
+<li><b>Stój</b> — gdy detektor jego własnego odstępu zgłasza pociąg (zwykle czerwony),</li>
+<li><b>Ostrzeżenie</b> — gdy jego własny odstęp jest wolny, ale następny odstęp jest zajęty (zwykle żółty),</li>
+<li><b>Jazda</b> — gdy oba odstępy są wolne (zwykle zielony).</li>
+</ul>
+<p>Każdy sygnał wybiera się lampa po lampie przez <b>▾</b>, jak w kroku przebiegu: każda lampa może być wyłączona,
+włączona lub migać. Migające lampy migają z częstotliwością 1 Hz. Lampy są na pinach A–D; wymagany jest tylko pin A,
+więc semafor z dwiema lub trzema lampami po prostu zostawia pozostałe piny jako „nieużywane”.</p>
+<p>Detektorem może być każde używane wejście z pinem: najlepiej wejście typu <b>Czujnik (zajętość)</b>, na przykład
+detektor prądowy, kontaktron lub zapora świetlna (wciśnięte = LOW = zajęty), albo warunek analogowy. Jeden
+detektor może sterować kilkoma semaforami.</p>
+<p>Sygnał jest tylko obliczany, nigdy zapisywany. Wejścia, przebiegi i polecenia DCC nie mogą ustawić semafora
+odstępowego, dlatego nie można go wybrać jako celu w panelu wejścia ani przeciągnąć na niego wejścia.</p>
+
+<h4>Przykład 1: holenderskie semafory 3-komorowe w szeregu</h4>
+<p>Lampy: A zielona, B żółta, C czerwona. Semafor 1 osłania odstęp 1 (własny odstęp = jego detektor) i patrzy na
+odstęp 2 (następny odstęp), semafor 2 osłania odstęp 2 i patrzy na odstęp 3 itd. Sygnały: Stój = C wł.,
+Ostrzeżenie = B wł., Jazda = A wł. (ustawienia domyślne). Pociąg w odstępie 2 daje czerwone na semaforze 2, żółte na
+semaforze 1 i zielone na semaforze 3.</p>
+
+<h4>Przykład 2: semafor główny bez powiązanego następnego odstępu</h4>
+<p>Tylko czerwone / zielone: zostaw <b>Następny odstęp</b> na „brak”. Stój = czerwone, Jazda = zielone; sygnał
+Ostrzeżenie nie jest używany.</p>
+
+<h4>Przykład 3: tarcza ostrzegawcza</h4>
+<p>Tarcza ostrzegawcza stoi przed semaforem głównym i zapowiada, co ten semafor pokazuje. Zrób z niej semafor
+odstępowy, którego <b>własnym odstępem</b> jest detektor odstępu za semaforem głównym przed nią (odstępu, który ten
+semafor główny osłania), następny odstęp „brak”: zajęty = żółte (semafor główny pokazuje czerwone), wolny = zielone.
+Semafor główny używa tego samego detektora jako własnego odstępu, więc jeden detektor steruje obydwoma.</p>
+
+<h4>Odstęp na następnej płytce</h4>
+<p>Detektor następnego odstępu może być na innej płytce. Podłącz jego sygnał przez transoptor do wejścia tutaj,
+na przykład D0 (RX): na płytce D0 działa tylko wtedy, gdy nie jest podłączony komputer (5 s po włączeniu zasilania
+bez GUI); w symulatorze działa zawsze.</p>

@@ -1,0 +1,36 @@
+<h3>Kroki przebiegu</h3>
+<p>Przebieg to lista czynności do wykonania, od góry do dołu. Każdy wiersz (krok) ustawia <b>jedno wyjście</b>, a potem
+<b>czeka</b> chwilę przed następnym krokiem.</p>
+
+<h4>Kiedy przebieg startuje?</h4>
+<p>Gdy przycisk na pinie wejścia zostanie <b>naciśnięty</b> albo przy poleceniu DCC dla adresu wejścia. Które
+polecenie DCC – wybierz w <b>Przebieg startuje przy</b>:</p>
+<ul>
+<li><b>każde polecenie (na wprost i na bok)</b>: uruchamia go zarówno „na wprost”, jak i „na bok”;</li>
+<li><b>tylko na wprost</b> lub <b>tylko na bok</b>: dzięki temu dwa przebiegi mogą dzielić jeden adres. Przykład: przejazd kolejowy na
+adresie 1: przebieg A z <i>tylko na bok</i> włącza światła i zamyka rogatki, przebieg B z
+<i>tylko na wprost</i> znów je otwiera.</li>
+</ul>
+<p>Centrala powtarza polecenie kilka razy; przebieg przyjmuje pierwsze.</p>
+
+<h4>Kolumny</h4>
+<ul>
+<li><b>Wyjście</b>: czym steruje ten krok.</li>
+<li><b>Wartość</b>: co ma zrobić wyjście:
+  <ul>
+  <li>zwrotnica, światło, przekaźnik: <b>na bok (0)</b> lub <b>na wprost (1)</b>;</li>
+  <li>semafor 4-komorowy: <b>numer sygnału</b> (0&ndash;255);</li>
+  <li>serwo: na bok, na wprost albo dokładny <b>kąt</b> między 10&deg; a 170&deg;;</li>
+  <li>PWM: wartość jasności / prędkości 0&ndash;255.</li>
+  </ul></li>
+<li><b>Czekaj po</b>: tylko gdy w ustawieniach płytki włączony jest <i>Własny czas oczekiwania dla każdego kroku przebiegu</i>;
+w przeciwnym razie każdy krok czeka stały czas płytki (domyślnie 0,3 s).</li>
+</ul>
+
+<h4>Jak go utworzyć</h4>
+<ol>
+<li>Wybierz wyjście w pierwszym wierszu <i>albo</i> przeciągnij wyjście na to wejście.</li>
+<li>Kliknij <b>+ Dodaj krok</b> (albo przeciągnij ponownie), aby dodać następny.</li>
+<li>Użyj &#9650; &#9660;, aby zmienić kolejność, i <b>kosza</b>, aby usunąć krok.</li>
+</ol>
+<p>To samo wyjście może wystąpić więcej niż raz, na przykład serwo, które najpierw idzie do 45&deg;, a potem do 135&deg;.</p>

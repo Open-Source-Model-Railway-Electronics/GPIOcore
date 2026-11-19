@@ -1,0 +1,29 @@
+<h3>Ställa in ett servo</h3>
+<p>Ett servo vrider sig till en vinkel mellan 0&deg; och 180&deg;. Som växelmotor rör det sig mellan två lägen:</p>
+<ul>
+<li><b>Läge 0 (avvikande)</b>: vinkeln för "avvikande".</li>
+<li><b>Läge 1 (rakt)</b>: vinkeln för "rakt".</li>
+<li><b>Hastighet</b>: millisekunder per grad. 20 ms/&deg; är lugnt och realistiskt; 5 är snabbt; 50 är mycket långsamt.</li>
+</ul>
+<h4>Hitta rätt lägen</h4>
+<ol>
+<li>Med kortet anslutet, kryssa i <b>Live</b> och dra reglaget <i>Läge 0</i> långsamt. Servot följer med.
+Stanna när växeltungan precis ligger an mot rälen, gör sedan samma sak för <i>Läge 1</i>. Det sparas direkt.</li>
+<li>Eller utan dator: använd <b>config-knappen</b> och lokadress 9999 på handkontrollen (se
+<i>Hjälp &rarr; Config-knapp och inlärning av servon</i>).</li>
+</ol>
+<p><b>Tips:</b> tryck inte tungan för hårt mot rälen: servot brummar då och blir varmt.
+Gå tillbaka 2&ndash;3&deg; från punkten där den ligger an.</p>
+<h4>Semaforarm: följa en detektor</h4>
+<p>Kryssa i <b>Följer en detektor (semaforarm)</b> och välj detektoringången: kortet flyttar då servot
+själv, utan kommandon. När blocket är belagt går servot till <i>Läge 0 (avvikande)</i> = armen i
+stopp; när det är fritt till <i>Läge 1 (rakt)</i> = kör. Det rör sig med sin egen hastighet. <b>Byt: belagd =
+rakt</b> vänder på detta. Vilken ingång som helst som används och har en pinne kan vara detektor, helst en ingång av typen
+<b>Sensor (beläggning)</b>; på arbetsytan förbinder en prickad linje den med servot.</p>
+<h4>Bra att veta</h4>
+<ul>
+<li>Vid start startar servona <b>ett i taget</b>, med en halv sekunds mellanrum, vart och ett till sitt senaste läge. Det undviker en
+stor strömtopp.</li>
+<li>Högst 6 servon rör sig samtidigt; de andra väntar på sin tur.</li>
+<li>Koppling: brun/svart = GND, röd = 5 V (från en separat 5 V-matning om du har flera servon!), orange/gul = signal.</li>
+</ul>

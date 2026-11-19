@@ -1,0 +1,12 @@
+<h3>PWM: luminosità e dissolvenza</h3>
+<p>Un'uscita PWM regola una lampada o una striscia di LED su un pin PWM (D3, D5, D6, D9, D10, D11): <b>0</b> = spento,
+<b>255</b> = piena luminosità. Usa un transistor o un modulo MOSFET oltre circa 20 mA.</p>
+<ul>
+<li><b>Duty cycle</b> — la luminosità dopo l'accensione, finché valori personalizzati, un passo di itinerario o un DCC esteso non ne impostano un'altra.</li>
+<li><b>Tempo di dissolvenza</b> — quanti secondi dura un cambiamento completo da 0 a 255; un mezzo cambiamento dura la metà.
+<i>subito</i> (0) commuta immediatamente. Ogni nuova luminosità viene raggiunta in dissolvenza a questa velocità: da valori
+personalizzati, da un passo di itinerario o da un comando DCC esteso. All'accensione l'uscita si accende in dissolvenza dal buio.</li>
+</ul>
+<p><b>Esempio — giorno e notte:</b> un ingresso assoluto (un interruttore o un indirizzo DCC) con <b>Valori personalizzati</b>
+spento = 0 e acceso = 255, e un tempo di dissolvenza di 60 s. Passare alla notte attenua le luci in un minuto;
+tornare indietro riporta il giorno altrettanto lentamente.</p>

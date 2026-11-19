@@ -1,13 +1,19 @@
 <h3>Boardtype</h3>
+<p>Het boardtype bepaalt welke pinnen het programma aanbiedt en hoe ze heten.</p>
 <ul>
-<li><b>Arduino Uno / Nano</b>: pinnen D3&ndash;D12 en A0&ndash;A5. De Nano heeft ook <b>A6</b> (alleen analoge ingang).</li>
-<li><b>DCCnext</b> (van ArCoMoRa): een kant-en-klaar board met een Arduino Nano, DCC-ingang en schroefklemmen. De
-pinlijsten tonen dan ook de <b>poortnummers</b> die op het board staan.</li>
+<li><b>Arduino Nano</b>: pinnen D3&ndash;D12 en A0&ndash;A5, D0 / D1 vanaf het niveau Gevorderd, en <b>A6</b> (alleen analoge
+ingang).</li>
+<li><b>DCCnext</b> (van ArCoMoRa): een kant-en-klaar board met DCC-ingang en schroefklemmen. Het programma gebruikt overal de
+<b>poortnummers P1&ndash;P16</b> die op het board staan: in de pinlijsten (&ldquo;P1 (D3)&rdquo;), op het
+canvas en in waarschuwingen. Alleen deze 16 poorten worden aangeboden: geen D0, D1, D2, D13, A6 of A7.</li>
 <li><b>Jack of all trades</b>: ons eigen board.</li>
 </ul>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>DCCnext-poort</th><td>1&ndash;10</td><td>11&ndash;16</td></tr>
+<tr><th>DCCnext-poort</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Arduino-pin</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p>Op elk board zijn <b>D2</b> (DCC), <b>D13</b> (config-LED) en <b>A7</b> (config-knop) gereserveerd.
-Dimmen (PWM) werkt op D3, D5, D6, D9, D10 en D11 (DCCnext-poort 1, 3, 4, 7, 8 en 9).</p>
+<p>Op elk board zijn <b>D2</b> (DCC) en <b>D13</b> (config-LED) gereserveerd. De config-knop (<b>A7</b>) bestaat
+alleen op de Nano: een DCCnext heeft geen config-knop.
+Dimmen (PWM) werkt op D3, D5, D6, D9, D10 en D11 (DCCnext P1, P3, P4, P7, P8 en P9).</p>
+<p>Een bestand dat voor een ander boardtype gemaakt is, houdt al zijn pinnen. Een pin die dit board niet heeft, krijgt een
+waarschuwing, net als elke andere pin die niet gebruikt kan worden: kies er een andere pin voor.</p>

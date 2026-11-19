@@ -1,0 +1,38 @@
+<h3>Blocksignal</h3>
+<p><i>Stufe Experte (Menü Ansicht).</i></p>
+<p>Ein Blocksignal stellt sich selbst, ohne Zentrale oder Computer. Die Platine prüft alle 50 ms zwei
+<b>Blockmelder</b> (Eingänge) und zeigt eines von drei Signalbildern:</p>
+<ul>
+<li><b>Halt</b> — wenn der Melder des eigenen Blocks einen Zug meldet (meist rot),</li>
+<li><b>Halt erwarten</b> — wenn der eigene Block frei, aber der nächste Block besetzt ist (meist gelb),</li>
+<li><b>Fahrt</b> — wenn beide Blöcke frei sind (meist grün).</li>
+</ul>
+<p>Jedes Signalbild wird Lampe für Lampe mit <b>▾</b> gewählt, wie bei einem Fahrstraßen-Schritt: Jede Lampe kann aus, ein oder
+blinkend sein. Blinkende Lampen blinken mit 1 Hz. Die Lampen liegen an den Pins A–D; nur Pin A ist Pflicht, ein Signal mit
+zwei oder drei Lampen lässt die übrigen Pins also einfach auf „nicht benutzt“.</p>
+<p>Ein Melder ist jeder benutzte Eingang mit einem Pin: am besten ein Eingang vom Typ <b>Sensor (Belegtmelder)</b>, zum Beispiel
+ein Stromfühler, ein Reedkontakt oder eine Lichtschranke (gedrückt = LOW = besetzt), oder eine analoge Bedingung. Ein
+Melder darf mehrere Signale steuern.</p>
+<p>Das Signalbild wird nur berechnet, nie gespeichert. Eingänge, Fahrstraßen und DCC-Befehle können ein Blocksignal nicht
+stellen, deshalb kann es im Eingangsbereich nicht als Ziel gewählt und kein Eingang darauf gezogen werden.</p>
+
+<h4>Beispiel 1: Niederländische 3-begriffige Signale hintereinander</h4>
+<p>Lampen: A grün, B gelb, C rot. Signal 1 deckt Block 1 (eigener Block = sein Melder) und schaut auf Block 2
+(nächster Block), Signal 2 deckt Block 2 und schaut auf Block 3 und so weiter. Signalbilder: Halt = C ein, Halt erwarten = B ein,
+Fahrt = A ein (die Voreinstellung). Ein Zug in Block 2 gibt Signal 2 rot, Signal 1
+gelb und Signal 3 grün.</p>
+
+<h4>Beispiel 2: ein Hauptsignal ohne verknüpften nächsten Block</h4>
+<p>Nur rot / grün: Lassen Sie <b>Nächster Block</b> auf „keiner“. Halt = rot, Fahrt = grün; das Signalbild Halt erwarten wird
+nicht benutzt.</p>
+
+<h4>Beispiel 3: ein Vorsignal</h4>
+<p>Ein Vorsignal steht vor einem Hauptsignal und kündigt an, was dieses Hauptsignal zeigt. Machen Sie daraus ein Blocksignal,
+dessen <b>eigener Block</b> der Melder des Blocks hinter dem folgenden Hauptsignal ist (des Blocks, den dieses Hauptsignal deckt),
+nächster Block „keiner“: besetzt = gelb (das Hauptsignal zeigt rot), frei = grün. Das Hauptsignal benutzt denselben Melder als
+eigenen Block, so steuert ein Melder beide.</p>
+
+<h4>Ein Block auf der nächsten Platine</h4>
+<p>Der Melder des nächsten Blocks darf auf einer anderen Platine liegen. Führen Sie sein Signal über einen Optokoppler zu einem
+Eingang hier, zum Beispiel D0 (RX): Auf der Platine funktioniert D0 nur, wenn kein PC verbunden ist (5 s nach dem Einschalten ohne
+die GUI); im Simulator funktioniert es immer.</p>

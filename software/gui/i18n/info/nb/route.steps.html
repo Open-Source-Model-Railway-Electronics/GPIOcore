@@ -1,0 +1,36 @@
+<h3>Togveiens trinn</h3>
+<p>En togvei er en liste over ting som skal gjøres, fra topp til bunn. Hver linje (trinn) stiller <b>én utgang</b> og
+<b>venter</b> så et øyeblikk før neste trinn.</p>
+
+<h4>Når starter togveien?</h4>
+<p>Når knappen på inngangspinnen <b>trykkes</b>, eller ved en DCC-kommando til adressen til inngangen. Velg hvilken
+DCC-kommando under <b>Togvei starter ved</b>:</p>
+<ul>
+<li><b>enhver kommando</b>: både rett og avvikende starter den;</li>
+<li><b>bare rett</b> eller <b>bare avvikende</b>: da kan to togveier dele én adresse. Eksempel, en planovergang på
+adresse 1: togvei A på <i>bare avvikende</i> slår på lysene og senker bommene, togvei B på
+<i>bare rett</i> hever dem igjen.</li>
+</ul>
+<p>En sentral gjentar en kommando noen ganger; togveien tar den første.</p>
+
+<h4>Kolonnene</h4>
+<ul>
+<li><b>Utgang</b>: hva dette trinnet styrer.</li>
+<li><b>Verdi</b>: hva utgangen skal gjøre:
+  <ul>
+  <li>sporveksel, lys, relé: <b>avvikende (0)</b> eller <b>rett (1)</b>;</li>
+  <li>signal med 4 signalbilder: et <b>signalbildenummer</b> (0&ndash;255);</li>
+  <li>servo: avvikende, rett, eller en nøyaktig <b>vinkel</b> mellom 10&deg; og 170&deg;;</li>
+  <li>PWM: en lysstyrke- / hastighetsverdi 0&ndash;255.</li>
+  </ul></li>
+<li><b>Vent etter</b>: bare når <i>Egen ventetid for hvert togveitrinn</i> er slått på i kortinnstillingene; ellers venter hvert
+trinn kortets faste tid (0,3 s som standard).</li>
+</ul>
+
+<h4>Slik lager du en</h4>
+<ol>
+<li>Velg en utgang på første linje, <i>eller</i> dra en utgang over på denne inngangen.</li>
+<li>Klikk på <b>+ Legg til trinn</b> (eller dra igjen) for den neste.</li>
+<li>Bruk &#9650; &#9660; for å endre rekkefølgen, og <b>søppelkassen</b> for å slette et trinn.</li>
+</ol>
+<p>Den samme utgangen kan forekomme mer enn én gang, for eksempel en servo som først går til 45&deg; og deretter til 135&deg;.</p>

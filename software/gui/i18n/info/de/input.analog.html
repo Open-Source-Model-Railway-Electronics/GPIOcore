@@ -1,0 +1,28 @@
+<h3>Analogeingänge: eine Widerstandsleiter oder ein Sensor</h3>
+<p>Statt eines Tasters nach GND kann ein Analogpin (A0–A6) eine Spannung messen: <b>0 = 0 V, 1023 = 5 V</b>.
+Der Eingang gilt als <i>gedrückt</i>, solange der Wert die Bedingung erfüllt, und wirkt dann genau wie ein gedrückter
+Taster: Umschalten, Absolut und Fahrstraßen funktionieren alle.</p>
+<ul>
+<li><b>Unter einem Wert</b> — gedrückt unterhalb der Schwelle, wieder losgelassen 20 darüber. Zum Beispiel ein
+Lichtsensor (LDR), der dunkel wird, oder ein einzelner Taster.</li>
+<li><b>Über einem Wert</b> — gedrückt oberhalb der Schwelle, wieder losgelassen 20 darunter.</li>
+<li><b>Bei einem Wert</b> — gedrückt innerhalb der Schwelle &plusmn; 10: ein Taster einer <b>Widerstandsleiter</b>.
+Mehrere Eingänge können sich einen Pin teilen, jeder mit seinem eigenen Wert.</li>
+</ul>
+<p><b>Widerstandsleiter:</b> mehrere Taster an einem Pin. Ein Widerstand von 10 k&Omega; von 5 V zum Pin hält ihn auf 1023,
+solange nichts gedrückt ist; jeder Taster verbindet den Pin über seinen eigenen Widerstand mit GND, so gibt jeder
+Taster einen anderen Wert.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ Taster 1 ]--- GND    etwa 0
+                 +--[1k]---[ Taster 2 ]--- GND    etwa 93
+                 +--[3k3]--[ Taster 3 ]--- GND    etwa 254
+                 +--[10k]--[ Taster 4 ]--- GND    etwa 512</pre>
+<p><b>Die echten Werte ablesen:</b> Widerstände haben Toleranzen und Kontakte haben einen Widerstand, deshalb weicht die
+Praxis von der Theorie ab. Verbinden Sie die Platine, wählen Sie den Eingang und beobachten Sie <b>Jetzt:</b>, während Sie
+jeden Taster gedrückt halten; <b>Diesen Wert übernehmen</b> übernimmt ihn als Schwelle. Halten Sie zwischen zwei Tastern
+mindestens etwa 40 Abstand.</p>
+<ul>
+<li>Die Schwelle wird in Schritten von 8 gespeichert. Die Platine liest den Pin alle 50 ms und reagiert erst, wenn zwei Messungen übereinstimmen.</li>
+<li><b>A7</b> ist der Konfig-Taster und kann nicht benutzt werden; <b>A6</b> gibt es nur auf einem Arduino Nano.</li>
+<li>Klicken Sie in <b>Simulieren</b> am Eingang auf <i>Wert ▾</i>, um einen Wert für seinen Pin einzugeben: Jeder Eingang an diesem Pin reagiert.</li>
+</ul>

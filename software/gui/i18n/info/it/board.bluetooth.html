@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Con un modulo Bluetooth <b>HC-05</b> sulla scheda puoi configurarla senza cavo USB. Il programma configura il
+modulo per te attraverso la scheda (<i>Scheda &gt; Configura Bluetooth (HC-05)</i>, livello Avanzato o superiore).
+Solo Arduino <b>Nano</b>: ti serve il pulsante di configurazione per collegarti in seguito.</p>
+<p><b>Cablaggio</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> tramite un partitore di tensione: 1 k&Omega; da D1 a RXD, 2 k&Omega; da RXD a GND
+(l'HC-05 accetta 3,3 V sul suo RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> tramite un <b>diodo Schottky</b> (BAT85 o 1N5819), con il <b>catodo (la fascetta)
+sul TXD dell'HC-05</b>. Il diodo permette all'HC-05 di portare D0 a livello basso ma non contrasta mai il chip USB, così
+l'USB continua a funzionare mentre l'HC-05 è collegato.</li>
+</ul>
+<p><b>Configurazione</b> (una volta sola):</p>
+<ol>
+<li>Tieni premuto il pulsante dell'HC-05 mentre inserisci il cavo USB. Il suo LED ora lampeggia <b>lentamente</b> (circa
+ogni 2 secondi): il modulo è in <b>modalità AT</b>.</li>
+<li>Collega il programma alla scheda via USB.</li>
+<li>Scegli <i>Scheda &gt; Configura Bluetooth (HC-05)</i> e clicca <b>Avvia</b>. La scheda prova le velocità consuete e
+imposta il modulo a <b>115200 baud</b> e il nome <b>GPIOcore-&lt;nome della scheda&gt;</b>. Il PIN resta com'è.
+Ci vogliono alcuni secondi.</li>
+<li>Scollega la scheda e ricollegala, <b>senza</b> tenere premuto il pulsante.</li>
+<li>Nelle impostazioni Bluetooth di Windows associa <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, o 0000 su alcuni moduli).
+Windows crea una porta COM per il modulo (a volte due: usa quella "in uscita"). Scegli quella porta in GPIOcore.</li>
+</ol>
+<p>Se non funziona: il modulo non è in modalità AT (lampeggio veloce = modalità normale), il cablaggio è sbagliato, oppure
+il diodo manca o è montato al contrario. Altri moduli (HC-06, alcuni cloni) non conoscono questi comandi.</p>
+<p><b>Collegarsi via Bluetooth</b>: aprire la porta COM Bluetooth non resetta la scheda. Se niente sulla scheda usa D0 o D1,
+la sua porta seriale resta aperta e il programma si collega e basta. Se qualcosa li usa (un ingresso o un'uscita su D0/D1,
+o un effetto sonoro), la scheda chiude la sua porta seriale 5 secondi dopo l'avvio (D0/D1 diventano pin normali).
+Allora, quando clicchi <i>Connetti</i>, il programma
+mostra <i>"In attesa della scheda &mdash; premi brevemente il suo pulsante di configurazione"</i>. Premi <b>brevemente</b> il
+pulsante di configurazione (A7): la scheda riapre la sua porta seriale per 5 secondi e si annuncia, e il programma si collega.
+Il programma aspetta fino a 30 secondi.</p>
+<p>Mentre il programma è collegato, D0 e D1 appartengono alla porta seriale: non usarli per ingressi o uscite su una
+scheda con un HC-05.</p>

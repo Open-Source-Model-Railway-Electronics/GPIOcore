@@ -1,0 +1,19 @@
+<h3>Hjertestykke-polarisering — electrofrog eller unifrog?</h3>
+<p><b>Hjertestykket</b> er stedet i en sporveksel der de to skinnene krysser hverandre. På sporveksler med «strømførende hjertestykke» er denne delen
+av metall og må få <b>samme polaritet som veien som er stilt</b>. Får det feil polaritet, stopper lokene opp eller
+lager kortslutning. Et relé kobler om hjertestykket når sporvekselen legges om.</p>
+<p>Se på sporvekselen din og velg <b>én</b>:</p>
+<ul>
+<li><b>Ingen (isolert hjertestykke)</b> — hjertestykket er av plast (Peco <i>Insulfrog</i>, de fleste skinnesystemer med ballast). Ingenting å gjøre.</li>
+<li><b>Electrofrog — 2 releer</b> (Peco <i>Electrofrog</i> og lignende). Relé A slås på for
+«rett», relé B for «avvikende». Mens sporvekselen beveger seg, er <b>begge av</b> et øyeblikk, så det aldri blir
+kortslutning (bryte før slutte).</li>
+<li><b>Unifrog — 1 vekselrelé</b> (Peco <i>Unifrog</i>). Hjertestykket har én ledning. Et vekselrelé kobler den til
+riktig skinne. Med en servo kobler det akkurat når servoen passerer midten; med en spolemotor ved slutten av
+pulsen.</li>
+</ul>
+<p>Du kan bare bruke én av de to. Velger du den ene, fjernes pinnene til den andre.</p>
+<p><b>Kobling:</b> bruk en relé<i>modul</i> (med transistor og diode) — en Arduino-pinne kan ikke drive et nakent relé.</p>
+<p><b>Reléer kobler ved LOW (invertert)</b>: kryss av her for relémoduler som slår på når inngangen er LOW
+(mange billige moduler med optokobler). Kortet driver da relépinnene omvendt; hva
+reléene betyr (rett / avvikende), forblir det samme.</p>

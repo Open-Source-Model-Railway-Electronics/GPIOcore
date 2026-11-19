@@ -1,0 +1,23 @@
+<h3>Soundeffekt: ein DFPlayer Mini MP3-Player</h3>
+<p>Dieser Ausgang spielt MP3-Dateien von der microSD-Karte in einem DFPlayer-Mini-Modul ab: eine Glocke, ein Pfiff, eine Durchsage.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  Lautsprecher (max. 3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>Der <b>Widerstand von 1 k&Omega;</b> in der TX-Leitung schützt den DFPlayer; zum Arduino geht nichts zurück.</li>
+<li>Dateien auf der SD-Karte: in einem Ordner <b>MP3</b>, benannt <b>0001.mp3</b>, <b>0002.mp3</b> … Titel 1 ist
+/MP3/0001.mp3. Es zählt der Name, nicht die Reihenfolge, in der Sie sie kopieren. Nur MP3, kein WAV.</li>
+<li><b>Der Eingang wählt den Titel</b>, so kann ein Sound-Ausgang viele Klänge abspielen: Geben Sie einem Eingang mit Umschalten
+oder Absolut <b>Eigene Werte</b> (einen Titel für aus und einen für ein), verwenden Sie einen Fahrstraßen-Schritt oder senden Sie
+einen DCC-extended-Wert. Titel 0 = Stopp. Ohne eigene Werte: ein = Titel 1, aus = Stopp.</li>
+<li>Ein Eingang, den Sie mit einem Sound-Ausgang verbinden, bekommt von selbst eigene Werte: aus = Stopp, ein = Titel 1.</li>
+<li>Mehrere Sound-Ausgänge dürfen D1 gemeinsam nutzen, meist reicht aber einer.</li>
+<li><b>Nur ohne PC:</b> D1 ist auch die USB-Leitung zum Computer. Ist die GUI verbunden, meldet die Platine nur
+den Titel (♪ auf der Arbeitsfläche). Ziehen Sie das USB-Kabel ab und versorgen Sie die Platine anders, um ihn zu hören.</li>
+<li><b>Am PC hören</b> (ab Stufe Fortgeschritten): <i>Ansicht &gt; Sound-Ordner&hellip;</i> wählt einen Ordner mit denselben
+Dateien wie der MP3-Ordner auf der SD-Karte (0001.mp3 &hellip;). In Simulieren und Live-Test spielt das
+Programm dann den Titel ab, den die Platine meldet; ein neuer Titel unterbricht den vorherigen, wie beim DFPlayer.
+<i>Ansicht &gt; Sounds stummschalten</i> schaltet ihn stumm.</li>
+<li>Nicht auf einer <b>DCCnext</b>: Sie hat kein D1 an ihren Klemmen, deshalb wird dieser Typ dort nicht angeboten.</li>
+</ul>

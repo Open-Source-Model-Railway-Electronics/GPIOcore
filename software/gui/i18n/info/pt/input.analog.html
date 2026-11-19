@@ -1,0 +1,27 @@
+<h3>Entradas analógicas: uma escada de resistências ou um sensor</h3>
+<p>Em vez de um botão para GND, um pino analógico (A0–A6) pode medir uma tensão: <b>0 = 0 V, 1023 = 5 V</b>.
+A entrada conta como <i>premida</i> enquanto o valor cumprir a condição, e funciona então exactamente como um botão
+premido: Comutar, Absoluto e itinerários funcionam todos.</p>
+<ul>
+<li><b>Abaixo de um valor</b> — premido abaixo do limiar, solto de novo 20 acima. Por exemplo um sensor de luz (LDR)
+que fica às escuras, ou um único botão.</li>
+<li><b>Acima de um valor</b> — premido acima do limiar, solto de novo 20 abaixo.</li>
+<li><b>Num valor</b> — premido dentro do limiar &plusmn; 10: um botão de uma <b>escada de resistências</b>.
+Várias entradas podem partilhar um pino, cada uma com o seu próprio valor.</li>
+</ul>
+<p><b>Escada de resistências:</b> vários botões num pino. Uma resistência de 10 k&Omega; de 5 V ao pino mantém-no em 1023
+enquanto nada está premido; cada botão liga o pino a GND através da sua própria resistência, por isso cada botão dá um
+valor diferente.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ botão 1 ]--- GND    cerca de 0
+                 +--[1k]---[ botão 2 ]--- GND    cerca de 93
+                 +--[3k3]--[ botão 3 ]--- GND    cerca de 254
+                 +--[10k]--[ botão 4 ]--- GND    cerca de 512</pre>
+<p><b>Leia os valores reais:</b> as resistências têm tolerâncias e os contactos têm resistência, por isso a prática difere da
+teoria. Ligue a placa, escolha a entrada e observe <b>Agora:</b> enquanto mantém cada botão premido; <b>Usar este valor</b>
+usa-o como limiar. Mantenha pelo menos cerca de 40 entre dois botões.</p>
+<ul>
+<li>O limiar é guardado em passos de 8. A placa lê o pino a cada 50 ms e só reage quando duas leituras coincidem.</li>
+<li><b>A7</b> é o botão de configuração e não pode ser usado; <b>A6</b> só existe num Arduino Nano.</li>
+<li>Em <b>Simular</b>, clique em <i>valor ▾</i> na entrada para escrever um valor para o seu pino: todas as entradas nesse pino reagem.</li>
+</ul>

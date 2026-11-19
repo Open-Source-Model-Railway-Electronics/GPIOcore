@@ -1,0 +1,16 @@
+<h3>Egne værdier: mere end til og fra</h3>
+<p>Normalt skifter en skift- eller absolut-indgang sin udgang til <b>afvigende / fra</b> (0) eller <b>lige / til</b> (1).
+Med <b>Egne værdier</b> sender hver af de to tilstande i stedet sin egen værdi, ligesom et togvejstrin:</p>
+<ul>
+<li><b>Servo</b> — en vinkel, f.eks. fra = 45&deg;, til = 135&deg; (eller afvigende / lige som normalt).</li>
+<li><b>Signal med 4 signalbilleder</b> — et signalbillede pr. tilstand, valgt lampe for lampe med &#9662;.</li>
+<li><b>PWM</b> — en lysstyrke pr. tilstand, f.eks. fra = 20 (dæmpet), til = 255.</li>
+<li><b>Lydeffekt</b> — et nummer pr. tilstand; <i>stop</i> (0) stopper afspilningen. Én lydudgang kan afspille mange
+numre, hvert valgt af sin egen indgang.</li>
+<li>Andre udgange — afvigende eller lige pr. tilstand, for eksempel omvendt.</li>
+</ul>
+<p><b>Fra / afvigende</b> bruges, når indgangens tilstand bliver 0 (en absolut-indgang: knap trykket eller en DCC-kommando
+'afvigende'), <b>Til / lige</b>, når den bliver 1. En skift-indgang veksler mellem de to.</p>
+<p>De to værdier gemmes som 2 trin i indgangens togvejshukommelse, så de tæller med i printets samlede antal
+togvejstrin. Udvidede DCC-kommandoer (DCC extended) sender stadig deres egen værdi.</p>
+<p>Forbind en indgang med en lydudgang, og egne værdier slås til af sig selv: fra = stop, til = nummer 1.</p>

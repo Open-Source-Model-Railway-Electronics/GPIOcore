@@ -1,0 +1,28 @@
+<h3>Przycisk konfiguracji (A7) i ustawianie serw sterownikiem</h3>
+<p>Bez komputera możesz ustawić położenia krańcowe serw przyciskiem konfiguracji i ręcznym sterownikiem DCC.</p>
+<p><b>Uwaga:</b> przycisk konfiguracji (A7) istnieje tylko w Arduino <b>Nano</b>. DCCnext nie ma
+A7, więc nie ma przycisku konfiguracji: ustaw położenia krańcowe serw w programie (albo przez sterowanie z telefonu).</p>
+<p><b>Połączenia:</b> przycisk od <b>A7</b> do <b>GND</b> oraz rezystor 10 k&Omega; od A7 do <b>5 V</b>
+(A7 nie ma wbudowanego rezystora podciągającego). Dioda LED z rezystorem na <b>D13</b> pokazuje tryb (większość Arduino już ją ma).</p>
+<ol>
+<li>Przytrzymaj przycisk konfiguracji przez <b>2 sekundy</b>: LED zaczyna migać. Jesteś w trybie konfiguracji.</li>
+<li>Naciśnij go <b>krótko</b>: zostaje wybrane następne serwo i przestawia się, żebyś widział, które to jest. Naciśnij
+ponownie, aby przejść do następnego serwa.</li>
+<li>Na sterowniku wybierz <b>adres lokomotywy 9999</b>.
+  <ul>
+  <li>Kręć <b>pokrętłem prędkości</b>: wybrane serwo się porusza. Przycisk kierunku decyduje, w którą stronę, a pokrętło – jak szybko.</li>
+  <li><b>F1</b> = zapisz ten kąt jako <i>na bok</i>, <b>F2</b> = zapisz go jako <i>na wprost</i>.</li>
+  <li><b>F3</b> = przestaw serwo (do sprawdzenia), <b>F5</b> = następne serwo.</li>
+  <li><b>F4</b> = odwróć przekaźniki sercówki wybranego serwa, dla modułów przekaźników załączanych stanem LOW.
+  Każde naciśnięcie przełącza między normalnym a odwróconym.</li>
+  </ul></li>
+<li>Ponownie przytrzymaj przycisk konfiguracji przez 2 sekundy: LED świeci ciągle. Powrót do normalnej pracy.</li>
+</ol>
+<p>Nowe położenia są zapisywane od razu. Gdy później połączysz program, odczyta je z płytki.</p>
+<p><b>Krótkie naciśnięcie poza trybem konfiguracji = tryb GUI.</b> 5 sekund po starcie płytka zamyka port szeregowy,
+jeśli żaden program się nie połączył, a konfiguracja używa D0 lub D1 (stają się wtedy zwykłymi pinami; w przeciwnym
+razie port pozostaje otwarty). <b>Krótkie</b> naciśnięcie przycisku konfiguracji (LED świeci ciągle, nie w
+trybie konfiguracji) otwiera go ponownie na 5 sekund i płytka się zgłasza, więc program może się połączyć bez
+resetu, na przykład przez Bluetooth (zob. <i>Pomoc &gt; Bluetooth (HC-05)</i>). Gdy program pokazuje <i>„Czekam
+na płytkę”</i>, to jest moment, żeby go nacisnąć.</p>
+<p>Dlatego <b>D13</b> i <b>A7</b> nigdy nie mogą być używane do wejść ani wyjść.</p>

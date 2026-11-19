@@ -1,0 +1,21 @@
+<h3>Hvad er tilsluttet denne udgang?</h3>
+<ul>
+<li><b>Enkelt fast</b> — én pin til eller fra. LED'er, et relæmodul, pærer (via en transistor eller et relæ).</li>
+<li><b>Enkelt puls</b> — én pin får en kort puls. Til en afkobler eller en enhed med én spole.</li>
+<li><b>Enkelt blink</b> — én pin blinker, mens den er tændt. Et advarselslys.</li>
+<li><b>Dobbelt fast</b> — to pins: A til og B fra, eller omvendt. Tofarvede signaler, to relæer.</li>
+<li><b>Dobbelt puls</b> — to pins, en af dem får en kort puls. Til <b>sporskifter med spolemotor</b>
+(Peco, Roco, Fleischmann …): A = den ene spole, B = den anden spole.</li>
+<li><b>Dobbelt blink</b> — to pins blinker skiftevis.</li>
+<li><b>Vekselblink</b> — to lys skiftes til med en pause: lys ved en overkørsel.</li>
+<li><b>Pejs / Lysstofrør / Svejser</b> — lyseffekter: flakkende ild, et lysstofrør, der
+flimrer, når det tænder, svejseglimt. (Pejs og Lysstofrør kræver PWM-pins.)</li>
+<li><b>Signal med 4 signalbilleder</b> — fire LED'er (grøn, gul, rød, hvid …), stillet af DCC-signalkommandoer eller af en togvej.</li>
+<li><b>Servo</b> — en modelservo som sporskiftemotor. Langsom, realistisk bevægelse.</li>
+<li><b>PWM</b> — en lysstyrke til en lampe eller LED-kæde, eventuelt med langsom overgang (dag og nat).</li>
+<li><b>Bloksignal</b> — et automatisk signal (lamper A–D): printet vælger selv signalbilledet ud fra besat-melderne for sin egen blok og den næste blok.</li>
+<li><b>Lydeffekt</b> — en MP3-afspiller (DFPlayer Mini) på D1: en klokke, en fløjte, en meddelelse. Indgangen vælger nummeret. Spiller kun, når ingen pc er forbundet.</li>
+<li><b>Ikke i brug</b> — intet tilsluttet.</li>
+</ul>
+<p><b>Vigtigt for spoler:</b> en Arduino-pin kan ikke drive en spole direkte. Brug et driverprint (for eksempel en
+ULN2803 eller et MOSFET-modul) mellem pinnen og spolen.</p>

@@ -1,0 +1,35 @@
+<h2>Aktualizacja firmware</h2>
+<p><b>Firmware</b> to program działający w Arduino twojej płytki GPIOcore. Czasem pojawia się nowsza
+wersja z poprawkami lub nowymi funkcjami. To okno wgrywa ją na płytkę.</p>
+
+<h3>Krok po kroku</h3>
+<ol>
+<li><b>Podłącz płytkę</b> kablem USB.</li>
+<li><b>Port:</b> wybierz płytkę. Zwykle ma opis CH340, USB Serial lub Arduino. Nie widzisz jej? Sprawdź kabel i
+kliknij <b>Odśwież</b>.</li>
+<li><b>Plik firmware:</b> to plik z nowym programem (kończy się na <i>.hex</i>). Zwykle właściwy plik jest
+już wpisany. Jeśli nie, kliknij <b>Przeglądaj…</b> i wybierz <i>GPIOcore.hex</i>.</li>
+<li><b>Typ płytki:</b> większość płytek działa z <i>Arduino Uno / Nano (nowy bootloader)</i>. Tańsze lub starsze płytki
+Nano często potrzebują <i>Arduino Nano (stary bootloader)</i>. Nie wiesz? Po prostu zacznij od pierwszego: jeśli płytka
+nie odpowiada, program sam spróbuje drugiego.</li>
+<li>Kliknij <b>Wgraj</b> i poczekaj, aż pasek się zapełni. Trwa to około 10 do 30 sekund. <b>Nie odłączaj
+płytki</b>, dopóki trwa wgrywanie.</li>
+</ol>
+
+<h3>Warto wiedzieć</h3>
+<ul>
+<li>Podczas wgrywania program zwalnia płytkę, a potem łączy się ponownie. Nie musisz nic robić.</li>
+<li>Twoje ustawienia na płytce (wyjścia, wejścia, połączenia) zwykle zostają zachowane. Dla pewności najpierw użyj
+<b>Plik → Zapisz</b>.</li>
+<li>Inne programy, które używają płytki, np. monitor portu szeregowego w Arduino IDE, trzeba najpierw zamknąć.</li>
+<li>Coś poszło nie tak? Przeczytaj czerwony komunikat: mówi, czego spróbować. <b>Pokaż szczegóły</b> pokazuje pełny raport,
+który przydaje się, gdy prosisz kogoś o pomoc.</li>
+<li>Nieudane wgrywanie nie psuje płytki. Po prostu spróbuj ponownie.</li>
+</ul>
+
+<h3>Przez programator ArduinoISP (zaawansowane)</h3>
+<p>Tylko dla płytek bez bootloadera USB albo dla płytki, która już nie odpowiada. Potrzebujesz drugiego Arduino
+ze szkicem <i>ArduinoISP</i>, połączonego z sześcioma pinami ICSP twojej płytki. Wybierz port tego Arduino pełniącego
+rolę <i>programatora</i>. To ustawia też konfigurację układu (fusebity) i usuwa bootloader USB, więc później możesz
+aktualizować tę płytkę tylko programatorem. To również <b>kasuje twoje ustawienia</b> na płytce: najpierw zapisz je
+przez <b>Plik → Zapisz</b>, a potem zapisz je z powrotem na płytkę.</p>

@@ -1,0 +1,19 @@
+<h3>Polarisering av hjärtstycke — electrofrog eller unifrog?</h3>
+<p><b>Hjärtstycket</b> är den punkt i en växel där de två rälerna korsar varandra. På växlar med “strömförande hjärtstycke” är den här biten
+av metall och måste få <b>samma polaritet som den inställda vägen</b>. Får den fel polaritet stannar loken eller
+orsakar kortslutning. Ett relä polariserar hjärtstycket när växeln lägger om.</p>
+<p>Titta på din växel och välj <b>ett</b> alternativ:</p>
+<ul>
+<li><b>Ingen (isolerat hjärtstycke)</b> — hjärtstycket är av plast (Peco <i>Insulfrog</i>, de flesta startset-spår). Inget att göra.</li>
+<li><b>Electrofrog — 2 reläer</b> (Peco <i>Electrofrog</i> och liknande). Relä A slås till för
+“rakt”, relä B för “avvikande”. Medan växeln lägger om är <b>båda frånslagna</b> ett ögonblick, så att det aldrig blir
+kortslutning (bryt före slut).</li>
+<li><b>Unifrog — 1 växlande relä</b> (Peco <i>Unifrog</i>). Hjärtstycket har en tråd. Ett växlande relä kopplar det till
+rätt räl. Med ett servo slår det om exakt när servot passerar mitten; med en spolmotor i slutet av
+pulsen.</li>
+</ul>
+<p>Du kan bara använda ett av de två. Väljer du det ena tas pinnarna för det andra bort.</p>
+<p><b>Koppling:</b> använd ett relä<i>kort</i> (med transistor och diod) — en Arduino-pinne kan inte driva ett ensamt relä.</p>
+<p><b>Reläer slår till vid LOW (inverterat)</b>: kryssa i detta för reläkort som slår till när ingången är LOW
+(många billiga kort med optokopplare). Kortet styr då reläpinnarna tvärtom; vad
+reläerna betyder (rakt / avvikande) förblir detsamma.</p>

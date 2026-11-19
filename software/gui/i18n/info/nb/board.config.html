@@ -1,0 +1,28 @@
+<h3>Config-knapp (A7) og innlæring av servoer med håndkontrollen</h3>
+<p>Uten datamaskin kan du stille inn endestillingene til servoer med config-knappen og DCC-håndkontrollen din.</p>
+<p><b>Merk:</b> config-knappen (A7) finnes bare på en Arduino <b>Nano</b>. Et DCCnext har ingen
+A7 og derfor ingen config-knapp: still inn servoenes endestillinger i programmet (eller med telefon-fjernkontrollen) i stedet.</p>
+<p><b>Kobling:</b> en trykknapp fra <b>A7</b> til <b>GND</b>, pluss en 10 k&Omega;-motstand fra A7 til <b>5 V</b>
+(A7 har ingen innebygd pull-up). En LED med motstand på <b>D13</b> viser modusen (de fleste Arduinoer har allerede en).</p>
+<ol>
+<li>Hold inne config-knappen i <b>2 sekunder</b>: LED-en begynner å blinke. Du er i config-modus.</li>
+<li>Trykk <b>kort</b> på den: neste servo velges og legges om, så du ser hvilken det er. Trykk igjen
+for neste servo.</li>
+<li>Velg <b>lokadresse 9999</b> på håndkontrollen.
+  <ul>
+  <li>Vri på <b>hastighetsknappen</b>: den valgte servoen beveger seg. Retningsknappen bestemmer hvilken vei, hjulet hvor fort.</li>
+  <li><b>F1</b> = lagre denne vinkelen som <i>avvikende</i>, <b>F2</b> = lagre den som <i>rett</i>.</li>
+  <li><b>F3</b> = legg om servoen (for å sjekke), <b>F5</b> = neste servo.</li>
+  <li><b>F4</b> = inverter hjertestykkereléene til den valgte servoen, for relémoduler som kobler på LOW.
+  Hvert trykk bytter mellom normal og invertert.</li>
+  </ul></li>
+<li>Hold inne config-knappen i 2 sekunder igjen: LED-en lyser fast. Tilbake til normal.</li>
+</ol>
+<p>De nye posisjonene lagres med en gang. Koble til programmet senere, så leser det dem tilbake.</p>
+<p><b>Kort trykk utenfor config-modus = GUI-modus.</b> 5 sekunder etter oppstart lukker kortet seriellporten
+når ikke noe program har koblet til og konfigurasjonen bruker D0 eller D1 (de blir vanlige pinner; ellers forblir porten
+åpen). Et <b>kort</b> trykk på config-knappen (LED lyser fast, ikke i
+config-modus) åpner den igjen i 5 sekunder, og kortet melder seg, så programmet kan koble til uten
+tilbakestilling, for eksempel via Bluetooth (se <i>Hjelp &gt; Bluetooth (HC-05)</i>). Når programmet viser <i>"Venter på
+kortet"</i>, er det tiden for å trykke.</p>
+<p>Derfor kan <b>D13</b> og <b>A7</b> aldri brukes til innganger eller utganger.</p>

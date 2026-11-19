@@ -1,0 +1,27 @@
+<h3>Entrées analogiques : une échelle de résistances ou un capteur</h3>
+<p>Au lieu d'un bouton vers GND, une broche analogique (A0–A6) peut mesurer une tension : <b>0 = 0 V, 1023 = 5 V</b>.
+L'entrée compte comme <i>appuyée</i> tant que la valeur remplit la condition, et fonctionne alors exactement comme un
+bouton appuyé : bascule, absolu et itinéraires fonctionnent tous.</p>
+<ul>
+<li><b>Sous une valeur</b> — appuyée sous le seuil, relâchée de nouveau 20 plus haut. Par exemple un capteur de lumière
+(LDR) qui passe dans le noir, ou un bouton seul.</li>
+<li><b>Au-dessus d'une valeur</b> — appuyée au-dessus du seuil, relâchée de nouveau 20 plus bas.</li>
+<li><b>À une valeur</b> — appuyée dans le seuil &plusmn; 10 : un bouton d'une <b>échelle de résistances</b>.
+Plusieurs entrées peuvent partager une broche, chacune avec sa propre valeur.</li>
+</ul>
+<p><b>Échelle de résistances :</b> plusieurs boutons sur une broche. Une résistance de 10 k&Omega; du 5 V vers la broche la
+maintient à 1023 tant que rien n'est appuyé ; chaque bouton relie la broche à GND via sa propre résistance, si bien que
+chaque bouton donne une valeur différente.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ bouton 1 ]--- GND    environ 0
+                 +--[1k]---[ bouton 2 ]--- GND    environ 93
+                 +--[3k3]--[ bouton 3 ]--- GND    environ 254
+                 +--[10k]--[ bouton 4 ]--- GND    environ 512</pre>
+<p><b>Lisez les vraies valeurs :</b> les résistances ont des tolérances et les contacts ont une résistance, la pratique
+diffère donc de la théorie. Connectez la carte, choisissez l'entrée et regardez <b>Actuel :</b> pendant que vous maintenez
+chaque bouton ; <b>Utiliser cette valeur</b> la prend comme seuil. Gardez au moins environ 40 entre deux boutons.</p>
+<ul>
+<li>Le seuil est enregistré par pas de 8. La carte lit la broche toutes les 50 ms et ne réagit que lorsque deux lectures concordent.</li>
+<li><b>A7</b> est le bouton de config et ne peut pas être utilisée ; <b>A6</b> n'existe que sur un Arduino Nano.</li>
+<li>En mode <b>Simuler</b>, cliquez sur <i>valeur ▾</i> sur l'entrée pour saisir une valeur pour sa broche : toutes les entrées de cette broche réagissent.</li>
+</ul>

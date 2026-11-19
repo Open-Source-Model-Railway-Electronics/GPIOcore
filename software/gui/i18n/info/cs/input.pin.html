@@ -1,0 +1,14 @@
+<h3>Vstupní pin: kam je zapojeno tlačítko</h3>
+<p>Zvolte pin Arduina, ke kterému je připojeno tlačítko, přepínač nebo snímač.</p>
+<p><b>Jak zapojit:</b> jeden vodič tlačítka na pin, druhý na <b>GND</b> (minus, 0 V).
+Rezistor není potřeba: deska zapne svůj vlastní vnitřní rezistor „pull-up“.</p>
+<pre>  pin D7 ---[ tlačítko ]--- GND</pre>
+<ul>
+<li><b>Nepřipojujte</b> tlačítko na 5 V ani 12 V: může to poškodit Arduino.</li>
+<li><b>D2</b> (DCC vstup), <b>D13</b> (LED konfigurace) a <b>A7</b> (tlačítko konfigurace) nelze použít.</li>
+<li><b>A6</b> (jen Arduino Nano) je čistě analogový vstup bez pull-upu: přidejte rezistor 10 k&Omega; z pinu na 5 V.</li>
+<li>Používané piny jsou <b>červené</b>. Zvolením takového pinu ho vezmete jinému vstupu nebo výstupu, který se stane
+<i>nepoužitým</i>.</li>
+</ul>
+<p>Několik tlačítek na jednom analogovém pinu, nebo snímač? Nastavte <b>Číst jako</b> na některou analogovou volbu.</p>
+<p>Jen DCC, bez tlačítka? Zvolte „nepoužito“.</p>

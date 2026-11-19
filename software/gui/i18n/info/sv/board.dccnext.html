@@ -1,0 +1,19 @@
+<h3>Korttyp</h3>
+<p>Korttypen bestämmer vilka pinnar programmet erbjuder och vad de heter.</p>
+<ul>
+<li><b>Arduino Nano</b>: pinnarna D3&ndash;D12 och A0&ndash;A5, D0 / D1 från nivån Avancerad och uppåt, och <b>A6</b> (bara
+analog ingång).</li>
+<li><b>DCCnext</b> (från ArCoMoRa): ett färdigt kort med DCC-ingång och skruvplintar. Programmet använder överallt de
+<b>portnummer P1&ndash;P16</b> som står tryckta på kortet: i pinnlistorna (&ldquo;P1 (D3)&rdquo;), på
+arbetsytan och i varningar. Bara dessa 16 portar erbjuds: ingen D0, D1, D2, D13, A6 eller A7.</li>
+<li><b>Jack of all trades</b>: vårt eget kort.</li>
+</ul>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>DCCnext-port</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
+<tr><th>Arduino-pinne</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
+</table>
+<p><b>D2</b> (DCC) och <b>D13</b> (config-lysdiod) är reserverade på alla kort. Config-knappen (<b>A7</b>) finns bara
+på Nano: ett DCCnext har ingen config-knapp.
+Dimning (PWM) fungerar på D3, D5, D6, D9, D10 och D11 (DCCnext P1, P3, P4, P7, P8 och P9).</p>
+<p>En fil som gjorts för en annan korttyp behåller alla sina pinnar. En pinne som det här kortet inte har visas med en varning,
+som alla andra pinnar som inte kan användas: välj en annan pinne för den.</p>

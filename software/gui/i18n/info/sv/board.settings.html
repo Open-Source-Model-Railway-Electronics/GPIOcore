@@ -1,0 +1,13 @@
+<h3>Kortinställningar</h3>
+<ul>
+<li><b>Namn</b>: upp till 16 tecken, sparas på kortet. Programmet hittar kortets fil (namn på ingångar och
+utgångar) via det här namnet, så ge varje kort ett eget namn.</li>
+<li><b>Korttyp</b>: Arduino Nano, DCCnext eller Jack of all trades. Den bestämmer vilka pinnar som finns.</li>
+<li><b>Egen väntetid för varje tågvägssteg</b> (nivån Avancerad och uppåt): av = varje steg väntar lika länge (ställs in nedan) och tågvägar behöver hälften
+så mycket minne. På = varje steg har sin egen väntetid.</li>
+<li><b>Tågvägsförregling</b> (nivån Avancerad och uppåt): vad som händer när en tågväg startas medan en annan fortfarande körs.
+<i>Av</i> = båda körs, <i>på</i> = den andra ignoreras, <i>automatiskt</i> = tågvägar som lägger om en växel körs en
+i taget, tågvägar med bara belysning får köras samtidigt.</li>
+</ul>
+<p>Pinnar med en fast uppgift på alla kort: <b>D2</b> (DCC-ingång), <b>D13</b> (config-lysdiod) och <b>A7</b>
+(config-knapp).</p>

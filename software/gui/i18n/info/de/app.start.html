@@ -1,5 +1,5 @@
 <h2>Erste Schritte</h2>
-<p>Dieses Programm richtet eine <b>GPIOcore-Platine</b> ein: einen kleinen Arduino (Nano / Uno oder ein DCCnext), der
+<p>Dieses Programm richtet eine <b>GPIOcore-Platine</b> ein: einen kleinen Arduino (Nano oder ein DCCnext), der
 unter Ihrer Anlage sitzt und Dinge schaltet: Weichen, Beleuchtung, Signale, Relais. Sie sagen der Platine, <i>was</i>
 an <i>welchem</i> Pin angeschlossen ist und <i>wodurch</i> es sich bewegen soll.</p>
 
@@ -10,24 +10,30 @@ Weichenspule einen Impuls geben, eine LED leuchten lassen, ein Relais schalten. 
 <li><b>Eingänge</b> (Mitte, linke Spalte) sind Dinge, die <i>der Platine einen Befehl geben</i>: ein Taster auf Ihrem
 Stellpult oder ein Befehl Ihrer DCC-Zentrale (Ihr Digitalsystem / Handregler). Es gibt 16 davon.</li>
 </ul>
-<p>Die Einstellungen des gewählten Eingangs stehen immer <b>links</b>, die des gewählten Ausgangs <b>rechts</b>.</p>
+<p>Die Einstellungen des gewählten Eingangs stehen immer <b>links</b>, die des gewählten Ausgangs
+<b>rechts</b>.</p>
 
-<h3>Drei Arbeitsweisen: die farbigen Knöpfe oben</h3>
+<h3>Drei Modi: die farbigen Knöpfe oben</h3>
 <ul>
-<li><b style="color:#DC2626">&#9679; Konfigurieren</b> (roter Rahmen): Verbindung zur Platine am gewählten Port. Alles, was
-Sie ändern, geht <b>sofort</b> an die Platine; es gibt keinen eigenen Speichern-Knopf.</li>
-<li><b style="color:#A16207">&#9679; Simulieren</b> (gelber Rahmen): keine Platine nötig. Ihre eigenen Einstellungen laufen
-auf einer simulierten Platine; klicken Sie auf die Tasten der Eingänge und beobachten Sie die Ausgänge. Es kann
-nichts kaputtgehen.</li>
-<li><b style="color:#15803D">&#9679; Live-Test</b> (grüner Rahmen): Klicken Sie an einer echten Platine auf die Tasten der
-Eingänge und sehen Sie, was die Platine tut, auch wenn noch nichts verdrahtet ist.</li>
+<li><b style="color:#DC2626">&#9679; Konfigurieren</b>: Dinge ändern. Offline oder verbunden (roter Rahmen): Dann geht jede
+Änderung <b>sofort</b> an die Platine.</li>
+<li><b style="color:#A16207">&#9679; Simulieren</b> (gelber Rahmen): Probieren Sie Ihre Einstellungen auf einer simulierten
+Platine aus, drücken Sie die Tasten der Eingänge und beobachten Sie die Ausgänge. Hier kann nichts geändert werden.</li>
+<li><b style="color:#15803D">&#9679; Live-Test</b> (grüner Rahmen): verbindet sich selbst; drücken Sie die Tasten und sehen
+Sie, was die echte Platine tut. Hier kann nichts geändert werden.</li>
 </ul>
+<p><b>Verbinden / Trennen</b> neben dem Port zeigt, ob eine Platine verbunden ist.</p>
+
+<h3>Der schnellste Start</h3>
+<p>Das Programm startet mit einer leeren Platine: ein Eingang (DCC-Adresse 1), der einen Ausgang (an D3) schaltet.
+Wählen Sie oben in der Liste <b>Preset</b> eine fertige Konfiguration (zum Beispiel <i>16 servos</i>) und klicken Sie
+auf <b>Anwenden</b>, oder beginnen Sie mit einem Beispiel: <b>Datei &rarr; Beispiel öffnen&hellip;</b>.</p>
 
 <h3>Schritt für Schritt</h3>
 <ol>
 <li><b>Verbinden.</b> Stecken Sie die Platine an den USB-Anschluss, wählen Sie oben ihren Port (meist steht CH340,
-USB Serial oder Arduino dabei) und klicken Sie auf <b>&#9679; Konfigurieren</b>. Beim ersten Mal fragt das Programm nach
-einem <b>Namen</b> für die Platine.</li>
+USB Serial oder Arduino dabei) und klicken Sie auf <b>Verbinden</b>. Mit <b>Platine lesen</b> laden Sie, was darauf
+steht. Beim ersten Mal fragt das Programm nach einem <b>Namen</b> für die Platine.</li>
 <li><b>Einen Ausgang hinzufügen.</b> Klicken Sie auf <b>+ Ausgang hinzufügen</b> oder auf einen Ausgang. Wählen Sie den
 <b>Typ</b> (zum Beispiel <i>Servo</i>) und den <b>Pin</b>, an dem der Draht hängt.</li>
 <li><b>Einen Eingang hinzufügen.</b> Klicken Sie auf <b>+ Eingang hinzufügen</b> oder auf einen Eingang. Wählen Sie,
@@ -35,6 +41,7 @@ was ihn auslöst: einen <b>Taster-Pin</b>, eine <b>DCC-Adresse</b> oder beides.<
 <li><b>Verbinden Sie beide.</b> Ziehen Sie den Ausgang auf den Eingang. Eine farbige Linie erscheint: Dieser Eingang
 bedient jetzt diesen Ausgang. Der Ausgang bekommt die Farbe seines Eingangs.</li>
 <li><b>Ausprobieren.</b> Klicken Sie auf <b>&#9679; Live-Test</b> und drücken Sie die Tasten am Eingang.</li>
+<li><b>Speichern</b> (Ctrl+S) Sie die Konfiguration in einer Datei; das Programm speichert nicht von selbst.</li>
 </ol>
 
 <h3>Gut zu wissen</h3>
@@ -43,10 +50,14 @@ bedient jetzt diesen Ausgang. Der Ausgang bekommt die Farbe seines Eingangs.</li
 <li>Geben Sie Eingängen und Ausgängen einen <b>Namen</b> (Eingabefeld oben in jedem Bereich). Namen und alle Einstellungen
 werden auf diesem Computer in <i>Dokumente\GPIOcore\boards\&lt;Name der Platine&gt;.json</i> gespeichert, eine
 Datei pro Platine.</li>
-<li>Ein bereits belegter Pin erscheint in der Pinliste <b>rot</b>. Wählen Sie ihn trotzdem, wird der Eingang oder
-Ausgang, der ihn hatte, <i>nicht benutzt</i>.</li>
+<li>Ein bereits belegter Pin erscheint in der Pinliste <b>rot</b>. Wählen Sie ihn trotzdem, behält der Eingang oder
+Ausgang, der ihn hatte, seine Funktion, verliert aber diesen Pin.</li>
 <li>Unbenutzte Eingänge und Ausgänge sind ausgeblendet; <b>Ansicht &rarr; Unbenutzte Eingänge und Ausgänge anzeigen</b>
 zeigt alle.</li>
-<li><b>Ansicht &rarr; Expertenmodus</b> zeigt die Bytes, das serielle Protokoll und die Presets. <b>Ansicht &rarr; Design</b> schaltet auf dunkel um.</li>
+<li><b>Ansicht &rarr; Anfänger / Fortgeschritten / Experte</b> bestimmt, wie viel das Programm anbietet; es beginnt bei
+Anfänger und ändert nie Ihre Konfiguration. <b>Ansicht &rarr; Design</b> schaltet auf dunkel um.</li>
+<li><b>Datei &rarr; Exportieren&hellip;</b> speichert einige Ihrer Ausgänge, Eingänge oder Platineneinstellungen in einer
+eigenen Datei (Ihr eigenes Beispiel); <b>Datei &rarr; Importieren&hellip;</b> fügt sie einer anderen Platine hinzu, unter
+denselben Nummern oder an freien Plätzen.</li>
 <li><b>Platine &rarr; Firmware flashen&hellip;</b> spielt neue Firmware auf den Arduino.</li>
 </ul>

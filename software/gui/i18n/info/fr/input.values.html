@@ -1,0 +1,16 @@
+<h3>Valeurs personnalisées : plus que marche et arrêt</h3>
+<p>Normalement, une entrée en bascule ou en absolu commute sa sortie sur <b>dévié / arrêt</b> (0) ou <b>direct / marche</b> (1).
+Avec <b>Valeurs personnalisées</b>, chacun des deux états envoie à la place sa propre valeur, exactement comme une étape d'itinéraire :</p>
+<ul>
+<li><b>Servo</b> — un angle, p. ex. arrêt = 45&deg;, marche = 135&deg; (ou dévié / direct comme d'habitude).</li>
+<li><b>Signal 4 feux</b> — un aspect par état, choisi feu par feu avec &#9662;.</li>
+<li><b>PWM</b> — une luminosité par état, p. ex. arrêt = 20 (atténué), marche = 255.</li>
+<li><b>Effet sonore</b> — une piste par état ; <i>arrêt</i> (0) arrête la lecture. Une sortie son peut jouer de nombreuses
+pistes, chacune choisie par sa propre entrée.</li>
+<li>Autres sorties — dévié ou direct par état, par exemple à l'inverse.</li>
+</ul>
+<p><b>Arrêt / dévié</b> est utilisé quand l'état de l'entrée passe à 0 (une entrée en absolu : bouton appuyé ou commande DCC
+« dévié »), <b>Marche / direct</b> quand il passe à 1. Une entrée en bascule alterne entre les deux.</p>
+<p>Les deux valeurs sont enregistrées comme 2 étapes dans la mémoire d'itinéraire de l'entrée, elles comptent donc dans le total
+d'itinéraires de la carte. Les commandes DCC étendues envoient toujours leur propre valeur.</p>
+<p>Reliez une entrée à une sortie son et les valeurs personnalisées s'activent d'elles-mêmes : arrêt = arrêt de la lecture, marche = piste 1.</p>

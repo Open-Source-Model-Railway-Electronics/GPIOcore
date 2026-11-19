@@ -1,5 +1,5 @@
 <h2>Premiers pas</h2>
-<p>Ce programme configure une <b>carte GPIOcore</b> : un petit Arduino (Nano / Uno, ou un DCCnext) placé sous votre
+<p>Ce programme configure une <b>carte GPIOcore</b> : un petit Arduino (Nano, ou un DCCnext) placé sous votre
 réseau, qui commande des choses : aiguillages, éclairages, signaux, relais. Vous indiquez à la carte <i>ce qui</i> est
 branché sur <i>quelle</i> broche, et <i>ce qui</i> doit le faire bouger.</p>
 
@@ -13,20 +13,26 @@ de votre TCO, ou une commande de votre centrale DCC (votre système digital / r�
 <p>Les paramètres de l'entrée sélectionnée sont toujours à <b>gauche</b>, ceux de la sortie sélectionnée à
 <b>droite</b>.</p>
 
-<h3>Trois façons de travailler : les boutons de couleur en haut</h3>
+<h3>Trois modes : les boutons de couleur en haut</h3>
 <ul>
-<li><b style="color:#DC2626">&#9679; Configurer</b> (cadre rouge) : connexion à la carte sur le port choisi. Tout ce que vous
-modifiez part <b>tout de suite</b> vers la carte ; il n'y a pas de bouton d'enregistrement séparé.</li>
-<li><b style="color:#A16207">&#9679; Simuler</b> (cadre jaune) : pas besoin de carte. Vos propres paramètres tournent sur une
-carte simulée ; cliquez sur les boutons des entrées et observez les sorties. Rien ne peut casser.</li>
-<li><b style="color:#15803D">&#9679; Test en direct</b> (cadre vert) : sur une vraie carte, cliquez sur les boutons des entrées et
-voyez ce que fait la carte, même si rien n'est encore câblé.</li>
+<li><b style="color:#DC2626">&#9679; Configurer</b> : modifier les choses. Hors ligne, ou connecté (cadre rouge) : chaque
+modification part alors <b>tout de suite</b> vers la carte.</li>
+<li><b style="color:#A16207">&#9679; Simuler</b> (cadre jaune) : essayez vos paramètres sur une carte simulée, appuyez sur
+les boutons des entrées et observez les sorties. Rien ne peut être modifié ici.</li>
+<li><b style="color:#15803D">&#9679; Test en direct</b> (cadre vert) : se connecte tout seul ; appuyez sur les boutons et voyez
+ce que fait la vraie carte. Rien ne peut être modifié ici.</li>
 </ul>
+<p><b>Connecter / Déconnecter</b>, à côté du port, indique si une carte est connectée.</p>
+
+<h3>Le démarrage le plus rapide</h3>
+<p>Le programme démarre avec une carte vide : une entrée (adresse DCC 1) qui commande une sortie (sur D3). Choisissez
+une configuration toute faite dans la liste <b>Préréglage</b> en haut (par exemple <i>16 servos</i>) et cliquez sur
+<b>Appliquer</b>, ou partez d'un exemple : <b>Fichier &rarr; Ouvrir un exemple&hellip;</b>.</p>
 
 <h3>Pas à pas</h3>
 <ol>
 <li><b>Connecter.</b> Branchez la carte sur le port USB, choisissez son port en haut (il indique en général CH340,
-USB Serial ou Arduino) et cliquez sur <b>&#9679; Configurer</b>. La première fois, le programme demande un <b>nom</b> pour la carte.</li>
+USB Serial ou Arduino) et cliquez sur <b>Connecter</b>. Utilisez <b>Lire la carte</b> pour charger ce qu'elle contient. La première fois, le programme demande un <b>nom</b> pour la carte.</li>
 <li><b>Ajouter une sortie.</b> Cliquez sur <b>+ Ajouter une sortie</b>, ou cliquez sur une sortie. Choisissez le
 <b>type</b> (par exemple <i>Servo</i>) et la <b>broche</b> où va le fil.</li>
 <li><b>Ajouter une entrée.</b> Cliquez sur <b>+ Ajouter une entrée</b>, ou cliquez sur une entrée. Choisissez ce qui la
@@ -34,6 +40,7 @@ déclenche : une <b>broche de bouton</b>, une <b>adresse DCC</b>, ou les deux.</
 <li><b>Reliez-les.</b> Glissez la sortie sur l'entrée. Une ligne de couleur apparaît : cette entrée commande maintenant
 cette sortie. La sortie prend la couleur de son entrée.</li>
 <li><b>Essayez.</b> Cliquez sur <b>&#9679; Test en direct</b> et appuyez sur les boutons de l'entrée.</li>
+<li><b>Enregistrez</b> (Ctrl+S) la configuration dans un fichier ; le programme n'enregistre pas tout seul.</li>
 </ol>
 
 <h3>Bon à savoir</h3>
@@ -42,9 +49,13 @@ cette sortie. La sortie prend la couleur de son entrée.</li>
 <li>Donnez un <b>nom</b> aux entrées et aux sorties (champ en haut de chaque panneau). Les noms et tous les paramètres
 sont conservés sur cet ordinateur dans <i>Documents\GPIOcore\boards\&lt;nom de la carte&gt;.json</i>, un fichier par carte.</li>
 <li>Une broche déjà utilisée apparaît en <b>rouge</b> dans la liste des broches. Si vous la choisissez quand même,
-l'entrée ou la sortie qui l'avait devient <i>non utilisée</i>.</li>
+l'entrée ou la sortie qui l'avait garde sa fonction, mais perd cette broche.</li>
 <li>Les entrées et sorties non utilisées sont masquées ; <b>Affichage &rarr; Afficher les entrées et sorties non
 utilisées</b> les montre toutes.</li>
-<li><b>Affichage &rarr; Mode expert</b> affiche les octets, le journal série et les préréglages. <b>Affichage &rarr; Thème</b> passe en sombre.</li>
+<li><b>Affichage &rarr; Débutant / Avancé / Expert</b> détermine ce que le programme propose ; il démarre en Débutant et
+ne modifie jamais votre configuration. <b>Affichage &rarr; Thème</b> passe en sombre.</li>
+<li><b>Fichier &rarr; Exporter&hellip;</b> enregistre quelques sorties, entrées ou paramètres de la carte dans un fichier à
+part (votre propre exemple) ; <b>Fichier &rarr; Importer&hellip;</b> les ajoute à une autre carte, aux mêmes numéros ou
+dans des emplacements libres.</li>
 <li><b>Carte &rarr; Flasher le firmware&hellip;</b> installe un nouveau firmware sur l'Arduino.</li>
 </ul>

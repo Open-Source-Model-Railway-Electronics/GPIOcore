@@ -1,0 +1,8 @@
+<h3>Stan i testowanie</h3>
+<p>Każde wyjście ma <b>stan</b>: 0 lub 1. Co on oznacza, zależy od wyjścia: dla zwrotnicy
+0 = na bok, a 1 = na wprost; dla światła 0 = wył., a 1 = wł.</p>
+<p><b>Zapamiętany stan</b>: płytka pamięta ostatni stan, także po wyłączeniu zasilania. Po włączeniu wyjście
+do niego wraca (z wyjątkiem zwrotnic z napędem elektromagnetycznym: nie dostają impulsu przy włączeniu, więc nie przestawiają się wszystkie naraz).</p>
+<p><b>▶ Test: na bok / wył.</b> i <b>▶ Test: na wprost / wł.</b> od razu wysyłają to wyjście do płytki i je przełączają. Użyj tego do
+sprawdzenia połączeń: czy przestawia się właściwa zwrotnica, we właściwą stronę? Jeśli „na wprost” i „na bok” są zamienione,
+zamień dwa położenia (serwo) albo dwa przewody / piny (napęd elektromagnetyczny).</p>

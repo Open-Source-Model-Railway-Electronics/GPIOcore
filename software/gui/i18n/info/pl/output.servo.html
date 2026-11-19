@@ -1,0 +1,29 @@
+<h3>Ustawianie serwa</h3>
+<p>Serwo obraca się do kąta między 0&deg; a 180&deg;. Jako napęd zwrotnicy porusza się między dwoma położeniami:</p>
+<ul>
+<li><b>Położenie 0 (na bok)</b>: kąt dla „na bok”.</li>
+<li><b>Położenie 1 (na wprost)</b>: kąt dla „na wprost”.</li>
+<li><b>Prędkość</b>: milisekundy na stopień. 20 ms/&deg; to spokojny, realistyczny ruch; 5 to szybko; 50 to bardzo wolno.</li>
+</ul>
+<h4>Znajdowanie właściwych położeń</h4>
+<ol>
+<li>Przy podłączonej płytce zaznacz <b>Na żywo</b> i powoli przesuwaj suwak <i>Położenie 0</i>. Serwo porusza się razem z nim.
+Zatrzymaj się, gdy iglica zwrotnicy właśnie dotknie opornicy, potem zrób to samo dla <i>Położenie 1</i>. Zapisuje się od razu.</li>
+<li>Albo bez komputera: użyj <b>przycisku konfiguracji</b> i adresu lokomotywy 9999 na sterowniku (zob.
+<i>Pomoc &rarr; Przycisk konfiguracji i ustawianie serw</i>).</li>
+</ol>
+<p><b>Wskazówka:</b> nie dociskaj iglicy zbyt mocno do opornicy: serwo będzie buczeć i się nagrzewać.
+Cofnij się o 2&ndash;3&deg; od punktu, w którym dotyka.</p>
+<h4>Semafor kształtowy: podążanie za detektorem</h4>
+<p>Zaznacz <b>Podąża za detektorem (semafor kształtowy)</b> i wybierz wejście detektora: płytka sama porusza wtedy
+serwem, bez poleceń. Gdy ten odstęp jest zajęty, serwo idzie do <i>Położenie 0 (na bok)</i> = ramię w pozycji
+„stój”; gdy jest wolny – do <i>Położenie 1 (na wprost)</i> = droga wolna. Porusza się z własną prędkością. <b>Zamień: zajęty =
+na wprost</b> odwraca to działanie. Detektorem może być każde używane wejście z pinem, najlepiej wejście typu
+<b>Czujnik (zajętość)</b>; w obszarze roboczym kropkowana linia łączy je z serwem.</p>
+<h4>Warto wiedzieć</h4>
+<ul>
+<li>Po włączeniu zasilania serwa startują <b>jedno po drugim</b>, co pół sekundy, każde do swojego ostatniego położenia.
+To zapobiega dużemu skokowi prądu.</li>
+<li>Jednocześnie porusza się najwyżej 6 serw; pozostałe czekają na swoją kolej.</li>
+<li>Połączenia: brązowy/czarny = GND, czerwony = 5 V (przy kilku serwach z osobnego zasilacza 5 V!), pomarańczowy/żółty = sygnał.</li>
+</ul>

@@ -1,0 +1,14 @@
+<h3>Inngangspinne: hvor knappen er koblet til</h3>
+<p>Velg Arduino-pinnen som knappen, bryteren eller sensoren er koblet til.</p>
+<p><b>Slik kobler du den:</b> den ene ledningen fra knappen til pinnen, den andre ledningen til <b>GND</b> (minus, 0 V).
+Ingen motstand nødvendig: kortet slår på sin egen innebygde "pull-up"-motstand.</p>
+<pre>  pinne D7 ---[ knapp ]--- GND</pre>
+<ul>
+<li>Koble <b>ikke</b> en knapp til 5 V eller 12 V: det kan skade Arduinoen.</li>
+<li><b>D2</b> (DCC-inngang), <b>D13</b> (config-LED) og <b>A7</b> (config-knapp) kan ikke brukes.</li>
+<li><b>A6</b> (bare Arduino Nano) er en ren analog inngang uten pull-up: legg til en 10 k&Omega;-motstand fra pinnen til 5 V.</li>
+<li>Pinner som allerede er i bruk, vises i <b>rødt</b>. Velger du en, tas den fra den andre inngangen eller utgangen, som blir
+<i>ikke i bruk</i>.</li>
+</ul>
+<p>Flere knapper på én analog pinne, eller en sensor? Sett <b>Les som</b> til et av de analoge valgene.</p>
+<p>Bare DCC, ingen knapp? Velg "ikke brukt".</p>

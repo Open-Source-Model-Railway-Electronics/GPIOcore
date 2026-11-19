@@ -1,0 +1,35 @@
+<h2>Actualizar o firmware</h2>
+<p>O <b>firmware</b> é o programa que corre no Arduino da sua placa GPIOcore. Por vezes há uma versão mais recente
+com correcções ou novas funcionalidades. Esta janela coloca-a na sua placa.</p>
+
+<h3>Passo a passo</h3>
+<ol>
+<li><b>Ligue a placa</b> com um cabo USB.</li>
+<li><b>Porta:</b> escolha a placa. Normalmente diz CH340, USB Serial ou Arduino. Não a vê? Verifique o cabo e
+clique em <b>Actualizar</b>.</li>
+<li><b>Ficheiro de firmware:</b> é o ficheiro com o novo programa (termina em <i>.hex</i>). Normalmente o ficheiro certo já
+está preenchido. Se não estiver, clique em <b>Procurar…</b> e escolha <i>GPIOcore.hex</i>.</li>
+<li><b>Tipo de placa:</b> a maioria das placas funciona com <i>Arduino Uno / Nano (bootloader novo)</i>. Placas Nano mais baratas
+ou mais antigas precisam muitas vezes de <i>Arduino Nano (bootloader antigo)</i>. Não tem a certeza? Comece pela primeira: se a placa
+não responder, o programa experimenta a outra sozinho.</li>
+<li>Clique em <b>Gravar</b> e espere até a barra estar cheia. Isto demora cerca de 10 a 30 segundos. <b>Não desligue a
+placa</b> enquanto estiver ocupada.</li>
+</ol>
+
+<h3>Bom saber</h3>
+<ul>
+<li>Este programa liberta a placa durante o carregamento e volta a ligar-se depois. Não tem de fazer nada.</li>
+<li>As suas definições na placa (saídas, entradas, ligações) normalmente mantêm-se. Por segurança, use primeiro
+<b>Ficheiro → Guardar</b>.</li>
+<li>Outros programas que usam a placa, como o monitor série do Arduino IDE, têm de ser fechados primeiro.</li>
+<li>Algo correu mal? Leia a mensagem a vermelho: diz o que experimentar. <b>Mostrar detalhes</b> mostra o relatório completo,
+útil quando pede ajuda a alguém.</li>
+<li>Um carregamento falhado não estraga a placa. Tente simplesmente de novo.</li>
+</ul>
+
+<h3>Através de programador ArduinoISP (avançado)</h3>
+<p>Só para placas sem bootloader USB, ou uma placa que já não responde. Precisa de um segundo Arduino a correr
+o sketch <i>ArduinoISP</i>, ligado aos seis pinos ICSP da sua placa. Escolha a porta desse Arduino
+<i>programador</i>. Isto também define as configurações do chip (fuses) e remove o bootloader USB, por isso depois só pode actualizar
+esta placa com o programador. Também <b>apaga as suas definições</b> na placa: guarde-as primeiro com <b>Ficheiro → Guardar</b>,
+e volte a escrevê-las depois.</p>

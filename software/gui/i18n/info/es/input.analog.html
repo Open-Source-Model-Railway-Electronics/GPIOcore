@@ -1,0 +1,27 @@
+<h3>Entradas analógicas: una escalera de resistencias o un sensor</h3>
+<p>En lugar de un botón a GND, un pin analógico (A0–A6) puede medir una tensión: <b>0 = 0 V, 1023 = 5 V</b>.
+La entrada cuenta como <i>pulsada</i> mientras el valor cumple la condición, y entonces funciona exactamente como un botón
+pulsado: conmutar, absoluto e itinerarios funcionan todos.</p>
+<ul>
+<li><b>Por debajo de un valor</b> — pulsada por debajo del umbral, suelta de nuevo 20 más arriba. Por ejemplo un sensor
+de luz (LDR) que se queda a oscuras, o un solo botón.</li>
+<li><b>Por encima de un valor</b> — pulsada por encima del umbral, suelta de nuevo 20 más abajo.</li>
+<li><b>En un valor</b> — pulsada dentro del umbral &plusmn; 10: un botón de una <b>escalera de resistencias</b>.
+Varias entradas pueden compartir un pin, cada una con su propio valor.</li>
+</ul>
+<p><b>Escalera de resistencias:</b> varios botones en un pin. Una resistencia de 10 k&Omega; de 5 V al pin lo mantiene en 1023
+mientras no se pulsa nada; cada botón une el pin a GND a través de su propia resistencia, así que cada botón da un valor
+distinto.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ botón 1 ]--- GND    unos 0
+                 +--[1k]---[ botón 2 ]--- GND    unos 93
+                 +--[3k3]--[ botón 3 ]--- GND    unos 254
+                 +--[10k]--[ botón 4 ]--- GND    unos 512</pre>
+<p><b>Lea los valores reales:</b> las resistencias tienen tolerancias y los contactos tienen resistencia, así que la práctica
+difiere de la teoría. Conecte la placa, elija la entrada y observe <b>Ahora:</b> mientras mantiene pulsado cada botón;
+<b>Usar este valor</b> lo toma como umbral. Deje al menos unos 40 entre dos botones.</p>
+<ul>
+<li>El umbral se guarda en pasos de 8. La placa lee el pin cada 50 ms y solo reacciona cuando dos lecturas coinciden.</li>
+<li><b>A7</b> es el botón de configuración y no se puede usar; <b>A6</b> solo existe en un Arduino Nano.</li>
+<li>En <b>Simular</b>, haga clic en <i>valor ▾</i> en la entrada para escribir un valor para su pin: todas las entradas de ese pin reaccionan.</li>
+</ul>

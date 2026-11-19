@@ -1,0 +1,36 @@
+<h3>Togvejens trin</h3>
+<p>En togvej er en liste over ting, der skal gøres, fra top til bund. Hver linje (trin) stiller <b>én udgang</b> og
+<b>venter</b> så et øjeblik før det næste trin.</p>
+
+<h4>Hvornår starter togvejen?</h4>
+<p>Når knappen på indgangspinnen <b>trykkes</b>, eller ved en DCC-kommando til indgangens adresse. Vælg hvilken
+DCC-kommando under <b>Togvej starter ved</b>:</p>
+<ul>
+<li><b>enhver kommando</b>: både lige og afvigende starter den;</li>
+<li><b>kun lige</b> eller <b>kun afvigende</b>: så kan to togveje dele én adresse. Eksempel, en overkørsel på
+adresse 1: togvej A på <i>kun afvigende</i> tænder lysene og sænker bommene, togvej B på
+<i>kun lige</i> hæver dem igen.</li>
+</ul>
+<p>En digitalcentral gentager en kommando et par gange; togvejen tager den første.</p>
+
+<h4>Kolonnerne</h4>
+<ul>
+<li><b>Udgang</b>: hvad dette trin styrer.</li>
+<li><b>Værdi</b>: hvad udgangen skal gøre:
+  <ul>
+  <li>sporskifte, lys, relæ: <b>afvigende (0)</b> eller <b>lige (1)</b>;</li>
+  <li>signal med 4 signalbilleder: et <b>signalbillede-nummer</b> (0&ndash;255);</li>
+  <li>servo: afvigende, lige eller en præcis <b>vinkel</b> mellem 10&deg; og 170&deg;;</li>
+  <li>PWM: en lysstyrke- / hastighedsværdi 0&ndash;255.</li>
+  </ul></li>
+<li><b>Vent efter</b>: kun når <i>Egen ventetid for hvert togvejstrin</i> er slået til i printindstillingerne; ellers venter hvert
+trin printets faste tid (0,3 s som standard).</li>
+</ul>
+
+<h4>Sådan laver du en</h4>
+<ol>
+<li>Vælg en udgang i første linje, <i>eller</i> træk en udgang hen på denne indgang.</li>
+<li>Klik på <b>+ Tilføj trin</b> (eller træk igen) for det næste.</li>
+<li>Brug &#9650; &#9660; til at ændre rækkefølgen og <b>skraldespanden</b> til at slette et trin.</li>
+</ol>
+<p>Den samme udgang må forekomme mere end én gang, for eksempel en servo, der først går til 45&deg; og derefter til 135&deg;.</p>

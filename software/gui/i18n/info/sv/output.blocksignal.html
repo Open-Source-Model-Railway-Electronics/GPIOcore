@@ -1,0 +1,38 @@
+<h3>Blocksignal</h3>
+<p><i>Nivån Expert (menyn Visa).</i></p>
+<p>En blocksignal ställer sig själv, utan centralenhet eller dator. Kortet tittar på två
+<b>blockdetektorer</b> (ingångar) var 50:e ms och visar en av tre signalbilder:</p>
+<ul>
+<li><b>Stopp</b> — när detektorn för det egna blocket rapporterar ett tåg (oftast rött),</li>
+<li><b>Vänta stopp</b> — när det egna blocket är fritt men nästa block är belagt (oftast gult),</li>
+<li><b>Kör</b> — när båda blocken är fria (oftast grönt).</li>
+</ul>
+<p>Varje signalbild väljs lampa för lampa med <b>▾</b>, som ett tågvägssteg: varje lampa kan vara släckt, tänd eller blinkande.
+Blinkande lampor blinkar med 1 Hz. Lamporna sitter på pinnarna A–D; bara pinne A krävs, så en signal med två eller tre
+lampor lämnar helt enkelt de andra pinnarna på “används inte”.</p>
+<p>En detektor är vilken ingång som helst som används och har en pinne: helst en ingång av typen <b>Sensor (beläggning)</b>, till exempel en
+strömdetektor, en reedkontakt eller en fotocell (nedtryckt = LOW = belagt), eller ett analogt villkor. En
+detektor får styra flera signaler.</p>
+<p>Signalbilden beräknas bara, den sparas aldrig. Ingångar, tågvägar och DCC-kommandon kan inte ställa en blocksignal, så den
+kan inte väljas som mål i ingångspanelen och en ingång kan inte dras till den.</p>
+
+<h4>Exempel 1: holländska 3-begreppssignaler i rad</h4>
+<p>Lampor: A grön, B gul, C röd. Signal 1 skyddar block 1 (eget block = dess detektor) och tittar på block 2
+(nästa block), signal 2 skyddar block 2 och tittar på block 3, och så vidare. Signalbilder: stopp = C tänd, vänta stopp = B tänd,
+kör = A tänd (standardvärdena). Ett tåg i block 2 ger rött på signal 2, gult på signal 1
+och grönt på signal 3.</p>
+
+<h4>Exempel 2: en huvudsignal utan länkat nästa block</h4>
+<p>Bara rött / grönt: lämna <b>Nästa block</b> på “inget”. Stopp = rött, kör = grönt; signalbilden vänta stopp
+används inte.</p>
+
+<h4>Exempel 3: en försignal</h4>
+<p>En försignal står före en huvudsignal och förvarnar om vad huvudsignalen visar. Gör den till en
+blocksignal vars <b>eget block</b> är detektorn för blocket bakom huvudsignalen längre fram (blocket som den huvudsignalen
+skyddar), nästa block “inget”: belagt = gult (huvudsignalen visar rött), fritt = grönt. Huvudsignalen använder
+samma detektor som sitt eget block, så en detektor styr båda.</p>
+
+<h4>Ett block på nästa kort</h4>
+<p>Detektorn för nästa block får sitta på ett annat kort. Koppla dess signal via en optokopplare till en ingång här, till
+exempel D0 (RX): på kortet fungerar D0 bara när ingen PC är ansluten (5 s efter start utan programmet); i
+simulatorn fungerar den alltid.</p>

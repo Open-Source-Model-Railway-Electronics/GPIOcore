@@ -1,0 +1,59 @@
+<h2>Kom i gang</h2>
+<p>Dette programmet setter opp et <b>GPIOcore-kort</b>: en liten Arduino (Nano eller et DCCnext) som sitter under
+anlegget ditt og kobler ting: sporveksler, lys, signaler, reléer. Du forteller kortet <i>hva</i> som er koblet til
+<i>hvilken</i> pinne, og <i>hva</i> som skal få det til å bevege seg.</p>
+
+<h3>De to typene ting</h3>
+<ul>
+<li><b>Utganger</b> (midten, høyre kolonne) er ting kortet <i>gjør</i>: bevege en servo, gi en sporvekselspole en
+puls, tenne en LED, koble et relé. Det er 16 av dem.</li>
+<li><b>Innganger</b> (midten, venstre kolonne) er ting som <i>ber kortet gjøre noe</i>: en trykknapp på
+kontrollpanelet ditt, eller en kommando fra DCC-sentralen din (digitalsystemet / håndkontrollen din). Det er 16.</li>
+</ul>
+<p>Innstillingene for den valgte inngangen står alltid til <b>venstre</b>, de for den valgte utgangen til
+<b>høyre</b>.</p>
+
+<h3>Tre moduser: de fargede knappene øverst</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Konfigurer</b>: endre ting. Frakoblet, eller tilkoblet (rød ramme): da går hver endring
+<b>med en gang</b> til kortet.</li>
+<li><b style="color:#A16207">&#9679; Simuler</b> (gul ramme): prøv innstillingene dine på et simulert kort, trykk på
+knappene på inngangene og se på utgangene. Ingenting kan endres her.</li>
+<li><b style="color:#15803D">&#9679; Live-test</b> (grønn ramme): kobler til av seg selv; trykk på knappene og se hva det
+ekte kortet gjør. Ingenting kan endres her.</li>
+</ul>
+<p><b>Koble til / Koble fra</b> ved siden av porten viser om et kort er tilkoblet.</p>
+
+<h3>Den raskeste starten</h3>
+<p>Programmet starter med et tomt kort: én inngang (DCC-adresse 1) som kobler én utgang (på D3). Velg en
+ferdig konfigurasjon i listen <b>Preset</b> øverst (for eksempel <i>16 servos</i>) og klikk på <b>Bruk</b>,
+eller start fra et eksempel: <b>Fil &rarr; Åpne eksempel&hellip;</b>.</p>
+
+<h3>Steg for steg</h3>
+<ol>
+<li><b>Koble til.</b> Sett kortet i USB-porten, velg porten øverst (det står som regel CH340, USB Serial
+eller Arduino) og klikk på <b>Koble til</b>. Bruk <b>Les kortet</b> for å hente det som ligger på kortet. Første gang ber programmet om et <b>navn</b> på kortet.</li>
+<li><b>Legg til en utgang.</b> Klikk på <b>+ Legg til utgang</b>, eller klikk på en utgang. Velg <b>typen</b> (for eksempel
+<i>Servo</i>) og <b>pinnen</b> ledningen skal til.</li>
+<li><b>Legg til en inngang.</b> Klikk på <b>+ Legg til inngang</b>, eller klikk på en inngang. Velg hva som utløser den: en <b>knappepinne</b>,
+en <b>DCC-adresse</b> eller begge deler.</li>
+<li><b>Koble dem sammen.</b> Dra utgangen over på inngangen. En farget strek dukker opp: den inngangen styrer nå den
+utgangen. Utgangen får samme farge som inngangen sin.</li>
+<li><b>Prøv det.</b> Klikk på <b>&#9679; Live-test</b> og trykk på knappene på inngangen.</li>
+<li><b>Lagre</b> (Ctrl+S) konfigurasjonen i en fil; programmet lagrer ikke av seg selv.</li>
+</ol>
+
+<h3>Greit å vite</h3>
+<ul>
+<li>Hver <b>(i)</b>-knapp forklarer det som står ved siden av.</li>
+<li>Gi innganger og utganger et <b>navn</b> (feltet øverst i hvert panel). Navn og alle innstillinger lagres på
+denne datamaskinen i <i>Documents\GPIOcore\boards\&lt;kortets navn&gt;.json</i>, én fil per kort.</li>
+<li>En pinne som allerede er i bruk, vises i <b>rødt</b> i pinnelisten. Velger du den likevel, beholder inngangen
+eller utgangen som hadde den, funksjonen sin, men mister den pinnen.</li>
+<li>Ubrukte innganger og utganger er skjult; <b>Vis &rarr; Vis ubrukte innganger og utganger</b> viser alle.</li>
+<li><b>Vis &rarr; Nybegynner / Avansert / Ekspert</b> bestemmer hvor mye programmet tilbyr; det starter på Nybegynner og
+endrer aldri konfigurasjonen din. <b>Vis &rarr; Tema</b> bytter til mørkt.</li>
+<li><b>Fil &rarr; Eksporter&hellip;</b> lagrer noen av utgangene, inngangene eller kortinnstillingene dine i en egen fil (ditt
+eget eksempel); <b>Fil &rarr; Importer&hellip;</b> legger dem til et annet kort, på de samme numrene eller på ledige plasser.</li>
+<li><b>Kort &rarr; Flash fastvare&hellip;</b> legger ny fastvare på Arduinoen.</li>
+</ul>

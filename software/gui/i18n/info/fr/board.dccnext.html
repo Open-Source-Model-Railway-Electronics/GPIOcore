@@ -1,13 +1,19 @@
 <h3>Type de carte</h3>
+<p>Le type de carte détermine quelles broches le programme propose et comment elles s'appellent.</p>
 <ul>
-<li><b>Arduino Uno / Nano</b> : broches D3&ndash;D12 et A0&ndash;A5. Le Nano a aussi <b>A6</b> (entrée analogique seulement).</li>
-<li><b>DCCnext</b> (d'ArCoMoRa) : une carte toute faite avec un Arduino Nano, une entrée DCC et des borniers à vis. Les
-listes de broches affichent alors aussi les <b>numéros de port</b> imprimés sur la carte.</li>
+<li><b>Arduino Nano</b> : broches D3&ndash;D12 et A0&ndash;A5, D0 / D1 à partir du niveau Avancé, et <b>A6</b> (entrée
+analogique seulement).</li>
+<li><b>DCCnext</b> (d'ArCoMoRa) : une carte toute faite avec une entrée DCC et des borniers à vis. Le programme utilise
+partout les <b>numéros de port P1&ndash;P16</b> imprimés sur la carte : dans les listes de broches (&ldquo;P1 (D3)&rdquo;), sur
+le plan de travail et dans les avertissements. Seuls ces 16 ports sont proposés : pas de D0, D1, D2, D13, A6 ni A7.</li>
 <li><b>Jack of all trades</b> : notre propre carte.</li>
 </ul>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Port DCCnext</th><td>1&ndash;10</td><td>11&ndash;16</td></tr>
+<tr><th>Port DCCnext</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Broche Arduino</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p>Sur chaque carte, <b>D2</b> (DCC), <b>D13</b> (LED de config) et <b>A7</b> (bouton de config) sont réservées.
-La variation (PWM) fonctionne sur D3, D5, D6, D9, D10 et D11 (ports DCCnext 1, 3, 4, 7, 8 et 9).</p>
+<p>Sur chaque carte, <b>D2</b> (DCC) et <b>D13</b> (LED de config) sont réservées. Le bouton de config (<b>A7</b>) n'existe
+que sur le Nano : un DCCnext n'a pas de bouton de config.
+La variation (PWM) fonctionne sur D3, D5, D6, D9, D10 et D11 (DCCnext P1, P3, P4, P7, P8 et P9).</p>
+<p>Un fichier créé pour un autre type de carte garde toutes ses broches. Une broche que cette carte n'a pas est affichée
+avec un avertissement, comme toute autre broche inutilisable : choisissez-en une autre.</p>

@@ -1,0 +1,12 @@
+<h3>PWM: fényerő és áttűnés</h3>
+<p>A PWM-kimenet egy izzó vagy LED-szalag fényerejét szabályozza egy PWM-lábon (D3, D5, D6, D9, D10, D11): <b>0</b> = ki,
+<b>255</b> = teljes fényerő. Kb. 20 mA felett használjon tranzisztort vagy MOSFET-modult.</p>
+<ul>
+<li><b>Kitöltési tényező</b> — a fényerő bekapcsolás után, amíg saját értékek, egy vágányút-lépés vagy DCC extended parancs mást nem állít be.</li>
+<li><b>Áttűnési idő</b> — hány másodpercig tart egy teljes változás 0-ról 255-re; egy fél változás feleannyi ideig.
+Az <i>azonnal</i> (0) rögtön kapcsol. Minden új fényerő ezzel az ütemmel tűnik át: saját értékekből, egy
+vágányút-lépésből vagy egy DCC extended parancsból. Bekapcsoláskor a kimenet sötétből tűnik fel.</li>
+</ul>
+<p><b>Példa — nappal és éjszaka:</b> egy abszolút bemenet (kapcsoló vagy DCC-cím) <b>Saját értékek</b> beállítással,
+ki = 0 és be = 255, és 60 s áttűnési idővel. Éjszakára váltva a világítás egy perc alatt elsötétül;
+visszaváltva a nappal ugyanilyen lassan jön vissza.</p>

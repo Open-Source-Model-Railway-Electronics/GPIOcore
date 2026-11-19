@@ -1,0 +1,16 @@
+<h3>Własne wartości: więcej niż wł. i wył.</h3>
+<p>Normalnie wejście typu Przełącz lub Bezwzględny przełącza swoje wyjście na <b>na bok / wył.</b> (0) albo <b>na wprost / wł.</b> (1).
+Z opcją <b>Własne wartości</b> każdy z dwóch stanów wysyła zamiast tego własną wartość, tak jak krok przebiegu:</p>
+<ul>
+<li><b>Serwo</b> — kąt, np. wył. = 45&deg;, wł. = 135&deg; (albo jak zwykle na bok / na wprost).</li>
+<li><b>Semafor 4-komorowy</b> — sygnał dla każdego stanu, wybierany lampa po lampie przez &#9662;.</li>
+<li><b>PWM</b> — jasność dla każdego stanu, np. wył. = 20 (przyciemnione), wł. = 255.</li>
+<li><b>Efekt dźwiękowy</b> — utwór dla każdego stanu; <i>stop</i> (0) zatrzymuje odtwarzanie. Jedno wyjście dźwiękowe
+może odtwarzać wiele utworów, każdy wybierany przez własne wejście.</li>
+<li>Inne wyjścia — na bok lub na wprost dla każdego stanu, na przykład odwrotnie.</li>
+</ul>
+<p><b>Wył. / na bok</b> jest używane, gdy stan wejścia zmienia się na 0 (wejście typu Bezwzględny: przycisk wciśnięty lub
+polecenie DCC „na bok”), <b>Wł. / na wprost</b>, gdy zmienia się na 1. Wejście typu Przełącz używa ich na przemian.</p>
+<p>Obie wartości są zapisywane jako 2 kroki w pamięci przebiegu wejścia, więc wliczają się do łącznej liczby kroków
+przebiegów płytki. Polecenia DCC extended nadal wysyłają własną wartość.</p>
+<p>Połącz wejście z wyjściem dźwiękowym, a własne wartości włączą się same: wył. = stop, wł. = utwór 1.</p>

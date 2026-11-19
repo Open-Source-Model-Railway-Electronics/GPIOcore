@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Z modułem Bluetooth <b>HC-05</b> na płytce możesz ją konfigurować bez kabla USB. Program sam konfiguruje
+moduł przez płytkę (<i>Płytka &gt; Konfiguracja Bluetooth (HC-05)</i>, poziom Zaawansowany lub wyższy).
+Tylko Arduino <b>Nano</b>: do późniejszego łączenia potrzebny jest przycisk konfiguracji.</p>
+<p><b>Połączenia</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> przez dzielnik napięcia: 1 k&Omega; od D1 do RXD, 2 k&Omega; od RXD do GND
+(wejście RXD modułu HC-05 przyjmuje 3,3 V).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> przez <b>diodę Schottky'ego</b> (BAT85 lub 1N5819), <b>katodą (paskiem)
+w stronę TXD modułu HC-05</b>. Dioda pozwala HC-05 ściągać D0 do stanu niskiego, ale nigdy nie walczy z układem USB,
+więc USB działa dalej, gdy HC-05 jest podłączony.</li>
+</ul>
+<p><b>Konfiguracja</b> (jednorazowo):</p>
+<ol>
+<li>Przytrzymaj przycisk na HC-05, podłączając kabel USB. Dioda LED modułu miga teraz <b>wolno</b> (mniej więcej co
+2 sekundy): moduł jest w <b>trybie AT</b>.</li>
+<li>Połącz program z płytką przez USB.</li>
+<li>Wybierz <i>Płytka &gt; Konfiguracja Bluetooth (HC-05)</i> i kliknij <b>Start</b>. Płytka próbuje typowych prędkości
+i ustawia moduł na <b>115200 bodów</b> oraz nazwę <b>GPIOcore-&lt;nazwa płytki&gt;</b>. PIN pozostaje bez zmian.
+Trwa to kilka sekund.</li>
+<li>Odłącz płytkę i podłącz ją ponownie, <b>nie</b> trzymając przycisku.</li>
+<li>W ustawieniach Bluetooth systemu Windows sparuj <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, w niektórych modułach 0000).
+Windows utworzy dla niego port COM (czasem dwa: użyj „wychodzącego”). Wybierz ten port w GPIOcore.</li>
+</ol>
+<p>Jeśli się nie uda: moduł nie jest w trybie AT (szybkie miganie = tryb normalny), połączenia są błędne albo
+brakuje diody lub jest wlutowana odwrotnie. Inne moduły (HC-06, niektóre klony) nie znają tych poleceń.</p>
+<p><b>Łączenie przez Bluetooth</b>: otwarcie portu COM Bluetooth nie resetuje płytki. Gdy nic na płytce nie używa
+D0 ani D1, jej port szeregowy pozostaje otwarty i program po prostu się łączy. Gdy coś ich używa
+(wejście lub wyjście na D0/D1 albo efekt dźwiękowy), płytka zamyka port szeregowy 5 sekund po starcie
+(D0/D1 stają się zwykłymi pinami). Wtedy po kliknięciu <i>Połącz</i> program
+pokazuje <i>„Czekam na płytkę &mdash; krótko naciśnij jej przycisk konfiguracji (Nano)&hellip;”</i>. Naciśnij przycisk
+konfiguracji (A7) <b>krótko</b>: płytka ponownie otwiera port szeregowy na 5 sekund i zgłasza się, a program się łączy.
+Program czeka na to do 30 sekund.</p>
+<p>Gdy program jest połączony, D0 i D1 należą do portu szeregowego: na płytce z HC-05 nie używaj ich do wejść ani
+wyjść.</p>

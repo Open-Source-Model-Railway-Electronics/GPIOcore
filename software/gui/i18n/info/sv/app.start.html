@@ -1,0 +1,59 @@
+<h2>Kom igång</h2>
+<p>Det här programmet ställer in ett <b>GPIOcore-kort</b>: en liten Arduino (Nano, eller ett DCCnext) som sitter under din
+anläggning och manövrerar saker: växlar, belysning, signaler, reläer. Du talar om för kortet <i>vad</i> som är anslutet till
+<i>vilken</i> pinne, och <i>vad</i> som ska få det att röra sig.</p>
+
+<h3>Två sorters saker</h3>
+<ul>
+<li><b>Utgångar</b> (i mitten, högra kolumnen) är saker som kortet <i>gör</i>: flytta ett servo, ge en växelspole en puls,
+tända en lysdiod, slå till ett relä. Det finns 16 stycken.</li>
+<li><b>Ingångar</b> (i mitten, vänstra kolumnen) är saker som <i>säger åt kortet att göra något</i>: en tryckknapp på
+din manöverpanel, eller ett kommando från din DCC-centralenhet (ditt digitalsystem / din handkontroll). Det finns 16.</li>
+</ul>
+<p>Inställningarna för den valda ingången finns alltid till <b>vänster</b>, de för den valda utgången till
+<b>höger</b>.</p>
+
+<h3>Tre lägen: de färgade knapparna högst upp</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Konfigurera</b>: ändra saker. Offline, eller ansluten (röd ram): då går varje ändring
+till kortet <b>direkt</b>.</li>
+<li><b style="color:#A16207">&#9679; Simulera</b> (gul ram): prova dina inställningar på ett låtsaskort, tryck på
+knapparna vid ingångarna och titta på utgångarna. Här kan inget ändras.</li>
+<li><b style="color:#15803D">&#9679; Livetest</b> (grön ram): ansluter av sig självt; tryck på knapparna och se vad det
+riktiga kortet gör. Här kan inget ändras.</li>
+</ul>
+<p><b>Anslut / Koppla från</b> bredvid porten visar om ett kort är anslutet.</p>
+
+<h3>Snabbaste starten</h3>
+<p>Programmet startar med ett tomt kort: en ingång (DCC-adress 1) som manövrerar en utgång (på D3). Välj en
+färdig konfiguration i listan <b>Preset</b> högst upp (till exempel <i>16 servos</i>) och klicka på <b>Tillämpa</b>,
+eller utgå från ett exempel: <b>Arkiv &rarr; Öppna exempel&hellip;</b>.</p>
+
+<h3>Steg för steg</h3>
+<ol>
+<li><b>Anslut.</b> Koppla in kortet i USB-porten, välj dess port högst upp (där står oftast CH340, USB Serial
+eller Arduino) och klicka på <b>Anslut</b>. Använd <b>Läs kortet</b> för att hämta det som finns på det. Första gången ber programmet om ett <b>namn</b> för kortet.</li>
+<li><b>Lägg till en utgång.</b> Klicka på <b>+ Lägg till utgång</b>, eller klicka på en utgång. Välj <b>typ</b> (till exempel
+<i>Servo</i>) och den <b>pinne</b> där tråden ska anslutas.</li>
+<li><b>Lägg till en ingång.</b> Klicka på <b>+ Lägg till ingång</b>, eller klicka på en ingång. Välj vad som startar den: en <b>knapp-pinne</b>,
+en <b>DCC-adress</b>, eller båda.</li>
+<li><b>Koppla ihop dem.</b> Dra utgången till ingången. En färgad linje visas: den ingången manövrerar nu den
+utgången. Utgången får samma färg som sin ingång.</li>
+<li><b>Prova.</b> Klicka på <b>&#9679; Livetest</b> och tryck på knapparna vid ingången.</li>
+<li><b>Spara</b> (Ctrl+S) konfigurationen i en fil; programmet sparar inte av sig självt.</li>
+</ol>
+
+<h3>Bra att veta</h3>
+<ul>
+<li>Varje <b>(i)</b>-knapp förklarar det som står bredvid den.</li>
+<li>Ge ingångar och utgångar ett <b>namn</b> (fältet högst upp i varje panel). Namn och alla inställningar sparas på
+den här datorn i <i>Documents\GPIOcore\boards\&lt;kortnamn&gt;.json</i>, en fil per kort.</li>
+<li>En pinne som redan används visas <b>röd</b> i pinnlistan. Om du väljer den ändå behåller ingången eller utgången som
+hade den sin funktion, men förlorar den pinnen.</li>
+<li>Oanvända ingångar och utgångar är dolda; <b>Visa &rarr; Visa oanvända ingångar och utgångar</b> visar alla.</li>
+<li><b>Visa &rarr; Nybörjare / Avancerad / Expert</b> bestämmer hur mycket programmet erbjuder; det startar på Nybörjare och
+ändrar aldrig din konfiguration. <b>Visa &rarr; Tema</b> byter till mörkt.</li>
+<li><b>Arkiv &rarr; Exportera&hellip;</b> sparar några av dina utgångar, ingångar eller kortinställningar i en egen fil (ditt
+eget exempel); <b>Arkiv &rarr; Importera&hellip;</b> lägger till dem i ett annat kort, på samma nummer eller på lediga platser.</li>
+<li><b>Kort &rarr; Flasha firmware&hellip;</b> lägger ny firmware på Arduinon.</li>
+</ul>

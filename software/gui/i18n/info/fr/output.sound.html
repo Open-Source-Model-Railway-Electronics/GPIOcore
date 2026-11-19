@@ -1,0 +1,23 @@
+<h3>Effet sonore : un lecteur MP3 DFPlayer Mini</h3>
+<p>Cette sortie joue des fichiers MP3 depuis la carte micro SD d'un module DFPlayer Mini : une cloche, un sifflet, une annonce.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  haut-parleur (3 W max.) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>La <b>résistance de 1 k&Omega;</b> sur la ligne TX protège le DFPlayer ; rien ne revient vers l'Arduino.</li>
+<li>Fichiers sur la carte SD : dans un dossier <b>MP3</b>, nommés <b>0001.mp3</b>, <b>0002.mp3</b> … La piste 1 est
+/MP3/0001.mp3. C'est le nom qui compte, pas l'ordre dans lequel vous les copiez. Uniquement MP3, pas de WAV.</li>
+<li><b>L'entrée choisit la piste</b>, une seule sortie son peut donc jouer de nombreux sons : donnez à une entrée en bascule ou
+en absolu des <b>Valeurs personnalisées</b> (une piste pour arrêt et une pour marche), utilisez une étape d'itinéraire, ou envoyez
+une valeur DCC étendue. Piste 0 = arrêt. Sans valeurs personnalisées : marche = piste 1, arrêt = arrêt de la lecture.</li>
+<li>Une entrée que vous reliez à une sortie son reçoit d'elle-même des valeurs personnalisées : arrêt = arrêt de la lecture, marche = piste 1.</li>
+<li>Plusieurs sorties son peuvent utiliser D1 ensemble, mais une seule suffit généralement.</li>
+<li><b>Seulement sans PC :</b> D1 est aussi la ligne USB vers l'ordinateur. Avec la GUI connectée, la carte ne fait que
+signaler la piste (♪ sur le plan). Débranchez le câble USB et alimentez la carte autrement pour l'entendre.</li>
+<li><b>L'écouter sur le PC</b> (à partir du niveau Avancé) : <i>Affichage &gt; Dossier de sons&hellip;</i> choisit un dossier
+contenant les mêmes fichiers que le dossier MP3 de la carte SD (0001.mp3 &hellip;). En Simulation et en Test en direct, le
+programme joue alors la piste que signale la carte ; une nouvelle piste interrompt la précédente, comme le DFPlayer.
+<i>Affichage &gt; Couper les sons</i> le rend muet.</li>
+<li>Pas sur une <b>DCCnext</b> : elle n'a pas de D1 sur ses borniers, ce type n'y est donc pas proposé.</li>
+</ul>

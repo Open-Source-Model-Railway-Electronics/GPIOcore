@@ -1,0 +1,14 @@
+<h3>Piny D0 i D1</h3>
+<p>D0 i D1 to linie, przez które Arduino rozmawia z tym programem przez USB. Nowsze płytki mogą ich mimo to używać
+na makiecie:</p>
+<ul>
+<li>Po starcie płytka czeka <b>5 sekund</b> na ten program.</li>
+<li>Jeśli program się połączy, D0 / D1 pozostają zarezerwowane dla USB podczas konfigurowania. To, co jest na tych
+pinach, <b>nie</b> działa wtedy.</li>
+<li>Jeśli nic się nie połączy (normalna praca na makiecie), D0 / D1 stają się zwykłymi pinami. Gdy na
+D0 / D1 nic nie ma (żadnego wejścia ani wyjścia, żadnego efektu dźwiękowego), pozostają liniami USB: program może
+się połączyć w każdej chwili.</li>
+<li>Krótkie naciśnięcie przycisku konfiguracji (Nano) ponownie zamienia je w linie USB na 5 sekund, więc program
+może się połączyć bez resetu.</li>
+</ul>
+<p>Używaj ich do prostych rzeczy, takich jak diody LED. Unikaj dużych obciążeń na D0: mogą zakłócać wgrywanie nowego firmware.</p>

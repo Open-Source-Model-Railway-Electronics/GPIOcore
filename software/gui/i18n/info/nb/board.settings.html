@@ -1,0 +1,13 @@
+<h3>Kortinnstillinger</h3>
+<ul>
+<li><b>Navn</b>: opptil 16 tegn, lagret på kortet. Programmet finner filen til dette kortet (navn på innganger og
+utganger) ut fra dette navnet, så gi hvert kort sitt eget navn.</li>
+<li><b>Korttype</b>: Arduino Nano, DCCnext eller Jack of all trades. Den bestemmer hvilke pinner som finnes.</li>
+<li><b>Egen ventetid for hvert togveitrinn</b> (nivå Avansert og oppover): av = hvert trinn venter like lenge (stilles inn nedenfor), og togveier bruker halvparten
+så mye minne. På = hvert trinn har sin egen ventetid.</li>
+<li><b>Togveislåsing</b> (nivå Avansert og oppover): hva som skjer når en togvei startes mens en annen fortsatt kjører.
+<i>Av</i> = begge kjører, <i>på</i> = den andre ignoreres, <i>automatisk</i> = togveier som legger om en sporveksel, kjører én
+om gangen, togveier med bare lys kan kjøre samtidig.</li>
+</ul>
+<p>Pinner med en fast oppgave på alle kort: <b>D2</b> (DCC-inngang), <b>D13</b> (config-LED) og <b>A7</b>
+(config-knapp).</p>

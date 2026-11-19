@@ -1,0 +1,19 @@
+<h3>Hjertestykke-polarisering — electrofrog eller unifrog?</h3>
+<p><b>Hjertestykket</b> er det sted i et sporskifte, hvor de to skinner krydser hinanden. På sporskifter med »strømførende hjertestykke« er dette stykke
+af metal og skal have <b>samme polaritet som den indstillede vej</b>. Får det den forkerte, går lokomotiverne i stå eller
+laver kortslutning. Et relæ skifter hjertestykket om, når sporskiftet slår om.</p>
+<p>Se på dit sporskifte, og vælg <b>én</b>:</p>
+<ul>
+<li><b>Ingen (isoleret hjertestykke)</b> — hjertestykket er af plast (Peco <i>Insulfrog</i>, de fleste skinnesystemer med ballast). Intet at gøre.</li>
+<li><b>Electrofrog — 2 relæer</b> (Peco <i>Electrofrog</i> og lignende). Relæ A tændes for
+»lige«, relæ B for »afvigende«. Mens sporskiftet bevæger sig, er <b>begge slukket</b> et øjeblik, så der aldrig opstår
+kortslutning (bryde før slutte).</li>
+<li><b>Unifrog — 1 skifterelæ</b> (Peco <i>Unifrog</i>). Hjertestykket har én ledning. Et skifterelæ forbinder den med den
+rigtige skinne. Med en servo skifter det præcis, når servoen passerer midten; med en spolemotor ved slutningen af
+pulsen.</li>
+</ul>
+<p>Du kan kun bruge én af de to. Vælger du den ene, fjernes den andens pins.</p>
+<p><b>Tilslutning:</b> brug et relæ<i>modul</i> (med transistor og diode) — en Arduino-pin kan ikke drive et nøgent relæ.</p>
+<p><b>Relæer skifter ved LOW (inverteret)</b>: sæt flueben her for relæmoduler, der tænder, når indgangen er LOW
+(mange billige moduler med optokobler). Printet driver så relæ-pinsene omvendt; hvad
+relæerne betyder (lige / afvigende), forbliver det samme.</p>

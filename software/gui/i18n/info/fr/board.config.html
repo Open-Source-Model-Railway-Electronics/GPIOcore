@@ -1,6 +1,8 @@
 <h3>Bouton de config (A7) et apprentissage des servos avec votre régulateur</h3>
 <p>Sans ordinateur, vous pouvez régler les positions de fin de course des servos avec le bouton de config et votre
 régulateur DCC.</p>
+<p><b>Remarque :</b> le bouton de config (A7) n'existe que sur un Arduino <b>Nano</b>. Un DCCnext n'a pas de
+A7, donc pas de bouton de config : réglez plutôt les positions de fin de course des servos dans le programme (ou avec la télécommande sur téléphone).</p>
 <p><b>Câblage :</b> un bouton-poussoir de <b>A7</b> vers <b>GND</b>, plus une résistance de 10 k&Omega; de A7 vers <b>5 V</b>
 (A7 n'a pas de pull-up interne). Une LED avec résistance sur <b>D13</b> indique le mode (la plupart des Arduino en ont déjà une).</p>
 <ol>
@@ -11,9 +13,17 @@ Appuyez encore pour le servo suivant.</li>
   <ul>
   <li>Tournez le <b>bouton de vitesse</b> : le servo sélectionné bouge. Le sens de marche décide de quel côté, le bouton à quelle vitesse.</li>
   <li><b>F1</b> = mémoriser cet angle comme <i>dévié</i>, <b>F2</b> = le mémoriser comme <i>direct</i>.</li>
-  <li><b>F3</b> = faire basculer le servo (pour vérifier), <b>F4</b> = servo suivant.</li>
+  <li><b>F3</b> = faire basculer le servo (pour vérifier), <b>F5</b> = servo suivant.</li>
+  <li><b>F4</b> = inverser les relais du cœur du servo sélectionné, pour les modules relais actifs sur LOW.
+  Chaque appui bascule entre normal et inversé.</li>
   </ul></li>
 <li>Maintenez de nouveau le bouton de config 2 secondes : la LED reste allumée. Retour au fonctionnement normal.</li>
 </ol>
 <p>Les nouvelles positions sont mémorisées tout de suite. Quand vous connectez le programme plus tard, il les relit.</p>
+<p><b>Appui bref hors du mode configuration = mode GUI.</b> 5 secondes après le démarrage, la carte ferme son port série
+si aucun programme ne s'est connecté et que la configuration utilise D0 ou D1 (elles deviennent des broches normales ;
+sinon le port reste ouvert). Un appui <b>bref</b> sur le bouton de config (LED fixe, pas en
+mode configuration) le rouvre pendant 5 secondes et la carte s'annonce, pour que le programme puisse se connecter sans
+reset, par exemple via Bluetooth (voir <i>Aide &gt; Bluetooth (HC-05)</i>). Quand le programme affiche <i>« En attente de
+la carte »</i>, c'est le moment d'appuyer.</p>
 <p>C'est pourquoi <b>D13</b> et <b>A7</b> ne peuvent jamais servir d'entrées ou de sorties.</p>

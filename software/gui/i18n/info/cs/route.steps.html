@@ -1,0 +1,36 @@
+<h3>Kroky jízdní cesty</h3>
+<p>Jízdní cesta je seznam úkonů, shora dolů. Každý řádek (krok) nastaví <b>jeden výstup</b> a pak
+chvíli <b>čeká</b>, než přijde další krok.</p>
+
+<h4>Kdy jízdní cesta startuje?</h4>
+<p>Když se <b>stiskne</b> tlačítko na pinu vstupu, nebo při DCC povelu pro adresu vstupu. Který
+DCC povel, zvolíte v <b>Jízdní cesta startuje při</b>:</p>
+<ul>
+<li><b>jakýkoli povel (přímo i do odbočky)</b>: spustí ji „přímo“ i „do odbočky“;</li>
+<li><b>jen přímo</b> nebo <b>jen do odbočky</b>: dvě jízdní cesty tak mohou sdílet jednu adresu. Příklad: železniční přejezd na
+adrese 1: jízdní cesta A na <i>jen do odbočky</i> zapne světla a zavře závory, jízdní cesta B na
+<i>jen přímo</i> je zase otevře.</li>
+</ul>
+<p>Centrála opakuje povel několikrát; jízdní cesta přijme první.</p>
+
+<h4>Sloupce</h4>
+<ul>
+<li><b>Výstup</b>: co tento krok ovládá.</li>
+<li><b>Hodnota</b>: co má výstup udělat:
+  <ul>
+  <li>výhybka, světlo, relé: <b>do odbočky (0)</b> nebo <b>přímo (1)</b>;</li>
+  <li>návěstidlo se 4 návěstmi: <b>číslo návěsti</b> (0&ndash;255);</li>
+  <li>servo: do odbočky, přímo nebo přesný <b>úhel</b> mezi 10&deg; a 170&deg;;</li>
+  <li>PWM: hodnota jasu / rychlosti 0&ndash;255.</li>
+  </ul></li>
+<li><b>Čekat poté</b>: jen když je v nastavení desky zapnuta <i>Vlastní čekací doba pro každý krok jízdní cesty</i>; jinak každý
+krok čeká pevnou dobu desky (výchozí 0,3 s).</li>
+</ul>
+
+<h4>Jak ji vytvořit</h4>
+<ol>
+<li>V prvním řádku zvolte výstup, <i>nebo</i> přetáhněte výstup na tento vstup.</li>
+<li>Klikněte na <b>+ Přidat krok</b> (nebo znovu přetáhněte) pro další krok.</li>
+<li>Pomocí &#9650; &#9660; změníte pořadí, <b>košem</b> krok smažete.</li>
+</ol>
+<p>Stejný výstup se může objevit víckrát, například servo, které jede nejdřív na 45&deg; a pak na 135&deg;.</p>

@@ -1,0 +1,19 @@
+<h3>Polaryzacja sercówki — electrofrog czy unifrog?</h3>
+<p><b>Sercówka</b> to miejsce zwrotnicy, w którym krzyżują się dwie szyny. W zwrotnicach z „zasilaną sercówką” ten
+element jest metalowy i musi mieć <b>tę samą polaryzację co ustawiony kierunek jazdy</b>. Jeśli dostanie niewłaściwą,
+lokomotywy stają albo powstaje zwarcie. Przekaźnik przełącza sercówkę, gdy zwrotnica się przestawia.</p>
+<p>Obejrzyj swoją zwrotnicę i wybierz <b>jedną</b> opcję:</p>
+<ul>
+<li><b>Brak (sercówka izolowana)</b> — sercówka jest plastikowa (Peco <i>Insulfrog</i>, większość torów z zestawów startowych). Nic nie trzeba robić.</li>
+<li><b>Electrofrog — 2 przekaźniki</b> (Peco <i>Electrofrog</i> i podobne). Przekaźnik A jest włączany dla
+„na wprost”, przekaźnik B dla „na bok”. Podczas przestawiania zwrotnicy <b>oba są na chwilę wyłączone</b>, więc nigdy
+nie ma zwarcia (najpierw rozłącz, potem załącz).</li>
+<li><b>Unifrog — 1 przekaźnik przełączny</b> (Peco <i>Unifrog</i>). Sercówka ma jeden przewód. Jeden przekaźnik przełączny
+łączy go z właściwą szyną. Z serwem przełącza dokładnie wtedy, gdy serwo mija środek; z napędem elektromagnetycznym na
+końcu impulsu.</li>
+</ul>
+<p>Można użyć tylko jednej z dwóch opcji. Wybranie jednej usuwa piny drugiej.</p>
+<p><b>Podłączenie:</b> użyj <i>modułu</i> przekaźnika (z tranzystorem i diodą) — pin Arduino nie wysteruje samego przekaźnika.</p>
+<p><b>Przekaźniki załączane stanem LOW (odwrócone)</b>: zaznacz to dla modułów przekaźników, które załączają się, gdy
+wejście jest w stanie LOW (wiele tanich modułów z transoptorem). Płytka steruje wtedy pinami przekaźników odwrotnie;
+znaczenie przekaźników (na wprost / na bok) pozostaje takie samo.</p>

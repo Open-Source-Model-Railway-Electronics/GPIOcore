@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Con un módulo Bluetooth <b>HC-05</b> en la placa puede configurarla sin cable USB. El programa configura el
+módulo por usted a través de la placa (<i>Placa &gt; Configurar Bluetooth (HC-05)</i>, nivel Avanzado o superior).
+Solo Arduino <b>Nano</b>: necesita el botón de configuración para conectarse después.</p>
+<p><b>Cableado</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> a través de un divisor de tensión: 1 k&Omega; de D1 a RXD, 2 k&Omega; de RXD a GND
+(el HC-05 admite 3,3 V en su RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> a través de un <b>diodo Schottky</b> (BAT85 o 1N5819), con el <b>cátodo (la franja)
+en el TXD del HC-05</b>. El diodo deja que el HC-05 ponga D0 a nivel bajo pero nunca se enfrenta al chip USB, así que el
+USB sigue funcionando mientras el HC-05 está conectado.</li>
+</ul>
+<p><b>Configuración</b> (una sola vez):</p>
+<ol>
+<li>Mantenga pulsado el botón del HC-05 mientras conecta el cable USB. Su LED parpadea ahora <b>despacio</b> (más o menos
+cada 2 segundos): el módulo está en <b>modo AT</b>.</li>
+<li>Conecte el programa a la placa por USB.</li>
+<li>Elija <i>Placa &gt; Configurar Bluetooth (HC-05)</i> y haga clic en <b>Iniciar</b>. La placa prueba las velocidades
+habituales y ajusta el módulo a <b>115200 baudios</b> y al nombre <b>GPIOcore-&lt;nombre de la placa&gt;</b>. El PIN no cambia.
+Tarda unos segundos.</li>
+<li>Desconecte la placa y vuelva a conectarla, <b>sin</b> mantener pulsado el botón.</li>
+<li>En la configuración Bluetooth de Windows, empareje <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, o 0000 en algunos módulos).
+Windows crea un puerto COM para él (a veces dos: use el "saliente"). Elija ese puerto en GPIOcore.</li>
+</ol>
+<p>Si falla: el módulo no está en modo AT (parpadeo rápido = modo normal), el cableado está mal, o el diodo falta o está
+al revés. Otros módulos (HC-06, algunos clones) no conocen estos comandos.</p>
+<p><b>Conectar por Bluetooth</b>: abrir el puerto COM de Bluetooth no reinicia la placa. Si nada en la placa usa D0 ni D1,
+su puerto serie sigue abierto y el programa simplemente se conecta. Si algo los usa (una entrada o salida en D0/D1, o un
+efecto de sonido), la placa cierra su puerto serie 5 segundos después del arranque (D0/D1 pasan a ser pines normales).
+Entonces, al hacer clic en <i>Conectar</i>, el programa
+muestra <i>"Esperando la placa &mdash; pulse brevemente su botón de configuración"</i>. Pulse <b>brevemente</b> el botón de
+configuración (A7): la placa vuelve a abrir su puerto serie durante 5 segundos y se anuncia, y el programa se conecta.
+El programa espera hasta 30 segundos.</p>
+<p>Mientras el programa está conectado, D0 y D1 pertenecen al puerto serie: no los use para entradas ni salidas en una
+placa con un HC-05.</p>

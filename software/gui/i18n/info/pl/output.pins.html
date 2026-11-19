@@ -1,0 +1,14 @@
+<h3>Piny: dokąd idą przewody</h3>
+<p>Wybierz pin(y) Arduino dla tego wyjścia. Nazwy pinów są nadrukowane na płytce: <b>D3 &hellip; D12</b> i
+<b>A0 &hellip; A5</b>.</p>
+<ul>
+<li>Zajęte piny są <b>czerwone</b>, z informacją, kto ich używa („zajęty: Wyj. 3”). Jeśli mimo to wybierzesz taki pin,
+to drugie wejście lub wyjście staje się <i>nieużywane</i>.</li>
+<li><b>D2</b> to wejście DCC, <b>D13</b> LED konfiguracji, a <b>A7</b> przycisk konfiguracji: nigdy nie są dostępne.
+<b>D0 / D1</b> to połączenie USB; działają jako wejścia/wyjścia tylko wtedy, gdy nie jest podłączony komputer.</li>
+<li>Piny <b>~PWM</b> (D3, D5, D6, D9, D10, D11) mogą ściemniać. Efekty świetlne wymagają jednego z nich.
+Gdy używane jest jakiekolwiek serwo, D9 i D10 <i>nie</i> mogą ściemniać.</li>
+<li>Na płytce <b>DCCnext</b> lista pokazuje też numer portu nadrukowany na tej płytce.</li>
+</ul>
+<p>Pin Arduino daje tylko mały prąd (maks. 20 mA). Wystarczy na jedną diodę LED z rezystorem albo przewód sygnałowy
+serwa. Dla przekaźników, cewek i żarówek wstaw pomiędzy moduł sterownika lub moduł przekaźnika.</p>

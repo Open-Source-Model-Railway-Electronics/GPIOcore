@@ -1,0 +1,41 @@
+<h3>Konfigurer, Simuler og Live-test</h3>
+<p>Programmet er alltid i én av tre moduser: de fargede knappene øverst. Tilkoblingen er en egen sak:
+<b>Koble til / Koble fra</b> ved siden av porten, med tilstanden vist ved siden av (Frakoblet, Tilkoblet: <i>navn</i>,
+Simulering).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Modus</th><th>Ramme</th><th>Hva du kan gjøre</th></tr>
+<tr><td><b>&#9679; Konfigurer</b></td><td>ingen når frakoblet, <span style="color:#DC2626">rød</span> når tilkoblet</td><td>Endre
+alt. Frakoblet forbereder du et kort; tilkoblet går hver endring til kortet med en gang. Ingenting leses automatisk fra
+kortet: bruk <b>Les kortet</b> eller <b>Skriv alt</b>.</td></tr>
+<tr><td><b>&#9679; Simuler</b></td><td style="color:#A16207">gul</td><td>Konfigurasjonen din kjører på et simulert kort.
+Trykk på knappene på inngangene og se; ingenting kan endres.</td></tr>
+<tr><td><b>&#9679; Live-test</b></td><td><span style="color:#15803D">grønn</span> når tilkoblet</td><td>Kobler til av
+seg selv. Trykk på knappene på inngangene og se hva det ekte kortet gjør; ingenting kan endres. Hvis kortet har
+et annet navn enn skjermen, tilbyr programmet å lese kortet først.</td></tr>
+</table>
+<p>Ingenting lagres i en fil av seg selv: <b>Lagre</b> (Ctrl+S) spør alltid hvor, og når du lukker programmet, spør det
+om endringer som ikke er lagret.</p>
+
+<h4>Knappene på inngangene</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absolutt-innganger): &#9664; = avvikende / av, &#9654; = rett / på.</li>
+<li><b>&#9654; trykk</b> (veksle) og <b>&#9654; start</b> (togvei): som å trykke på knappen eller sende en DCC-kommando.</li>
+<li><b>signalbilde &#9662; / verdi &#9662;</b>: for en inngang som styrer et signal eller en PWM-utgang. Velg per lampe av, på,
+blinkende eller blinkende i motfase.</li>
+</ul>
+<p>En knapp virker som en DCC-kommando: et nytt klikk innen et halvt sekund ignoreres, akkurat som en gjentatt pakke
+fra en sentral.</p>
+<p>I <b>Simuler</b> virker en inngang med en pinne (ikke analog) på den pinnen, som den ekte knappen eller bryteren:
+<b>&#9654; trykk</b> / <b>&#9654; start</b> trekker pinnen lav og slipper den igjen, &#9664; holder pinnen til en absolutt-inngang
+lav og &#9654; høy (siden som holdes, er uthevet). Så alt som leser pinnen, reagerer også, for eksempel
+en servo som følger inngangen som beleggsmelder. Innganger uten pinne virker som en DCC-kommando.</p>
+
+<h4>Hva utgangene viser</h4>
+<ul>
+<li><b>Blå prikk</b> = rett / på, <b>rød prikk</b> = avvikende / av, grå = ikke kjent ennå.</li>
+<li><b>Servo</b>: en skive med vinkelen; den dreier grad for grad etter hvert som kortet melder den.</li>
+<li><b>Signal</b>: fire lamper i sine farger, som blinker som på kortet.</li>
+<li><b>Hjertestykkereléer</b>: en liten relétegning. Armen og hjertestykket viser hvilken kontakt som er strømførende (rød = avvikende,
+blå = rett). Et electrofrog er grått (strømløst) mens sporvekselen beveger seg; et unifrog bytter med en gang.</li>
+</ul>
+<p>Ingenting trenger å være koblet til kortet for en live-test: du ser hva kortet <i>ville</i> koblet.</p>

@@ -1,0 +1,23 @@
+<h3>Effetto sonoro: un lettore MP3 DFPlayer Mini</h3>
+<p>Questa uscita riproduce file MP3 dalla scheda micro SD in un modulo DFPlayer Mini: una campana, un fischio, un annuncio.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  altoparlante (max. 3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li>La <b>resistenza da 1 k&Omega;</b> sulla linea TX protegge il DFPlayer; non torna niente verso l'Arduino.</li>
+<li>File sulla scheda SD: in una cartella <b>MP3</b>, con i nomi <b>0001.mp3</b>, <b>0002.mp3</b> … La traccia 1 è
+/MP3/0001.mp3. Conta il nome, non l'ordine in cui li copi. Solo MP3, niente WAV.</li>
+<li><b>L'ingresso sceglie la traccia</b>, quindi un'uscita sonora può riprodurre molti suoni: dai a un ingresso commuta o
+assoluto dei <b>Valori personalizzati</b> (una traccia per spento e una per acceso), usa un passo di itinerario o invia un
+valore DCC esteso. Traccia 0 = stop. Senza valori personalizzati: acceso = traccia 1, spento = stop.</li>
+<li>Un ingresso che colleghi a un'uscita sonora riceve da solo dei valori personalizzati: spento = stop, acceso = traccia 1.</li>
+<li>Più uscite sonore possono usare D1 insieme, ma di solito ne basta una.</li>
+<li><b>Solo senza PC:</b> D1 è anche la linea USB verso il computer. Con la GUI collegata la scheda riporta soltanto
+la traccia (♪ nell'area di lavoro). Scollega il cavo USB e alimenta la scheda in un altro modo per sentirla.</li>
+<li><b>Ascoltarla sul PC</b> (dal livello Avanzato in su): <i>Visualizza &gt; Cartella dei suoni&hellip;</i> sceglie una cartella
+con gli stessi file della cartella MP3 sulla scheda SD (0001.mp3 &hellip;). In Simula e Test dal vivo il
+programma riproduce allora la traccia che la scheda riporta; una nuova traccia interrompe la precedente, come il DFPlayer.
+<i>Visualizza &gt; Disattiva i suoni</i> la silenzia.</li>
+<li>Non su una <b>DCCnext</b>: non ha D1 sui suoi morsetti, quindi questo tipo lì non viene offerto.</li>
+</ul>

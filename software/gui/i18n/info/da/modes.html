@@ -1,0 +1,41 @@
+<h3>Konfigurer, Simulér og Live-test</h3>
+<p>Programmet er altid i en af tre tilstande: de farvede knapper øverst. Forbindelsen er noget for sig:
+<b>Forbind / Afbryd</b> ved siden af porten, med tilstanden vist ved siden af (Offline, Forbundet: <i>navn</i>,
+Simulering).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Tilstand</th><th>Ramme</th><th>Hvad du kan gøre</th></tr>
+<tr><td><b>&#9679; Konfigurer</b></td><td>ingen offline, <span style="color:#DC2626">rød</span> når forbundet</td><td>Ændre
+alt. Offline forbereder du et print; forbundet går hver ændring straks til printet. Intet læses automatisk fra
+printet: brug <b>Læs print</b> eller <b>Skriv alt</b>.</td></tr>
+<tr><td><b>&#9679; Simulér</b></td><td style="color:#A16207">gul</td><td>Din konfiguration kører på et simuleret print.
+Tryk på indgangenes knapper, og se; intet kan ændres.</td></tr>
+<tr><td><b>&#9679; Live-test</b></td><td><span style="color:#15803D">grøn</span> når forbundet</td><td>Forbinder af
+sig selv. Tryk på indgangenes knapper, og se, hvad det rigtige print gør; intet kan ændres. Hvis printet har
+et andet navn end skærmen, tilbyder programmet først at læse printet.</td></tr>
+</table>
+<p>Intet gemmes i en fil af sig selv: <b>Gem</b> (Ctrl+S) spørger altid hvor, og når programmet lukkes, spørger det
+om ikke-gemte ændringer.</p>
+
+<h4>Indgangenes knapper</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absolut-indgange): &#9664; = afvigende / fra, &#9654; = lige / til.</li>
+<li><b>&#9654; tryk</b> (skift) og <b>&#9654; start</b> (togvej): som at trykke på knappen eller sende en DCC-kommando.</li>
+<li><b>signalbillede &#9662; / værdi &#9662;</b>: til en indgang, der styrer et signal eller en PWM-udgang. Vælg pr. lampe fra, til,
+blinkende eller blinkende i modfase.</li>
+</ul>
+<p>En knap virker som en DCC-kommando: et nyt klik inden for et halvt sekund ignoreres, ligesom en gentaget pakke
+fra en digitalcentral.</p>
+<p>I <b>Simulér</b> virker en indgang med en pin (ikke analog) på den pin, ligesom den rigtige knap eller kontakt:
+<b>&#9654; tryk</b> / <b>&#9654; start</b> trækker pinnen lav og slipper den igen, &#9664; holder pinnen på en absolut-indgang
+lav og &#9654; høj (den holdte side er fremhævet). Så alt, der læser pinnen, reagerer også, for eksempel
+en servo, der følger indgangen som besat-melder. Indgange uden pin virker som en DCC-kommando.</p>
+
+<h4>Hvad udgangene viser</h4>
+<ul>
+<li><b>Blå prik</b> = lige / til, <b>rød prik</b> = afvigende / fra, grå = endnu ukendt.</li>
+<li><b>Servo</b>: en skive med vinklen; den drejer grad for grad, efterhånden som printet melder den.</li>
+<li><b>Signal</b>: fire lamper i deres farver, der blinker som på printet.</li>
+<li><b>Hjertestykke-relæer</b>: en lille relætegning. Armen og hjertestykket viser, hvilken kontakt der er strømførende (rød = afvigende,
+blå = lige). Et electrofrog er gråt (strømløst), mens sporskiftet bevæger sig; et unifrog skifter med det samme.</li>
+</ul>
+<p>Der behøver ikke være noget tilsluttet printet til en live-test: du ser, hvad printet <i>ville</i> skifte.</p>

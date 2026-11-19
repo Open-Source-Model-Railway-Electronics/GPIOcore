@@ -1,0 +1,14 @@
+<h3>Piny: kam vedou vodiče</h3>
+<p>Zvolte pin(y) Arduina pro tento výstup. Názvy pinů jsou natištěné na desce: <b>D3 &hellip; D12</b> a
+<b>A0 &hellip; A5</b>.</p>
+<ul>
+<li>Používané piny jsou <b>červené</b> s informací, kdo je používá („obsazeno: Výst. 3“). Pokud některý přesto zvolíte,
+ten druhý vstup nebo výstup se stane <i>nepoužitým</i>.</li>
+<li><b>D2</b> je DCC vstup, <b>D13</b> LED konfigurace a <b>A7</b> tlačítko konfigurace: nikdy nejsou k dispozici.
+<b>D0 / D1</b> jsou USB připojení; jako vstupy/výstupy fungují jen tehdy, když není připojen počítač.</li>
+<li>Piny <b>~PWM</b> (D3, D5, D6, D9, D10, D11) umějí stmívat. Světelné efekty potřebují jeden z nich.
+Dokud se používá jakékoli servo, D9 a D10 stmívat <i>nemohou</i>.</li>
+<li>U desky <b>DCCnext</b> seznam ukazuje i číslo portu natištěné na této desce.</li>
+</ul>
+<p>Pin Arduina dává jen malý proud (max. 20 mA). Stačí pro jednu LED s rezistorem nebo signální vodič
+serva. Pro relé, cívky a žárovky zapojte mezi ně budič nebo reléový modul.</p>

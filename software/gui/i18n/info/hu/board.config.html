@@ -1,0 +1,28 @@
+<h3>Konfiggomb (A7) és szervók betanítása a kézi szabályzóval</h3>
+<p>Számítógép nélkül is beállíthatja a szervók véghelyzeteit a konfiggombbal és a DCC kézi szabályzóval.</p>
+<p><b>Megjegyzés:</b> a konfiggomb (A7) csak Arduino <b>Nano</b> esetén létezik. A DCCnext-nek nincs
+A7 lába, így konfiggombja sincs: ott a szervók véghelyzeteit a programban (vagy a telefonos távvezérléssel) állítsa be.</p>
+<p><b>Bekötés:</b> egy nyomógomb az <b>A7</b> és a <b>GND</b> közé, valamint egy 10 k&Omega;-os ellenállás az A7 és az <b>5 V</b> közé
+(az A7-nek nincs beépített felhúzó ellenállása). Egy LED ellenállással a <b>D13</b>-on mutatja a módot (a legtöbb Arduinón már van ilyen).</p>
+<ol>
+<li>Tartsa nyomva a konfiggombot <b>2 másodpercig</b>: a LED villogni kezd. Konfig módban van.</li>
+<li>Nyomja meg <b>röviden</b>: kiválasztódik a következő szervó, és átáll, így látja, melyik az. Nyomja meg újra
+a következő szervóhoz.</li>
+<li>A kézi szabályzón válassza ki a <b>9999-es mozdonycímet</b>.
+  <ul>
+  <li>Forgassa a <b>sebességszabályzó gombot</b>: a kiválasztott szervó mozog. Az irányváltó gomb határozza meg az irányt, a forgatógomb a sebességet.</li>
+  <li><b>F1</b> = ez a szög tárolása <i>kitérő irányként</i>, <b>F2</b> = tárolás <i>egyenesként</i>.</li>
+  <li><b>F3</b> = a szervó átállítása (ellenőrzéshez), <b>F5</b> = következő szervó.</li>
+  <li><b>F4</b> = a kiválasztott szervó szívreléinek megfordítása, LOW jelre kapcsoló relémodulokhoz.
+  Minden megnyomás vált a normál és a fordított között.</li>
+  </ul></li>
+<li>Tartsa nyomva újra a konfiggombot 2 másodpercig: a LED folyamatosan világít. Vissza normál módba.</li>
+</ol>
+<p>Az új helyzetek azonnal tárolódnak. Ha később csatlakoztatja a programot, visszaolvassa őket.</p>
+<p><b>Rövid megnyomás konfig módon kívül = GUI mód.</b> Az indulás után 5 másodperccel a panel bezárja a soros portját,
+ha nem csatlakozott program, és a konfiguráció használja a D0-t vagy a D1-et (ezek normál lábbá válnak; különben a port
+nyitva marad). A konfiggomb <b>rövid</b> megnyomása (a LED folyamatosan világít, nem
+konfig módban) 5 másodpercre újra megnyitja, és a panel jelentkezik, így a program újraindítás nélkül
+csatlakozhat, például Bluetooth-on (lásd <i>Súgó &gt; Bluetooth (HC-05)</i>). Amikor a program kiírja: <i>"Várakozás
+a panelre"</i>, akkor kell megnyomni.</p>
+<p>Emiatt a <b>D13</b> és az <b>A7</b> soha nem használható bemenetekhez vagy kimenetekhez.</p>

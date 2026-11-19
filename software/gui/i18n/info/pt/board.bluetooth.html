@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Com um módulo Bluetooth <b>HC-05</b> na placa pode configurá-la sem cabo USB. O programa configura o
+módulo por si através da placa (<i>Placa &gt; Configurar Bluetooth (HC-05)</i>, nível Avançado ou superior).
+Só no Arduino <b>Nano</b>: mais tarde precisa do botão de configuração para ligar.</p>
+<p><b>Ligações</b> (HC-05 &rarr; Nano):</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> através de um divisor de tensão: 1 k&Omega; de D1 a RXD, 2 k&Omega; de RXD a GND
+(o HC-05 aceita 3,3 V no seu RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> através de um <b>díodo Schottky</b> (BAT85 ou 1N5819), com o <b>cátodo (a risca)
+no TXD do HC-05</b>. O díodo deixa o HC-05 pôr D0 em nível baixo, mas nunca entra em conflito com o chip USB, por isso o USB
+continua a funcionar com o HC-05 ligado.</li>
+</ul>
+<p><b>Configuração</b> (uma vez):</p>
+<ol>
+<li>Mantenha premido o botão do HC-05 enquanto liga o cabo USB. O seu LED pisca agora <b>devagar</b> (cerca de
+2 em 2 segundos): o módulo está em <b>modo AT</b>.</li>
+<li>Ligue o programa à placa por USB.</li>
+<li>Escolha <i>Placa &gt; Configurar Bluetooth (HC-05)</i> e clique em <b>Iniciar</b>. A placa experimenta as velocidades habituais e
+define o módulo para <b>115200 baud</b> e o nome <b>GPIOcore-&lt;nome da placa&gt;</b>. O PIN fica como está.
+Isto demora alguns segundos.</li>
+<li>Desligue a placa e volte a ligá-la, <b>sem</b> premir o botão.</li>
+<li>Nas definições de Bluetooth do Windows emparelhe o <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, ou 0000 em alguns módulos).
+O Windows cria uma porta COM para ele (por vezes duas: use a de "saída"). Escolha essa porta no GPIOcore.</li>
+</ol>
+<p>Se falhar: o módulo não está em modo AT (piscar rápido = modo normal), as ligações estão erradas, ou o díodo
+falta ou está ao contrário. Outros módulos (HC-06, alguns clones) não conhecem estes comandos.</p>
+<p><b>Ligar por Bluetooth</b>: abrir a porta COM Bluetooth não reinicia a placa. Quando nada na
+placa usa D0 ou D1, a sua porta série fica aberta e o programa liga-se simplesmente. Quando algo os usa
+(uma entrada ou saída em D0/D1, ou um efeito sonoro), a placa fecha a sua porta série 5 segundos após o arranque
+(D0/D1 passam a ser pinos normais). Então, quando clica em <i>Ligar</i>, o programa
+mostra <i>"A aguardar a placa &mdash; prima brevemente o seu botão de configuração"</i>. Prima o botão de configuração (A7)
+<b>brevemente</b>: a placa volta a abrir a sua porta série durante 5 segundos e anuncia-se, e o programa liga-se.
+O programa espera até 30 segundos por isso.</p>
+<p>Enquanto o programa está ligado, D0 e D1 pertencem à porta série: não os use para entradas ou saídas numa
+placa com um HC-05.</p>

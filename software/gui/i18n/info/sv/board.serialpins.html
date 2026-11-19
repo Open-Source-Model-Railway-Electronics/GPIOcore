@@ -1,0 +1,13 @@
+<h3>Pinnarna D0 och D1</h3>
+<p>D0 och D1 är ledningarna som Arduinon använder för att prata med det här programmet via USB. Nyare kort kan ändå använda dem för
+din anläggning:</p>
+<ul>
+<li>När kortet startar väntar det <b>5 sekunder</b> på det här programmet.</li>
+<li>Om programmet ansluter förblir D0 / D1 reserverade för USB medan du konfigurerar. Saker på de pinnarna fungerar
+då <b>inte</b>.</li>
+<li>Om inget ansluter (normal drift på anläggningen) blir D0 / D1 vanliga pinnar. När inget sitter på
+D0 / D1 (ingen ingång eller utgång, ingen ljudeffekt) förblir de USB-ledningar: programmet kan ansluta när som helst.</li>
+<li>Ett kort tryck på config-knappen (Nano) gör dem till USB-ledningar igen i 5 sekunder, så att programmet kan
+ansluta utan återställning.</li>
+</ul>
+<p>Använd dem för enkla saker som lysdioder. Undvik tung last på D0: den kan störa uppladdning av ny firmware.</p>

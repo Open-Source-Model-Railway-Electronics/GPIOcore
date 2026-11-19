@@ -1,0 +1,59 @@
+<h2>Kom godt i gang</h2>
+<p>Dette program sætter et <b>GPIOcore-print</b> op: en lille Arduino (Nano eller et DCCnext), der sidder under dit
+anlæg og skifter ting: sporskifter, lys, signaler, relæer. Du fortæller printet, <i>hvad</i> der er tilsluttet
+<i>hvilken</i> pin, og <i>hvad</i> der skal få det til at bevæge sig.</p>
+
+<h3>De to slags ting</h3>
+<ul>
+<li><b>Udgange</b> (midten, højre kolonne) er ting, som printet <i>gør</i>: flytte en servo, give en sporskiftespole en
+puls, tænde en LED, skifte et relæ. Der er 16 af dem.</li>
+<li><b>Indgange</b> (midten, venstre kolonne) er ting, der <i>beder printet om at gøre noget</i>: en trykknap på
+dit kontrolpanel eller en kommando fra din DCC-digitalcentral (dit digitalsystem / din håndkontrol). Der er 16.</li>
+</ul>
+<p>Indstillingerne for den valgte indgang står altid til <b>venstre</b>, dem for den valgte udgang til
+<b>højre</b>.</p>
+
+<h3>Tre tilstande: de farvede knapper øverst</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Konfigurer</b>: ændr ting. Offline eller forbundet (rød ramme): så går hver ændring
+<b>med det samme</b> til printet.</li>
+<li><b style="color:#A16207">&#9679; Simulér</b> (gul ramme): prøv dine indstillinger på et simuleret print, tryk på
+knapperne ved indgangene, og se på udgangene. Her kan intet ændres.</li>
+<li><b style="color:#15803D">&#9679; Live-test</b> (grøn ramme): forbinder af sig selv; tryk på knapperne, og se, hvad det
+rigtige print gør. Her kan intet ændres.</li>
+</ul>
+<p><b>Forbind / Afbryd</b> ved siden af porten viser, om et print er forbundet.</p>
+
+<h3>Den hurtigste start</h3>
+<p>Programmet starter med et tomt print: én indgang (DCC-adresse 1), der skifter én udgang (på D3). Vælg en
+færdig konfiguration i listen <b>Preset</b> øverst (for eksempel <i>16 servos</i>), og klik på <b>Anvend</b>,
+eller start fra et eksempel: <b>Filer &rarr; Åbn eksempel&hellip;</b>.</p>
+
+<h3>Trin for trin</h3>
+<ol>
+<li><b>Forbind.</b> Sæt printet i USB-porten, vælg dets port øverst (der står som regel CH340, USB Serial
+eller Arduino), og klik på <b>Forbind</b>. Brug <b>Læs print</b> til at hente det, der ligger på printet. Første gang beder programmet om et <b>navn</b> til printet.</li>
+<li><b>Tilføj en udgang.</b> Klik på <b>+ Tilføj udgang</b>, eller klik på en udgang. Vælg <b>typen</b> (for eksempel
+<i>Servo</i>) og den <b>pin</b>, ledningen skal til.</li>
+<li><b>Tilføj en indgang.</b> Klik på <b>+ Tilføj indgang</b>, eller klik på en indgang. Vælg, hvad der udløser den: en <b>knap-pin</b>,
+en <b>DCC-adresse</b> eller begge dele.</li>
+<li><b>Forbind dem.</b> Træk udgangen hen på indgangen. Der kommer en farvet streg: den indgang styrer nu den
+udgang. Udgangen får samme farve som sin indgang.</li>
+<li><b>Prøv det.</b> Klik på <b>&#9679; Live-test</b>, og tryk på knapperne ved indgangen.</li>
+<li><b>Gem</b> (Ctrl+S) konfigurationen i en fil; programmet gemmer ikke af sig selv.</li>
+</ol>
+
+<h3>Godt at vide</h3>
+<ul>
+<li>Hver <b>(i)</b>-knap forklarer det, der står ved siden af.</li>
+<li>Giv indgange og udgange et <b>navn</b> (feltet øverst i hvert panel). Navne og alle indstillinger gemmes på
+denne computer i <i>Documents\GPIOcore\boards\&lt;printets navn&gt;.json</i>, én fil pr. print.</li>
+<li>En pin, der allerede er i brug, vises med <b>rødt</b> i pinlisten. Vælger du den alligevel, beholder den indgang
+eller udgang, der havde den, sin funktion, men mister den pin.</li>
+<li>Ubrugte indgange og udgange er skjult; <b>Vis &rarr; Vis ubrugte indgange og udgange</b> viser dem alle.</li>
+<li><b>Vis &rarr; Begynder / Avanceret / Ekspert</b> bestemmer, hvor meget programmet tilbyder; det starter på Begynder og
+ændrer aldrig din konfiguration. <b>Vis &rarr; Tema</b> skifter til mørkt.</li>
+<li><b>Filer &rarr; Eksportér&hellip;</b> gemmer nogle af dine udgange, indgange eller printindstillinger i en fil for sig (dit
+eget eksempel); <b>Filer &rarr; Importér&hellip;</b> føjer dem til et andet print, på de samme numre eller på ledige pladser.</li>
+<li><b>Print &rarr; Flash firmware&hellip;</b> lægger ny firmware på din Arduino.</li>
+</ul>

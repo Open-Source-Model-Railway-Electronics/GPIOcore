@@ -398,7 +398,7 @@ QIcon swatchIcon(const QColor &color)
 void fillPinCombo(QComboBox *combo, bool output)
 {
     combo->clear();
-    combo->addItem(trGpio("—  not used"), int(PinNA));
+    combo->addItem(trGpio(QT_TRANSLATE_NOOP("Gpio", "—  not used")), int(PinNA));
     for (quint8 pin = 0; pin < NumPins; ++pin)
     {
         QString text = pinLabel(pin);
@@ -411,8 +411,8 @@ void fillPinCombo(QComboBox *combo, bool output)
         if (boardOptions().dccNext && !dccNextPort(pin))
             continue;                    // DCCnext: only its ports P1-P16
         if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
-        else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio("serial pin"));
-        else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio("analog input only"));
+        else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio(QT_TRANSLATE_NOOP("Gpio", "serial pin")));
+        else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio(QT_TRANSLATE_NOOP("Gpio", "analog input only")));
         combo->addItem(text, int(pin));
         combo->setItemData(combo->count() - 1, text, Qt::UserRole + 1);       // text without 'in use'
         if (!reserved.isEmpty())
@@ -683,10 +683,10 @@ QString inputSummaryTarget(const InputConfig &c)
 {
     const InputTypeInfo &info = inputTypeInfo(c.type);
     if (info.usesRoute)
-        return c.route.isEmpty() ? trGpio("(empty route)")
-                                 : trGpio("%1 steps").arg(c.route.size());
+        return c.route.isEmpty() ? trGpio(QT_TRANSLATE_NOOP("Gpio", "(empty route)"))
+                                 : trGpio(QT_TRANSLATE_NOOP("Gpio", "%1 steps")).arg(c.route.size());
     if (info.usesOutput)
-        return trGpio("Output %1").arg(c.outputId + 1);
+        return trGpio(QT_TRANSLATE_NOOP("Gpio", "Output %1")).arg(c.outputId + 1);
     return QString();
 }
 

@@ -1,0 +1,27 @@
+<h3>Analoga ingångar: en motståndsstege eller en sensor</h3>
+<p>I stället för en knapp till GND kan en analog pinne (A0–A6) mäta en spänning: <b>0 = 0 V, 1023 = 5 V</b>.
+Ingången räknas som <i>nedtryckt</i> så länge värdet uppfyller villkoret, och fungerar då precis som en nedtryckt
+knapp: växla, absolut och tågvägar fungerar alla.</p>
+<ul>
+<li><b>Under ett värde</b> — nedtryckt under tröskeln, släppt igen 20 högre. Till exempel en ljussensor (LDR)
+som blir mörk, eller en enda knapp.</li>
+<li><b>Över ett värde</b> — nedtryckt över tröskeln, släppt igen 20 lägre.</li>
+<li><b>Vid ett värde</b> — nedtryckt inom tröskeln &plusmn; 10: en knapp i en <b>motståndsstege</b>.
+Flera ingångar kan dela en pinne, var och en med sitt eget värde.</li>
+</ul>
+<p><b>Motståndsstege:</b> flera knappar på en pinne. Ett 10 k&Omega; motstånd från 5 V till pinnen håller den på 1023
+när inget är nedtryckt; varje knapp kopplar pinnen till GND via sitt eget motstånd, så att varje knapp ger ett
+annat värde.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ knapp 1 ]--- GND    ca 0
+                 +--[1k]---[ knapp 2 ]--- GND    ca 93
+                 +--[3k3]--[ knapp 3 ]--- GND    ca 254
+                 +--[10k]--[ knapp 4 ]--- GND    ca 512</pre>
+<p><b>Läs av de verkliga värdena:</b> motstånd har toleranser och kontakter har resistans, så praktiken skiljer sig från
+teorin. Anslut kortet, välj ingången och titta på <b>Nu:</b> medan du håller in varje knapp; <b>Använd detta värde</b>
+tar det som tröskel. Håll minst ungefär 40 mellan två knappar.</p>
+<ul>
+<li>Tröskeln sparas i steg om 8. Kortet läser pinnen var 50:e ms och reagerar bara när två avläsningar stämmer överens.</li>
+<li><b>A7</b> är config-knappen och kan inte användas; <b>A6</b> finns bara på en Arduino Nano.</li>
+<li>I <b>Simulera</b>, klicka på <i>värde ▾</i> vid ingången för att skriva in ett värde för dess pinne: alla ingångar på den pinnen reagerar.</li>
+</ul>

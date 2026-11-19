@@ -1,0 +1,59 @@
+<h2>Primeiros passos</h2>
+<p>Este programa configura uma <b>placa GPIOcore</b>: um pequeno Arduino (Nano, ou um DCCnext) que fica por baixo da
+sua maqueta e comanda coisas: agulhas, luzes, sinais, relés. Indica à placa <i>o que</i> está ligado a
+<i>que</i> pino, e <i>o que</i> o deve accionar.</p>
+
+<h3>Os dois tipos de coisas</h3>
+<ul>
+<li>As <b>saídas</b> (ao centro, coluna da direita) são o que a placa <i>faz</i>: mover um servo, dar um impulso à
+bobina de uma agulha, acender um LED, comutar um relé. Há 16.</li>
+<li>As <b>entradas</b> (ao centro, coluna da esquerda) são o que <i>diz à placa para fazer alguma coisa</i>: um botão
+de pressão no seu painel de comando, ou um comando da sua central DCC (o seu sistema digital / comando manual). Há 16.</li>
+</ul>
+<p>As definições da entrada seleccionada estão sempre à <b>esquerda</b>, as da saída seleccionada à
+<b>direita</b>.</p>
+
+<h3>Três modos: os botões coloridos no topo</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Configurar</b>: alterar coisas. Sem ligação, ou ligado (moldura vermelha): nesse caso
+cada alteração vai para a placa <b>de imediato</b>.</li>
+<li><b style="color:#A16207">&#9679; Simular</b> (moldura amarela): experimente as suas definições numa placa fictícia, prima
+os botões das entradas e observe as saídas. Aqui não é possível alterar nada.</li>
+<li><b style="color:#15803D">&#9679; Teste em directo</b> (moldura verde): liga-se sozinho; prima os botões e veja o que a
+placa real faz. Aqui não é possível alterar nada.</li>
+</ul>
+<p><b>Ligar / Desligar</b>, junto à porta, mostra se há uma placa ligada.</p>
+
+<h3>O arranque mais rápido</h3>
+<p>O programa começa com uma placa vazia: uma entrada (endereço DCC 1) que comanda uma saída (em D3). Escolha uma
+configuração pronta na lista <b>Predefinição</b> no topo (por exemplo <i>16 servos</i>) e clique em <b>Aplicar</b>,
+ou comece a partir de um exemplo: <b>Ficheiro &rarr; Abrir exemplo&hellip;</b>.</p>
+
+<h3>Passo a passo</h3>
+<ol>
+<li><b>Ligar.</b> Ligue a placa à porta USB, escolha a sua porta no topo (normalmente diz CH340, USB Serial
+ou Arduino) e clique em <b>Ligar</b>. Use <b>Ler placa</b> para carregar o que está nela. Da primeira vez, o programa pede um <b>nome</b> para a placa.</li>
+<li><b>Adicionar uma saída.</b> Clique em <b>+ Adicionar saída</b>, ou clique numa saída. Escolha o <b>tipo</b> (por exemplo
+<i>Servo</i>) e o <b>pino</b> onde vai o fio.</li>
+<li><b>Adicionar uma entrada.</b> Clique em <b>+ Adicionar entrada</b>, ou clique numa entrada. Escolha o que a acciona: um <b>pino de botão</b>,
+um <b>endereço DCC</b>, ou ambos.</li>
+<li><b>Ligá-las.</b> Arraste a saída para a entrada. Aparece uma linha colorida: essa entrada passa a comandar essa
+saída. A saída fica com a cor da sua entrada.</li>
+<li><b>Experimentar.</b> Clique em <b>&#9679; Teste em directo</b> e prima os botões da entrada.</li>
+<li><b>Guardar</b> (Ctrl+S) a configuração num ficheiro; o programa não guarda sozinho.</li>
+</ol>
+
+<h3>Bom saber</h3>
+<ul>
+<li>Cada botão <b>(i)</b> explica o que está ao lado dele.</li>
+<li>Dê um <b>nome</b> às entradas e saídas (campo no topo de cada painel). Os nomes e todas as definições ficam guardados
+neste computador em <i>Documents\GPIOcore\boards\&lt;nome da placa&gt;.json</i>, um ficheiro por placa.</li>
+<li>Um pino já utilizado aparece a <b>vermelho</b> na lista de pinos. Se o escolher mesmo assim, a entrada ou saída que
+o tinha mantém a sua função, mas perde esse pino.</li>
+<li>As entradas e saídas não utilizadas ficam ocultas; <b>Ver &rarr; Mostrar entradas e saídas não utilizadas</b> mostra-as todas.</li>
+<li><b>Ver &rarr; Principiante / Avançado / Especialista</b> determina quanto o programa oferece; começa em Principiante e
+nunca altera a sua configuração. <b>Ver &rarr; Tema</b> muda para escuro.</li>
+<li><b>Ficheiro &rarr; Exportar&hellip;</b> guarda algumas das suas saídas, entradas ou definições da placa num ficheiro próprio (o seu
+próprio exemplo); <b>Ficheiro &rarr; Importar&hellip;</b> adiciona-as a outra placa, nos mesmos números ou em posições livres.</li>
+<li><b>Placa &rarr; Gravar firmware&hellip;</b> coloca um firmware novo no Arduino.</li>
+</ul>

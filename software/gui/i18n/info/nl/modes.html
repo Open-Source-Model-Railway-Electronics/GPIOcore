@@ -1,16 +1,20 @@
 <h3>Configureren, simuleren en live testen</h3>
-<p>De drie gekleurde knoppen bovenaan laten zien wat het programma doet. Dezelfde kleur staat als rand om het
-midden van het scherm, zodat je altijd weet waar je bent.</p>
+<p>Het programma staat altijd in een van drie modi: de gekleurde knoppen bovenaan. De verbinding staat daar los van:
+<b>Verbinden / Verbinding verbreken</b> naast de poort, met de toestand ernaast (Offline, Verbonden: <i>naam</i>,
+Simulatie).</p>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Knop</th><th>Rand</th><th>Wat er gebeurt</th></tr>
-<tr><td><b>&#9679; Configureren</b></td><td style="color:#DC2626">rood</td><td>Verbonden met een echt board. Elke wijziging gaat
-meteen naar het board en wordt ter controle teruggelezen.</td></tr>
-<tr><td><b>&#9679; Simuleren</b></td><td style="color:#A16207">geel</td><td>Een nagebootst board draait <i>jouw</i> instellingen
-(van het board dat je verbonden had, een boardbestand, of een nieuw board). De knoppen van de ingangen staan aan.
-Wijzigingen worden in het boardbestand bewaard, zodat je thuis een board kunt voorbereiden.</td></tr>
-<tr><td><b>&#9679; Live test</b></td><td style="color:#15803D">groen</td><td>Op een echt board: de ingangen krijgen knoppen en de
-uitgangen tonen wat het board terugmeldt.</td></tr>
+<tr><th>Modus</th><th>Rand</th><th>Wat je kunt doen</th></tr>
+<tr><td><b>&#9679; Configureren</b></td><td>geen als je offline bent, <span style="color:#DC2626">rood</span> als je verbonden bent</td><td>Alles
+veranderen. Offline bereid je een board voor; verbonden gaat elke wijziging meteen naar het board. Er wordt niets vanzelf
+van het board gelezen: gebruik <b>Board uitlezen</b> of <b>Alles schrijven</b>.</td></tr>
+<tr><td><b>&#9679; Simuleren</b></td><td style="color:#A16207">geel</td><td>Je configuratie draait op een nagebootst board.
+Druk op de knoppen van de ingangen en kijk; je kunt niets veranderen.</td></tr>
+<tr><td><b>&#9679; Live test</b></td><td><span style="color:#15803D">groen</span> als je verbonden bent</td><td>Verbindt
+vanzelf. Druk op de knoppen van de ingangen en kijk wat het echte board doet; je kunt niets veranderen. Heeft het board
+een andere naam dan het scherm, dan biedt het programma aan om eerst het board uit te lezen.</td></tr>
 </table>
+<p>Er wordt niets vanzelf in een bestand opgeslagen: <b>Opslaan</b> (Ctrl+S) vraagt altijd waar, en bij het afsluiten
+vraagt het programma wat er met niet-opgeslagen wijzigingen moet gebeuren.</p>
 
 <h4>De knoppen van de ingangen</h4>
 <ul>
@@ -21,6 +25,10 @@ aan, knipperend of knipperend in tegenfase.</li>
 </ul>
 <p>Een knop werkt als een DCC-commando: een tweede klik binnen een halve seconde wordt genegeerd, net als een
 herhaald pakket van een centrale.</p>
+<p>In <b>Simuleren</b> werkt een ingang met een pin (niet analoog) op die pin, net als de echte knop of schakelaar:
+<b>&#9654; druk</b> / <b>&#9654; start</b> trekt de pin laag en laat hem weer los, &#9664; houdt de pin van een absolute
+ingang laag en &#9654; hoog (de vastgehouden kant is gemarkeerd). Zo reageert alles wat die pin leest ook, bijvoorbeeld
+een servo die de ingang als melder volgt. Ingangen zonder pin werken als een DCC-commando.</p>
 
 <h4>Wat de uitgangen tonen</h4>
 <ul>

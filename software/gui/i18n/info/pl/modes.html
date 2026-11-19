@@ -1,0 +1,42 @@
+<h3>Konfiguracja, symulacja i test na żywo</h3>
+<p>Program jest zawsze w jednym z trzech trybów: kolorowe przyciski u góry. Połączenie to osobna sprawa:
+<b>Połącz / Rozłącz</b> obok portu, ze stanem pokazanym obok (Offline, Połączono: <i>nazwa</i>,
+Symulacja).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Tryb</th><th>Ramka</th><th>Co możesz robić</th></tr>
+<tr><td><b>&#9679; Konfiguruj</b></td><td>brak offline, <span style="color:#DC2626">czerwona</span> po połączeniu</td><td>Zmieniać
+wszystko. Offline przygotowujesz płytkę; po połączeniu każda zmiana trafia od razu do płytki. Nic nie jest automatycznie
+odczytywane z płytki: użyj <b>Odczytaj płytkę</b> lub <b>Zapisz wszystko</b>.</td></tr>
+<tr><td><b>&#9679; Symuluj</b></td><td style="color:#A16207">żółta</td><td>Twoja konfiguracja działa na udawanej płytce.
+Naciskaj przyciski wejść i obserwuj; nic nie można zmienić.</td></tr>
+<tr><td><b>&#9679; Test na żywo</b></td><td><span style="color:#15803D">zielona</span> po połączeniu</td><td>Łączy się
+sam. Naciskaj przyciski wejść i obserwuj, co robi prawdziwa płytka; nic nie można zmienić. Jeśli płytka ma
+inną nazwę niż ta na ekranie, program proponuje najpierw odczytać płytkę.</td></tr>
+</table>
+<p>Nic nie jest zapisywane do pliku samo: <b>Zapisz</b> (Ctrl+S) zawsze pyta gdzie, a przy zamykaniu program pyta
+o niezapisane zmiany.</p>
+
+<h4>Przyciski wejść</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (wejścia typu Bezwzględny): &#9664; = na bok / wył., &#9654; = na wprost / wł.</li>
+<li><b>&#9654; naciśnij</b> (Przełącz) i <b>&#9654; start</b> (Przebieg): jak naciśnięcie przycisku lub wysłanie polecenia DCC.</li>
+<li><b>sygnał &#9662; / wartość &#9662;</b>: dla wejścia, które steruje semaforem lub wyjściem PWM. Wybierz dla każdej lampy: wył., wł.,
+miga lub miga w przeciwfazie.</li>
+</ul>
+<p>Przycisk działa jak polecenie DCC: drugie kliknięcie w ciągu pół sekundy jest ignorowane, tak jak powtórzony pakiet
+z centrali.</p>
+<p>W trybie <b>Symuluj</b> wejście z pinem (nie analogowym) działa na tym pinie, jak prawdziwy przycisk lub przełącznik:
+<b>&#9654; naciśnij</b> / <b>&#9654; start</b> ściąga pin do stanu niskiego i znów go zwalnia, &#9664; utrzymuje pin wejścia typu
+Bezwzględny w stanie niskim, a &#9654; w wysokim (przytrzymana strona jest podświetlona). Dzięki temu reaguje też wszystko, co
+odczytuje ten pin, na przykład serwo, które podąża za wejściem jako detektorem. Wejścia bez pinu działają jak polecenie DCC.</p>
+
+<h4>Co pokazują wyjścia</h4>
+<ul>
+<li><b>Niebieska kropka</b> = na wprost / wł., <b>czerwona kropka</b> = na bok / wył., szara = jeszcze nieznany.</li>
+<li><b>Serwo</b>: tarcza z kątem; obraca się stopień po stopniu, tak jak płytka go zgłasza.</li>
+<li><b>Semafor</b>: cztery lampy w swoich kolorach, migające tak jak na płytce.</li>
+<li><b>Przekaźniki sercówki</b>: mały rysunek przekaźnika. Styk ruchomy i sercówka pokazują, który styk jest pod napięciem
+(czerwony = na bok, niebieski = na wprost). Electrofrog jest szary (bez napięcia), gdy zwrotnica się przestawia; unifrog
+przełącza się od razu.</li>
+</ul>
+<p>Do testu na żywo nic nie musi być podłączone do płytki: widzisz, co płytka <i>by</i> przełączyła.</p>

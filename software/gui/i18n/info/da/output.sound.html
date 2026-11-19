@@ -1,0 +1,23 @@
+<h3>Lydeffekt: en DFPlayer Mini MP3-afspiller</h3>
+<p>Denne udgang afspiller MP3-filer fra micro-SD-kortet i et DFPlayer Mini-modul: en klokke, en fløjte, en meddelelse.</p>
+<pre>  D1 (TX) ---[1k]--- DFPlayer RX
+  5 V -------------- DFPlayer VCC
+  GND -------------- DFPlayer GND
+  højttaler (maks. 3 W) DFPlayer SPK_1 / SPK_2</pre>
+<ul>
+<li><b>1 k&Omega;-modstanden</b> i TX-ledningen beskytter DFPlayeren; intet går tilbage til Arduinoen.</li>
+<li>Filer på SD-kortet: i en mappe <b>MP3</b>, med navnene <b>0001.mp3</b>, <b>0002.mp3</b> … Nummer 1 er
+/MP3/0001.mp3. Det er navnet, der tæller, ikke rækkefølgen, du kopierer dem i. Kun MP3, ikke WAV.</li>
+<li><b>Indgangen vælger nummeret</b>, så én lydudgang kan afspille mange lyde: giv en skift- eller absolut-indgang
+<b>Egne værdier</b> (et nummer til fra og et til til), brug et togvejstrin, eller send en DCC extended-værdi.
+Nummer 0 = stop. Uden egne værdier: til = nummer 1, fra = stop.</li>
+<li>En indgang, du forbinder med en lydudgang, får egne værdier af sig selv: fra = stop, til = nummer 1.</li>
+<li>Flere lydudgange må dele D1, men som regel er én nok.</li>
+<li><b>Kun uden pc:</b> D1 er også USB-ledningen til computeren. Med programmet forbundet melder printet kun
+nummeret (♪ på lærredet). Tag USB-kablet ud, og forsyn printet på anden vis for at høre det.</li>
+<li><b>Hør det på pc'en</b> (niveau Avanceret og op): <i>Vis &gt; Lydmappe&hellip;</i> vælger en mappe med de
+samme filer som MP3-mappen på SD-kortet (0001.mp3 &hellip;). I Simulér og Live-test afspiller
+programmet så det nummer, printet melder; et nyt nummer afbryder det forrige, ligesom DFPlayeren.
+<i>Vis &gt; Slå lyd fra</i> gør det lydløst.</li>
+<li>Ikke på et <b>DCCnext</b>: det har ingen D1 på sine terminaler, så denne type tilbydes ikke der.</li>
+</ul>

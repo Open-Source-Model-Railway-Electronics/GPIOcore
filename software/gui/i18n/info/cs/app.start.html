@@ -1,0 +1,58 @@
+<h2>Začínáme</h2>
+<p>Tento program nastavuje <b>desku GPIOcore</b>: malé Arduino (Nano nebo DCCnext), které je pod kolejištěm
+a přepíná různé věci: výhybky, osvětlení, návěstidla, relé. Řeknete desce, <i>co</i> je připojeno ke
+<i>kterému</i> pinu a <i>co</i> to má uvést do pohybu.</p>
+
+<h3>Dva druhy věcí</h3>
+<ul>
+<li><b>Výstupy</b> (uprostřed, pravý sloupec) jsou věci, které deska <i>dělá</i>: pohne servem, dá impuls do cívky
+výhybky, rozsvítí LED, sepne relé. Je jich 16.</li>
+<li><b>Vstupy</b> (uprostřed, levý sloupec) jsou věci, které <i>desce říkají, co má udělat</i>: tlačítko na
+ovládacím panelu nebo povel z vaší DCC centrály (digitálního systému / ručního ovladače). Je jich 16.</li>
+</ul>
+<p>Nastavení zvoleného vstupu jsou vždy <b>vlevo</b>, nastavení zvoleného výstupu <b>vpravo</b>.</p>
+
+<h3>Tři režimy: barevná tlačítka nahoře</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Konfigurovat</b>: měníte nastavení. Offline, nebo připojeno (červený rámeček): pak každá
+změna jde do desky <b>okamžitě</b>.</li>
+<li><b style="color:#A16207">&#9679; Simulovat</b> (žlutý rámeček): vyzkoušejte nastavení na simulované desce, mačkejte
+tlačítka vstupů a sledujte výstupy. Nic zde nelze změnit.</li>
+<li><b style="color:#15803D">&#9679; Živý test</b> (zelený rámeček): připojí se sám; mačkejte tlačítka a sledujte, co
+dělá skutečná deska. Nic zde nelze změnit.</li>
+</ul>
+<p><b>Připojit / Odpojit</b> vedle portu ukazuje, zda je deska připojena.</p>
+
+<h3>Nejrychlejší start</h3>
+<p>Program začíná s prázdnou deskou: jeden vstup (DCC adresa 1), který přepíná jeden výstup (na D3). Vyberte
+hotovou konfiguraci v seznamu <b>Předvolba</b> nahoře (například <i>16 servos</i>) a klikněte na <b>Použít</b>,
+nebo začněte z příkladu: <b>Soubor &rarr; Otevřít příklad&hellip;</b>.</p>
+
+<h3>Krok za krokem</h3>
+<ol>
+<li><b>Připojte.</b> Zapojte desku do USB portu, nahoře zvolte její port (obvykle je u něj CH340, USB Serial
+nebo Arduino) a klikněte na <b>Připojit</b>. Tlačítkem <b>Načíst desku</b> načtete, co v ní je. Poprvé se program zeptá na <b>název</b> desky.</li>
+<li><b>Přidejte výstup.</b> Klikněte na <b>+ Přidat výstup</b>, nebo klikněte na výstup. Zvolte <b>typ</b> (například
+<i>Servo</i>) a <b>pin</b>, kam vede vodič.</li>
+<li><b>Přidejte vstup.</b> Klikněte na <b>+ Přidat vstup</b>, nebo klikněte na vstup. Zvolte, co ho spouští: <b>pin tlačítka</b>,
+<b>DCC adresa</b>, nebo obojí.</li>
+<li><b>Propojte je.</b> Přetáhněte výstup na vstup. Objeví se barevná čára: tento vstup nyní ovládá tento
+výstup. Výstup dostane barvu svého vstupu.</li>
+<li><b>Vyzkoušejte.</b> Klikněte na <b>&#9679; Živý test</b> a mačkejte tlačítka na vstupu.</li>
+<li><b>Uložte</b> (Ctrl+S) konfiguraci do souboru; program sám neukládá.</li>
+</ol>
+
+<h3>Dobré vědět</h3>
+<ul>
+<li>Každé tlačítko <b>(i)</b> vysvětluje věc vedle sebe.</li>
+<li>Dejte vstupům a výstupům <b>název</b> (pole nahoře v každém panelu). Názvy a všechna nastavení se ukládají v
+tomto počítači do <i>Documents\GPIOcore\boards\&lt;název desky&gt;.json</i>, jeden soubor na desku.</li>
+<li>Pin, který se už používá, je v seznamu pinů <b>červený</b>. Pokud ho přesto zvolíte, vstup nebo výstup, který
+ho měl, si ponechá svou funkci, ale o tento pin přijde.</li>
+<li>Nepoužité vstupy a výstupy jsou skryté; <b>Zobrazení &rarr; Zobrazit nepoužité vstupy a výstupy</b> ukáže všechny.</li>
+<li><b>Zobrazení &rarr; Začátečník / Pokročilý / Expert</b> určuje, kolik program nabízí; začíná na úrovni Začátečník a
+nikdy nemění vaši konfiguraci. <b>Zobrazení &rarr; Motiv</b> přepne na tmavý vzhled.</li>
+<li><b>Soubor &rarr; Exportovat&hellip;</b> uloží některé vaše výstupy, vstupy nebo nastavení desky do samostatného souboru (váš
+vlastní příklad); <b>Soubor &rarr; Importovat&hellip;</b> je přidá do jiné desky, na stejná čísla nebo na volná místa.</li>
+<li><b>Deska &rarr; Nahrát firmware&hellip;</b> nahraje do Arduina nový firmware.</li>
+</ul>

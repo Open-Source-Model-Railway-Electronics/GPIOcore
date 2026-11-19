@@ -1,0 +1,38 @@
+<h3>Önműködő térközjelző</h3>
+<p><i>Szakértő szint (Nézet menü).</i></p>
+<p>Az önműködő térközjelző magától áll be, digitális központ vagy számítógép nélkül. A panel 50 ms-onként figyel két
+<b>térköz-foglaltságjelzőt</b> (bemenetet), és három jelzési kép egyikét mutatja:</p>
+<ul>
+<li><b>Megállj</b> — ha a saját térköz foglaltságjelzője vonatot jelez (általában piros),</li>
+<li><b>Vigyázat</b> — ha a saját térköz szabad, de a következő térköz foglalt (általában sárga),</li>
+<li><b>Szabad</b> — ha mindkét térköz szabad (általában zöld).</li>
+</ul>
+<p>Minden jelzési képet lámpánként kell kiválasztani a <b>▾</b> gombbal, mint egy vágányút-lépésnél: minden lámpa lehet ki, be vagy villogó.
+A villogó lámpák 1 Hz-cel villognak. A lámpák az A–D lábakon vannak; csak az A láb kötelező, így a két- vagy háromlámpás
+jelzőnél a többi láb egyszerűen “nem használt” marad.</p>
+<p>Foglaltságjelző bármely használatban lévő, lábbal rendelkező bemenet lehet: legjobb egy <b>Érzékelő (foglaltság)</b> bemenet, például
+áramérzékelős foglaltságjelző, reed-kontaktus vagy fénysorompó (lenyomva = LOW = foglalt), vagy egy analóg feltétel. Egy
+foglaltságjelző több jelzőt is vezérelhet.</p>
+<p>A jelzési képet a panel csak kiszámítja, soha nem tárolja. Bemenetek, vágányutak és DCC-parancsok nem állíthatják az önműködő térközjelzőt, ezért
+nem választható célként a bemeneti beállításokban, és bemenetet sem lehet rá húzni.</p>
+
+<h4>1. példa: holland háromfogalmú jelzők sorban</h4>
+<p>Lámpák: A zöld, B sárga, C piros. Az 1. jelző az 1. térközt fedezi (saját térköz = annak foglaltságjelzője), és a 2. térközt
+figyeli (következő térköz), a 2. jelző a 2. térközt fedezi és a 3. térközt figyeli, és így tovább. Jelzési képek: megállj = C be, vigyázat = B be,
+szabad = A be (az alapértékek). Egy vonat a 2. térközben a 2. jelzőt pirosra, az 1. jelzőt
+sárgára, a 3. jelzőt zöldre állítja.</p>
+
+<h4>2. példa: főjelző összekapcsolt következő térköz nélkül</h4>
+<p>Csak piros / zöld: a <b>Következő térköz</b> maradjon “nincs”. Megállj = piros, szabad = zöld; a vigyázat jelzési kép
+nincs használatban.</p>
+
+<h4>3. példa: előjelző</h4>
+<p>Az előjelző egy főjelző előtt áll, és előre jelzi, mit mutat a főjelző. Állítsa be önműködő térközjelzőként,
+amelynek <b>saját térköze</b> az előtte álló főjelző mögötti térköz foglaltságjelzője (az a térköz, amelyet a főjelző
+fedez), a következő térköz “nincs”: foglalt = sárga (a főjelző pirosat mutat), szabad = zöld. A főjelző
+ugyanezt a foglaltságjelzőt használja saját térközeként, így egy foglaltságjelző mindkettőt vezérli.</p>
+
+<h4>Térköz a következő panelen</h4>
+<p>A következő térköz foglaltságjelzője lehet egy másik panelen is. Vezesse a jelét optocsatolón keresztül egy itteni bemenetre, például
+a D0-ra (RX): a panelen a D0 csak akkor működik, ha nincs PC csatlakoztatva (5 s-mal a bekapcsolás után, program nélkül); a
+szimulátorban mindig működik.</p>

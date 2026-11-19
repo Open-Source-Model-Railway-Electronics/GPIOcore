@@ -1,0 +1,36 @@
+<h3>Bluetooth (HC-05)</h3>
+<p>Avec un module Bluetooth <b>HC-05</b> sur la carte, vous pouvez la configurer sans câble USB. Le programme configure
+le module pour vous à travers la carte (<i>Carte &gt; Configurer le Bluetooth (HC-05)</i>, niveau Avancé ou plus).
+Arduino <b>Nano</b> uniquement : il vous faut le bouton de config pour vous connecter ensuite.</p>
+<p><b>Câblage</b> (HC-05 &rarr; Nano) :</p>
+<ul>
+<li><b>VCC</b> &rarr; 5 V, <b>GND</b> &rarr; GND.</li>
+<li><b>RXD</b> &rarr; <b>D1</b> via un pont diviseur : 1 k&Omega; de D1 vers RXD, 2 k&Omega; de RXD vers GND
+(le HC-05 attend 3,3 V sur son RXD).</li>
+<li><b>TXD</b> &rarr; <b>D0</b> via une <b>diode Schottky</b> (BAT85 ou 1N5819), avec la <b>cathode (l'anneau)
+côté TXD du HC-05</b>. La diode permet au HC-05 de tirer D0 au niveau bas sans jamais s'opposer à la puce USB : l'USB
+continue donc de fonctionner pendant que le HC-05 est branché.</li>
+</ul>
+<p><b>Configuration</b> (une seule fois) :</p>
+<ol>
+<li>Maintenez le bouton du HC-05 enfoncé pendant que vous branchez le câble USB. Sa LED clignote maintenant
+<b>lentement</b> (environ toutes les 2 secondes) : le module est en <b>mode AT</b>.</li>
+<li>Connectez le programme à la carte par USB.</li>
+<li>Choisissez <i>Carte &gt; Configurer le Bluetooth (HC-05)</i> et cliquez sur <b>Démarrer</b>. La carte essaie les vitesses
+habituelles et règle le module sur <b>115200 bauds</b> et le nom <b>GPIOcore-&lt;nom de la carte&gt;</b>. Le code PIN reste
+inchangé. Cela prend quelques secondes.</li>
+<li>Débranchez la carte et rebranchez-la, <b>sans</b> maintenir le bouton.</li>
+<li>Dans les paramètres Bluetooth de Windows, associez <b>GPIOcore&hellip;</b> (code PIN <b>1234</b>, ou 0000 sur certains modules).
+Windows crée un port COM pour lui (parfois deux : prenez le port « sortant »). Choisissez ce port dans GPIOcore.</li>
+</ol>
+<p>En cas d'échec : le module n'est pas en mode AT (clignotement rapide = mode normal), le câblage est faux, ou la diode
+manque ou est montée à l'envers. D'autres modules (HC-06, certains clones) ne connaissent pas ces commandes.</p>
+<p><b>Connexion par Bluetooth</b> : l'ouverture du port COM Bluetooth ne réinitialise pas la carte. Si rien sur la carte
+n'utilise D0 ou D1, son port série reste ouvert et le programme se connecte simplement. Si quelque chose les utilise
+(une entrée ou une sortie sur D0/D1, ou un effet sonore), la carte ferme son port série 5 secondes après le démarrage
+(D0/D1 deviennent des broches normales). Quand vous cliquez alors sur <i>Connecter</i>, le programme
+affiche <i>« En attente de la carte &mdash; appuyez brièvement sur son bouton de config »</i>. Appuyez <b>brièvement</b> sur
+le bouton de config (A7) : la carte rouvre son port série pendant 5 secondes et s'annonce, et le programme se connecte.
+Le programme attend cela jusqu'à 30 secondes.</p>
+<p>Tant que le programme est connecté, D0 et D1 appartiennent au port série : ne les utilisez pas pour des entrées ou des
+sorties sur une carte équipée d'un HC-05.</p>

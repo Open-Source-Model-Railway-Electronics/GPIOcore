@@ -1,0 +1,29 @@
+<h3>Opsætning af en servo</h3>
+<p>En servo drejer til en vinkel mellem 0&deg; og 180&deg;. Som sporskiftemotor bevæger den sig mellem to positioner:</p>
+<ul>
+<li><b>Position 0 (afvigende)</b>: vinklen for "afvigende".</li>
+<li><b>Position 1 (lige)</b>: vinklen for "lige".</li>
+<li><b>Hastighed</b>: millisekunder pr. grad. 20 ms/&deg; er roligt og realistisk; 5 er hurtigt; 50 er meget langsomt.</li>
+</ul>
+<h4>Find de rigtige positioner</h4>
+<ol>
+<li>Med printet forbundet sætter du flueben ved <b>Live</b> og trækker langsomt i skyderen <i>Position 0</i>. Servoen følger med.
+Stop, når sporskiftetungen lige rører skinnen, og gør så det samme for <i>Position 1</i>. Det gemmes med det samme.</li>
+<li>Eller uden computer: brug <b>config-knappen</b> og lokadresse 9999 på din håndkontrol (se
+<i>Hjælp &rarr; Config-knap og indlæring af servoer</i>).</li>
+</ol>
+<p><b>Tip:</b> pres ikke tungen for hårdt mod skinnen: servoen brummer og bliver varm.
+Gå 2&ndash;3&deg; tilbage fra det punkt, hvor den rører.</p>
+<h4>Semaforarm: følge en besat-melder</h4>
+<p>Sæt flueben ved <b>Følger en besat-melder (semaforarm)</b>, og vælg besat-melderens indgang: printet flytter så servoen
+selv, uden kommandoer. Når den blok er besat, går servoen til <i>Position 0 (afvigende)</i> = armen på
+stop; når den er fri, til <i>Position 1 (lige)</i> = kør. Den bevæger sig med sin egen hastighed. <b>Byt om: besat =
+lige</b> vender dette om. Enhver indgang, der er i brug og har en pin, kan være besat-melderen, helst en
+<b>Sensor (besat-melder)</b>-indgang; på lærredet forbinder en prikket linje den med servoen.</p>
+<h4>Godt at vide</h4>
+<ul>
+<li>Ved opstart starter servoerne <b>én ad gangen</b> med et halvt sekunds mellemrum, hver til sin sidste position. Det undgår en
+stor strømspids.</li>
+<li>Højst 6 servoer bevæger sig samtidig; de andre venter på deres tur.</li>
+<li>Tilslutning: brun/sort = GND, rød = 5 V (fra en separat 5 V-forsyning ved flere servoer!), orange/gul = signal.</li>
+</ul>

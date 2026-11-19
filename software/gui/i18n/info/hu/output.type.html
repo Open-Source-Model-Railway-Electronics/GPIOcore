@@ -1,0 +1,21 @@
+<h3>Mi csatlakozik ehhez a kimenethez?</h3>
+<ul>
+<li><b>Egyszeres folyamatos</b> — egy láb be vagy ki. LED-ek, relémodul, izzók (tranzisztoron vagy relén keresztül).</li>
+<li><b>Egyszeres impulzus</b> — egy láb rövid impulzust kap. Szétkapcsolóhoz vagy egytekercses eszközhöz.</li>
+<li><b>Egyszeres villogó</b> — egy láb villog, amíg be van kapcsolva. Figyelmeztető fény.</li>
+<li><b>Kettős folyamatos</b> — két láb: A be és B ki, vagy fordítva. Kétszínű jelzők, két relé.</li>
+<li><b>Kettős impulzus</b> — két láb, ezek egyike rövid impulzust kap. <b>Tekercses váltóállítókhoz</b>
+(Peco, Roco, Fleischmann …): A = az egyik tekercs, B = a másik tekercs.</li>
+<li><b>Kettős villogó</b> — két láb felváltva villog.</li>
+<li><b>Váltakozó fény</b> — két lámpa felváltva világít, szünettel: vasúti átjáró fényjelzője.</li>
+<li><b>Kandalló / Fénycső / Hegesztő</b> — fényeffektek: lobogó tűz, villogva bekapcsoló
+fénycső, hegesztési villanások. (A Kandallóhoz és a Fénycsőhöz PWM-lábak kellenek.)</li>
+<li><b>4 jelzési képes jelző</b> — négy LED (zöld, sárga, piros, fehér …), DCC jelzőparancsokkal vagy vágányúttal állítva.</li>
+<li><b>Szervó</b> — modellszervó váltóállítóként. Lassú, valósághű mozgás.</li>
+<li><b>PWM</b> — fényerő egy izzóhoz vagy LED-szalaghoz, igény szerint lassú áttűnéssel (nappal és éjszaka).</li>
+<li><b>Önműködő térközjelző</b> — automatikus jelző (A–D lámpák): a panel maga választja ki a jelzési képet a saját térköz és a következő térköz foglaltságjelzői alapján.</li>
+<li><b>Hangeffekt</b> — MP3-lejátszó (DFPlayer Mini) a D1-en: harangszó, sípszó, bemondás. A bemenet választja ki a számot. Csak akkor szól, ha nincs PC csatlakoztatva.</li>
+<li><b>Nincs használatban</b> — semmi sincs csatlakoztatva.</li>
+</ul>
+<p><b>Fontos a tekercsekhez:</b> egy Arduino láb nem tud közvetlenül tekercset meghajtani. Használjon meghajtópanelt (például
+ULN2803-at vagy MOSFET-modult) a láb és a tekercs között.</p>

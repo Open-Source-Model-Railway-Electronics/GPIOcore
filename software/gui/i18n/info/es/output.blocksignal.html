@@ -1,0 +1,38 @@
+<h3>Señal de bloqueo</h3>
+<p><i>Nivel Experto (menú Ver).</i></p>
+<p>Una señal de bloqueo se ajusta sola, sin central ni ordenador. La placa mira cada 50 ms dos
+<b>detectores de cantón</b> (entradas) y muestra uno de tres aspectos:</p>
+<ul>
+<li><b>Parada</b> — cuando el detector de su propio cantón indica un tren (normalmente rojo),</li>
+<li><b>Anuncio de parada</b> — cuando su propio cantón está libre pero el cantón siguiente está ocupado (normalmente amarillo),</li>
+<li><b>Vía libre</b> — cuando los dos cantones están libres (normalmente verde).</li>
+</ul>
+<p>Cada aspecto se elige lámpara a lámpara con <b>▾</b>, como un paso de itinerario: cada lámpara puede estar apagada,
+encendida o intermitente. Las lámparas intermitentes parpadean a 1 Hz. Las lámparas están en los pines A–D; solo el pin A es
+obligatorio, así que una señal de dos o tres lámparas deja simplemente los demás pines en “sin uso”.</p>
+<p>Un detector es cualquier entrada que esté en uso y tenga un pin: mejor una entrada <b>Sensor (ocupación)</b>, por ejemplo
+un detector de corriente, un contacto reed o una barrera de luz (pulsado = LOW = ocupado), o una condición analógica. Un
+detector puede manejar varias señales.</p>
+<p>El aspecto solo se calcula, nunca se guarda. Las entradas, los itinerarios y las órdenes DCC no pueden ajustar una señal de
+bloqueo, así que no se puede elegir como destino en el panel de entradas y no se puede arrastrar una entrada sobre ella.</p>
+
+<h4>Ejemplo 1: señales neerlandesas de 3 aspectos en fila</h4>
+<p>Lámparas: A verde, B amarillo, C rojo. La señal 1 protege el cantón 1 (cantón propio = su detector) y mira el cantón 2
+(cantón siguiente), la señal 2 protege el cantón 2 y mira el cantón 3, y así sucesivamente. Aspectos: parada = C encendida,
+anuncio de parada = B encendida, vía libre = A encendida (los valores por defecto). Un tren en el cantón 2 pone la señal 2
+en rojo, la señal 1 en amarillo y la señal 3 en verde.</p>
+
+<h4>Ejemplo 2: una señal principal sin cantón siguiente enlazado</h4>
+<p>Solo rojo / verde: deje <b>Cantón siguiente</b> en “ninguno”. Parada = rojo, vía libre = verde; el aspecto anuncio de
+parada no se usa.</p>
+
+<h4>Ejemplo 3: una señal avanzada</h4>
+<p>Una señal avanzada está delante de una señal principal y anuncia lo que muestra esa señal principal. Hágala una señal de
+bloqueo cuyo <b>cantón propio</b> sea el detector del cantón situado detrás de la siguiente señal principal (el cantón que
+protege esa señal principal), cantón siguiente “ninguno”: ocupado = amarillo (la señal principal muestra rojo), libre = verde.
+La señal principal usa el mismo detector como cantón propio, así que un solo detector maneja las dos.</p>
+
+<h4>Un cantón en la placa siguiente</h4>
+<p>El detector del cantón siguiente puede estar en otra placa. Lleve su señal a través de un optoacoplador a una entrada de
+esta placa, por ejemplo D0 (RX): en la placa, D0 solo funciona cuando no hay ningún PC conectado (5 s después del encendido
+sin la GUI); en el simulador funciona siempre.</p>

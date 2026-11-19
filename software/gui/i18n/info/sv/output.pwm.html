@@ -1,0 +1,12 @@
+<h3>PWM: ljusstyrka och övergång</h3>
+<p>En PWM-utgång dimmar en lampa eller en LED-slinga på en PWM-pinne (D3, D5, D6, D9, D10, D11): <b>0</b> = av,
+<b>255</b> = full ljusstyrka. Använd en transistor eller ett MOSFET-kort för mer än ungefär 20 mA.</p>
+<ul>
+<li><b>Pulskvot</b> — ljusstyrkan efter start, tills egna värden, ett tågvägssteg eller DCC extended ställer in en annan.</li>
+<li><b>Övergångstid</b> — hur många sekunder en full ändring från 0 till 255 tar; en halv ändring tar halva tiden.
+<i>direkt</i> (0) ändrar omedelbart. Varje ny ljusstyrka tonas i den här takten: från egna värden, ett
+tågvägssteg eller ett utökat DCC-kommando. Vid start tonas utgången upp från mörker.</li>
+</ul>
+<p><b>Exempel — dag och natt:</b> en absolut ingång (en strömbrytare, eller en DCC-adress) med <b>Egna värden</b>
+av = 0 och på = 255, och en övergångstid på 60 s. När du växlar till natt dimmas belysningen ner på en minut;
+när du växlar tillbaka kommer dagen lika långsamt.</p>

@@ -1,5 +1,8 @@
 <h3>Botón de configuración (A7) y ajuste de servos con su mando</h3>
 <p>Sin ordenador puede ajustar las posiciones finales de los servos con el botón de configuración y su mando DCC.</p>
+<p><b>Nota:</b> el botón de configuración (A7) solo existe en un Arduino <b>Nano</b>. Un DCCnext no tiene
+A7, así que no tiene botón de configuración: ajuste las posiciones finales de los servos en el programa (o con el
+control remoto con el móvil).</p>
 <p><b>Cableado:</b> un pulsador de <b>A7</b> a <b>GND</b>, más una resistencia de 10 k&Omega; de A7 a <b>5 V</b>
 (A7 no tiene pull-up interno). Un LED con resistencia en <b>D13</b> muestra el modo (la mayoría de los Arduino ya tienen uno).</p>
 <ol>
@@ -10,9 +13,17 @@ pulsar para el siguiente servo.</li>
   <ul>
   <li>Gire el <b>mando de velocidad</b>: el servo seleccionado se mueve. El botón de sentido decide hacia dónde, el mando a qué velocidad.</li>
   <li><b>F1</b> = guardar este ángulo como <i>desviado</i>, <b>F2</b> = guardarlo como <i>recto</i>.</li>
-  <li><b>F3</b> = cambiar el servo de posición (para comprobar), <b>F4</b> = siguiente servo.</li>
+  <li><b>F3</b> = cambiar el servo de posición (para comprobar), <b>F5</b> = siguiente servo.</li>
+  <li><b>F4</b> = invertir los relés del corazón del servo seleccionado, para módulos de relé que conmutan con LOW.
+  Cada pulsación alterna entre normal e invertido.</li>
   </ul></li>
 <li>Vuelva a mantener pulsado el botón de configuración 2 segundos: el LED queda encendido. Vuelta al funcionamiento normal.</li>
 </ol>
 <p>Las nuevas posiciones se guardan al instante. Cuando conecte el programa más tarde, las vuelve a leer.</p>
+<p><b>Pulsación breve fuera del modo de configuración = modo GUI.</b> 5 segundos después del arranque, la placa cierra
+su puerto serie si no se ha conectado ningún programa y la configuración usa D0 o D1 (pasan a ser pines normales; si
+no, el puerto sigue abierto). Una pulsación <b>breve</b> del botón de configuración (LED fijo, fuera del modo de
+configuración) lo vuelve a abrir durante 5 segundos y la placa se anuncia, de modo que el programa puede conectarse sin
+reiniciarla, por ejemplo por Bluetooth (vea <i>Ayuda &gt; Bluetooth (HC-05)</i>). Cuando el programa indique
+<i>"Esperando la placa"</i>, es el momento de pulsarlo.</p>
 <p>Por eso <b>D13</b> y <b>A7</b> nunca se pueden usar para entradas o salidas.</p>

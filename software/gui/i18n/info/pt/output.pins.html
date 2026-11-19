@@ -1,0 +1,14 @@
+<h3>Pinos: onde vão os fios</h3>
+<p>Escolha o(s) pino(s) do Arduino para esta saída. Os nomes dos pinos estão impressos na placa: <b>D3 &hellip; D12</b> e
+<b>A0 &hellip; A5</b>.</p>
+<ul>
+<li>Os pinos já utilizados aparecem a <b>vermelho</b> com quem os usa ("em uso: Saí. 3"). Se escolher um mesmo assim, a outra
+entrada ou saída passa a <i>não utilizada</i>.</li>
+<li><b>D2</b> é a entrada DCC, <b>D13</b> o LED de configuração e <b>A7</b> o botão de configuração: nunca disponíveis.
+<b>D0 / D1</b> são a ligação USB; só funcionam como E/S quando não há nenhum computador ligado.</li>
+<li>Os pinos <b>~PWM</b> (D3, D5, D6, D9, D10, D11) podem regular a intensidade. Os efeitos de luz precisam de um destes.
+Enquanto houver algum servo em uso, D9 e D10 <i>não</i> podem regular a intensidade.</li>
+<li>Numa <b>DCCnext</b> a lista mostra também o número de porta impresso nessa placa.</li>
+</ul>
+<p>Um pino do Arduino fornece pouca corrente (máx. 20 mA). Chega para um LED com resistência ou para o fio de sinal de um
+servo. Para relés, bobinas e lâmpadas coloque um módulo driver ou de relés pelo meio.</p>

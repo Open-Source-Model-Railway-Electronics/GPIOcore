@@ -1,0 +1,36 @@
+<h3>Tågvägens steg</h3>
+<p>En tågväg är en lista med saker att göra, uppifrån och ner. Varje rad (steg) ställer in <b>en utgång</b> och
+<b>väntar</b> sedan en stund före nästa steg.</p>
+
+<h4>När startar tågvägen?</h4>
+<p>När knappen på ingångspinnen <b>trycks ned</b>, eller vid ett DCC-kommando för ingångens adress. Välj vilket
+DCC-kommando under <b>Tågväg startar vid</b>:</p>
+<ul>
+<li><b>alla kommandon</b>: både rakt och avvikande startar den;</li>
+<li><b>bara rakt</b> eller <b>bara avvikande</b>: så att två tågvägar kan dela en adress. Exempel, en plankorsning på
+adress 1: tågväg A på <i>bara avvikande</i> tänder ljusen och fäller bommarna, tågväg B på
+<i>bara rakt</i> öppnar dem igen.</li>
+</ul>
+<p>En centralenhet upprepar ett kommando några gånger; tågvägen tar det första.</p>
+
+<h4>Kolumnerna</h4>
+<ul>
+<li><b>Utgång</b>: vad det här steget manövrerar.</li>
+<li><b>Värde</b>: vad utgången ska göra:
+  <ul>
+  <li>växel, belysning, relä: <b>avvikande (0)</b> eller <b>rakt (1)</b>;</li>
+  <li>signal med 4 signalbilder: ett <b>signalbildsnummer</b> (0&ndash;255);</li>
+  <li>servo: avvikande, rakt, eller en exakt <b>vinkel</b> mellan 10&deg; och 170&deg;;</li>
+  <li>PWM: ett värde för ljusstyrka / hastighet 0&ndash;255.</li>
+  </ul></li>
+<li><b>Vänta efter</b>: bara när <i>Egen väntetid för varje tågvägssteg</i> är påslagen i kortinställningarna; annars väntar varje
+steg kortets fasta tid (0,3 s som standard).</li>
+</ul>
+
+<h4>Så gör du en</h4>
+<ol>
+<li>Välj en utgång på första raden, <i>eller</i> dra en utgång till den här ingången.</li>
+<li>Klicka på <b>+ Lägg till steg</b> (eller dra igen) för nästa.</li>
+<li>Använd &#9650; &#9660; för att ändra ordningen, och <b>papperskorgen</b> för att ta bort ett steg.</li>
+</ol>
+<p>Samma utgång får förekomma mer än en gång, till exempel ett servo som först går till 45&deg; och sedan till 135&deg;.</p>

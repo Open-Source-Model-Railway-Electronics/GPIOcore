@@ -1,0 +1,21 @@
+<h3>O que está ligado a esta saída?</h3>
+<ul>
+<li><b>Simples fixo</b> — um pino ligado ou desligado. LEDs, um módulo de relés, lâmpadas (através de um transístor ou relé).</li>
+<li><b>Simples impulso</b> — um pino recebe um impulso curto. Para um desengatador ou um aparelho de uma só bobina.</li>
+<li><b>Simples intermitente</b> — um pino pisca enquanto está ligado. Uma luz de aviso.</li>
+<li><b>Duplo fixo</b> — dois pinos: A ligado e B desligado, ou ao contrário. Sinais de duas cores, dois relés.</li>
+<li><b>Duplo impulso</b> — dois pinos, um deles recebe um impulso curto. Para <b>motores de agulha de bobinas</b>
+(Peco, Roco, Fleischmann …): A = uma bobina, B = a outra bobina.</li>
+<li><b>Duplo intermitente</b> — dois pinos piscam alternadamente.</li>
+<li><b>Luz alternada</b> — duas luzes alternam com uma pausa: luzes de passagem de nível.</li>
+<li><b>Lareira / Lâmpada fluorescente / Soldador</b> — efeitos de luz: fogo a tremeluzir, uma lâmpada fluorescente que
+acende a cintilar, clarões de soldadura. (Lareira e Lâmpada fluorescente precisam de pinos PWM.)</li>
+<li><b>Sinal de 4 aspectos</b> — quatro LEDs (verde, amarelo, vermelho, branco …), definidos por comandos DCC de sinal ou por um itinerário.</li>
+<li><b>Servo</b> — um servo de modelismo como motor de agulha. Movimento lento e realista.</li>
+<li><b>PWM</b> — um brilho para uma lâmpada ou fita de LEDs, opcionalmente com transição lenta (dia e noite).</li>
+<li><b>Sinal de bloco</b> — um sinal automático (lâmpadas A–D): a placa escolhe sozinha o aspecto a partir dos detectores do seu próprio cantão e do cantão seguinte.</li>
+<li><b>Efeito sonoro</b> — um leitor de MP3 (DFPlayer Mini) em D1: uma campainha, um apito, um anúncio. A entrada escolhe a faixa. Só toca quando não há nenhum PC ligado.</li>
+<li><b>Não utilizado</b> — nada ligado.</li>
+</ul>
+<p><b>Importante para bobinas:</b> um pino do Arduino não consegue comandar uma bobina directamente. Use uma placa driver (por exemplo um
+ULN2803 ou um módulo MOSFET) entre o pino e a bobina.</p>

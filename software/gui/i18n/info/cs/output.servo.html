@@ -1,0 +1,29 @@
+<h3>Nastavení serva</h3>
+<p>Servo se natočí na úhel mezi 0&deg; a 180&deg;. Jako přestavník výhybky se pohybuje mezi dvěma polohami:</p>
+<ul>
+<li><b>Poloha 0 (do odbočky)</b>: úhel pro „do odbočky“.</li>
+<li><b>Poloha 1 (přímo)</b>: úhel pro „přímo“.</li>
+<li><b>Rychlost</b>: milisekundy na stupeň. 20 ms/&deg; je klidné a realistické; 5 je rychlé; 50 je velmi pomalé.</li>
+</ul>
+<h4>Hledání správných poloh</h4>
+<ol>
+<li>S připojenou deskou zaškrtněte <b>Živě</b> a pomalu posouvejte posuvník <i>Poloha 0</i>. Servo se pohybuje s ním.
+Zastavte, když se jazyk výhybky právě dotkne opornice, a pak udělejte totéž pro <i>Poloha 1</i>. Uloží se okamžitě.</li>
+<li>Nebo bez počítače: použijte <b>tlačítko konfigurace</b> a adresu lokomotivy 9999 na ovladači (viz
+<i>Nápověda &rarr; Tlačítko konfigurace a nastavení serv</i>).</li>
+</ol>
+<p><b>Tip:</b> netlačte jazyk na opornici příliš silně: servo bude bzučet a zahřívat se.
+Vraťte se o 2&ndash;3&deg; od bodu, kde se dotýká.</p>
+<h4>Ramenní návěstidlo: sledování hlásiče</h4>
+<p>Zaškrtněte <b>Sleduje hlásič (ramenní návěstidlo)</b> a zvolte vstup hlásiče: deska pak servem pohybuje
+sama, bez povelů. Když je tento oddíl obsazený, servo jede do <i>Poloha 0 (do odbočky)</i> = rameno v poloze
+stůj; když je volný, do <i>Poloha 1 (přímo)</i> = volno. Pohybuje se svou vlastní rychlostí. <b>Prohodit: obsazeno =
+přímo</b> to obrátí. Hlásičem může být jakýkoli používaný vstup s pinem, nejlépe vstup
+<b>Snímač (obsazení)</b>; na plátně ho se servem spojuje tečkovaná čára.</p>
+<h4>Dobré vědět</h4>
+<ul>
+<li>Po zapnutí napájení se serva rozjíždějí <b>jedno po druhém</b>, s odstupem půl sekundy, každé do své poslední polohy.
+Tím se zabrání velké proudové špičce.</li>
+<li>Současně se pohybuje nejvýše 6 serv; ostatní čekají, až na ně přijde řada.</li>
+<li>Zapojení: hnědý/černý = GND, červený = 5 V (pro více serv ze samostatného zdroje 5 V!), oranžový/žlutý = signál.</li>
+</ul>

@@ -1,0 +1,27 @@
+<h3>Analogové vstupy: odporový žebřík nebo snímač</h3>
+<p>Místo tlačítka na GND může analogový pin (A0–A6) měřit napětí: <b>0 = 0 V, 1023 = 5 V</b>.
+Vstup se považuje za <i>stisknutý</i>, dokud hodnota splňuje podmínku, a pak funguje přesně jako stisknuté
+tlačítko: přepínání, absolutní režim i jízdní cesty fungují.</p>
+<ul>
+<li><b>Pod hodnotou</b> — stisknuto pod prahem, uvolněno opět o 20 výše. Například světelné čidlo (fotorezistor, LDR),
+které se zatemní, nebo jedno tlačítko.</li>
+<li><b>Nad hodnotou</b> — stisknuto nad prahem, uvolněno opět o 20 níže.</li>
+<li><b>Na hodnotě</b> — stisknuto v rozsahu prahu &plusmn; 10: jedno tlačítko <b>odporového žebříku</b>.
+Několik vstupů může sdílet jeden pin, každý s vlastní hodnotou.</li>
+</ul>
+<p><b>Odporový žebřík:</b> několik tlačítek na jednom pinu. Rezistor 10 k&Omega; z 5 V na pin ho drží na 1023,
+dokud není nic stisknuto; každé tlačítko spojuje pin s GND přes vlastní rezistor, takže každé tlačítko dává
+jinou hodnotu.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ tlačítko 1 ]--- GND    asi 0
+                 +--[1k]---[ tlačítko 2 ]--- GND    asi 93
+                 +--[3k3]--[ tlačítko 3 ]--- GND    asi 254
+                 +--[10k]--[ tlačítko 4 ]--- GND    asi 512</pre>
+<p><b>Odečtěte skutečné hodnoty:</b> rezistory mají tolerance a kontakty mají odpor, takže praxe se liší od
+teorie. Připojte desku, zvolte vstup a sledujte <b>Nyní:</b>, zatímco držíte jednotlivá tlačítka; <b>Použít tuto hodnotu</b>
+převezme měření jako práh. Mezi dvěma tlačítky nechte odstup alespoň asi 40.</p>
+<ul>
+<li>Práh se ukládá v krocích po 8. Deska čte pin každých 50 ms a reaguje, až když se dvě měření shodují.</li>
+<li><b>A7</b> je tlačítko konfigurace a nelze ho použít; <b>A6</b> existuje jen u Arduina Nano.</li>
+<li>V režimu <b>Simulovat</b> klikněte na vstupu na <i>hodnota ▾</i> a zadejte hodnotu pro jeho pin: reaguje každý vstup na tomto pinu.</li>
+</ul>

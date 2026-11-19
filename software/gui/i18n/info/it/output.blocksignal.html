@@ -1,0 +1,39 @@
+<h3>Segnale di blocco</h3>
+<p><i>Livello Esperto (menu Visualizza).</i></p>
+<p>Un segnale di blocco si imposta da solo, senza centrale né computer. La scheda guarda ogni 50 ms due
+<b>rilevatori di sezione</b> (ingressi) e mostra uno di tre aspetti:</p>
+<ul>
+<li><b>Via impedita</b> — quando il rilevatore della propria sezione segnala un treno (di solito rosso),</li>
+<li><b>Avviso</b> — quando la propria sezione è libera ma la sezione successiva è occupata (di solito giallo),</li>
+<li><b>Via libera</b> — quando entrambe le sezioni sono libere (di solito verde).</li>
+</ul>
+<p>Ogni aspetto si sceglie lampada per lampada con <b>▾</b>, come un passo di itinerario: ogni lampada può essere spenta, accesa
+o lampeggiante. Le lampade lampeggianti lampeggiano a 1 Hz. Le lampade sono sui pin A–D; solo il pin A è obbligatorio, quindi un
+segnale con due o tre lampade lascia semplicemente gli altri pin su “non usato”.</p>
+<p>Un rilevatore è qualsiasi ingresso in uso che abbia un pin: meglio un ingresso <b>Sensore (occupazione)</b>, per esempio
+un rilevatore di corrente, un contatto reed o una barriera a luce (premuto = LOW = occupato), o una condizione analogica. Un
+rilevatore può comandare più segnali.</p>
+<p>L'aspetto viene solo calcolato, mai memorizzato. Ingressi, itinerari e comandi DCC non possono impostare un segnale di
+blocco, quindi non può essere scelto come destinazione nel pannello degli ingressi e non ci si può trascinare sopra un ingresso.</p>
+
+<h4>Esempio 1: segnali olandesi a 3 aspetti in fila</h4>
+<p>Lampade: A verde, B giallo, C rosso. Il segnale 1 protegge la sezione 1 (sezione propria = il suo rilevatore) e guarda la
+sezione 2 (sezione successiva), il segnale 2 protegge la sezione 2 e guarda la sezione 3, e così via. Aspetti: via impedita = C
+accesa, avviso = B accesa, via libera = A accesa (le impostazioni predefinite). Un treno nella sezione 2 dà rosso al segnale 2,
+giallo al segnale 1 e verde al segnale 3.</p>
+
+<h4>Esempio 2: un segnale principale senza sezione successiva collegata</h4>
+<p>Solo rosso / verde: lascia <b>Sezione successiva</b> su “nessuna”. Via impedita = rosso, via libera = verde; l'aspetto
+avviso non viene usato.</p>
+
+<h4>Esempio 3: un segnale di avviso</h4>
+<p>Un segnale di avviso sta prima di un segnale principale e annuncia cosa mostra quel segnale principale. Rendilo un segnale
+di blocco la cui <b>sezione propria</b> è il rilevatore della sezione dietro il segnale principale seguente (la sezione che
+quel segnale principale protegge), sezione successiva “nessuna”: occupata = giallo (il segnale principale mostra rosso),
+libera = verde. Il segnale principale usa lo stesso rilevatore come sezione propria, quindi un solo rilevatore li comanda
+entrambi.</p>
+
+<h4>Una sezione sulla scheda successiva</h4>
+<p>Il rilevatore della sezione successiva può trovarsi su un'altra scheda. Porta il suo segnale tramite un optoisolatore a un
+ingresso di questa scheda, per esempio D0 (RX): sulla scheda D0 funziona solo quando non è collegato nessun PC (5 s dopo
+l'accensione senza la GUI); nel simulatore funziona sempre.</p>

@@ -1,0 +1,59 @@
+<h2>Első lépések</h2>
+<p>Ez a program egy <b>GPIOcore panelt</b> állít be: egy kis Arduinót (Nano vagy DCCnext), amely a terepasztal
+alatt ül, és kapcsolja a dolgokat: váltókat, világítást, jelzőket, reléket. Ön megmondja a panelnek, <i>mi</i> csatlakozik
+<i>melyik</i> lábra, és <i>mi</i> hozza azt működésbe.</p>
+
+<h3>A kétféle dolog</h3>
+<ul>
+<li>A <b>kimenetek</b> (középen, jobb oldali oszlop) azok, amiket a panel <i>csinál</i>: szervót mozgat, impulzust ad egy
+váltótekercsre, LED-et kapcsol be, relét kapcsol. 16 van belőlük.</li>
+<li>A <b>bemenetek</b> (középen, bal oldali oszlop) azok, amik <i>utasítják a panelt valamire</i>: egy nyomógomb a
+kapcsolópulton, vagy egy parancs a DCC digitális központtól (a digitális rendszertől / kézi szabályzótól). 16 van belőlük.</li>
+</ul>
+<p>A kiválasztott bemenet beállításai mindig <b>bal oldalon</b>, a kiválasztott kimenetéi mindig a
+<b>jobb oldalon</b> vannak.</p>
+
+<h3>Három mód: a színes gombok felül</h3>
+<ul>
+<li><b style="color:#DC2626">&#9679; Konfigurálás</b>: itt módosíthat. Offline, vagy csatlakoztatva (piros keret): ekkor minden változás
+<b>azonnal</b> a panelre kerül.</li>
+<li><b style="color:#A16207">&#9679; Szimuláció</b> (sárga keret): próbálja ki a beállításait egy virtuális panelen, nyomja meg a
+bemenetek gombjait, és figyelje a kimeneteket. Itt semmi sem módosítható.</li>
+<li><b style="color:#15803D">&#9679; Élő teszt</b> (zöld keret): magától csatlakozik; nyomja meg a gombokat, és nézze meg, mit csinál a
+valódi panel. Itt semmi sem módosítható.</li>
+</ul>
+<p>A port melletti <b>Csatlakozás / Bontás</b> mutatja, hogy van-e csatlakoztatott panel.</p>
+
+<h3>A leggyorsabb kezdés</h3>
+<p>A program egy üres panellel indul: egy bemenet (DCC-cím 1), amely egy kimenetet kapcsol (D3-on). Válasszon egy
+kész konfigurációt a felső <b>Preset</b> listából (például <i>16 servos</i>), és kattintson az <b>Alkalmaz</b> gombra,
+vagy induljon ki egy példából: <b>Fájl &rarr; Példa megnyitása&hellip;</b>.</p>
+
+<h3>Lépésről lépésre</h3>
+<ol>
+<li><b>Csatlakoztatás.</b> Dugja a panelt az USB-portba, válassza ki a portját felül (általában CH340, USB Serial
+vagy Arduino a neve), és kattintson a <b>Csatlakozás</b> gombra. A <b>Panel olvasása</b> betölti, ami a panelen van. Első alkalommal a program <b>nevet</b> kér a panelnek.</li>
+<li><b>Kimenet hozzáadása.</b> Kattintson a <b>+ Kimenet hozzáadása</b> gombra, vagy kattintson egy kimenetre. Válassza ki a <b>típust</b> (például
+<i>Szervó</i>) és a <b>lábat</b>, ahová a vezeték megy.</li>
+<li><b>Bemenet hozzáadása.</b> Kattintson a <b>+ Bemenet hozzáadása</b> gombra, vagy kattintson egy bemenetre. Válassza ki, mi indítja: egy <b>nyomógomb-láb</b>,
+egy <b>DCC-cím</b>, vagy mindkettő.</li>
+<li><b>Összekötés.</b> Húzza a kimenetet a bemenetre. Megjelenik egy színes vonal: ez a bemenet most azt a
+kimenetet működteti. A kimenet megkapja a bemenete színét.</li>
+<li><b>Kipróbálás.</b> Kattintson az <b>&#9679; Élő teszt</b> gombra, és nyomja meg a bemenet gombjait.</li>
+<li><b>Mentés</b> (Ctrl+S): mentse a konfigurációt egy fájlba; a program magától nem ment.</li>
+</ol>
+
+<h3>Jó tudni</h3>
+<ul>
+<li>Minden <b>(i)</b> gomb elmagyarázza a mellette lévő dolgot.</li>
+<li>Adjon <b>nevet</b> a bemeneteknek és a kimeneteknek (a mező a beállítási részek tetején). A nevek és minden beállítás
+ezen a számítógépen tárolódik, a <i>Documents\GPIOcore\boards\&lt;panel neve&gt;.json</i> fájlban, panelenként egy fájl.</li>
+<li>A már használt láb <b>pirosan</b> jelenik meg a láblistában. Ha mégis kiválasztja, az a bemenet vagy kimenet, amelyiké
+volt, megtartja a funkcióját, de elveszíti ezt a lábat.</li>
+<li>A nem használt bemenetek és kimenetek rejtve vannak; a <b>Nézet &rarr; Nem használt bemenetek és kimenetek megjelenítése</b> mindet megmutatja.</li>
+<li>A <b>Nézet &rarr; Kezdő / Haladó / Szakértő</b> határozza meg, mennyit kínál a program; Kezdő szinten indul, és
+soha nem változtatja meg a konfigurációt. A <b>Nézet &rarr; Téma</b> sötétre vált.</li>
+<li>A <b>Fájl &rarr; Exportálás&hellip;</b> a kimenetek, bemenetek vagy panelbeállítások egy részét külön fájlba menti (saját
+példa); a <b>Fájl &rarr; Importálás&hellip;</b> hozzáadja őket egy másik panelhez, ugyanazokon a számokon vagy szabad helyeken.</li>
+<li>A <b>Panel &rarr; Firmware feltöltése&hellip;</b> új firmware-t tölt az Arduinóra.</li>
+</ul>

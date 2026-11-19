@@ -1,16 +1,20 @@
 <h3>Configurer, simuler et tester en direct</h3>
-<p>Les trois boutons de couleur en haut montrent ce que fait le programme. La même couleur encadre le centre de
-l'écran, pour que vous sachiez toujours où vous en êtes.</p>
+<p>Le programme est toujours dans l'un des trois modes : les boutons de couleur en haut. La connexion est à part :
+<b>Connecter / Déconnecter</b> à côté du port, avec l'état affiché juste à côté (Hors ligne, Connecté : <i>nom</i>,
+Simulation).</p>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Bouton</th><th>Cadre</th><th>Ce qui se passe</th></tr>
-<tr><td><b>&#9679; Configurer</b></td><td style="color:#DC2626">rouge</td><td>Connecté à une vraie carte. Chaque modification
-part tout de suite vers la carte et est relue pour vérification.</td></tr>
-<tr><td><b>&#9679; Simuler</b></td><td style="color:#A16207">jaune</td><td>Une carte simulée exécute <i>vos</i> paramètres (ceux de
-la carte que vous aviez connectée, d'un fichier de carte, ou d'une nouvelle carte). Les boutons des entrées sont
-actifs. Les modifications sont conservées dans le fichier de carte, vous pouvez donc préparer une carte chez vous.</td></tr>
-<tr><td><b>&#9679; Test en direct</b></td><td style="color:#15803D">vert</td><td>Sur une vraie carte : les entrées reçoivent des
-boutons et les sorties montrent ce que la carte renvoie.</td></tr>
+<tr><th>Mode</th><th>Cadre</th><th>Ce que vous pouvez faire</th></tr>
+<tr><td><b>&#9679; Configurer</b></td><td>aucun hors ligne, <span style="color:#DC2626">rouge</span> une fois connecté</td><td>Tout
+modifier. Hors ligne, vous préparez une carte ; connecté, chaque modification part tout de suite vers la carte. Rien n'est
+lu automatiquement depuis la carte : utilisez <b>Lire la carte</b> ou <b>Tout écrire</b>.</td></tr>
+<tr><td><b>&#9679; Simuler</b></td><td style="color:#A16207">jaune</td><td>Votre configuration tourne sur une carte simulée.
+Appuyez sur les boutons des entrées et observez ; rien ne peut être modifié.</td></tr>
+<tr><td><b>&#9679; Test en direct</b></td><td><span style="color:#15803D">vert</span> une fois connecté</td><td>Se connecte
+tout seul. Appuyez sur les boutons des entrées et regardez ce que fait la vraie carte ; rien ne peut être modifié. Si la
+carte porte un autre nom que celui à l'écran, le programme propose de lire d'abord la carte.</td></tr>
 </table>
+<p>Rien n'est enregistré tout seul dans un fichier : <b>Enregistrer</b> (Ctrl+S) demande toujours où, et à la fermeture le
+programme signale les modifications non enregistrées.</p>
 
 <h4>Les boutons des entrées</h4>
 <ul>
@@ -21,6 +25,11 @@ feu éteint, allumé, clignotant ou clignotant en opposition de phase.</li>
 </ul>
 <p>Un bouton agit comme une commande DCC : un second clic dans la demi-seconde est ignoré, exactement comme un paquet
 répété par une centrale.</p>
+<p>En mode <b>Simuler</b>, une entrée avec une broche (non analogique) agit sur cette broche, comme le vrai bouton ou
+interrupteur : <b>&#9654; appui</b> / <b>&#9654; départ</b> met la broche à l'état bas puis la relâche, &#9664; maintient la
+broche d'une entrée en absolu à l'état bas et &#9654; à l'état haut (le côté maintenu est mis en évidence). Tout ce qui lit
+la broche réagit donc aussi, par exemple un servo qui suit l'entrée comme détecteur. Les entrées sans broche agissent
+comme une commande DCC.</p>
 
 <h4>Ce que montrent les sorties</h4>
 <ul>

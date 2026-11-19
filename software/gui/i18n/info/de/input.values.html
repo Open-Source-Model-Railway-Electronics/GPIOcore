@@ -1,0 +1,16 @@
+<h3>Eigene Werte: mehr als ein und aus</h3>
+<p>Normalerweise schaltet ein Eingang mit Umschalten oder Absolut seinen Ausgang auf <b>Abzweig / aus</b> (0) oder <b>Gerade / ein</b> (1).
+Mit <b>Eigene Werte</b> sendet stattdessen jeder der beiden Zustände seinen eigenen Wert, genau wie ein Fahrstraßen-Schritt:</p>
+<ul>
+<li><b>Servo</b> — ein Winkel, z. B. aus = 45&deg;, ein = 135&deg; (oder wie üblich Abzweig / Gerade).</li>
+<li><b>4-begriffiges Signal</b> — ein Signalbild pro Zustand, Lampe für Lampe gewählt mit &#9662;.</li>
+<li><b>PWM</b> — eine Helligkeit pro Zustand, z. B. aus = 20 (gedimmt), ein = 255.</li>
+<li><b>Soundeffekt</b> — ein Titel pro Zustand; <i>Stopp</i> (0) beendet die Wiedergabe. Ein Sound-Ausgang kann viele
+Titel abspielen, jeden gewählt von seinem eigenen Eingang.</li>
+<li>Andere Ausgänge — Abzweig oder Gerade pro Zustand, zum Beispiel andersherum.</li>
+</ul>
+<p><b>Aus / Abzweig</b> wird verwendet, wenn der Zustand des Eingangs 0 wird (ein absoluter Eingang: Taster gedrückt oder ein
+DCC-Befehl 'Abzweig'), <b>Ein / Gerade</b>, wenn er 1 wird. Ein Eingang mit Umschalten wechselt zwischen beiden.</p>
+<p>Die beiden Werte werden als 2 Schritte im Fahrstraßen-Speicher des Eingangs abgelegt, sie zählen also zur Fahrstraßen-Summe
+der Platine. DCC-extended-Befehle senden weiterhin ihren eigenen Wert.</p>
+<p>Verbinden Sie einen Eingang mit einem Sound-Ausgang, werden eigene Werte von selbst eingeschaltet: aus = Stopp, ein = Titel 1.</p>

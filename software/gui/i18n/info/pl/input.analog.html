@@ -1,0 +1,27 @@
+<h3>Wejścia analogowe: drabinka rezystorowa lub czujnik</h3>
+<p>Zamiast przycisku do GND pin analogowy (A0–A6) może mierzyć napięcie: <b>0 = 0 V, 1023 = 5 V</b>.
+Wejście uznaje się za <i>wciśnięte</i>, dopóki wartość spełnia warunek, i działa wtedy dokładnie jak wciśnięty
+przycisk: Przełącz, Bezwzględny i przebiegi działają normalnie.</p>
+<ul>
+<li><b>Poniżej wartości</b> — wciśnięte poniżej progu, zwolnione ponownie 20 wyżej. Na przykład czujnik światła
+(fotorezystor, LDR), który zostaje zaciemniony, albo pojedynczy przycisk.</li>
+<li><b>Powyżej wartości</b> — wciśnięte powyżej progu, zwolnione ponownie 20 niżej.</li>
+<li><b>Przy wartości</b> — wciśnięte w zakresie progu &plusmn; 10: jeden przycisk <b>drabinki rezystorowej</b>.
+Kilka wejść może dzielić jeden pin, każde z własną wartością.</li>
+</ul>
+<p><b>Drabinka rezystorowa:</b> kilka przycisków na jednym pinie. Rezystor 10 k&Omega; od 5 V do pinu utrzymuje
+na nim 1023, gdy nic nie jest wciśnięte; każdy przycisk łączy pin z GND przez własny rezystor, więc każdy przycisk
+daje inną wartość.</p>
+<pre>  5 V ---[10k]---+--- A0
+                 +---------[ przycisk 1 ]--- GND    ok. 0
+                 +--[1k]---[ przycisk 2 ]--- GND    ok. 93
+                 +--[3k3]--[ przycisk 3 ]--- GND    ok. 254
+                 +--[10k]--[ przycisk 4 ]--- GND    ok. 512</pre>
+<p><b>Odczytaj rzeczywiste wartości:</b> rezystory mają tolerancje, a styki – rezystancję, więc praktyka różni się
+od teorii. Podłącz płytkę, wybierz wejście i obserwuj <b>Teraz:</b>, trzymając kolejno każdy przycisk; <b>Użyj tej wartości</b>
+przyjmuje odczyt jako próg. Zachowaj odstęp co najmniej ok. 40 między dwoma przyciskami.</p>
+<ul>
+<li>Próg jest zapisywany w krokach co 8. Płytka odczytuje pin co 50 ms i reaguje dopiero, gdy dwa odczyty są zgodne.</li>
+<li><b>A7</b> to przycisk konfiguracji i nie można go użyć; <b>A6</b> istnieje tylko w Arduino Nano.</li>
+<li>W trybie <b>Symuluj</b> kliknij <i>wartość ▾</i> na wejściu, aby wpisać wartość dla jego pinu: reaguje każde wejście na tym pinie.</li>
+</ul>

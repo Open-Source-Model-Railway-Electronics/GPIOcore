@@ -1,0 +1,41 @@
+<h3>Konfigurace, simulace a živý test</h3>
+<p>Program je vždy v jednom ze tří režimů: barevná tlačítka nahoře. Připojení je samostatné:
+<b>Připojit / Odpojit</b> vedle portu, se stavem zobrazeným vedle (Offline, Připojeno: <i>název</i>,
+Simulace).</p>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Režim</th><th>Rámeček</th><th>Co můžete dělat</th></tr>
+<tr><td><b>&#9679; Konfigurovat</b></td><td>žádný offline, <span style="color:#DC2626">červený</span> při připojení</td><td>Měnit
+vše. Offline připravujete desku; při připojení jde každá změna do desky okamžitě. Nic se nenačítá z
+desky automaticky: použijte <b>Načíst desku</b> nebo <b>Zapsat vše</b>.</td></tr>
+<tr><td><b>&#9679; Simulovat</b></td><td style="color:#A16207">žlutý</td><td>Vaše konfigurace běží na simulované desce.
+Mačkejte tlačítka vstupů a sledujte; nic nelze změnit.</td></tr>
+<tr><td><b>&#9679; Živý test</b></td><td><span style="color:#15803D">zelený</span> při připojení</td><td>Připojí se
+sám. Mačkejte tlačítka vstupů a sledujte, co dělá skutečná deska; nic nelze změnit. Pokud má deska
+jiný název než obrazovka, program nabídne nejprve desku načíst.</td></tr>
+</table>
+<p>Nic se do souboru neukládá samo: <b>Uložit</b> (Ctrl+S) se vždy zeptá kam a při zavírání se program zeptá
+na neuložené změny.</p>
+
+<h4>Tlačítka vstupů</h4>
+<ul>
+<li><b>&#9664; / &#9654;</b> (absolutní vstupy): &#9664; = do odbočky / vyp, &#9654; = přímo / zap.</li>
+<li><b>&#9654; stisk</b> (přepínání) a <b>&#9654; start</b> (jízdní cesta): jako stisk tlačítka nebo odeslání DCC povelu.</li>
+<li><b>návěst &#9662; / hodnota &#9662;</b>: pro vstup, který řídí návěstidlo nebo PWM výstup. Pro každé světlo zvolte vyp, zap,
+bliká nebo bliká v protifázi.</li>
+</ul>
+<p>Tlačítko se chová jako DCC povel: druhé kliknutí do půl sekundy se ignoruje, stejně jako opakovaný paket
+z centrály.</p>
+<p>V režimu <b>Simulovat</b> funguje vstup s pinem (ne analogovým) na tomto pinu jako skutečné tlačítko nebo přepínač:
+<b>&#9654; stisk</b> / <b>&#9654; start</b> stáhne pin do nízké úrovně a zase ho uvolní, &#9664; drží pin absolutního
+vstupu v nízké úrovni a &#9654; ve vysoké (držená strana je zvýrazněna). Reaguje tak i vše, co tento pin čte, například
+servo, které sleduje vstup jako hlásič. Vstupy bez pinu se chovají jako DCC povel.</p>
+
+<h4>Co ukazují výstupy</h4>
+<ul>
+<li><b>Modrá tečka</b> = přímo / zap, <b>červená tečka</b> = do odbočky / vyp, šedá = zatím neznámo.</li>
+<li><b>Servo</b>: ciferník s úhlem; otáčí se stupeň po stupni, jak ho deska hlásí.</li>
+<li><b>Návěstidlo</b>: čtyři světla ve svých barvách, blikající jako na desce.</li>
+<li><b>Relé srdcovky</b>: malý nákres relé. Přepínací kontakt a srdcovka ukazují, který kontakt je pod napětím (červená = do odbočky,
+modrá = přímo). Electrofrog je šedý (bez napětí), zatímco se výhybka přestavuje; unifrog se přepne okamžitě.</li>
+</ul>
+<p>Pro živý test nemusí být k desce nic připojeno: vidíte, co <i>by</i> deska přepnula.</p>

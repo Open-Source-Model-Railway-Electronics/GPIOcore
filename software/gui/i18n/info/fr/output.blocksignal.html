@@ -1,0 +1,39 @@
+<h3>Signal de block</h3>
+<p><i>Niveau Expert (menu Affichage).</i></p>
+<p>Un signal de block se règle tout seul, sans centrale ni ordinateur. La carte regarde toutes les 50 ms deux
+<b>détecteurs de block</b> (des entrées) et affiche l'un de trois aspects :</p>
+<ul>
+<li><b>Arrêt</b> — quand le détecteur de son propre block signale un train (généralement rouge),</li>
+<li><b>Avertissement</b> — quand son propre block est libre mais que le block suivant est occupé (généralement jaune),</li>
+<li><b>Voie libre</b> — quand les deux blocks sont libres (généralement vert).</li>
+</ul>
+<p>Chaque aspect se choisit feu par feu avec <b>▾</b>, comme une étape d'itinéraire : chaque feu peut être éteint, allumé ou
+clignotant. Les feux clignotants clignotent à 1 Hz. Les feux sont sur les broches A–D ; seule la broche A est obligatoire, un
+signal à deux ou trois feux laisse donc simplement les autres broches sur « non utilisé ».</p>
+<p>Un détecteur est toute entrée utilisée qui a une broche : de préférence une entrée <b>Capteur (occupation)</b>, par exemple
+un détecteur de courant, un contact reed ou une barrière lumineuse (appuyé = LOW = occupé), ou une condition analogique. Un
+détecteur peut commander plusieurs signaux.</p>
+<p>L'aspect est seulement calculé, jamais enregistré. Les entrées, les itinéraires et les commandes DCC ne peuvent pas commander
+un signal de block : il ne peut donc pas être choisi comme cible dans le panneau des entrées et on ne peut pas y faire glisser
+une entrée.</p>
+
+<h4>Exemple 1 : signaux néerlandais à 3 feux à la suite</h4>
+<p>Feux : A vert, B jaune, C rouge. Le signal 1 protège le block 1 (block propre = son détecteur) et regarde le block 2
+(block suivant), le signal 2 protège le block 2 et regarde le block 3, et ainsi de suite. Aspects : arrêt = C allumé,
+avertissement = B allumé, voie libre = A allumé (les valeurs par défaut). Un train dans le block 2 donne le signal 2 au rouge,
+le signal 1 au jaune et le signal 3 au vert.</p>
+
+<h4>Exemple 2 : un signal principal sans block suivant lié</h4>
+<p>Rouge / vert seulement : laissez <b>Block suivant</b> sur « aucun ». Arrêt = rouge, voie libre = vert ; l'aspect
+avertissement n'est pas utilisé.</p>
+
+<h4>Exemple 3 : un signal d'avertissement</h4>
+<p>Un signal d'avertissement se trouve avant un signal principal et annonce ce que montre ce signal principal. Faites-en un
+signal de block dont le <b>block propre</b> est le détecteur du block situé derrière le signal principal suivant (le block que
+ce signal principal protège), block suivant « aucun » : occupé = jaune (le signal principal est au rouge), libre = vert. Le
+signal principal utilise le même détecteur comme block propre : un seul détecteur commande donc les deux.</p>
+
+<h4>Un block sur la carte suivante</h4>
+<p>Le détecteur du block suivant peut se trouver sur une autre carte. Amenez son signal via un optocoupleur à une entrée ici,
+par exemple D0 (RX) : sur la carte, D0 ne fonctionne que si aucun PC n'est connecté (5 s après la mise sous tension sans
+la GUI) ; dans le simulateur, il fonctionne toujours.</p>

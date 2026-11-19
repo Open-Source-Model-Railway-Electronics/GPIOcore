@@ -1,16 +1,20 @@
 <h3>Configura, simula e test dal vivo</h3>
-<p>I tre pulsanti colorati in alto mostrano cosa sta facendo il programma. Lo stesso colore incornicia il centro dello
-schermo, così sai sempre dove sei.</p>
+<p>Il programma è sempre in una di tre modalità: i pulsanti colorati in alto. La connessione è separata:
+<b>Connetti / Disconnetti</b> accanto alla porta, con lo stato indicato a fianco (Offline, Collegato: <i>nome</i>,
+Simulazione).</p>
 <table border="1" cellpadding="4" cellspacing="0">
-<tr><th>Pulsante</th><th>Cornice</th><th>Cosa succede</th></tr>
-<tr><td><b>&#9679; Configura</b></td><td style="color:#DC2626">rossa</td><td>Collegato a una scheda vera. Ogni modifica va subito
-alla scheda e viene riletta per controllo.</td></tr>
-<tr><td><b>&#9679; Simula</b></td><td style="color:#A16207">gialla</td><td>Una scheda simulata esegue le <i>tue</i> impostazioni
-(della scheda che avevi collegato, di un file di scheda o di una nuova scheda). I pulsanti degli ingressi sono attivi.
-Le modifiche vengono conservate nel file della scheda, così puoi preparare una scheda a casa.</td></tr>
-<tr><td><b>&#9679; Test dal vivo</b></td><td style="color:#15803D">verde</td><td>Su una scheda vera: gli ingressi ricevono dei
-pulsanti e le uscite mostrano ciò che la scheda riporta.</td></tr>
+<tr><th>Modalità</th><th>Cornice</th><th>Cosa puoi fare</th></tr>
+<tr><td><b>&#9679; Configura</b></td><td>nessuna offline, <span style="color:#DC2626">rossa</span> quando collegato</td><td>Modificare
+tutto. Offline prepari una scheda; da collegato, ogni modifica va subito alla scheda. Dalla scheda non viene letto
+nulla automaticamente: usa <b>Leggi scheda</b> o <b>Scrivi tutto</b>.</td></tr>
+<tr><td><b>&#9679; Simula</b></td><td style="color:#A16207">gialla</td><td>La tua configurazione gira su una scheda simulata.
+Premi i pulsanti degli ingressi e osserva; non si può modificare nulla.</td></tr>
+<tr><td><b>&#9679; Test dal vivo</b></td><td><span style="color:#15803D">verde</span> quando collegato</td><td>Si collega
+da solo. Premi i pulsanti degli ingressi e guarda cosa fa la scheda vera; non si può modificare nulla. Se la scheda ha
+un nome diverso da quello sullo schermo, il programma propone di leggere prima la scheda.</td></tr>
 </table>
+<p>Niente viene salvato in un file da solo: <b>Salva</b> (Ctrl+S) chiede sempre dove, e alla chiusura il programma
+chiede cosa fare delle modifiche non salvate.</p>
 
 <h4>I pulsanti degli ingressi</h4>
 <ul>
@@ -21,6 +25,10 @@ spenta, accesa, lampeggiante o lampeggiante in controfase.</li>
 </ul>
 <p>Un pulsante agisce come un comando DCC: un secondo clic entro mezzo secondo viene ignorato, proprio come un pacchetto
 ripetuto da una centrale.</p>
+<p>In <b>Simula</b>, un ingresso con un pin (non analogico) agisce su quel pin, come il pulsante o l'interruttore vero:
+<b>&#9654; premi</b> / <b>&#9654; avvia</b> porta il pin a livello basso e poi lo rilascia, &#9664; tiene basso il pin di un
+ingresso assoluto e &#9654; alto (il lato tenuto è evidenziato). Così reagisce anche tutto ciò che legge il pin, per
+esempio un servo che segue l'ingresso come rilevatore. Gli ingressi senza pin agiscono come un comando DCC.</p>
 
 <h4>Cosa mostrano le uscite</h4>
 <ul>
