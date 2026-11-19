@@ -20,7 +20,8 @@ Output::Output() {}
 
 uint8_t Output::setVal( uint8_t _val )
 {
-    eedata.pwmVal = _val ;
+    if( eedata.type == PWM ) eedata.pwm.value   = _val ;
+    else                     eedata.signal.aspect = _val ;
     if( eedata.type != PWM ) saveEEPROM() ;     // a PWM level is not kept (EEPROM wear); a signal aspect is
     return 0 ;
 }
@@ -230,7 +231,7 @@ StateFunction( idle )
     return 1 ;      // the idle state body in update() must run every time: it starts the actions
 }
 
-// PWM: data[0] = brightness, data[1] = fade time in s for a full 0-255 change (0 = at once).
+// PWM: pwm.value = brightness, pwm.fadeTime = s for a full 0-255 change (0 = at once).
 // 'pos' (the servo angle) holds the brightness of the moment; it moves one step per tick.
 StateFunction( pwm )
 {
@@ -239,15 +240,15 @@ StateFunction( pwm )
         timer.type  = TIMER_BLEEP ;
     }
 
-    timer.PT = eedata.data[1] ? eedata.data[1] * 1000UL / 255 : 100 ;
+    timer.PT = eedata.pwm.fadeTime ? eedata.pwm.fadeTime * 1000UL / 255 : 100 ;
     timer.update( 1 ) ;                                // a BLEEP timer only runs with its input on
     if( timer.Q )
     {
         uint8_t before = pos ;
-        if(      !eedata.data[1]          ) pos = eedata.pwmVal ;
-        else if( pos < eedata.pwmVal      ) pos ++ ;
-        else if( pos > eedata.pwmVal      ) pos -- ;
-        if( pos != before && callbackServoPos ) callbackServoPos( this, pos, pos == eedata.pwmVal ) ;   // every fade step
+        if(      !eedata.pwm.fadeTime        ) pos = eedata.pwm.value ;
+        else if( pos < eedata.pwm.value      ) pos ++ ;
+        else if( pos > eedata.pwm.value      ) pos -- ;
+        if( pos != before && callbackServoPos ) callbackServoPos( this, pos, pos == eedata.pwm.value ) ;   // every fade step
         if( isPwmPin( eedata.pinA ) ) { analogWrite( eedata.pinA, pos ) ; }
     }
 
@@ -549,14 +550,15 @@ StateFunction( fourToneSignalState )
         timer.PT   = 500 ;          // blink interval 500ms
     }
 
-    const uint8_t aspect = eedata.type == blockSignal ? pos : eedata.pwmVal ;   // block signal: computed, not stored
+    const uint8_t aspect = eedata.type == blockSignal ? pos : eedata.signal.aspect ;   // block signal: computed, not stored
     uint8_t onMask   = aspect & 0x0F ;
     uint8_t blinkMask = ( aspect >> 4 ) & 0x0F ;
 
     const uint8_t pins[4] = { eedata.pinA, eedata.pinB, eedata.pinC, eedata.pinD } ;
 
-    // data[1] = blink frequency in 0.1 Hz (0 = 1 Hz): half a period = 5000 / data[1] ms
-    timer.PT = ( eedata.type != blockSignal && eedata.data[1] ) ? 5000 / eedata.data[1] : 500 ;   // block signal: 1 Hz
+    // half a blink period: a signal has its own rate (x 0.1 Hz), block signals share the board's
+    timer.PT = eedata.type == blockSignal ? blockBlinkHalfMs()
+             : eedata.signal.blinkRate    ? 5000 / eedata.signal.blinkRate : 500 ;
     if( timer.update(1) ) phase ^= 1 ;     // timer.Q is high for one call only: keep our own phase
 
     for( uint8_t i = 0 ; i < 4 ; i++ )

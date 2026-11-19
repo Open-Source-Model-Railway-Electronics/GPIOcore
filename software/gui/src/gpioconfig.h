@@ -71,7 +71,6 @@ struct OutputConfig
     quint8  servoMin()     const { return data[0]; }
     quint8  servoMax()     const { return data[1]; }
     quint8  servoSpeed()   const { return data[2]; }
-    quint8  servoPattern() const { return data[3]; }
     quint8  pwmValue()     const { return data[0]; }
     quint8  pwmFade()      const { return data[1]; }   // s for a full 0-255 change, 0 = at once
     // Block signal (type 15): data[0] aspect when its own block is occupied, data[1] when the next block
@@ -218,10 +217,15 @@ struct BoardSettings
     bool    timing    = false;          // per-step wait times in routes (off: fixed delay), firmware default
     quint8  interlock = InterlockAuto;
     quint8  delay     = DefaultStepDelay; // 0.1 s units, used when timing is off
+    quint8  blockBlink = 0;             // block signals' blink rate x 0.25 Hz, 0 = 1 Hz (flags bits 4-7)
+
+    double  blockBlinkHz() const { return blockBlink ? blockBlink * 0.25 : 1.0; }
+    int     blockBlinkHalfMs() const { return blockBlink ? 2000 / blockBlink : 500; }   // as the firmware
+    static quint8 blockBlinkFromHz(double hz);   // 1 Hz = 0 (the default), else hz / 0.25, 1-15
 
     bool operator==(const BoardSettings &o) const
     { return name == o.name && type == o.type && timing == o.timing
-          && interlock == o.interlock && delay == o.delay; }
+          && interlock == o.interlock && delay == o.delay && blockBlink == o.blockBlink; }
     bool operator!=(const BoardSettings &o) const { return !(*this == o); }
 
     QJsonObject toJson() const;

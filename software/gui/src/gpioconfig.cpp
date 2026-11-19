@@ -552,9 +552,9 @@ QString boardTypeName(quint8 type)
 {
     switch (type)
     {
-    case BoardNano:            return trGpio("Arduino Nano");
-    case BoardDccNext:         return trGpio("DCCnext");
-    case BoardJackOfAllTrades: return trGpio("Jack of all trades");
+    case BoardNano:            return trGpio(QT_TRANSLATE_NOOP("Gpio", "Arduino Nano"));
+    case BoardDccNext:         return trGpio(QT_TRANSLATE_NOOP("Gpio", "DCCnext"));
+    case BoardJackOfAllTrades: return trGpio(QT_TRANSLATE_NOOP("Gpio", "Jack of all trades"));
     }
     return QStringLiteral("?");
 }
@@ -576,7 +576,14 @@ QJsonObject BoardSettings::toJson() const
     o["timing"]    = timing;
     o["interlock"] = QString::fromLatin1(kInterlockKeys[interlock < 3 ? interlock : InterlockAuto]);
     o["delay"]     = int(delay);
+    o["blockSignalBlinkHz"] = blockBlinkHz();
     return o;
+}
+
+quint8 BoardSettings::blockBlinkFromHz(double hz)
+{
+    const int n = qBound(1, qRound(hz * 4), 15);
+    return n == 4 ? 0 : quint8(n);
 }
 
 BoardSettings BoardSettings::fromJson(const QJsonObject &o)
@@ -592,6 +599,7 @@ BoardSettings BoardSettings::fromJson(const QJsonObject &o)
     for (quint8 i = 0; i < 3; ++i)
         if (il == QLatin1String(kInterlockKeys[i])) b.interlock = i;
     b.delay = quint8(qBound(0, o["delay"].toInt(DefaultStepDelay), 255));
+    b.blockBlink = blockBlinkFromHz(o["blockSignalBlinkHz"].toDouble(1.0));
     return b;
 }
 
@@ -599,7 +607,7 @@ QByteArray encodeBoard(const BoardSettings &b)
 {
     QByteArray p;
     p.append(char(b.type));
-    p.append(char((b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2)));
+    p.append(char((b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2) | ((b.blockBlink & 0x0F) << 4)));
     p.append(char(b.delay));
     p.append(cleanBoardName(b.name).toLatin1());
     return p;
@@ -614,6 +622,7 @@ bool decodeBoard(const QByteArray &p, BoardSettings &b)
     b.timing    = p.at(1) & 0x02;
     b.interlock = quint8((p.at(1) >> 2) & 0x03);
     if (b.interlock > InterlockAuto) b.interlock = InterlockAuto;
+    b.blockBlink = quint8((p.at(1) >> 4) & 0x0F);     // older firmware: always 0 (1 Hz)
     b.delay     = quint8(p.at(2));
     b.name      = cleanBoardName(QString::fromLatin1(p.mid(3)));
     return true;
@@ -678,22 +687,22 @@ QString pinReservedReason(quint8 pin)
 {
     const BoardOptions &b = boardOptions();
     if (b.dccNext && pin != 2 && pin < NumPins && !dccNextPort(pin))
-        return trGpio("not a DCCnext port");   // only P1-P16 (D3-D12, A0-A5) are on its terminals
+        return trGpio(QT_TRANSLATE_NOOP("Gpio", "not a DCCnext port"));   // only P1-P16 (D3-D12, A0-A5) are on its terminals
     switch (pin)
     {
-    case 0:  return b.serialPinsUsable ? QString() : trGpio("Serial RX (GUI link)");
-    case 1:  return b.serialPinsUsable ? QString() : trGpio("Serial TX (GUI link)");
-    case 2:  return trGpio("DCC input");
-    case 13: return trGpio("config LED");
-    case 20: return b.type == BoardNano ? QString() : trGpio("only on an Arduino Nano");
-    case 21: return trGpio("config button");
+    case 0:  return b.serialPinsUsable ? QString() : trGpio(QT_TRANSLATE_NOOP("Gpio", "Serial RX (GUI link)"));
+    case 1:  return b.serialPinsUsable ? QString() : trGpio(QT_TRANSLATE_NOOP("Gpio", "Serial TX (GUI link)"));
+    case 2:  return trGpio(QT_TRANSLATE_NOOP("Gpio", "DCC input"));
+    case 13: return trGpio(QT_TRANSLATE_NOOP("Gpio", "config LED"));
+    case 20: return b.type == BoardNano ? QString() : trGpio(QT_TRANSLATE_NOOP("Gpio", "only on an Arduino Nano"));
+    case 21: return trGpio(QT_TRANSLATE_NOOP("Gpio", "config button"));
     }
     return QString();
 }
 
 QString pinOutputReason(quint8 pin)
 {
-    return (pin == 20 || pin == 21) ? trGpio("analog input only") : QString();
+    return (pin == 20 || pin == 21) ? trGpio(QT_TRANSLATE_NOOP("Gpio", "analog input only")) : QString();
 }
 
 bool isServoTimerPin(quint8 pin)
@@ -710,9 +719,9 @@ void setBoardType(quint8 type)
 QString pinNote(quint8 pin)
 {
     if (pin < 2 && boardOptions().serialPinsUsable)
-        return trGpio("shared with serial: only active when no GUI is connected");
+        return trGpio(QT_TRANSLATE_NOOP("Gpio", "shared with serial: only active when no GUI is connected"));
     if (pin == 20 || pin == 21)
-        return trGpio("analog input without pull-up: add a 10 kOhm resistor to 5 V");
+        return trGpio(QT_TRANSLATE_NOOP("Gpio", "analog input without pull-up: add a 10 kOhm resistor to 5 V"));
     return QString();
 }
 

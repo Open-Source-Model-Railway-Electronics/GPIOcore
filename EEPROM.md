@@ -11,7 +11,7 @@ Source: `software/GPIOcore/routes.h` (`EE_*` constants).
 |---|---|---|---|
 | 0 – 2 | 0x000 – 0x002 | 3 | Magic `'G'` `'2'`, layout version `1`. If this is missing, the board gets default values (delay 0.3 s, Nano, timing off, interlocking auto) |
 | 3 | 0x003 | 1 | Board type: 0 Uno, 1 Nano, 2 DCCnext, 3 Jack of all trades |
-| 4 | 0x004 | 1 | Board flags: bit0 reserved (was recorder), bit1 timing per step, bit2-3 interlocking (0 off, 1 on, 2 auto) |
+| 4 | 0x004 | 1 | Board flags: bit0 reserved (was recorder), bit1 timing per step, bit2-3 interlocking (0 off, 1 on, 2 auto), bit4-7 block signal blink rate x 0.25 Hz (0 = 1 Hz) |
 | 5 | 0x005 | 1 | Fixed wait time after a route step when timing is off, × 0.1 s |
 | 6 – 21 | 0x006 – 0x015 | 16 | Board name, ASCII, padded with 0 |
 | 22 – 181 | 0x016 – 0x0B5 | 160 | **16 outputs × 10 B** — output *n* at `22 + 10·n` |

@@ -2579,13 +2579,23 @@ void MainWindow::editBoardSettings()
     interlock->addItem(tr("On — one route at a time"));
     interlock->addItem(tr("Automatic — turnout routes one at a time, lights in parallel"));
     interlock->setCurrentIndex(m_edit.board.interlock);
+    auto *blink = new QDoubleSpinBox;                 // all block signals of this board blink alike
+    blink->setRange(0.25, 3.75);
+    blink->setSingleStep(0.25);
+    blink->setDecimals(2);
+    blink->setSuffix(tr(" Hz"));
+    blink->setValue(m_edit.board.blockBlinkHz());
+    blink->setToolTip(tr("How fast flashing lamps of block signals blink. 1 Hz = 60 times a minute; "
+                         "1.5 Hz = 90 a minute."));
     form->addRow(tr("Name"), name);
     form->addRow(tr("Board type"), type);
     form->addRow(QString(), timing);
     form->addRow(tr("Wait time per step"), delay);
     form->addRow(tr("Route interlocking"), interlock);
+    form->addRow(tr("Block signals flash at"), blink);
     if (Ui::level() < Ui::Advanced)          // Beginner: name and board type only (the rest is kept as it is)
-        for (QWidget *w : { static_cast<QWidget *>(timing), static_cast<QWidget *>(delay), static_cast<QWidget *>(interlock) })
+        for (QWidget *w : { static_cast<QWidget *>(timing), static_cast<QWidget *>(delay), static_cast<QWidget *>(interlock),
+                            static_cast<QWidget *>(blink) })
         {
             w->hide();
             if (QWidget *label = form->labelForField(w)) label->hide();
@@ -2612,6 +2622,7 @@ void MainWindow::editBoardSettings()
     b.timing    = timing->isChecked();
     b.delay     = quint8(qRound(delay->value() * 10));
     b.interlock = quint8(interlock->currentIndex());
+    b.blockBlink = BoardSettings::blockBlinkFromHz(blink->value());
     m_edit.board = b;
     setBoardType(b.type);
     m_inEd->setTimingEnabled(b.timing);

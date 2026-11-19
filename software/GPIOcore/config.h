@@ -50,6 +50,7 @@ const uint8_t  BOARD_INTERLOCK    = 0x0C ;  // flags bit2-3: 0 = off, 1 = on, 2 
 const uint8_t  INTERLOCK_OFF      = 0 ;
 const uint8_t  INTERLOCK_ON       = 1 ;
 const uint8_t  INTERLOCK_AUTO     = 2 ;
+const uint8_t  BOARD_BLINK        = 0xF0 ;  // flags bit4-7: block signal blink rate x 0.25 Hz, 0 = 1 Hz
 const uint8_t  BOARD_NAME_LEN     = 16 ;
 
 typedef struct                      // name[16] is not kept in RAM, it is read from EEPROM when needed
@@ -60,6 +61,9 @@ typedef struct                      // name[16] is not kept in RAM, it is read f
 } BoardSettings ;
 
 extern BoardSettings board ;
+
+// Half a blink period of the block signals in ms: 1 Hz by default, else n x 0.25 Hz
+inline uint16_t blockBlinkHalfMs() { uint8_t n = board.flags >> 4 ; return n ? 2000 / n : 500 ; }
 extern uint16_t      boardEEAddress ;
 extern uint8_t       configSession ;    // set by HELLO
 extern uint8_t       serialIsIO ;       // D0/D1 are I/O: no HELLO within the serial window

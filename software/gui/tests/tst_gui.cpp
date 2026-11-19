@@ -1759,7 +1759,7 @@ private slots:
         };
         QCOMPARE(boardSettingsRows(), 2);                    // name, board type
         advanced->trigger();
-        QCOMPARE(boardSettingsRows(), 5);                    // + own wait time, wait time, interlocking
+        QCOMPARE(boardSettingsRows(), 6);                    // + own wait time, wait time, interlocking, block signal blink
     }
 
     void higherLevelFeaturesHidden()

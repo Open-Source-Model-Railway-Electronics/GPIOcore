@@ -8,6 +8,7 @@
 #include "protocol.h"
 #include "simulateddevice.h"
 
+#include <QElapsedTimer>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSignalSpy>
@@ -674,8 +675,15 @@ private slots:
         BoardSettings b;
         b.name = QStringLiteral("Station/left:1234567890");   // path characters dropped, max 16
         b.type = BoardDccNext; b.timing = false; b.interlock = InterlockOn; b.delay = 7;
+        b.blockBlink = BoardSettings::blockBlinkFromHz(1.5);   // 90 a minute: flags bits 4-7 = 6
+        QCOMPARE(int(b.blockBlink), 6);
+        QCOMPARE(int(quint8(encodeBoard(b).at(1))), 0x60 | (InterlockOn << 2));
+        QCOMPARE(int(BoardSettings::blockBlinkFromHz(1.0)), 0);   // 1 Hz: the default, as older firmware
+        QCOMPARE(int(BoardSettings::blockBlinkFromHz(9.0)), 15);
         BoardSettings d;
         QVERIFY(decodeBoard(encodeBoard(b), d));
+        QCOMPARE(d.blockBlinkHz(), 1.5);
+        QCOMPARE(d.blockBlinkHalfMs(), 333);
         QCOMPARE(d.name, QStringLiteral("Stationleft12345"));
         QCOMPARE(int(d.type), int(BoardDccNext));
         QVERIFY(!d.timing);
@@ -1544,6 +1552,40 @@ private slots:
         QCOMPARE(int(r.sim->pin(7).level), 1);           // distant: yellow lamp B
         r.sim->setAnalogValue(2, 1023);
         QTRY_COMPARE(aspects(), (QVector<int>{ 0x01, 0x01 }));
+        QCOMPARE(r.errors, 0);
+    }
+
+    // Block signals blink at the board's rate (board flags bits 4-7), 1 Hz by default
+    void firmwareBlockSignalBlinkRate()
+    {
+        Rig r; makeRig(r);
+        OutputConfig none;
+        for (int o = 1; o < NumOutputs; ++o)
+            r.sim->setOutput(o, none);
+        OutputConfig sig = makeBlockSignal(4, -1, 3, PinNA, PinNA);
+        sig.data[2] = 0x11;                              // free: lamp A blinks
+        r.sim->setOutput(0, sig);
+        auto hz = [&r] {                                 // lamp A's blink rate, measured over 2 s
+            int n = 0, last = r.sim->pin(3).level;
+            QElapsedTimer t;
+            t.start();
+            while (t.elapsed() < 2000)
+            {
+                QTest::qWait(10);
+                if (int(r.sim->pin(3).level) != last) { ++n; last = r.sim->pin(3).level; }
+            }
+            return n * 500.0 / t.elapsed();             // two level changes per period
+        };
+        QTRY_COMPARE(r.sim->servoPosition(0), 0x11);
+        const double slow = hz();
+        BoardSettings b = r.sim->board();
+        b.blockBlink = BoardSettings::blockBlinkFromHz(3.0);   // 180 a minute
+        r.link->writeBoard(b);
+        waitFinished(r);
+        QCOMPARE(int(r.sim->board().blockBlink), 12);
+        const double fast = hz();
+        QVERIFY2(slow > 0.7 && slow < 1.3, qPrintable(QString::number(slow)));
+        QVERIFY2(fast > 2.4 && fast < 3.6, qPrintable(QString::number(fast)));
         QCOMPARE(r.errors, 0);
     }
 

@@ -409,6 +409,7 @@ flags  : bit0   = reserved (was: recorder enabled), ignored and cleared
                                       1 = on  (one route at a time)
                                       2 = auto (routes that move a turnout run one at a time,
                                                 other routes run in parallel)  <- default
+         bit4-7 = block signal blink rate x 0.25 Hz (1-15 = 0.25-3.75 Hz), 0 = 1 Hz (default)
 delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3 = 0.3 s)
 ```
 

@@ -312,7 +312,8 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
         // a block signal's aspect only exists on the board (OUTPUT_EVENT / GET_OUTPUT_STATE state 2)
         const int aspect = m_liveRaw[o] ? m_liveValue[o] : c.type == BlockSignal ? 0 : c.data[0];
         // like output.cpp: on + blink = flashes in phase, blink only = in opposite phase, 500 ms
-        const int halfMs = c.type == FourToneSignal && c.data[1] ? 5000 / c.data[1] : 500;   // data[1] = Hz x 10, block: 1 Hz
+        const int halfMs = c.type == BlockSignal ? m_board.board.blockBlinkHalfMs()          // the board's rate
+                         : c.data[1] ? 5000 / c.data[1] : 500;                            // data[1] = Hz x 10
         const bool phase = (m_liveClock.elapsed() / halfMs) % 2;
         for (int k = 0; k < 4; ++k)
         {

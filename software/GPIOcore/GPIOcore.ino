@@ -464,10 +464,10 @@ void callbackInputExt( uint8_t index, uint8_t value )
 }
 
 // ── Automatic signals, recalculated every 50 ms from the detector levels (Input::occupied()):
-// - block signal (type blockSignal): aspect data[0] when its own block is occupied, data[1] when the
-//   next block is, data[2] otherwise; data[3] = own block input | next block input << 4 (equal = no next)
-// - servo with data[3] bit7 (semaphore arm): follows input data[3] & 0x0F, occupied = curved (stop),
-//   free = straight (clear); bit6 swaps them
+// - block signal (type blockSignal): block.aspect[0] when its own block is occupied, [1] when the next
+//   block is, [2] otherwise (nextBlock == ownBlock: no next block)
+// - servo with servo.follows (semaphore arm): follows input servo.followInput, occupied = curved (stop),
+//   free = straight (clear); servo.followSwap swaps them
 void blockSignals()
 {
     for( uint8_t o = 0 ; o < 16 ; o ++ )
@@ -477,17 +477,17 @@ void blockSignals()
 
         if( s.type == blockSignal )
         {
-            uint8_t own  = s.data[3] & 0x0F ;
-            uint8_t next = s.data[3] >> 4 ;
-            uint8_t aspect = input[own].occupied()                    ? s.data[0]
-                           : ( next != own && input[next].occupied() ) ? s.data[1]
-                           :                                             s.data[2] ;
+            uint8_t own  = s.block.ownBlock ;
+            uint8_t next = s.block.nextBlock ;
+            uint8_t aspect = input[own].occupied()                    ? s.block.aspect[0]
+                           : ( next != own && input[next].occupied() ) ? s.block.aspect[1]
+                           :                                             s.block.aspect[2] ;
             if( out.showAspect( aspect ) ) reportOutput( o, 2, aspect ) ;
         }
-        else if( s.type == servoType && ( s.data[3] & 0x80 ) )
+        else if( s.type == servoType && s.servo.follows )
         {
-            uint8_t state = !input[ s.data[3] & 0x0F ].occupied() ;
-            if( s.data[3] & 0x40 ) state = !state ;
+            uint8_t state = !input[ s.servo.followInput ].occupied() ;
+            if( s.servo.followSwap ) state = !state ;
             if( state != s.state ) callbackInput( o, state, 0 ) ;
         }
     }

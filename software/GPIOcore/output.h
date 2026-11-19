@@ -20,27 +20,48 @@ typedef struct eeOutputSettings
     uint8_t     state     : 1  ;
     uint8_t     invertFrog : 1 ; // frog relays active low (relay modules that switch on LOW)
 
-    union {
+    union {                    // the 4 settings bytes, one struct per output type
         uint32_t switchTime ;  // switch time for flashing or pulsed IO
 
-        struct {               // servo settings
+        struct {               // servoType
             uint8_t servoMin ;
             uint8_t servoMax ;
             uint8_t servoSpeed ;
-            uint8_t servoPattern ;
+            uint8_t followInput : 4 ;   // semaphore arm: the input (block detector) it follows
+            uint8_t             : 2 ;
+            uint8_t followSwap  : 1 ;   // occupied = straight instead of curved
+            uint8_t follows     : 1 ;   // follows followInput instead of DCC
         } servo ;
 
-        struct {               // swing light settings
+        struct {               // swingLight
             uint16_t pulseTime ;   // how long each LED is on (ms)
             uint16_t pauseTime ;   // dark pause between cycles (ms)
         } swing ;
 
-        uint8_t data[4] ;
+        struct {               // PWM
+            uint8_t value ;        // brightness 0-255
+            uint8_t fadeTime ;     // s for a full 0-255 change, 0 = at once
+        } pwm ;
 
-        uint8_t pwmVal ;    // PWM: brightness; data[1] = fade time in s for 0-255 (0 = at once)
+        struct {               // fourToneSignal
+            uint8_t aspect ;       // lamps A-D: bits 0-3 on, bits 4-7 blink (both: blink in opposite phase)
+            uint8_t blinkRate ;    // x 0.1 Hz, 0 = 1 Hz
+        } signal ;
+
+        struct {               // blockSignal (the rate: board flags, blockBlinkHalfMs())
+            uint8_t aspect[3] ;    // own block occupied / next block occupied / both free
+            uint8_t ownBlock  : 4 ;    // detector inputs; nextBlock == ownBlock: no next block
+            uint8_t nextBlock : 4 ;
+        } block ;
+
+        uint8_t data[4] ;      // raw, as the protocol sends them
     };
 
 } Settings ;
+
+#ifdef __AVR__
+static_assert( sizeof( Settings ) == 10, "EEPROM layout: an output is 10 bytes" ) ;   // the 6-bit pins are packed
+#endif
 
 
 enum types
@@ -60,9 +81,8 @@ enum types
     PWM,
     notInUse,
     soundEffect,        // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
-    blockSignal         // automatic block signal, lamps A-D: data[0] aspect when its own block is occupied,
-                        // data[1] when the next block is, data[2] when both are free, data[3] = own | next << 4
-                        // (next == own: no next block); the current aspect is only in RAM
+    blockSignal         // automatic block signal, lamps A-D, settings in Settings.block; the current aspect
+                        // is only in RAM
 } ;
 
 const Settings defaultSettings = {
