@@ -7,13 +7,13 @@ Release a new version (run from the repository root, or from anywhere):
     python release.py --dry-run    show what would happen; changes nothing
 
 Steps:
-1. Asks the version (e.g. 0.2.0 or v0.2.0) and the release notes.
+1. Asks the version (e.g. 0.2, v0.2 or 0.2.1) and the release notes.
 2. Writes the version into the project:
-       software/**/src/version.h     const char * version = "v0.2.0" ;   (the firmware reports it)
-       software/*/CMakeLists.txt     project(<name> VERSION 0.2.0 ...)    (the GUI shows it)
+       software/**/src/version.h     const char * version = "v0.2" ;   (the firmware reports it)
+       software/*/CMakeLists.txt     project(<name> VERSION 0.2 ...)    (the GUI shows it)
 3. Builds everything into release/ (build.py), so the files carry the new version.
-4. Asks for a final OK, then: commit "Release v0.2.0", tag v0.2.0, push both.
-5. Makes a GitHub release v0.2.0 with release/ as <repo>-v0.2.0.zip, plus the .hex files on their own.
+4. Asks for a final OK, then: commit "Release v0.2", tag v0.2, push both.
+5. Makes a GitHub release v0.2 with release/ as <repo>-v0.2.zip, the setup.exe, plus the .hex files on their own.
 
 Needs git and the GitHub CLI (gh auth login). The same file works in other repositories with this layout.
 """
@@ -110,9 +110,9 @@ def main():
             fail("commit or stash your changes first")
 
     last = git("describe", "--tags", "--abbrev=0", check=False) or "none"
-    version = ask(f"Version to release (last: {last}), e.g. 0.2.0: ").lstrip("vV")
-    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
-        fail(f"'{version}' is not a version like 0.2.0")
+    version = ask(f"Version to release (last: {last}), e.g. 0.2: ").lstrip("vV")
+    if not re.fullmatch(r"\d+\.\d+(\.\d+)?", version):              # 0.2, or 0.2.1 for a quick fix
+        fail(f"'{version}' is not a version like 0.2")
     tag = "v" + version
     if git("tag", "--list", tag):
         fail(f"tag {tag} already exists")
