@@ -13,12 +13,12 @@ Steps:
        software/*/CMakeLists.txt     project(<name> VERSION 0.2 ...)    (the GUI shows it)
 3. Builds everything into release/ (build.py), so the files carry the new version.
 4. Asks for a final OK, then: commit "Release v0.2", tag v0.2, push both.
-5. Makes a GitHub release v0.2 with release/ as <repo>-v0.2.zip, the setup.exe, plus the .hex files on their own.
+5. Makes a GitHub release v0.2 with release/ as <repo>-v0.2.zip, the setup.exe (build.py puts it in the root),
+   plus the .hex files on their own.
 
 Needs git and the GitHub CLI (gh auth login). The same file works in other repositories with this layout.
 """
 
-import os
 import re
 import shutil
 import subprocess
@@ -29,6 +29,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 RELEASE_DIR = ROOT / "release"
 REPO = ROOT.name
+sys.path.insert(0, str(ROOT))
+import build as builder         # noqa: E402  (build.py next to this file: make_setup)
 
 
 def fail(msg):
@@ -68,30 +70,6 @@ def make_zip(tag, out_dir):
     staged = out_dir / "stage" / f"{REPO}-{tag}"
     shutil.copytree(RELEASE_DIR, staged)
     return Path(shutil.make_archive(str(base), "zip", root_dir=staged.parent))
-
-
-def find_iscc():
-    """Inno Setup compiler, or None (then only the zip is made)."""
-    for p in (os.environ.get("ISCC"), shutil.which("ISCC"),
-              r"C:\Program Files\Inno Setup 7\ISCC.exe", r"C:\Program Files (x86)\Inno Setup 7\ISCC.exe",
-              r"C:\Program Files\Inno Setup 6\ISCC.exe", r"C:\Program Files (x86)\Inno Setup 6\ISCC.exe"):
-        if p and Path(p).is_file():
-            return p
-    return None
-
-
-def make_setup(version, out_dir):
-    """installer/<REPO>.iss -> <REPO>-v<version>-setup.exe, or None without Inno Setup or script."""
-    iss = ROOT / "installer" / f"{REPO}.iss"
-    iscc = find_iscc()
-    if not iss.is_file() or not iscc:
-        return None
-    res = subprocess.run([iscc, "-Q", f"-DAppVersion={version}", f"-DSourceDir={RELEASE_DIR}",
-                          f"-DOutputDir={out_dir}", str(iss)], cwd=ROOT)
-    if res.returncode != 0:
-        fail("Inno Setup could not build the installer")
-    found = sorted(Path(out_dir).glob("*-setup.exe"))
-    return found[0] if found else None
 
 
 def main():
@@ -142,7 +120,9 @@ def main():
 
     with tempfile.TemporaryDirectory() as tmp:
         archive = make_zip(tag, Path(tmp))
-        setup = make_setup(version, Path(tmp) / "setup")
+        setup = None if dry else (ROOT / f"{REPO}-v{version}-setup.exe")   # build.py made it
+        if setup and not setup.is_file():
+            setup = builder.make_setup(version)                           # --no-build
         print(f"\n  release : {REPO} {tag}{'  (pre-release)' if prerelease else ''}"
               f"\n  zip     : {archive.name} ({len(files)} files, {size:.1f} MB unpacked)"
               f"\n  setup   : {setup.name if setup else '- (no Inno Setup or installer script)'}"

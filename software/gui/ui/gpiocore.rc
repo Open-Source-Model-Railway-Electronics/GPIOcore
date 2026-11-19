@@ -1,0 +1,2 @@
+// Windows: the program icon (Explorer, desktop shortcut, taskbar). ui/make_icon.py makes oshw.ico.
+IDI_ICON1 ICON "oshw.ico"

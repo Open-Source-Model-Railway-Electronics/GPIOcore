@@ -29,6 +29,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir={#OutputDir}
 OutputBaseFilename=GPIOcore-v{#AppVersion}-setup
 UninstallDisplayIcon={app}\GPIOcoreGUI.exe
+SetupIconFile=..\software\gui\ui\oshw.ico
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern

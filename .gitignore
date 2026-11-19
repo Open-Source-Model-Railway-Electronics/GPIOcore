@@ -25,3 +25,9 @@ release/
 
 # Inno Setup output when the installer is built by hand
 installer/output/
+
+# Installer, built by build.py into the root (also uploaded by release.py)
+/*-setup.exe
+
+# Personal build notes
+/MIJN-BOUWNOTITIES.md

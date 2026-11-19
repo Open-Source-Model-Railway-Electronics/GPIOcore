@@ -97,9 +97,12 @@ qt_add_resources(gpiocore_ui "help_texts" PREFIX "/info" BASE "i18n/info" FILES 
 
 add_executable(GPIOcoreGUI src/main.cpp)
 target_link_libraries(GPIOcoreGUI PRIVATE gpiocore_ui)
+if(WIN32)
+    target_sources(GPIOcoreGUI PRIVATE ui/gpiocore.rc)   # the OSHW icon on the exe (ui/make_icon.py)
+endif()
 
-# small UI images (check mark for check boxes)
-qt_add_resources(gpiocore_ui "ui_images" PREFIX "/ui" BASE "ui" FILES ui/check.svg)
+# small UI images (check mark for check boxes, the OSHW window icon)
+qt_add_resources(gpiocore_ui "ui_images" PREFIX "/ui" BASE "ui" FILES ui/check.svg ui/oshw.svg)
 
 # Firmware flashing: avrdude next to the exe, dev builds also find tools/ and release/ in the source tree
 target_compile_definitions(gpiocore_ui PRIVATE GPIOCORE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")

@@ -3,12 +3,14 @@
 #include "uihelpers.h"
 
 #include <QApplication>
+#include <QIcon>
 #include <QCommandLineParser>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName(QStringLiteral("GPIOcore Configurator"));
+    QApplication::setWindowIcon(QIcon(QStringLiteral(":/ui/oshw.svg")));   // the Open Source Hardware gear
     QApplication::setOrganizationName(QStringLiteral("Train-Science"));
     QApplication::setApplicationVersion(QStringLiteral(PROJECT_VERSION_STRING));
     Ui::applyAppStyle(app);
