@@ -50,12 +50,12 @@ def save(name, cfg):
 
 SERVO = (80, 100, 20, 0)          # curved 80, straight 100, 20 ms per degree
 BARRIER = (20, 110, 40, 0)        # curved = barrier down (20), straight = up (110), slow
-SWING = (50, 0, 0, 0)             # each lamp 0.5 s, no pause
+SWING = (50, 0, 0, 0)             # light effect 'swing' (data[3] = 0): each lamp 0.5 s, no pause
 
 
 def crossing(barriers):
     """AHOB (with half barriers) or AKI (lights and bell only)."""
-    outs = [out("swingLight", 3, 4, data=SWING, name="Flashing lights"),
+    outs = [dict(out("lightEffect", 3, 4, data=SWING, name="Flashing lights"), effect="swing"),
             out("soundEffect", 1, name="Bell (DFPlayer, track 1)")]
     close = [step(0, 1, delay=0), step(1, 1, raw=True, delay=40 if barriers else 0)]
     open_ = []

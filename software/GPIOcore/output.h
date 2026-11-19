@@ -33,10 +33,10 @@ typedef struct eeOutputSettings
             uint8_t follows     : 1 ;   // follows followInput instead of DCC
         } servo ;
 
-        struct {               // swingLight
-            uint16_t pulseTime ;   // how long each LED is on (ms)
-            uint16_t pauseTime ;   // dark pause between cycles (ms)
-        } swing ;
+        struct {               // lightEffect
+            uint8_t time[3] ;      // swing: on time (12 bits) and pause (12 bits), x 10 ms; other effects: unused
+            uint8_t effect ;       // LIGHT_SWING, LIGHT_FIRE, ...
+        } light ;
 
         struct {               // PWM
             uint8_t value ;        // brightness 0-255
@@ -72,10 +72,10 @@ enum types
     doubleSteady,
     doublePulse,
     doubleFlashing,
-    swingLight,
-    firePlaceLight,
-    tubeLight,
-    welderLight,
+    lightEffect,        // one type for all light effects, the effect in Settings.light.effect
+    unusedType7,        // free (were the fireplace, tube and welder types)
+    unusedType8,
+    unusedType9,
     fourToneSignal,
     servoType,
     PWM,
@@ -83,6 +83,15 @@ enum types
     soundEffect,        // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
     blockSignal         // automatic block signal, lamps A-D, settings in Settings.block; the current aspect
                         // is only in RAM
+} ;
+
+enum lightEffects     // Settings.light.effect
+{
+    LIGHT_SWING,        // A and B alternate, then a pause (level crossing)
+    LIGHT_FIRE,         // random flicker on PWM pins A and B
+    LIGHT_TUBE,         // fluorescent tube start-up flicker on PWM pin A
+    LIGHT_WELDER,       // random welding flashes on pin A
+    LIGHT_PHOTO,        // photographer: a flash now and then, sometimes with a pre-flash
 } ;
 
 const Settings defaultSettings = {
@@ -109,6 +118,7 @@ enum state
     firePlaceLightState,
     tubeLightState,
     welderLightState,
+    photoLightState,
     fourToneSignalState,
     pwm,
     turnOnRelays,
@@ -156,7 +166,11 @@ private:
     uint8_t     firePlaceLightStateF() ;
     uint8_t     tubeLightStateF() ;
     uint8_t     welderLightStateF() ;
+    uint8_t     photoLightStateF() ;
     uint8_t     fourToneSignalStateF() ;
+    uint8_t     isEffect( uint8_t e ) { return eedata.type == lightEffect && eedata.light.effect == e ; }
+    uint16_t    swingOnTime() { return eedata.light.time[0] | ( eedata.light.time[1] & 0x0F ) << 8 ; }   // x 10 ms
+    uint16_t    swingPause()  { return eedata.light.time[1] >> 4 | eedata.light.time[2] << 4 ; }        // x 10 ms
     uint8_t     pwmF() ;
     uint8_t     turnOnRelaysF() ;
     uint8_t     sweep() ;

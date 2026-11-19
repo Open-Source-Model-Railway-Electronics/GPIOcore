@@ -22,14 +22,14 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
       QT_TRANSLATE_NOOP("Gpio", "Turnout coil pair: pin A or B is pulsed (value x 10 ms).") },
     { "doubleFlashing",  QT_TRANSLATE_NOOP("Gpio", "Double flashing"),   2, false, false, ParamKind::SwitchTime, 10,
       QT_TRANSLATE_NOOP("Gpio", "Pins A and B blink alternately (value x 10 ms per half period).") },
-    { "swingLight",      QT_TRANSLATE_NOOP("Gpio", "Swing light"),       2, false, false, ParamKind::Swing,      10,
-      QT_TRANSLATE_NOOP("Gpio", "Level crossing style: A, B, pause (values x 10 ms).") },
-    { "firePlaceLight",  QT_TRANSLATE_NOOP("Gpio", "Fireplace"),         2, false, true,  ParamKind::None,       0,
-      QT_TRANSLATE_NOOP("Gpio", "Random flicker on PWM pins A and B.") },
-    { "tubeLight",       QT_TRANSLATE_NOOP("Gpio", "TL tube"),           1, false, true,  ParamKind::None,       0,
-      QT_TRANSLATE_NOOP("Gpio", "Fluorescent tube start-up flicker on PWM pin A.") },
-    { "welderLight",     QT_TRANSLATE_NOOP("Gpio", "Welder"),            1, false, false, ParamKind::None,       0,
-      QT_TRANSLATE_NOOP("Gpio", "Random welding flashes on pin A.") },
+    { "lightEffect",     QT_TRANSLATE_NOOP("Gpio", "Light effect"),      2, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "A light effect: swing light, fireplace, TL tube, welder or photographer.") },
+    { "unused7",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
+    { "unused8",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
+    { "unused9",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
     { "fourToneSignal",  QT_TRANSLATE_NOOP("Gpio", "4-aspect signal"),   4, false, false, ParamKind::FourTone,   0,
       QT_TRANSLATE_NOOP("Gpio", "Four LEDs A-D. The aspect comes from DCC extended (signal) packets or a route; the board keeps the last aspect in EEPROM.") },
     { "servo",           QT_TRANSLATE_NOOP("Gpio", "Servo"),             1, true,  false, ParamKind::Servo,      0,
@@ -55,6 +55,38 @@ const OutputTypeInfo &outputTypeInfo(quint8 type)
     return kOutputTypes[type < OutputTypeCount ? type : OutputTypeCount];
 }
 
+// The effects of the light effect type (data[3]); key = the "effect" name in board files
+static const OutputTypeInfo kLightEffects[LightKindCount + 1] =
+{
+    { "swing",      QT_TRANSLATE_NOOP("Gpio", "Swing light"),   2, false, false, ParamKind::Swing, 10,
+      QT_TRANSLATE_NOOP("Gpio", "Level crossing style: A, B, pause (values x 10 ms).") },
+    { "fireplace",  QT_TRANSLATE_NOOP("Gpio", "Fireplace"),     2, false, true,  ParamKind::None,  0,
+      QT_TRANSLATE_NOOP("Gpio", "Random flicker on PWM pins A and B.") },
+    { "tube",       QT_TRANSLATE_NOOP("Gpio", "TL tube"),       1, false, true,  ParamKind::None,  0,
+      QT_TRANSLATE_NOOP("Gpio", "Fluorescent tube start-up flicker on PWM pin A.") },
+    { "welder",     QT_TRANSLATE_NOOP("Gpio", "Welder"),        1, false, false, ParamKind::None,  0,
+      QT_TRANSLATE_NOOP("Gpio", "Random welding flashes on pin A.") },
+    { "photo",      QT_TRANSLATE_NOOP("Gpio", "Photographer"),  1, false, false, ParamKind::None,  0,
+      QT_TRANSLATE_NOOP("Gpio", "A camera flash on pin A now and then, sometimes with a pre-flash.") },
+    { "unknown",    QT_TRANSLATE_NOOP("Gpio", "Unknown effect"), 2, false, false, ParamKind::None, 0,
+      QT_TRANSLATE_NOOP("Gpio", "Effect value not known by this GUI.") },
+};
+
+const OutputTypeInfo &lightEffectInfo(quint8 kind)
+{
+    return kLightEffects[kind < LightKindCount ? kind : LightKindCount];
+}
+
+bool isUnusedOutputType(quint8 type)
+{
+    return type == UnusedType7 || type == UnusedType8 || type == UnusedType9;
+}
+
+const OutputTypeInfo &outputTypeInfo(const OutputConfig &c)
+{
+    return c.type == LightEffect ? lightEffectInfo(c.lightEffect()) : outputTypeInfo(c.type);
+}
+
 static const InputTypeInfo kInputTypes[InputTypeCount + 1] =
 {
     // key          name          addr   output route
@@ -78,6 +110,8 @@ const InputTypeInfo &inputTypeInfo(quint8 type)
 QString trGpio(const char *text) { return QCoreApplication::translate("Gpio", text); }
 QString outputTypeName(quint8 type) { return trGpio(outputTypeInfo(type).name); }
 QString outputTypeHelp(quint8 type) { return trGpio(outputTypeInfo(type).help); }
+QString outputTypeName(const OutputConfig &c) { return trGpio(outputTypeInfo(c).name); }
+QString outputTypeHelp(const OutputConfig &c) { return trGpio(outputTypeInfo(c).help); }
 QString inputTypeName(quint8 type)  { return trGpio(inputTypeInfo(isRouteType(type) ? quint8(Route) : type).name); }
 QString inputTypeHelp(quint8 type)  { return trGpio(inputTypeInfo(type).help); }
 
@@ -109,8 +143,11 @@ QVector<int> OutputConfig::watchedInputs() const
 
 void OutputConfig::setSwing(quint16 pulse, quint16 pause)
 {
-    data[0] = quint8(pulse);  data[1] = quint8(pulse >> 8);
-    data[2] = quint8(pause);  data[3] = quint8(pause >> 8);
+    pulse = qMin<quint16>(pulse, MaxSwingTime);
+    pause = qMin<quint16>(pause, MaxSwingTime);
+    data[0] = quint8(pulse);
+    data[1] = quint8((pulse >> 8) | (pause & 0x0F) << 4);
+    data[2] = quint8(pause >> 4);                  // data[3]: the effect
 }
 
 quint8 OutputConfig::pin(int slot) const
@@ -165,6 +202,7 @@ QJsonObject OutputConfig::toJson() const
     o["relayA"] = pinToJson(relayA); o["relayB"] = pinToJson(relayB);
     o["relayC"] = pinToJson(relayC);
     o["state"]  = int(state);
+    if (type == LightEffect) o["effect"] = QString::fromUtf8(lightEffectInfo(lightEffect()).key);   // for people
     if (invertFrog) o["invertFrog"] = true;   // only when set: older files stay as they are
     QJsonArray d;
     for (quint8 b : data) d.append(int(b));
@@ -192,6 +230,21 @@ OutputConfig OutputConfig::fromJson(const QJsonObject &o)
         c.data[i] = quint8(d.at(i).toInt());
     if (c.type == FourToneSignal && (c.data[3] & 0x80))
         c.data[2] = c.data[3] = 0;       // the removed automatic mode (now the block signal type): a manual signal
+    // files from before the light effect type: one type per effect, swing times in 16 bits
+    static const char *const oldLights[4] = { "swingLight", "firePlaceLight", "tubeLight", "welderLight" };
+    for (quint8 k = 0; k < 4; ++k)
+        if (key == QLatin1String(oldLights[k]))
+        {
+            const quint16 pulse = quint16(c.data[0] | c.data[1] << 8), pause = quint16(c.data[2] | c.data[3] << 8);
+            c.type = LightEffect;
+            c.data = { { 0, 0, 0, k } };                // LightSwing .. LightWelder
+            if (k == LightSwing)
+                c.setSwing(pulse, pause);
+        }
+    if (c.type == LightEffect && o.contains("effect"))  // the name wins over data[3]
+        for (quint8 k = 0; k < LightKindCount; ++k)
+            if (o["effect"].toString() == QLatin1String(kLightEffects[k].key))
+                c.setLightEffect(k);
     return c;
 }
 

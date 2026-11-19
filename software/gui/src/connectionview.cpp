@@ -741,7 +741,7 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     p.fillRect(QRectF(typeRect.left(), typeRect.top() + 3, 10, 10), Ui::outputTypeColor(c.type));
     p.setPen(kText);
     p.drawText(typeRect.adjusted(15, 0, 0, 0), Qt::AlignLeft | Qt::AlignVCenter,
-               outputTypeName(c.type));
+               outputTypeName(c));
 
     QString sub = Ui::outputSummaryPins(c);
     if (c.type == SoundEffect)

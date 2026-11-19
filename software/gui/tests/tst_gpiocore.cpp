@@ -247,7 +247,8 @@ private slots:
     void jsonRoundTrip()
     {
         BoardConfig b;
-        b.outputs[2].type = SwingLight; b.outputs[2].pinA = 5; b.outputs[2].pinB = 6;
+        b.outputs[2].type = LightEffect; b.outputs[2].pinA = 5; b.outputs[2].pinB = 6;
+        b.outputs[2].setLightEffect(LightSwing);
         b.outputs[2].setSwing(40, 120);
         b.inputs[1].type = Route; b.inputs[1].address = 12;
         RouteStep a; a.output = 2; a.value = 1;
@@ -1586,6 +1587,79 @@ private slots:
         sim.setPinLevel(5, true);
         QTRY_COMPARE(int(sim.pin(1).level), 1);
         QCOMPARE(int(sim.pin(3).level), 1);
+    }
+
+    // One light effect type: the effect in data[3], swing times 12 bits each; old files (one type per effect,
+    // swing times in 16 bits) load as the new type
+    void lightEffectType()
+    {
+        OutputConfig o;
+        o.type = LightEffect;
+        o.setLightEffect(LightSwing);
+        o.setSwing(4095, 300);
+        QCOMPARE(int(o.swingPulse()), 4095);
+        QCOMPARE(int(o.swingPause()), 300);
+        QCOMPARE(int(o.lightEffect()), int(LightSwing));
+        o.setSwing(9000, 9000);                                  // clamped to 12 bits
+        QCOMPARE(int(o.swingPulse()), MaxSwingTime);
+        QCOMPARE(QString::fromUtf8(outputTypeInfo(o).key), QStringLiteral("swing"));
+        QCOMPARE(outputTypeInfo(o).pinCount, 2);
+        o.setLightEffect(LightPhoto);
+        QCOMPARE(outputTypeInfo(o).pinCount, 1);
+        o.setLightEffect(LightTube);
+        QVERIFY(outputTypeInfo(o).needsPwm);
+        QVERIFY(isUnusedOutputType(7) && isUnusedOutputType(9) && !isUnusedOutputType(LightEffect));
+
+        const QJsonObject j = o.toJson();
+        QCOMPARE(j["type"].toString(), QStringLiteral("lightEffect"));
+        QCOMPARE(j["effect"].toString(), QStringLiteral("tube"));
+        QCOMPARE(OutputConfig::fromJson(j), o);
+
+        QJsonObject old;                                         // a file from before: swing 0.4 s / 1.2 s
+        old["type"] = QStringLiteral("swingLight");
+        old["pinA"] = 3; old["pinB"] = 4;
+        old["data"] = QJsonArray{ 40, 0, 120, 0 };
+        const OutputConfig s = OutputConfig::fromJson(old);
+        QCOMPARE(int(s.type), int(LightEffect));
+        QCOMPARE(int(s.lightEffect()), int(LightSwing));
+        QCOMPARE(int(s.swingPulse()), 40);
+        QCOMPARE(int(s.swingPause()), 120);
+        old["type"] = QStringLiteral("welderLight");
+        QCOMPARE(int(OutputConfig::fromJson(old).lightEffect()), int(LightWelder));
+        QCOMPARE(int(OutputConfig::fromJson(old).swingPulse()), 0);
+    }
+
+    // The firmware runs the effect from data[3]: swing alternates A and B, the photographer flashes A now and then
+    void firmwareLightEffects()
+    {
+        SimulatedDevice sim;
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        OutputConfig none;
+        for (int o = 0; o < NumOutputs; ++o)
+            sim.setOutput(o, none);
+        OutputConfig swing;
+        swing.type = LightEffect; swing.pinA = 3; swing.pinB = 4; swing.state = 1;
+        swing.setLightEffect(LightSwing);
+        swing.setSwing(15, 10);                                  // 150 ms each lamp, 100 ms pause
+        sim.setOutput(0, swing);
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim.pin(3).level), 1, 2000);
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim.pin(4).level), 1, 2000);
+        QCOMPARE(int(sim.pin(3).level), 0);                      // never both
+
+        OutputConfig photo;
+        photo.type = LightEffect; photo.pinA = 5; photo.state = 1;
+        photo.setLightEffect(LightPhoto);
+        sim.setOutput(1, photo);
+        bool flashed = false;
+        QElapsedTimer t;
+        t.start();
+        while (!flashed && t.elapsed() < 8000)                   // the first flash within 0.5-3 s (+ pre-flash)
+        {
+            QTest::qWait(5);
+            flashed = sim.pin(5).level;
+        }
+        QVERIFY(flashed);
+        QTRY_COMPARE_WITH_TIMEOUT(int(sim.pin(5).level), 0, 1000);   // a flash is short
     }
 
     // Block signals blink at the board's rate (board flags bits 4-7), 1 Hz by default

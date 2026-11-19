@@ -11,7 +11,7 @@
   },
   "outputs": [
     {
-      "type": "swingLight",
+      "type": "lightEffect",
       "pinA": 3,
       "pinB": 4,
       "pinC": null,
@@ -27,6 +27,7 @@
         0
       ],
       "name": "Flashing lights",
+      "effect": "swing",
       "index": 0
     },
     {

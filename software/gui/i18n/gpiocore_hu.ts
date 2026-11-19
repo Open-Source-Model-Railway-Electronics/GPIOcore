@@ -620,42 +620,42 @@ step %1: %2, then wait %3</source>
         <translation>Az A és B láb felváltva villog (érték x 10 ms félperiódusonként).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="25"/>
+        <location filename="../src/gpioconfig.cpp" line="61"/>
         <source>Swing light</source>
         <translation>Váltakozó fény</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="26"/>
+        <location filename="../src/gpioconfig.cpp" line="62"/>
         <source>Level crossing style: A, B, pause (values x 10 ms).</source>
         <translation>Mint egy vasúti átjárónál: A, B, szünet (értékek x 10 ms).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="27"/>
+        <location filename="../src/gpioconfig.cpp" line="63"/>
         <source>Fireplace</source>
         <translation>Kandalló</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="28"/>
+        <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Random flicker on PWM pins A and B.</source>
         <translation>Véletlenszerű vibrálás az A és B PWM-lábon.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="29"/>
+        <location filename="../src/gpioconfig.cpp" line="65"/>
         <source>TL tube</source>
         <translation>Fénycső</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="30"/>
+        <location filename="../src/gpioconfig.cpp" line="66"/>
         <source>Fluorescent tube start-up flicker on PWM pin A.</source>
         <translation>Fénycső indulási villódzása az A PWM-lábon.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="31"/>
+        <location filename="../src/gpioconfig.cpp" line="67"/>
         <source>Welder</source>
         <translation>Hegesztő</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="32"/>
+        <location filename="../src/gpioconfig.cpp" line="68"/>
         <source>Random welding flashes on pin A.</source>
         <translation>Véletlenszerű hegesztési villanások az A lábon.</translation>
     </message>
@@ -690,13 +690,29 @@ step %1: %2, then wait %3</source>
         <translation>PWM-fényerő az A lábon. Áttűnési idővel lassan éri el az új értéket.</translation>
     </message>
     <message>
+        <location filename="../src/gpioconfig.cpp" line="27"/>
+        <location filename="../src/gpioconfig.cpp" line="29"/>
+        <location filename="../src/gpioconfig.cpp" line="31"/>
         <location filename="../src/gpioconfig.cpp" line="39"/>
-        <location filename="../src/gpioconfig.cpp" line="64"/>
-        <location filename="../src/gpioconfig.cpp" line="67"/>
+        <location filename="../src/gpioconfig.cpp" line="96"/>
+        <location filename="../src/gpioconfig.cpp" line="99"/>
         <source>Not in use</source>
         <translation>Nincs használatban</translation>
     </message>
     <message>
+        <location filename="../src/gpioconfig.cpp" line="25"/>
+        <source>Light effect</source>
+        <translation>Fényeffekt</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="26"/>
+        <source>A light effect: swing light, fireplace, TL tube, welder or photographer.</source>
+        <translation>Fényeffekt: váltakozó fény, kandalló, fénycső, hegesztő vagy fotós.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="28"/>
+        <location filename="../src/gpioconfig.cpp" line="30"/>
+        <location filename="../src/gpioconfig.cpp" line="32"/>
         <location filename="../src/gpioconfig.cpp" line="40"/>
         <source>Output disabled.</source>
         <translation>Kimenet kikapcsolva.</translation>
@@ -728,136 +744,156 @@ step %1: %2, then wait %3</source>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="50"/>
-        <location filename="../src/gpioconfig.cpp" line="70"/>
+        <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Type value not known by this GUI.</source>
         <translation>A típusérték ismeretlen ennek a programnak.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="61"/>
+        <location filename="../src/gpioconfig.cpp" line="69"/>
+        <source>Photographer</source>
+        <translation>Fotós</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="70"/>
+        <source>A camera flash on pin A now and then, sometimes with a pre-flash.</source>
+        <translation>Időnként egy fényképezőgép-vaku az A lábon, néha elővillantással.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="71"/>
+        <source>Unknown effect</source>
+        <translation>Ismeretlen effekt</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="72"/>
+        <source>Effect value not known by this GUI.</source>
+        <translation>Ez a GUI nem ismeri ezt az effektértéket.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="93"/>
         <source>Toggle</source>
         <translation>Váltás</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="61"/>
+        <location filename="../src/gpioconfig.cpp" line="93"/>
         <source>Each press (falling edge) or DCC command toggles the output.</source>
         <translation>Minden gombnyomás (lefutó él) vagy DCC-parancs átváltja a kimenetet.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <location filename="../src/gpioconfig.cpp" line="94"/>
         <source>Absolute</source>
         <translation>Abszolút</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <location filename="../src/gpioconfig.cpp" line="94"/>
         <source>The output follows the input level or the DCC direction.</source>
         <translation>A kimenet követi a bemenet szintjét vagy a DCC-irányt.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
-        <location filename="../src/gpioconfig.cpp" line="68"/>
-        <location filename="../src/gpioconfig.cpp" line="69"/>
+        <location filename="../src/gpioconfig.cpp" line="95"/>
+        <location filename="../src/gpioconfig.cpp" line="100"/>
+        <location filename="../src/gpioconfig.cpp" line="101"/>
         <source>Route</source>
         <translation>Vágányút</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
+        <location filename="../src/gpioconfig.cpp" line="95"/>
         <source>Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).</source>
         <translation>Legfeljebb 16 kimenetet állít egymás után, minden lépés saját várakozási idővel. A gomb megnyomására vagy a címére érkező bármely DCC-parancsra indul (egyenes és kitérő irány).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="64"/>
-        <location filename="../src/gpioconfig.cpp" line="67"/>
+        <location filename="../src/gpioconfig.cpp" line="96"/>
+        <location filename="../src/gpioconfig.cpp" line="99"/>
         <source>Input disabled.</source>
         <translation>Bemenet kikapcsolva.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="65"/>
+        <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>Sensor (occupancy)</source>
         <translation>Érzékelő (foglaltság)</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="65"/>
+        <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>An occupancy detector or other sensor. It switches nothing itself; automatic block signals read it.</source>
         <translation>Foglaltságjelző vagy más érzékelő. Maga nem kapcsol semmit; az önműködő térközjelzők olvassák.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="68"/>
+        <location filename="../src/gpioconfig.cpp" line="100"/>
         <source>Route that starts on a button press, or only on a DCC &apos;straight&apos; command for its address.</source>
         <translation>Vágányút, amely gombnyomásra indul, vagy csak a címére küldött &apos;egyenes&apos; DCC-paranccsal.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="69"/>
+        <location filename="../src/gpioconfig.cpp" line="101"/>
         <source>Route that starts on a button press, or only on a DCC &apos;curved&apos; command for its address.</source>
         <translation>Vágányút, amely gombnyomásra indul, vagy csak a címére küldött &apos;kitérő irány&apos; DCC-paranccsal.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="70"/>
+        <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Unknown</source>
         <translation>Ismeretlen</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="555"/>
+        <location filename="../src/gpioconfig.cpp" line="608"/>
         <source>Arduino Nano</source>
         <translation>Arduino Nano</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="556"/>
+        <location filename="../src/gpioconfig.cpp" line="609"/>
         <source>DCCnext</source>
         <translation>DCCnext</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="557"/>
+        <location filename="../src/gpioconfig.cpp" line="610"/>
         <source>Jack of all trades</source>
         <translation>Jack of all trades</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="690"/>
+        <location filename="../src/gpioconfig.cpp" line="743"/>
         <source>not a DCCnext port</source>
         <translation>nem DCCnext-port</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="693"/>
+        <location filename="../src/gpioconfig.cpp" line="746"/>
         <source>Serial RX (GUI link)</source>
         <translation>Soros RX (GUI-kapcsolat)</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="694"/>
+        <location filename="../src/gpioconfig.cpp" line="747"/>
         <source>Serial TX (GUI link)</source>
         <translation>Soros TX (GUI-kapcsolat)</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="695"/>
+        <location filename="../src/gpioconfig.cpp" line="748"/>
         <source>DCC input</source>
         <translation>DCC-bemenet</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="696"/>
+        <location filename="../src/gpioconfig.cpp" line="749"/>
         <source>config LED</source>
         <translation>konfig LED</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="697"/>
+        <location filename="../src/gpioconfig.cpp" line="750"/>
         <source>only on an Arduino Nano</source>
         <translation>csak Arduino Nanón</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="698"/>
+        <location filename="../src/gpioconfig.cpp" line="751"/>
         <source>config button</source>
         <translation>konfig gomb</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="705"/>
-        <location filename="../src/uihelpers.cpp" line="415"/>
+        <location filename="../src/gpioconfig.cpp" line="758"/>
+        <location filename="../src/uihelpers.cpp" line="412"/>
         <source>analog input only</source>
         <translation>csak analóg bemenet</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="722"/>
+        <location filename="../src/gpioconfig.cpp" line="775"/>
         <source>shared with serial: only active when no GUI is connected</source>
         <translation>a soros vonallal közös: csak akkor működik, ha nincs GUI csatlakoztatva</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="724"/>
+        <location filename="../src/gpioconfig.cpp" line="777"/>
         <source>analog input without pull-up: add a 10 kOhm resistor to 5 V</source>
         <translation>analóg bemenet felhúzó ellenállás nélkül: tegyen be egy 10 kOhm-os ellenállást 5 V-ra</translation>
     </message>
@@ -897,62 +933,62 @@ step %1: %2, then wait %3</source>
         <translation>Unifrog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="401"/>
+        <location filename="../src/uihelpers.cpp" line="398"/>
         <source>—  not used</source>
         <translation>—  nincs használatban</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="414"/>
+        <location filename="../src/uihelpers.cpp" line="411"/>
         <source>serial pin</source>
         <translation>soros láb</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="610"/>
+        <location filename="../src/uihelpers.cpp" line="607"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="610"/>
+        <location filename="../src/uihelpers.cpp" line="607"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="610"/>
+        <location filename="../src/uihelpers.cpp" line="607"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="611"/>
+        <location filename="../src/uihelpers.cpp" line="608"/>
         <source>D</source>
         <translation>D</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="611"/>
+        <location filename="../src/uihelpers.cpp" line="608"/>
         <source>relay A</source>
         <translation>A relé</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="612"/>
+        <location filename="../src/uihelpers.cpp" line="609"/>
         <source>relay B</source>
         <translation>B relé</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="612"/>
+        <location filename="../src/uihelpers.cpp" line="609"/>
         <source>relay C</source>
         <translation>C relé</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="686"/>
+        <location filename="../src/uihelpers.cpp" line="683"/>
         <source>(empty route)</source>
         <translation>(üres vágányút)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="687"/>
+        <location filename="../src/uihelpers.cpp" line="684"/>
         <source>%1 steps</source>
         <translation>%1 lépés</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="689"/>
+        <location filename="../src/uihelpers.cpp" line="686"/>
         <source>Output %1</source>
         <translation>Kimenet %1</translation>
     </message>
@@ -2609,344 +2645,354 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
 <context>
     <name>OutputEditor</name>
     <message>
-        <location filename="../src/outputeditor.cpp" line="84"/>
+        <location filename="../src/outputeditor.cpp" line="85"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="105"/>
-        <location filename="../src/outputeditor.cpp" line="611"/>
+        <location filename="../src/outputeditor.cpp" line="98"/>
+        <source>Effect</source>
+        <translation>Effekt</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="118"/>
+        <location filename="../src/outputeditor.cpp" line="636"/>
         <source>Pins</source>
         <translation>Lábak</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin A</source>
         <translation>A láb</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin B</source>
         <translation>B láb</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin C</source>
         <translation>C láb</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin D</source>
         <translation>D láb</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="126"/>
+        <location filename="../src/outputeditor.cpp" line="139"/>
         <source>Frog polarity</source>
         <translation>Szív polaritása</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="132"/>
+        <location filename="../src/outputeditor.cpp" line="145"/>
         <source>None (dead frog)</source>
         <translation>Nincs (szigetelt szív)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="133"/>
+        <location filename="../src/outputeditor.cpp" line="146"/>
         <source>Electrofrog — 2 relays</source>
         <translation>Electrofrog — 2 relé</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="134"/>
+        <location filename="../src/outputeditor.cpp" line="147"/>
         <source>Unifrog — 1 change-over relay</source>
         <translation>Unifrog — 1 váltóérintkezős relé</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="138"/>
+        <location filename="../src/outputeditor.cpp" line="151"/>
         <source>Frog</source>
         <translation>Szív</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="139"/>
+        <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Relay straight (A)</source>
         <translation>Relé egyenes (A)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="139"/>
+        <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Relay curved (B)</source>
         <translation>Relé kitérő irány (B)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="139"/>
+        <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Unifrog relay</source>
         <translation>Unifrog relé</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="145"/>
+        <location filename="../src/outputeditor.cpp" line="158"/>
         <source>Relays switch on LOW (inverted)</source>
         <translation>A relék LOW jelre kapcsolnak (fordított)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="146"/>
+        <location filename="../src/outputeditor.cpp" line="159"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
         <translation>Olyan relémodulokhoz, amelyek akkor kapcsolnak be, ha a bemenet LOW: a relélábakat fordítva vezérli</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="156"/>
+        <location filename="../src/outputeditor.cpp" line="169"/>
         <source>Parameters</source>
         <translation>Paraméterek</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="162"/>
+        <location filename="../src/outputeditor.cpp" line="175"/>
         <source>This type has no parameters.</source>
         <translation>Ennek a típusnak nincsenek paraméterei.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="176"/>
+        <location filename="../src/outputeditor.cpp" line="189"/>
         <source>Switch time</source>
         <translation>Kapcsolási idő</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="186"/>
+        <location filename="../src/outputeditor.cpp" line="199"/>
         <source>LED on time</source>
         <translation>LED bekapcsolási idő</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="187"/>
+        <location filename="../src/outputeditor.cpp" line="200"/>
         <source>Pause</source>
         <translation>Szünet</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="206"/>
+        <location filename="../src/outputeditor.cpp" line="219"/>
         <source>Live: move the servo while adjusting</source>
         <translation>Élő: a szervó beállítás közben mozog</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="211"/>
+        <location filename="../src/outputeditor.cpp" line="224"/>
         <source>Position 0 (curved)</source>
         <translation>0. helyzet (kitérő irány)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="212"/>
+        <location filename="../src/outputeditor.cpp" line="225"/>
         <source>Position 1 (straight)</source>
         <translation>1. helyzet (egyenes)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="213"/>
+        <location filename="../src/outputeditor.cpp" line="226"/>
         <source> ms/°</source>
         <translation> ms/°</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="216"/>
+        <location filename="../src/outputeditor.cpp" line="229"/>
         <source>Speed</source>
         <translation>Sebesség</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="219"/>
+        <location filename="../src/outputeditor.cpp" line="232"/>
         <source>Follows a detector (semaphore arm)</source>
         <translation>Foglaltságjelzőt követ (alakjelző)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="227"/>
+        <location filename="../src/outputeditor.cpp" line="240"/>
         <source>Detector</source>
         <translation>Foglaltságjelző</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="228"/>
+        <location filename="../src/outputeditor.cpp" line="241"/>
         <source>Swap: occupied = straight</source>
         <translation>Csere: foglalt = egyenes</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="230"/>
+        <location filename="../src/outputeditor.cpp" line="243"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
         <translation>Foglalt = 0. helyzet (kitérő irány, a kar megállj állásban), szabad = 1. helyzet (egyenes, szabad), a fent megadott sebességgel.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="252"/>
+        <location filename="../src/outputeditor.cpp" line="265"/>
         <source>Duty cycle</source>
         <translation>Kitöltési tényező</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="254"/>
+        <location filename="../src/outputeditor.cpp" line="267"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="255"/>
+        <location filename="../src/outputeditor.cpp" line="268"/>
         <source>at once</source>
         <translation>azonnal</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="264"/>
+        <location filename="../src/outputeditor.cpp" line="277"/>
         <source>Fade time</source>
         <translation>Áttűnési idő</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="274"/>
+        <location filename="../src/outputeditor.cpp" line="287"/>
         <source> Hz</source>
         <translation> Hz</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="276"/>
+        <location filename="../src/outputeditor.cpp" line="289"/>
         <source>Flashing</source>
         <translation>Villogás</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="277"/>
+        <location filename="../src/outputeditor.cpp" line="290"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Milyen gyorsan villognak a lámpák (1 Hz = másodpercenként egyszer). Magát a jelzési képet DCC extended-del vagy vágányútban választja.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="283"/>
+        <location filename="../src/outputeditor.cpp" line="296"/>
         <source>Aspect numbers…</source>
         <translation>Jelzésikép-számok…</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="284"/>
+        <location filename="../src/outputeditor.cpp" line="297"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
         <translation>Melyik DCC extended szám mely lámpákat mutatja — iTrainhez, Rocrailhez vagy a központjához</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="309"/>
+        <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Unsafe</source>
         <translation>Megállj</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="309"/>
+        <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Caution</source>
         <translation>Vigyázat</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="309"/>
+        <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Safe</source>
         <translation>Szabad</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="310"/>
+        <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Aspect while its own block is occupied</source>
         <translation>Jelzési kép, amíg a saját térköz foglalt</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="311"/>
+        <location filename="../src/outputeditor.cpp" line="324"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
         <translation>Jelzési kép, amíg a saját térköz szabad és a következő foglalt</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="312"/>
+        <location filename="../src/outputeditor.cpp" line="325"/>
         <source>Aspect while both blocks are free</source>
         <translation>Jelzési kép, amíg mindkét térköz szabad</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="318"/>
+        <location filename="../src/outputeditor.cpp" line="331"/>
         <source>aspect </source>
         <translation>jelzési kép </translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="323"/>
+        <location filename="../src/outputeditor.cpp" line="336"/>
         <source>Choose the aspect lamp by lamp</source>
         <translation>Jelzési kép választása lámpánként</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="345"/>
+        <location filename="../src/outputeditor.cpp" line="358"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
         <translation>A panel 50 ms-onként maga választja a jelzési képet: megállj, amíg a saját térköz foglalt, vigyázat, amíg a következő az, egyébként szabad. Bemenetek, vágányutak és DCC nem állíthatják. A villogó lámpák 1 Hz-cel villognak.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="611"/>
+        <location filename="../src/outputeditor.cpp" line="578"/>
+        <source>Unknown effect</source>
+        <translation>Ismeretlen effekt</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="636"/>
         <source>Pins (PWM capable: %1)</source>
         <translation>Lábak (PWM-képes: %1)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="307"/>
+        <location filename="../src/outputeditor.cpp" line="320"/>
         <source>Own block</source>
         <translation>Saját térköz</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="308"/>
+        <location filename="../src/outputeditor.cpp" line="321"/>
         <source>Next block</source>
         <translation>Következő térköz</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="512"/>
+        <location filename="../src/outputeditor.cpp" line="534"/>
         <source>— none</source>
         <translation>— nincs</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="590"/>
+        <location filename="../src/outputeditor.cpp" line="615"/>
         <source>Needs a connected board</source>
         <translation>Csatlakoztatott panel szükséges</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="361"/>
+        <location filename="../src/outputeditor.cpp" line="374"/>
         <source>State</source>
         <translation>Állapot</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="369"/>
+        <location filename="../src/outputeditor.cpp" line="382"/>
         <source>0  (off / curved)</source>
         <translation>0  (ki / kitérő irány)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="370"/>
+        <location filename="../src/outputeditor.cpp" line="383"/>
         <source>1  (on / straight)</source>
         <translation>1  (be / egyenes)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="371"/>
+        <location filename="../src/outputeditor.cpp" line="384"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Teszt: kitérő irány / ki</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="372"/>
+        <location filename="../src/outputeditor.cpp" line="385"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Teszt: egyenes / be</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="375"/>
+        <location filename="../src/outputeditor.cpp" line="388"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>A kimenetet a választott állapottal a panelre írja (az EEPROM-ba is mentve)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="378"/>
+        <location filename="../src/outputeditor.cpp" line="391"/>
         <source>Stored state</source>
         <translation>Tárolt állapot</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="492"/>
-        <location filename="../src/outputeditor.cpp" line="552"/>
+        <location filename="../src/outputeditor.cpp" line="514"/>
+        <location filename="../src/outputeditor.cpp" line="574"/>
         <source>Output %1</source>
         <translation>Kimenet %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="518"/>
+        <location filename="../src/outputeditor.cpp" line="540"/>
         <source>%1 · %2</source>
         <translation>%1 · %2</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="560"/>
+        <location filename="../src/outputeditor.cpp" line="585"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Electrofrog és Unifrog relék is be vannak állítva. Csak egy szívmód engedélyezett: az Unifrog relé törlődik, amikor módosítja ezt a kimenetet.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="652"/>
+        <location filename="../src/outputeditor.cpp" line="677"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="653"/>
+        <location filename="../src/outputeditor.cpp" line="678"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  be %2 ms, szünet %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="656"/>
+        <location filename="../src/outputeditor.cpp" line="681"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Teljes mozgás ≈ %1 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="658"/>
+        <location filename="../src/outputeditor.cpp" line="683"/>
         <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
         <translation>Egy teljes változás (0 → 255) %1 s, egy fél %2 s.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="659"/>
+        <location filename="../src/outputeditor.cpp" line="684"/>
         <source>A new brightness is set at once.</source>
         <translation>Az új fényerő azonnal beáll.</translation>
     </message>
@@ -2969,67 +3015,67 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
         <translation>nincs indító</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="484"/>
+        <location filename="../src/uihelpers.cpp" line="481"/>
         <source>lamp %1 flashing</source>
         <translation>%1. lámpa villog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="485"/>
+        <location filename="../src/uihelpers.cpp" line="482"/>
         <source>lamp %1 flashing, opposite phase</source>
         <translation>%1. lámpa ellenütemben villog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="486"/>
+        <location filename="../src/uihelpers.cpp" line="483"/>
         <source>lamp %1 on</source>
         <translation>%1. lámpa világít</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="488"/>
+        <location filename="../src/uihelpers.cpp" line="485"/>
         <source>all lamps off</source>
         <translation>minden lámpa kialudt</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="494"/>
+        <location filename="../src/uihelpers.cpp" line="491"/>
         <source>Signal aspect</source>
         <translation>Jelzési kép</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="499"/>
+        <location filename="../src/uihelpers.cpp" line="496"/>
         <source>Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
         <translation>Válasszon lámpánként. Az 1. lámpa az A láb, a 2. a B láb, és így tovább.</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="519"/>
+        <location filename="../src/uihelpers.cpp" line="516"/>
         <source>Value: %1  (0x%2)</source>
         <translation>Érték: %1  (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="528"/>
+        <location filename="../src/uihelpers.cpp" line="525"/>
         <source>off</source>
         <translation>ki</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="528"/>
+        <location filename="../src/uihelpers.cpp" line="525"/>
         <source>on</source>
         <translation>be</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="528"/>
+        <location filename="../src/uihelpers.cpp" line="525"/>
         <source>flashing</source>
         <translation>villog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="529"/>
+        <location filename="../src/uihelpers.cpp" line="526"/>
         <source>flashing, opposite phase</source>
         <translation>villog, ellenfázisban</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="538"/>
+        <location filename="../src/uihelpers.cpp" line="535"/>
         <source>Lamp %1</source>
         <translation>Lámpa %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="453"/>
+        <location filename="../src/uihelpers.cpp" line="450"/>
         <source>Out %1</source>
         <translation>Ki %1</translation>
     </message>
@@ -3115,32 +3161,32 @@ Ez lecseréli az összes kimenetet és bemenetet (és a vágányútjaikat).</tra
         <translation>saját várakozási idő minden vágányút-lépéshez</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="447"/>
+        <location filename="../src/uihelpers.cpp" line="444"/>
         <source>In %1</source>
         <translation>Be %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="494"/>
+        <location filename="../src/uihelpers.cpp" line="491"/>
         <source>Aspect numbers</source>
         <translation>Jelzésikép-számok</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="496"/>
+        <location filename="../src/uihelpers.cpp" line="493"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
         <translation>Válassza ki lámpánként, mit mutasson a jelző. Az alatta lévő szám a hozzá tartozó DCC extended érték: ezt adja meg az iTrainben, a Rocrailban vagy a központjában. Itt semmi sem változik. Az 1. lámpa az A láb, a 2. lámpa a B láb, és így tovább.</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="519"/>
+        <location filename="../src/uihelpers.cpp" line="516"/>
         <source>DCC extended number: %1  (0x%2)</source>
         <translation>DCC extended szám: %1  (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="582"/>
+        <location filename="../src/uihelpers.cpp" line="579"/>
         <source>shared with: %1</source>
         <translation>közösen: %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="589"/>
+        <location filename="../src/uihelpers.cpp" line="586"/>
         <source>in use: %1</source>
         <translation>foglalt: %1</translation>
     </message>

@@ -86,10 +86,8 @@ checksum : XOR of command and all payload bytes</code></pre>
 <tr><td>3</td><td>double steady</td><td>A, B</td><td>–</td></tr>
 <tr><td>4</td><td>double pulse</td><td>A, B</td><td><code>uint32</code> LE pulse time × 10 ms</td></tr>
 <tr><td>5</td><td>double flashing</td><td>A, B</td><td><code>uint32</code> LE half period × 10 ms</td></tr>
-<tr><td>6</td><td>swing light</td><td>A, B</td><td><code>data[0..1]</code> on time, <code>data[2..3]</code> pause; <code>uint16</code> LE × 10 ms</td></tr>
-<tr><td>7</td><td>fireplace</td><td>A, B (PWM)</td><td>–</td></tr>
-<tr><td>8</td><td>TL tube</td><td>A (PWM)</td><td>–</td></tr>
-<tr><td>9</td><td>welder</td><td>A</td><td>–</td></tr>
+<tr><td>6</td><td>light effect</td><td>per effect</td><td><code>data[3]</code> = effect: 0 swing light (A, B), 1 fireplace (A, B, PWM), 2 TL tube (A, PWM), 3 welder (A), 4 photographer (A). Swing: on time = <code>data[0] | (data[1] &amp; 0x0F) &lt;&lt; 8</code>, pause = <code>data[1] &gt;&gt; 4 | data[2] &lt;&lt; 4</code>, 12 bits each × 10 ms; other effects: <code>data[0..2]</code> unused (0)</td></tr>
+<tr><td>7–9</td><td>free</td><td>–</td><td>not used (EEPROM layout 1 had fireplace, TL tube and welder here)</td></tr>
 <tr><td>10</td><td>4-aspect signal</td><td>A–D</td><td><code>data[0]</code> = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), <code>data[1]</code> = flashing frequency in 0.1 Hz, <code>data[2]</code>/<code>data[3]</code> unused (0)</td></tr>
 <tr><td>11</td><td>servo</td><td>A (+ relays)</td><td><code>data[0]</code> angle at state 0, <code>data[1]</code> angle at state 1, <code>data[2]</code> speed in ms/° (≥ 1), <code>data[3]</code> = 0, or semaphore arm (below)</td></tr>
 <tr><td>12</td><td>PWM</td><td>A (PWM)</td><td><code>data[0]</code> = brightness 0–255, <code>data[1]</code> = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every <code>data[1] × 1000 / 255</code> ms (own values, route step, DCC-ext); at start-up it fades up from 0. <code>OUTPUT_EVENT</code> reports the target value immediately</td></tr>

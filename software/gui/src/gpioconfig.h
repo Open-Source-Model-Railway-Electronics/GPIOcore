@@ -23,12 +23,17 @@ enum OutputType : quint8
 {
     SingleSteady, SinglePulse, SingleFlashing,
     DoubleSteady, DoublePulse, DoubleFlashing,
-    SwingLight, FirePlaceLight, TubeLight, WelderLight,
+    LightEffect,    // 6: all light effects, the effect in data[3] (LightKind)
+    UnusedType7, UnusedType8, UnusedType9,   // free (were fireplace, TL tube and welder)
     FourToneSignal, ServoType, Pwm, OutputNotInUse,
     SoundEffect,    // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
     BlockSignal,    // 15: automatic signal, the board sets its aspect from two block detectors (inputs)
     OutputTypeCount
 };
+
+// Light effect output: the effect in data[3] (firmware output.h, lightEffects)
+enum LightKind : quint8 { LightSwing, LightFire, LightTube, LightWelder, LightPhoto, LightKindCount };
+constexpr int MaxSwingTime = 4095;   // swing on time and pause: 12 bits each, x 10 ms
 
 enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, Block };
 constexpr quint8 SoundPin = 1;   // a sound effect output always uses TX (D1)
@@ -46,6 +51,8 @@ struct OutputTypeInfo
 };
 
 const OutputTypeInfo &outputTypeInfo(quint8 type);
+const OutputTypeInfo &lightEffectInfo(quint8 kind);   // per effect: pins, PWM, parameters, name
+bool isUnusedOutputType(quint8 type);                 // 7-9: free type values, never offered
 // Translated texts (context "Gpio", see i18n/)
 QString trGpio(const char *text);
 QString outputTypeName(quint8 type);
@@ -65,9 +72,12 @@ struct OutputConfig
     // union views
     quint32 switchTime() const;
     void    setSwitchTime(quint32 v);
-    quint16 swingPulse() const  { return quint16(data[0] | data[1] << 8); }
-    quint16 swingPause() const  { return quint16(data[2] | data[3] << 8); }
-    void    setSwing(quint16 pulse, quint16 pause);
+    // Light effect: data[3] = LightKind; swing: on time and pause 12 bits each in data[0..2], x 10 ms
+    quint8  lightEffect() const { return data[3]; }
+    void    setLightEffect(quint8 kind) { data[3] = kind; }
+    quint16 swingPulse() const  { return quint16(data[0] | (data[1] & 0x0F) << 8); }
+    quint16 swingPause() const  { return quint16(data[1] >> 4 | data[2] << 4); }
+    void    setSwing(quint16 pulse, quint16 pause);   // max MaxSwingTime each
     quint8  servoMin()     const { return data[0]; }
     quint8  servoMax()     const { return data[1]; }
     quint8  servoSpeed()   const { return data[2]; }
@@ -95,6 +105,11 @@ struct OutputConfig
     QJsonObject toJson() const;
     static OutputConfig fromJson(const QJsonObject &o);
 };
+
+// For a light effect these describe the effect (pins, PWM, parameters, name), otherwise the type
+const OutputTypeInfo &outputTypeInfo(const OutputConfig &c);
+QString outputTypeName(const OutputConfig &c);
+QString outputTypeHelp(const OutputConfig &c);
 
 // Payload incl. index byte, 14 bytes.
 QByteArray encodeOutput(int index, const OutputConfig &c);

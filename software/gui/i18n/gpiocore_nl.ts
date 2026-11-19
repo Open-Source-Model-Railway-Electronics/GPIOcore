@@ -620,42 +620,42 @@ stap %1: %2, daarna %3 wachten</translation>
         <translation>Pinnen A en B knipperen om en om (waarde x 10 ms per halve periode).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="25"/>
+        <location filename="../src/gpioconfig.cpp" line="61"/>
         <source>Swing light</source>
         <translation>Wisselknipper</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="26"/>
+        <location filename="../src/gpioconfig.cpp" line="62"/>
         <source>Level crossing style: A, B, pause (values x 10 ms).</source>
         <translation>Zoals bij een overweg: A, B, pauze (waarden x 10 ms).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="27"/>
+        <location filename="../src/gpioconfig.cpp" line="63"/>
         <source>Fireplace</source>
         <translation>Haardvuur</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="28"/>
+        <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Random flicker on PWM pins A and B.</source>
         <translation>Willekeurig flakkeren op PWM-pinnen A en B.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="29"/>
+        <location filename="../src/gpioconfig.cpp" line="65"/>
         <source>TL tube</source>
         <translation>TL-buis</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="30"/>
+        <location filename="../src/gpioconfig.cpp" line="66"/>
         <source>Fluorescent tube start-up flicker on PWM pin A.</source>
         <translation>Startflikkering van een TL-buis op PWM-pin A.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="31"/>
+        <location filename="../src/gpioconfig.cpp" line="67"/>
         <source>Welder</source>
         <translation>Lasser</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="32"/>
+        <location filename="../src/gpioconfig.cpp" line="68"/>
         <source>Random welding flashes on pin A.</source>
         <translation>Willekeurige lasflitsen op pin A.</translation>
     </message>
@@ -690,13 +690,29 @@ stap %1: %2, daarna %3 wachten</translation>
         <translation>PWM-helderheid op pin A. Met een overvloeitijd gaat hij langzaam naar elke nieuwe waarde.</translation>
     </message>
     <message>
+        <location filename="../src/gpioconfig.cpp" line="27"/>
+        <location filename="../src/gpioconfig.cpp" line="29"/>
+        <location filename="../src/gpioconfig.cpp" line="31"/>
         <location filename="../src/gpioconfig.cpp" line="39"/>
-        <location filename="../src/gpioconfig.cpp" line="64"/>
-        <location filename="../src/gpioconfig.cpp" line="67"/>
+        <location filename="../src/gpioconfig.cpp" line="96"/>
+        <location filename="../src/gpioconfig.cpp" line="99"/>
         <source>Not in use</source>
         <translation>Niet in gebruik</translation>
     </message>
     <message>
+        <location filename="../src/gpioconfig.cpp" line="25"/>
+        <source>Light effect</source>
+        <translation>Lichteffect</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="26"/>
+        <source>A light effect: swing light, fireplace, TL tube, welder or photographer.</source>
+        <translation>Een lichteffect: wisselknipper, haardvuur, TL-buis, lasser of fotograaf.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="28"/>
+        <location filename="../src/gpioconfig.cpp" line="30"/>
+        <location filename="../src/gpioconfig.cpp" line="32"/>
         <location filename="../src/gpioconfig.cpp" line="40"/>
         <source>Output disabled.</source>
         <translation>Uitgang uitgeschakeld.</translation>
@@ -728,136 +744,156 @@ stap %1: %2, daarna %3 wachten</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="50"/>
-        <location filename="../src/gpioconfig.cpp" line="70"/>
+        <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Type value not known by this GUI.</source>
         <translation>Typewaarde is onbekend voor dit programma.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="61"/>
+        <location filename="../src/gpioconfig.cpp" line="69"/>
+        <source>Photographer</source>
+        <translation>Fotograaf</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="70"/>
+        <source>A camera flash on pin A now and then, sometimes with a pre-flash.</source>
+        <translation>Af en toe een cameraflits op pin A, soms met een voorflits.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="71"/>
+        <source>Unknown effect</source>
+        <translation>Onbekend effect</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="72"/>
+        <source>Effect value not known by this GUI.</source>
+        <translation>Effectwaarde onbekend voor deze GUI.</translation>
+    </message>
+    <message>
+        <location filename="../src/gpioconfig.cpp" line="93"/>
         <source>Toggle</source>
         <translation>Omschakelen</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="61"/>
+        <location filename="../src/gpioconfig.cpp" line="93"/>
         <source>Each press (falling edge) or DCC command toggles the output.</source>
         <translation>Elke druk (dalende flank) of elk DCC-commando schakelt de uitgang om.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <location filename="../src/gpioconfig.cpp" line="94"/>
         <source>Absolute</source>
         <translation>Absoluut</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="62"/>
+        <location filename="../src/gpioconfig.cpp" line="94"/>
         <source>The output follows the input level or the DCC direction.</source>
         <translation>De uitgang volgt het niveau van de ingang of de DCC-richting.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
-        <location filename="../src/gpioconfig.cpp" line="68"/>
-        <location filename="../src/gpioconfig.cpp" line="69"/>
+        <location filename="../src/gpioconfig.cpp" line="95"/>
+        <location filename="../src/gpioconfig.cpp" line="100"/>
+        <location filename="../src/gpioconfig.cpp" line="101"/>
         <source>Route</source>
         <translation>Rijweg</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="63"/>
+        <location filename="../src/gpioconfig.cpp" line="95"/>
         <source>Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).</source>
         <translation>Zet tot 16 uitgangen na elkaar, elke stap met een eigen wachttijd. Start als de knop wordt ingedrukt, of bij elk DCC-commando voor zijn adres (rechtdoor en afbuigend).</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="64"/>
-        <location filename="../src/gpioconfig.cpp" line="67"/>
+        <location filename="../src/gpioconfig.cpp" line="96"/>
+        <location filename="../src/gpioconfig.cpp" line="99"/>
         <source>Input disabled.</source>
         <translation>Ingang uitgeschakeld.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="65"/>
+        <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>Sensor (occupancy)</source>
         <translation>Sensor (bezetmelder)</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="65"/>
+        <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>An occupancy detector or other sensor. It switches nothing itself; automatic block signals read it.</source>
         <translation>Een bezetmelder of andere sensor. Hij schakelt zelf niets; automatische blokseinen lezen hem.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="68"/>
+        <location filename="../src/gpioconfig.cpp" line="100"/>
         <source>Route that starts on a button press, or only on a DCC &apos;straight&apos; command for its address.</source>
         <translation>Rijweg die start bij een druk op de knop, of alleen bij een DCC-commando &apos;rechtdoor&apos; voor zijn adres.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="69"/>
+        <location filename="../src/gpioconfig.cpp" line="101"/>
         <source>Route that starts on a button press, or only on a DCC &apos;curved&apos; command for its address.</source>
         <translation>Rijweg die start bij een druk op de knop, of alleen bij een DCC-commando &apos;afbuigend&apos; voor zijn adres.</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="70"/>
+        <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Unknown</source>
         <translation>Onbekend</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="555"/>
+        <location filename="../src/gpioconfig.cpp" line="608"/>
         <source>Arduino Nano</source>
         <translation>Arduino Nano</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="556"/>
+        <location filename="../src/gpioconfig.cpp" line="609"/>
         <source>DCCnext</source>
         <translation>DCCnext</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="557"/>
+        <location filename="../src/gpioconfig.cpp" line="610"/>
         <source>Jack of all trades</source>
         <translation>Jack of all trades</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="690"/>
+        <location filename="../src/gpioconfig.cpp" line="743"/>
         <source>not a DCCnext port</source>
         <translation>geen DCCnext-poort</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="693"/>
+        <location filename="../src/gpioconfig.cpp" line="746"/>
         <source>Serial RX (GUI link)</source>
         <translation>Serieel RX (GUI-verbinding)</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="694"/>
+        <location filename="../src/gpioconfig.cpp" line="747"/>
         <source>Serial TX (GUI link)</source>
         <translation>Serieel TX (GUI-verbinding)</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="695"/>
+        <location filename="../src/gpioconfig.cpp" line="748"/>
         <source>DCC input</source>
         <translation>DCC-ingang</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="696"/>
+        <location filename="../src/gpioconfig.cpp" line="749"/>
         <source>config LED</source>
         <translation>config-led</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="697"/>
+        <location filename="../src/gpioconfig.cpp" line="750"/>
         <source>only on an Arduino Nano</source>
         <translation>alleen op een Arduino Nano</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="698"/>
+        <location filename="../src/gpioconfig.cpp" line="751"/>
         <source>config button</source>
         <translation>configknop</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="705"/>
-        <location filename="../src/uihelpers.cpp" line="415"/>
+        <location filename="../src/gpioconfig.cpp" line="758"/>
+        <location filename="../src/uihelpers.cpp" line="412"/>
         <source>analog input only</source>
         <translation>alleen analoge ingang</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="722"/>
+        <location filename="../src/gpioconfig.cpp" line="775"/>
         <source>shared with serial: only active when no GUI is connected</source>
         <translation>gedeeld met serieel: werkt alleen als er geen GUI verbonden is</translation>
     </message>
     <message>
-        <location filename="../src/gpioconfig.cpp" line="724"/>
+        <location filename="../src/gpioconfig.cpp" line="777"/>
         <source>analog input without pull-up: add a 10 kOhm resistor to 5 V</source>
         <translation>analoge ingang zonder pull-up: zet een weerstand van 10 kOhm naar 5 V</translation>
     </message>
@@ -897,62 +933,62 @@ stap %1: %2, daarna %3 wachten</translation>
         <translation>Unifrog</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="401"/>
+        <location filename="../src/uihelpers.cpp" line="398"/>
         <source>—  not used</source>
         <translation>—  niet gebruikt</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="414"/>
+        <location filename="../src/uihelpers.cpp" line="411"/>
         <source>serial pin</source>
         <translation>seriële pin</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="610"/>
+        <location filename="../src/uihelpers.cpp" line="607"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="610"/>
+        <location filename="../src/uihelpers.cpp" line="607"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="610"/>
+        <location filename="../src/uihelpers.cpp" line="607"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="611"/>
+        <location filename="../src/uihelpers.cpp" line="608"/>
         <source>D</source>
         <translation>D</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="611"/>
+        <location filename="../src/uihelpers.cpp" line="608"/>
         <source>relay A</source>
         <translation>relais A</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="612"/>
+        <location filename="../src/uihelpers.cpp" line="609"/>
         <source>relay B</source>
         <translation>relais B</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="612"/>
+        <location filename="../src/uihelpers.cpp" line="609"/>
         <source>relay C</source>
         <translation>relais C</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="686"/>
+        <location filename="../src/uihelpers.cpp" line="683"/>
         <source>(empty route)</source>
         <translation>(lege rijweg)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="687"/>
+        <location filename="../src/uihelpers.cpp" line="684"/>
         <source>%1 steps</source>
         <translation>%1 stappen</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="689"/>
+        <location filename="../src/uihelpers.cpp" line="686"/>
         <source>Output %1</source>
         <translation>Uitgang %1</translation>
     </message>
@@ -2609,344 +2645,354 @@ Dit vervangt alle uitgangen en ingangen (en hun rijwegen).</translation>
 <context>
     <name>OutputEditor</name>
     <message>
-        <location filename="../src/outputeditor.cpp" line="84"/>
+        <location filename="../src/outputeditor.cpp" line="85"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="105"/>
-        <location filename="../src/outputeditor.cpp" line="611"/>
+        <location filename="../src/outputeditor.cpp" line="98"/>
+        <source>Effect</source>
+        <translation>Effect</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="118"/>
+        <location filename="../src/outputeditor.cpp" line="636"/>
         <source>Pins</source>
         <translation>Pinnen</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin A</source>
         <translation>Pin A</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin B</source>
         <translation>Pin B</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin C</source>
         <translation>Pin C</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="107"/>
+        <location filename="../src/outputeditor.cpp" line="120"/>
         <source>Pin D</source>
         <translation>Pin D</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="126"/>
+        <location filename="../src/outputeditor.cpp" line="139"/>
         <source>Frog polarity</source>
         <translation>Polariteit puntstuk</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="132"/>
+        <location filename="../src/outputeditor.cpp" line="145"/>
         <source>None (dead frog)</source>
         <translation>Geen (dood puntstuk)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="133"/>
+        <location filename="../src/outputeditor.cpp" line="146"/>
         <source>Electrofrog — 2 relays</source>
         <translation>Electrofrog — 2 relais</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="134"/>
+        <location filename="../src/outputeditor.cpp" line="147"/>
         <source>Unifrog — 1 change-over relay</source>
         <translation>Unifrog — 1 wisselcontact-relais</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="138"/>
+        <location filename="../src/outputeditor.cpp" line="151"/>
         <source>Frog</source>
         <translation>Puntstuk</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="139"/>
+        <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Relay straight (A)</source>
         <translation>Relais rechtdoor (A)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="139"/>
+        <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Relay curved (B)</source>
         <translation>Relais afbuigend (B)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="139"/>
+        <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Unifrog relay</source>
         <translation>Unifrog-relais</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="145"/>
+        <location filename="../src/outputeditor.cpp" line="158"/>
         <source>Relays switch on LOW (inverted)</source>
         <translation>Relais schakelen bij LOW (omgekeerd)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="146"/>
+        <location filename="../src/outputeditor.cpp" line="159"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
         <translation>Voor relaismodules die schakelen als de ingang LOW is: de relaispinnen worden andersom aangestuurd</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="156"/>
+        <location filename="../src/outputeditor.cpp" line="169"/>
         <source>Parameters</source>
         <translation>Parameters</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="162"/>
+        <location filename="../src/outputeditor.cpp" line="175"/>
         <source>This type has no parameters.</source>
         <translation>Dit type heeft geen parameters.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="176"/>
+        <location filename="../src/outputeditor.cpp" line="189"/>
         <source>Switch time</source>
         <translation>Schakeltijd</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="186"/>
+        <location filename="../src/outputeditor.cpp" line="199"/>
         <source>LED on time</source>
         <translation>LED-aan-tijd</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="187"/>
+        <location filename="../src/outputeditor.cpp" line="200"/>
         <source>Pause</source>
         <translation>Pauze</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="206"/>
+        <location filename="../src/outputeditor.cpp" line="219"/>
         <source>Live: move the servo while adjusting</source>
         <translation>Live: servo beweegt mee tijdens het instellen</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="211"/>
+        <location filename="../src/outputeditor.cpp" line="224"/>
         <source>Position 0 (curved)</source>
         <translation>Stand 0 (afbuigend)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="212"/>
+        <location filename="../src/outputeditor.cpp" line="225"/>
         <source>Position 1 (straight)</source>
         <translation>Stand 1 (rechtdoor)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="213"/>
+        <location filename="../src/outputeditor.cpp" line="226"/>
         <source> ms/°</source>
         <translation> ms/°</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="216"/>
+        <location filename="../src/outputeditor.cpp" line="229"/>
         <source>Speed</source>
         <translation>Snelheid</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="219"/>
+        <location filename="../src/outputeditor.cpp" line="232"/>
         <source>Follows a detector (semaphore arm)</source>
         <translation>Volgt een melder (armsein)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="227"/>
+        <location filename="../src/outputeditor.cpp" line="240"/>
         <source>Detector</source>
         <translation>Melder</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="228"/>
+        <location filename="../src/outputeditor.cpp" line="241"/>
         <source>Swap: occupied = straight</source>
         <translation>Omkeren: bezet = rechtdoor</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="230"/>
+        <location filename="../src/outputeditor.cpp" line="243"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
         <translation>Bezet = stand 0 (afbuigend, arm op onveilig), vrij = stand 1 (rechtdoor, veilig), met de snelheid hierboven.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="252"/>
+        <location filename="../src/outputeditor.cpp" line="265"/>
         <source>Duty cycle</source>
         <translation>Duty cycle</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="254"/>
+        <location filename="../src/outputeditor.cpp" line="267"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="255"/>
+        <location filename="../src/outputeditor.cpp" line="268"/>
         <source>at once</source>
         <translation>direct</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="264"/>
+        <location filename="../src/outputeditor.cpp" line="277"/>
         <source>Fade time</source>
         <translation>Overvloeitijd</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="274"/>
+        <location filename="../src/outputeditor.cpp" line="287"/>
         <source> Hz</source>
         <translation> Hz</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="276"/>
+        <location filename="../src/outputeditor.cpp" line="289"/>
         <source>Flashing</source>
         <translation>Knipperen</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="277"/>
+        <location filename="../src/outputeditor.cpp" line="290"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
         <translation>Hoe snel knipperende lampen knipperen (1 Hz = één keer per seconde). Het seinbeeld zelf kies je met DCC extended of in een rijweg.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="283"/>
+        <location filename="../src/outputeditor.cpp" line="296"/>
         <source>Aspect numbers…</source>
         <translation>Seinbeeldnummers…</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="284"/>
+        <location filename="../src/outputeditor.cpp" line="297"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
         <translation>Welk DCC extended-nummer welke lampen toont — voor iTrain, Rocrail of je centrale</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="309"/>
+        <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Unsafe</source>
         <translation>Onveilig</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="309"/>
+        <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Caution</source>
         <translation>Langzaam rijden</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="309"/>
+        <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Safe</source>
         <translation>Veilig</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="310"/>
+        <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Aspect while its own block is occupied</source>
         <translation>Seinbeeld zolang het eigen blok bezet is</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="311"/>
+        <location filename="../src/outputeditor.cpp" line="324"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
         <translation>Seinbeeld zolang het eigen blok vrij is en het volgende blok bezet</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="312"/>
+        <location filename="../src/outputeditor.cpp" line="325"/>
         <source>Aspect while both blocks are free</source>
         <translation>Seinbeeld zolang beide blokken vrij zijn</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="318"/>
+        <location filename="../src/outputeditor.cpp" line="331"/>
         <source>aspect </source>
         <translation>seinbeeld </translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="323"/>
+        <location filename="../src/outputeditor.cpp" line="336"/>
         <source>Choose the aspect lamp by lamp</source>
         <translation>Kies het seinbeeld lamp voor lamp</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="345"/>
+        <location filename="../src/outputeditor.cpp" line="358"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
         <translation>Het board kiest het seinbeeld zelf, elke 50 ms: onveilig zolang het eigen blok bezet is, langzaam rijden zolang het volgende blok dat is, anders veilig. Ingangen, rijwegen en DCC kunnen het niet instellen. Knipperende lampen knipperen met 1 Hz.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="611"/>
+        <location filename="../src/outputeditor.cpp" line="578"/>
+        <source>Unknown effect</source>
+        <translation>Onbekend effect</translation>
+    </message>
+    <message>
+        <location filename="../src/outputeditor.cpp" line="636"/>
         <source>Pins (PWM capable: %1)</source>
         <translation>Pinnen (PWM-geschikt: %1)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="307"/>
+        <location filename="../src/outputeditor.cpp" line="320"/>
         <source>Own block</source>
         <translation>Eigen blok</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="308"/>
+        <location filename="../src/outputeditor.cpp" line="321"/>
         <source>Next block</source>
         <translation>Volgend blok</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="512"/>
+        <location filename="../src/outputeditor.cpp" line="534"/>
         <source>— none</source>
         <translation>— geen</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="590"/>
+        <location filename="../src/outputeditor.cpp" line="615"/>
         <source>Needs a connected board</source>
         <translation>Werkt alleen met een verbonden board</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="361"/>
+        <location filename="../src/outputeditor.cpp" line="374"/>
         <source>State</source>
         <translation>Stand</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="369"/>
+        <location filename="../src/outputeditor.cpp" line="382"/>
         <source>0  (off / curved)</source>
         <translation>0  (uit / afbuigend)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="370"/>
+        <location filename="../src/outputeditor.cpp" line="383"/>
         <source>1  (on / straight)</source>
         <translation>1  (aan / rechtdoor)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="371"/>
+        <location filename="../src/outputeditor.cpp" line="384"/>
         <source>▶ Test: curved / off</source>
         <translation>▶ Test: afbuigend / uit</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="372"/>
+        <location filename="../src/outputeditor.cpp" line="385"/>
         <source>▶ Test: straight / on</source>
         <translation>▶ Test: rechtdoor / aan</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="375"/>
+        <location filename="../src/outputeditor.cpp" line="388"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
         <translation>Schrijft deze uitgang naar het board met de gekozen stand (wordt ook in EEPROM bewaard)</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="378"/>
+        <location filename="../src/outputeditor.cpp" line="391"/>
         <source>Stored state</source>
         <translation>Bewaarde stand</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="492"/>
-        <location filename="../src/outputeditor.cpp" line="552"/>
+        <location filename="../src/outputeditor.cpp" line="514"/>
+        <location filename="../src/outputeditor.cpp" line="574"/>
         <source>Output %1</source>
         <translation>Uitgang %1</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="518"/>
+        <location filename="../src/outputeditor.cpp" line="540"/>
         <source>%1 · %2</source>
         <translation>%1 · %2</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="560"/>
+        <location filename="../src/outputeditor.cpp" line="585"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
         <translation>Zowel electrofrog- als unifrog-relais zijn ingesteld. Er mag maar één puntstukmodus zijn: het unifrog-relais wordt verwijderd als je deze uitgang wijzigt.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="652"/>
+        <location filename="../src/outputeditor.cpp" line="677"/>
         <source>× %1 ms  =  %2 ms</source>
         <translation>× %1 ms  =  %2 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="653"/>
+        <location filename="../src/outputeditor.cpp" line="678"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
         <translation>× %1 ms  →  aan %2 ms, pauze %3 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="656"/>
+        <location filename="../src/outputeditor.cpp" line="681"/>
         <source>Full sweep ≈ %1 ms</source>
         <translation>Volle slag ≈ %1 ms</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="658"/>
+        <location filename="../src/outputeditor.cpp" line="683"/>
         <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
         <translation>Een volledige verandering (0 → 255) duurt %1 s, een halve %2 s.</translation>
     </message>
     <message>
-        <location filename="../src/outputeditor.cpp" line="659"/>
+        <location filename="../src/outputeditor.cpp" line="684"/>
         <source>A new brightness is set at once.</source>
         <translation>Een nieuwe helderheid wordt direct ingesteld.</translation>
     </message>
@@ -2969,67 +3015,67 @@ Dit vervangt alle uitgangen en ingangen (en hun rijwegen).</translation>
         <translation>geen trigger</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="484"/>
+        <location filename="../src/uihelpers.cpp" line="481"/>
         <source>lamp %1 flashing</source>
         <translation>lamp %1 knippert</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="485"/>
+        <location filename="../src/uihelpers.cpp" line="482"/>
         <source>lamp %1 flashing, opposite phase</source>
         <translation>lamp %1 knippert in tegenfase</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="486"/>
+        <location filename="../src/uihelpers.cpp" line="483"/>
         <source>lamp %1 on</source>
         <translation>lamp %1 aan</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="488"/>
+        <location filename="../src/uihelpers.cpp" line="485"/>
         <source>all lamps off</source>
         <translation>alle lampen uit</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="494"/>
+        <location filename="../src/uihelpers.cpp" line="491"/>
         <source>Signal aspect</source>
         <translation>Seinbeeld</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="499"/>
+        <location filename="../src/uihelpers.cpp" line="496"/>
         <source>Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
         <translation>Kies per lamp. Lamp 1 is pin A, lamp 2 pin B, enzovoort.</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="519"/>
+        <location filename="../src/uihelpers.cpp" line="516"/>
         <source>Value: %1  (0x%2)</source>
         <translation>Waarde: %1  (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="528"/>
+        <location filename="../src/uihelpers.cpp" line="525"/>
         <source>off</source>
         <translation>uit</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="528"/>
+        <location filename="../src/uihelpers.cpp" line="525"/>
         <source>on</source>
         <translation>aan</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="528"/>
+        <location filename="../src/uihelpers.cpp" line="525"/>
         <source>flashing</source>
         <translation>knipperend</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="529"/>
+        <location filename="../src/uihelpers.cpp" line="526"/>
         <source>flashing, opposite phase</source>
         <translation>knipperend, in tegenfase</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="538"/>
+        <location filename="../src/uihelpers.cpp" line="535"/>
         <source>Lamp %1</source>
         <translation>Lamp %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="453"/>
+        <location filename="../src/uihelpers.cpp" line="450"/>
         <source>Out %1</source>
         <translation>Uit %1</translation>
     </message>
@@ -3115,32 +3161,32 @@ Dit vervangt alle uitgangen en ingangen (en hun rijwegen).</translation>
         <translation>eigen wachttijd per rijwegstap</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="447"/>
+        <location filename="../src/uihelpers.cpp" line="444"/>
         <source>In %1</source>
         <translation>In %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="494"/>
+        <location filename="../src/uihelpers.cpp" line="491"/>
         <source>Aspect numbers</source>
         <translation>Seinbeeldnummers</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="496"/>
+        <location filename="../src/uihelpers.cpp" line="493"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
         <translation>Kies per lamp wat het sein moet tonen. Het nummer eronder is de DCC extended-waarde daarvoor: voer die in bij iTrain, Rocrail of je centrale. Hier verandert niets. Lamp 1 is pin A, lamp 2 pin B, enzovoort.</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="519"/>
+        <location filename="../src/uihelpers.cpp" line="516"/>
         <source>DCC extended number: %1  (0x%2)</source>
         <translation>DCC extended-nummer: %1  (0x%2)</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="582"/>
+        <location filename="../src/uihelpers.cpp" line="579"/>
         <source>shared with: %1</source>
         <translation>gedeeld met: %1</translation>
     </message>
     <message>
-        <location filename="../src/uihelpers.cpp" line="589"/>
+        <location filename="../src/uihelpers.cpp" line="586"/>
         <source>in use: %1</source>
         <translation>in gebruik: %1</translation>
     </message>

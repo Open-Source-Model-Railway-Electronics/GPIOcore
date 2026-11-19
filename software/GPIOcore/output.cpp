@@ -367,7 +367,7 @@ StateFunction( swingLightState )
     {
         counter    = 0 ;
         timer.type = TIMER_BLEEP ;
-        timer.PT   = eedata.swing.pulseTime * 10 ;
+        timer.PT   = swingOnTime() * 10UL ;
         digitalWrite( eedata.pinA, eedata.state ? HIGH : LOW ) ;
         digitalWrite( eedata.pinB, LOW ) ;
     }
@@ -378,19 +378,19 @@ StateFunction( swingLightState )
         {
             digitalWrite( eedata.pinA, LOW  ) ;
             digitalWrite( eedata.pinB, HIGH ) ;
-            timer.PT = eedata.swing.pulseTime * 10 ;
+            timer.PT = swingOnTime() * 10UL ;
             counter  = 1 ;
         }
         else if( counter == 1 )     // B was on → pause
         {
             digitalWrite( eedata.pinB, LOW ) ;
-            timer.PT = eedata.swing.pauseTime * 10 ;
+            timer.PT = swingPause() * 10UL ;
             counter  = 2 ;
         }
         else                        // pause done → A on
         {
             digitalWrite( eedata.pinA, HIGH ) ;
-            timer.PT = eedata.swing.pulseTime * 10 ;
+            timer.PT = swingOnTime() * 10UL ;
             counter  = 0 ;
         }
     }
@@ -401,7 +401,7 @@ StateFunction( swingLightState )
         digitalWrite( eedata.pinB, LOW ) ;
     }
 
-    if( eedata.type != swingLight ) return 1 ;
+    if( !isEffect( LIGHT_SWING ) ) return 1 ;
     return 0 ;
 }
 
@@ -456,7 +456,7 @@ StateFunction( firePlaceLightState )
         if( eedata.pinB != NA ) digitalWrite( eedata.pinB, LOW ) ;
     }
 
-    if( eedata.type != firePlaceLight ) return 1 ;
+    if( !isEffect( LIGHT_FIRE ) ) return 1 ;
     return 0 ;
 }
 
@@ -492,7 +492,7 @@ StateFunction( tubeLightState )
         if( eedata.pinA != NA ) digitalWrite( eedata.pinA, LOW ) ;
     }
 
-    if( eedata.type != tubeLight ) return 1 ;
+    if( !isEffect( LIGHT_TUBE ) ) return 1 ;
     return 0 ;
 }
 
@@ -532,7 +532,58 @@ StateFunction( welderLightState )
         if( eedata.pinA != NA ) digitalWrite( eedata.pinA, LOW ) ;
     }
 
-    if( eedata.type != welderLight ) return 1 ;
+    if( !isEffect( LIGHT_WELDER ) ) return 1 ;
+    return 0 ;
+}
+
+
+// Photographer: a short bright flash at a random moment, about one in three with a pre-flash
+// (red-eye reduction); a few seconds of darkness in between.
+// counter: 0 = dark, 1 = pre-flash, 2 = gap after the pre-flash, 3 = flash
+StateFunction( photoLightState )
+{
+    if( sm.entryState() )
+    {
+        randomSeed( analogRead(0) ) ;
+        counter    = 0 ;
+        timer.type = TIMER_BLEEP ;
+        timer.PT   = random( 500, 3000 ) ;
+    }
+
+    if( eedata.state && timer.update(1) )
+    {
+        if( counter == 0 )                          // dark is over: pre-flash or straight to the flash
+        {
+            if( eedata.pinA != NA ) digitalWrite( eedata.pinA, HIGH ) ;
+            if( random( 0, 3 ) == 0 ) { timer.PT = 15 ; counter = 1 ; }
+            else                      { timer.PT = 40 ; counter = 3 ; }
+        }
+        else if( counter == 1 )                     // pre-flash done
+        {
+            if( eedata.pinA != NA ) digitalWrite( eedata.pinA, LOW ) ;
+            timer.PT = random( 120, 200 ) ;
+            counter  = 2 ;
+        }
+        else if( counter == 2 )                     // the flash
+        {
+            if( eedata.pinA != NA ) digitalWrite( eedata.pinA, HIGH ) ;
+            timer.PT = 40 ;
+            counter  = 3 ;
+        }
+        else                                        // flash done: dark again
+        {
+            if( eedata.pinA != NA ) digitalWrite( eedata.pinA, LOW ) ;
+            timer.PT = random( 800, 6000 ) ;
+            counter  = 0 ;
+        }
+    }
+
+    if( !eedata.state )
+    {
+        if( eedata.pinA != NA ) digitalWrite( eedata.pinA, LOW ) ;
+    }
+
+    if( !isEffect( LIGHT_PHOTO ) ) return 1 ;
     return 0 ;
 }
 
@@ -593,10 +644,12 @@ uint8_t Output::update()
     {
         State( idle ) {
             if(      eedata.type == PWM          )  { sm.nextState( pwm                ) ; }
-            else if( eedata.type == swingLight   )  { sm.nextState( swingLightState    ) ; }
-            else if( eedata.type == firePlaceLight) { sm.nextState( firePlaceLightState) ; }
-            else if( eedata.type == tubeLight    )  { sm.nextState( tubeLightState     ) ; }
-            else if( eedata.type == welderLight  )  { sm.nextState( welderLightState   ) ; }
+            else if( isEffect( LIGHT_SWING  ) )     { sm.nextState( swingLightState    ) ; }
+            else if( isEffect( LIGHT_FIRE   ) )     { sm.nextState( firePlaceLightState) ; }
+            else if( isEffect( LIGHT_TUBE   ) )     { sm.nextState( tubeLightState     ) ; }
+            else if( isEffect( LIGHT_WELDER ) )     { sm.nextState( welderLightState   ) ; }
+            else if( isEffect( LIGHT_PHOTO  ) )     { sm.nextState( photoLightState    ) ; }
+            else if( eedata.type == lightEffect  )  { }               // unknown effect: nothing
             else if( eedata.type == fourToneSignal
                  ||  eedata.type == blockSignal  )  { sm.nextState( fourToneSignalState    ) ; }
             else if( eedata.type == singleFlashing
@@ -629,6 +682,9 @@ uint8_t Output::update()
             sm.nextState( idle ) ; }
 
         State( welderLightState ) {
+            sm.nextState( idle ) ; }
+
+        State( photoLightState ) {
             sm.nextState( idle ) ; }
 
         State( fourToneSignalState ) {

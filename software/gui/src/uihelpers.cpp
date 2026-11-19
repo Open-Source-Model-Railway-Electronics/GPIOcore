@@ -135,7 +135,7 @@ int outputLevel(const OutputConfig &c)
 {
     if (c.type == OutputNotInUse)
         return Beginner;
-    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    const OutputTypeInfo &info = outputTypeInfo(c);
     int l = outputTypeLevel(c.type);
     if (info.relays && (c.relayA != PinNA || c.relayB != PinNA || c.relayC != PinNA))
         l = qMax(l, int(Advanced));                       // frog relays
@@ -183,9 +183,9 @@ QStringList levelFeatures(const BoardConfig &b, int above)
         }
         if (o.servoFollows() >= 0)
             add(Expert, QObject::tr("semaphore arms"));
-        if (outputTypeInfo(o.type).relays && (o.relayA != PinNA || o.relayB != PinNA || o.relayC != PinNA))
+        if (outputTypeInfo(o).relays && (o.relayA != PinNA || o.relayB != PinNA || o.relayC != PinNA))
             add(Advanced, QObject::tr("frog relays"));
-        for (int k = 0; k < outputTypeInfo(o.type).pinCount; ++k)
+        for (int k = 0; k < outputTypeInfo(o).pinCount; ++k)
             if (o.pin(k) < 2 && o.type != SoundEffect)
                 add(Advanced, QObject::tr("D0 / D1"));
     }
@@ -342,10 +342,7 @@ QColor outputTypeColor(quint8 type)
     case DoubleSteady:   return QColor(0x0E, 0xA5, 0xE9);
     case DoublePulse:    return QColor(0x8B, 0x5C, 0xF6);
     case DoubleFlashing: return QColor(0xF9, 0x73, 0x16);
-    case SwingLight:     return QColor(0xEF, 0x44, 0x44);
-    case FirePlaceLight: return QColor(0xEA, 0x58, 0x0C);
-    case TubeLight:      return QColor(0x06, 0xB6, 0xD4);
-    case WelderLight:    return QColor(0xA8, 0x55, 0xF7);
+    case LightEffect:    return QColor(0xEA, 0x58, 0x0C);
     case FourToneSignal: return QColor(0x22, 0xC5, 0x5E);
     case ServoType:      return QColor(0x10, 0xB9, 0x81);
     case Pwm:            return QColor(0xEC, 0x48, 0x99);
@@ -614,7 +611,7 @@ QVector<QVector<PinUse>> pinUsage(const BoardConfig &board)
     for (int i = 0; i < NumOutputs; ++i)
     {
         const OutputConfig &c = board.outputs[i];
-        const OutputTypeInfo &info = outputTypeInfo(c.type);
+        const OutputTypeInfo &info = outputTypeInfo(c);
         for (int s = 0; s < 7; ++s)
         {
             const bool active = (s < 4) ? (s < info.pinCount) : info.relays;
@@ -634,7 +631,7 @@ QVector<QVector<PinUse>> pinUsage(const BoardConfig &board)
 
 QString outputSummaryPins(const OutputConfig &c)
 {
-    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    const OutputTypeInfo &info = outputTypeInfo(c);
     QStringList parts;
     for (int s = 0; s < info.pinCount; ++s)
         parts << pinName(c.pin(s));
@@ -643,7 +640,7 @@ QString outputSummaryPins(const OutputConfig &c)
 
 QString outputSummaryRelays(const OutputConfig &c)
 {
-    if (!outputTypeInfo(c.type).relays)
+    if (!outputTypeInfo(c).relays)
         return QString();
     QStringList parts;
     if (c.relayA != PinNA || c.relayB != PinNA)
@@ -655,7 +652,7 @@ QString outputSummaryRelays(const OutputConfig &c)
 
 QString outputSummaryParams(const OutputConfig &c)
 {
-    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    const OutputTypeInfo &info = outputTypeInfo(c);
     switch (info.params)
     {
     case ParamKind::SwitchTime:

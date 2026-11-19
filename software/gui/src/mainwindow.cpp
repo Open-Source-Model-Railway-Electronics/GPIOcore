@@ -468,7 +468,7 @@ void MainWindow::buildUi()
     });
     connect(m_outEd, &OutputEditor::changed, this, [this](int i, const OutputConfig &c) {
         QVector<quint8> fresh;                                      // pins this edit newly gives to output i
-        const OutputTypeInfo &info = outputTypeInfo(c.type);
+        const OutputTypeInfo &info = outputTypeInfo(c);
         for (int k = 0; k < 7; ++k)
         {
             const bool active = (k < 4) ? (k < info.pinCount) : info.relays;
@@ -1640,7 +1640,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
         ++outs;
         const OutputConfig &mine = m_edit.outputs[t];
         if (mine.type != OutputNotInUse)
-            replaced << tr("%1 · %2").arg(Ui::outputDisplayName(mine, t), outputTypeName(mine.type));
+            replaced << tr("%1 · %2").arg(Ui::outputDisplayName(mine, t), outputTypeName(mine));
     }
     for (int i = 0; i < NumInputs; ++i)
     {
@@ -1669,7 +1669,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
         const int t = plan.outputs[o];
         if (t < 0) continue;
         newOut[o] = importedOutput(file, o, plan);
-        const OutputTypeInfo &info = outputTypeInfo(newOut[o].type);
+        const OutputTypeInfo &info = outputTypeInfo(newOut[o]);
         QVector<quint8> pins;
         for (int k = 0; k < 7; ++k)
             if (((k < 4) ? (k < info.pinCount) : info.relays) && newOut[o].pin(k) < NumPins)
@@ -1810,7 +1810,7 @@ void MainWindow::updateActions()
 bool MainWindow::outputHasConflict(int i) const
 {
     const OutputConfig &c = m_edit.outputs[i];
-    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    const OutputTypeInfo &info = outputTypeInfo(c);
     const auto usage = Ui::pinUsage(m_edit);
     for (int s = 0; s < 7; ++s)
     {
@@ -1916,7 +1916,7 @@ QStringList MainWindow::outputWarnings(int i) const
 {
     QStringList w;
     const OutputConfig &c = m_edit.outputs[i];
-    const OutputTypeInfo &info = outputTypeInfo(c.type);
+    const OutputTypeInfo &info = outputTypeInfo(c);
     const auto usage = Ui::pinUsage(m_edit);
     static const char *roles[7] = { QT_TRANSLATE_NOOP("Gpio", "Pin A"), QT_TRANSLATE_NOOP("Gpio", "Pin B"),
                                     QT_TRANSLATE_NOOP("Gpio", "Pin C"), QT_TRANSLATE_NOOP("Gpio", "Pin D"),
@@ -1946,7 +1946,7 @@ QStringList MainWindow::outputWarnings(int i) const
         }
         if (info.needsPwm && s < info.pinCount && !isPwmPin(p))
             w << tr("%1 (%2) is not PWM capable; %3 needs PWM.")
-                     .arg(trGpio(roles[s]), pinName(p), outputTypeName(c.type));
+                     .arg(trGpio(roles[s]), pinName(p), outputTypeName(c));
     }
     for (int b : c.watchedInputs())             // block signal / semaphore arm: Input::occupied() needs a pin
         if (m_edit.inputs[b].type == InputNotInUse || m_edit.inputs[b].pin == PinNA)
@@ -2033,7 +2033,7 @@ QString MainWindow::outputNote(int i) const
     const OutputConfig &c = m_edit.outputs[i];
     if (c.type == SoundEffect)               // D1 by design, see the type help
         return QString();
-    for (int s = 0; s < outputTypeInfo(c.type).pinCount; ++s)
+    for (int s = 0; s < outputTypeInfo(c).pinCount; ++s)
         if (c.pin(s) < 2 && !boardOptions().dccNext)          // a DCCnext has no D0/D1: a warning instead
             return serialPinNote();
     return QString();
@@ -2082,7 +2082,7 @@ QString MainWindow::takeOverPins(const QVector<quint8> &pins, int output, int in
         {
             if (o == output) continue;
             OutputConfig &c = m_edit.outputs[o];
-            const OutputTypeInfo &info = outputTypeInfo(c.type);
+            const OutputTypeInfo &info = outputTypeInfo(c);
             if (c.type == OutputNotInUse) continue;
             if (share != Ui::ShareNone && Ui::pinShare(c) == share) continue;   // several sound outputs on D1
             for (int k = 0; k < 7; ++k)

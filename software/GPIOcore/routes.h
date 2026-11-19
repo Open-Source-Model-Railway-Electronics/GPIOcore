@@ -5,7 +5,7 @@
 
 // ── EEPROM layout v2, see EEPROM.md section 2 ─────────────────────────────────
 const uint16_t EE_MAGIC     =    0 ;    // 'G' '2' <layout>
-const uint8_t  EE_LAYOUT    =    1 ;
+const uint8_t  EE_LAYOUT    =    2 ;    // 2: one light effect type (swing times repacked)
 const uint16_t EE_BOARD     =    3 ;    // type, flags, delay, name[16]
 const uint16_t EE_OUTPUTS   =   22 ;    // 16 x 10 B
 const uint16_t EE_INPUTS    =  182 ;    // 16 x  4 B

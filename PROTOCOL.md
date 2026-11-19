@@ -93,10 +93,8 @@ In `SET_OUTPUT_DATA` / `GET_OUTPUT_DATA` the `state` byte carries `state` in **b
 | 3 | double steady | A, B | – |
 | 4 | double pulse | A, B | `uint32` LE pulse time × 10 ms |
 | 5 | double flashing | A, B | `uint32` LE half period × 10 ms |
-| 6 | swing light | A, B | `data[0..1]` on time, `data[2..3]` pause; `uint16` LE × 10 ms |
-| 7 | fireplace | A, B (PWM) | – |
-| 8 | TL tube | A (PWM) | – |
-| 9 | welder | A | – |
+| 6 | light effect | per effect | `data[3]` = effect: 0 swing light (A, B), 1 fireplace (A, B, PWM), 2 TL tube (A, PWM), 3 welder (A), 4 photographer (A). Swing: on time = `data[0] \| (data[1] & 0x0F) << 8`, pause = `data[1] >> 4 \| data[2] << 4`, 12 bits each × 10 ms; other effects: `data[0..2]` unused (0) |
+| 7–9 | free | – | not used (EEPROM layout 1 had fireplace, TL tube and welder here) |
 | 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), `data[1]` = flashing frequency in 0.1 Hz, `data[2]`/`data[3]` unused (0) |
 | 11 | servo | A (+ relays) | `data[0]` angle at state 0, `data[1]` angle at state 1, `data[2]` speed in ms/° (≥ 1), `data[3]` = 0, or semaphore arm (below) |
 | 12 | PWM | A (PWM) | `data[0]` = brightness 0–255, `data[1]` = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every `data[1] × 1000 / 255` ms (own values, route step, DCC-ext); at start-up it fades up from 0. `OUTPUT_EVENT` reports the target value immediately |

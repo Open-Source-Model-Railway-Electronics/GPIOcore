@@ -62,6 +62,8 @@ private:
 
     QLabel         *m_title = nullptr;
     QLabel         *m_help = nullptr;
+    QWidget        *m_effectRow = nullptr;     // light effect: which effect
+    QComboBox      *m_effect = nullptr;
     QLabel         *m_warn = nullptr;
     QLabel         *m_note = nullptr;
     QComboBox      *m_type = nullptr;

@@ -1711,10 +1711,10 @@ private slots:
         advanced->trigger();
         QCOMPARE(Ui::level(), int(Ui::Advanced));
         QVERIFY(advanced->isChecked() && !beginner->isChecked());
-        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 1);   // all but the block signal
+        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 3 - 1);   // all but the block signal (and 7-9: free)
         QVERIFY(!offered(type).contains(BlockSignal));
         QVERIFY(offered(type).contains(FourToneSignal) && offered(type).contains(Pwm) && offered(type).contains(SoundEffect)
-                && offered(type).contains(WelderLight));
+                && offered(type).contains(LightEffect));
         QVERIFY(!offered(fn).contains(3));
         QVERIFY(offered(pinA).contains(0) && offered(pinA).contains(1));
         QVERIFY(frogBox->isVisibleTo(oed));
@@ -1725,7 +1725,7 @@ private slots:
 
         // Expert: + block signal, sensor input, semaphore arm
         expert->trigger();
-        QCOMPARE(offered(type).size(), int(OutputTypeCount));
+        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 3);   // 7-9 are free type values
         QVERIFY(offered(fn).contains(3));
         QVERIFY(checkBox(oed, QStringLiteral("Follows a detector (semaphore arm)"))->isVisibleTo(oed));
         maybeScreenshot(w, "level-expert.png");

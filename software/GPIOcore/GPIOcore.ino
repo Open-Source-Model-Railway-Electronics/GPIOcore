@@ -48,7 +48,8 @@ static_assert( sizeof( InputSettings ) ==  4, "EEPROM layout v2: input = 4 B"   
 // EEPROM layout (EEPROM.md). A board without the magic gets defaults.
 void eepromBegin()
 {
-    if( EEPROM.read( EE_MAGIC ) == 'G' && EEPROM.read( EE_MAGIC + 1 ) == '2' )
+    if( EEPROM.read( EE_MAGIC ) == 'G' && EEPROM.read( EE_MAGIC + 1 ) == '2'
+    &&  EEPROM.read( EE_MAGIC + 2 ) == EE_LAYOUT )                     // another layout: start with defaults
     {
         EEPROM.get( boardEEAddress, board ) ;
         return ;

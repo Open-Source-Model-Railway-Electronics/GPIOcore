@@ -78,13 +78,26 @@ void OutputEditor::buildUi()
     m_type = new QComboBox;
     m_type->setMinimumWidth(140);
     for (quint8 t = 0; t < OutputTypeCount; ++t)
-        m_type->addItem(Ui::swatchIcon(Ui::outputTypeColor(t)), outputTypeName(t), int(t));
+        if (!isUnusedOutputType(t))
+            m_type->addItem(Ui::swatchIcon(Ui::outputTypeColor(t)), outputTypeName(t), int(t));
     head->addWidget(m_title);
     head->addStretch();
     head->addWidget(new QLabel(tr("Type")));
     head->addWidget(m_type);
     head->addWidget(Info::button(QStringLiteral("output.type")));
     root->addLayout(head);
+
+    // light effect: which effect (data[3])
+    m_effectRow = new QWidget;
+    auto *effectRow = new QHBoxLayout(m_effectRow);
+    effectRow->setContentsMargins(0, 0, 0, 0);
+    m_effect = new QComboBox;
+    m_effect->setObjectName(QStringLiteral("lightEffect"));
+    for (quint8 k = 0; k < LightKindCount; ++k)
+        m_effect->addItem(trGpio(lightEffectInfo(k).name), int(k));
+    effectRow->addWidget(new QLabel(tr("Effect")));
+    effectRow->addWidget(m_effect, 1);
+    root->addWidget(m_effectRow);
 
     m_help = new QLabel;
     m_help->setObjectName(QStringLiteral("help"));
@@ -179,8 +192,8 @@ void OutputEditor::buildUi()
     { // swing
         auto *w = new QWidget;
         auto *f = new QFormLayout(w);
-        m_swingPulse = makeSpin(0, 65535);
-        m_swingPause = makeSpin(0, 65535);
+        m_swingPulse = makeSpin(0, MaxSwingTime);
+        m_swingPause = makeSpin(0, MaxSwingTime);
         m_swingMs    = new QLabel;
         m_swingMs->setObjectName(QStringLiteral("help"));
         f->addRow(tr("LED on time"), m_swingPulse);
@@ -399,7 +412,8 @@ void OutputEditor::buildUi()
         case DoublePulse:    m_cfg.setSwitchTime(25); break;   // 250 ms
         case SingleFlashing:
         case DoubleFlashing: m_cfg.setSwitchTime(50); break;   // 500 ms
-        case SwingLight:     m_cfg.setSwing(50, 50);  break;
+        case LightEffect:    m_cfg.data = { { 0, 0, 0, LightSwing } };
+                             m_cfg.setSwing(50, 50);  break;
         case ServoType:      m_cfg.data = { { 80, 100, 20, 0 } }; break;
         case Pwm:            m_cfg.data = { { 128, 0, 0, 0 } };   break;
         case FourToneSignal: m_cfg.data[2] = m_cfg.data[3] = 0;  // keep the aspect the board has
@@ -412,6 +426,14 @@ void OutputEditor::buildUi()
                              m_cfg.pinA = SoundPin;   break;
         default:             m_cfg.data = { { 0, 0, 0, 0 } };     break;
         }
+        refresh();
+        collect();
+    });
+    connect(m_effect, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] {
+        if (m_loading) return;
+        m_cfg.data = { { 0, 0, 0, quint8(Ui::currentData(m_effect)) } };
+        if (m_cfg.lightEffect() == LightSwing)
+            m_cfg.setSwing(50, 50);
         refresh();
         collect();
     });
@@ -547,11 +569,14 @@ void OutputEditor::setLiveAvailable(bool available)
 void OutputEditor::refresh()
 {
     m_loading = true;
-    const OutputTypeInfo &info = outputTypeInfo(m_cfg.type);
+    const OutputTypeInfo &info = outputTypeInfo(m_cfg);
 
     Ui::setEditorTitle(m_title, m_cfg.name, tr("Output %1").arg(m_index + 1));
     Ui::selectData(m_type, m_cfg.type);
-    m_help->setText(outputTypeHelp(m_cfg.type));
+    m_effectRow->setVisible(m_cfg.type == LightEffect);
+    if (m_cfg.type == LightEffect)
+        Ui::selectData(m_effect, m_cfg.lightEffect(), tr("Unknown effect"));
+    m_help->setText(outputTypeHelp(m_cfg));
 
     for (int i = 0; i < 4; ++i) Ui::selectData(m_pins[i],   m_cfg.pin(i),     QStringLiteral("⚠ %1").arg(pinName(m_cfg.pin(i))));
     for (int i = 0; i < 3; ++i) Ui::selectData(m_relays[i], m_cfg.pin(4 + i), QStringLiteral("⚠ %1").arg(pinName(m_cfg.pin(4 + i))));
@@ -597,7 +622,7 @@ void OutputEditor::refresh()
 
 void OutputEditor::updateVisibility()
 {
-    const OutputTypeInfo &info = outputTypeInfo(m_cfg.type);
+    const OutputTypeInfo &info = outputTypeInfo(m_cfg);
     for (int i = 0; i < 4; ++i)
     {
         const bool used = i < info.pinCount;
@@ -647,7 +672,7 @@ void OutputEditor::applyLevel()
 
 void OutputEditor::updateTimeLabels()
 {
-    const OutputTypeInfo &info = outputTypeInfo(m_cfg.type);
+    const OutputTypeInfo &info = outputTypeInfo(m_cfg);
     const int unit = qMax(1, info.timeUnitMs);
     m_switchTimeMs->setText(tr("× %1 ms  =  %2 ms").arg(unit).arg(qulonglong(m_cfg.switchTime()) * unit));
     m_swingMs->setText(tr("× %1 ms  →  on %2 ms, pause %3 ms")
@@ -661,7 +686,7 @@ void OutputEditor::updateTimeLabels()
 
 void OutputEditor::collect()
 {
-    const OutputTypeInfo &info = outputTypeInfo(m_cfg.type);
+    const OutputTypeInfo &info = outputTypeInfo(m_cfg);
 
     // Unused pins are cleared: the firmware calls pinMode() on every pin != NA.
     for (int i = 0; i < 4; ++i)
