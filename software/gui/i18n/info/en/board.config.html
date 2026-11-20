@@ -1,9 +1,8 @@
-<h3>Config button (A7) and teaching servos with your throttle</h3>
+<h3>Config button (D2) and teaching servos with your throttle</h3>
 <p>Without a computer you can set the end positions of servos with the config button and your DCC throttle.</p>
-<p><b>Note:</b> the config button (A7) only exists on an Arduino <b>Nano</b>. A DCCnext has no
-A7, so there is no config button: set the servo end positions in the program (or with the phone remote) instead.</p>
-<p><b>Wiring:</b> a push button from <b>A7</b> to <b>GND</b>, plus a 10 k&Omega; resistor from A7 to <b>5 V</b>
-(A7 has no built-in pull-up). An LED with resistor on <b>D13</b> shows the mode (most Arduinos already have one).</p>
+<p><b>Wiring:</b> a push button from <b>D2</b> to <b>GND</b>. D2 is also the DCC input: DCC changes its level all
+the time, a pressed button holds it low, and that is what the board looks for (1 ms low without a break). An LED
+with resistor on <b>D13</b> shows the mode (most Arduinos already have one).</p>
 <ol>
 <li>Hold the config button for <b>2 seconds</b>: the LED starts blinking. You are in config mode.</li>
 <li>Press it <b>briefly</b>: the next servo is selected and moves over, so you can see which one it is. Press again
@@ -19,10 +18,9 @@ for the next servo.</li>
 <li>Hold the config button for 2 seconds again: the LED stays on. Back to normal.</li>
 </ol>
 <p>The new positions are stored at once. Connect the program later and it reads them back.</p>
-<p><b>Short press outside config mode = GUI mode.</b> 5 seconds after start-up the board closes its serial port
-when no program connected and the configuration uses D0 or D1 (they become normal pins; otherwise the port stays
-open). A <b>brief</b> press on the config button (LED steady, not in
-config mode) opens it again for 5 seconds and the board announces itself, so the program can connect without a
-reset, for example over Bluetooth (see <i>Help &gt; Bluetooth (HC-05)</i>). When the program says <i>"Waiting for
-the board"</i>, that is the moment to press it.</p>
-<p>Because of this, <b>D13</b> and <b>A7</b> can never be used for inputs or outputs.</p>
+<p><b>Short press outside config mode = GUI mode.</b> 5 seconds after start-up without a program the serial line
+becomes the board link. A <b>brief</b> press on the config button (LED steady, not in config mode) gives it back to
+the program for 5 seconds and the board announces itself, so the program can connect without a reset, for example
+over Bluetooth (see <i>Help &gt; Bluetooth (HC-05)</i>). When the program says <i>"Waiting for the board"</i>, that
+is the moment to press it.</p>
+<p>Because of this, <b>D2</b> and <b>D13</b> can never be used for inputs or outputs.</p>

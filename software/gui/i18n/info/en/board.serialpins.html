@@ -1,13 +1,12 @@
-<h3>Pins D0 and D1</h3>
-<p>D0 and D1 are the wires the Arduino uses to talk to this program over USB. Newer boards can still use them for
-your layout:</p>
+<h3>D0 and D1: the serial line</h3>
+<p>D0 (RX) and D1 (TX) are never an input or output pin: they are the board's serial line. Four things can use it:
+this program (over USB or Bluetooth), the <b>board link</b> to other boards, a <b>DFPlayer</b> on TX, and an
+<b>HC-05</b> Bluetooth module.</p>
 <ul>
-<li>When the board starts, it waits <b>5 seconds</b> for this program.</li>
-<li>If the program connects, D0 / D1 stay reserved for USB while you configure. Things on those pins do
-<b>not</b> work then.</li>
-<li>If nothing connects (normal operation on the layout), D0 / D1 become normal pins. When nothing is on
-D0 / D1 (no input or output, no sound effect), they stay USB wires: the program can connect at any time.</li>
-<li>A brief press on the config button (Nano) makes them USB wires again for 5 seconds, so the program can
-connect without a reset.</li>
+<li>When the board starts, it waits <b>5 seconds</b> for this program. If the program connects, the line is the
+program's while you configure: the board link and the DFPlayer do nothing then.</li>
+<li>If nothing connects (normal operation on the layout), the line becomes the <b>board link</b> (9600 baud): what
+comes in on RX is passed on to TX and runs as a DCC command; board link outputs and a DFPlayer use TX.</li>
+<li>Opening the USB port resets the board, so the program connects within those 5 seconds. Over Bluetooth there
+is no reset: press the config button <b>briefly</b>, then the line is the program's again for 5 seconds.</li>
 </ul>
-<p>Use them for simple things like LEDs. Avoid heavy loads on D0: they can disturb uploading new firmware.</p>

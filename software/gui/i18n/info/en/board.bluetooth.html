@@ -25,12 +25,9 @@ Windows creates a COM port for it (sometimes two: use the "outgoing" one). Choos
 </ol>
 <p>If it fails: the module is not in AT mode (fast blinking = normal mode), the wiring is wrong, or the diode is
 missing or the wrong way round. Other modules (HC-06, some clones) do not know these commands.</p>
-<p><b>Connecting over Bluetooth</b>: opening the Bluetooth COM port does not reset the board. When nothing on the
-board uses D0 or D1, its serial port stays open and the program simply connects. When something does use them
-(an input or output on D0/D1, or a sound effect), the board closes its serial port 5 seconds after start-up
-(D0/D1 become normal pins). Then, when you click <i>Connect</i>, the program
-shows <i>"Waiting for the board &mdash; press its config button briefly"</i>. Press the config button (A7)
-<b>briefly</b>: the board opens its serial port again for 5 seconds and announces itself, and the program connects.
-The program waits up to 30 seconds for that.</p>
-<p>While the program is connected, D0 and D1 belong to the serial port: do not use them for inputs or outputs on a
-board with an HC-05.</p>
+<p><b>Connecting over Bluetooth</b>: opening the Bluetooth COM port does not reset the board, and 5 seconds after
+start-up the serial line has become the board link. So when you click <i>Connect</i>, the program shows
+<i>"Waiting for the board &mdash; press its config button briefly"</i>. Press the config button (D2)
+<b>briefly</b>: the board gives the line back to the program for 5 seconds and announces itself, and the program
+connects. The program waits up to 30 seconds for that.</p>
+<p>A board with an HC-05 cannot use the board link at the same time: both need D0/D1.</p>

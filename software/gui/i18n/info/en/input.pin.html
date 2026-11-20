@@ -5,7 +5,7 @@ No resistor needed: the board switches on its own internal "pull-up" resistor.</
 <pre>  pin D7 ---[ button ]--- GND</pre>
 <ul>
 <li>Do <b>not</b> connect a button to 5 V or 12 V: that can damage the Arduino.</li>
-<li><b>D2</b> (DCC input), <b>D13</b> (config LED) and <b>A7</b> (config button) cannot be used.</li>
+<li><b>D2</b> (DCC input and config button), <b>D13</b> (config LED) and <b>D0 / D1</b> (the serial line) cannot be used.</li>
 <li><b>A6</b> (Arduino Nano only) is an analog-only input without a pull-up: add a 10 k&Omega; resistor from the pin to 5 V.</li>
 <li>Pins already used show <b>red</b>. Choosing one takes it from the other input or output, which becomes
 <i>not in use</i>.</li>

@@ -1,0 +1,23 @@
+<h3>Board link (TX): commands to other boards</h3>
+<p>Several boards work together over a chain of wires: <b>TX (D1)</b> of one board to <b>RX (D0)</b> of the next,
+with a common GND. A board that receives a command passes it on at once and runs it as if it came from the DCC
+command station: every input with that <b>DCC address</b> reacts as usual. The other boards need no setting: set
+them up as a normal DCC decoder.</p>
+<pre>  board 1 TX (D1) ----&gt; board 2 RX (D0)
+  board 2 TX (D1) ----&gt; board 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>One board link output is enough.</b> Put it in a route; each step chooses the <b>address</b> (1-255) and
+<b>Curved</b> or <b>Straight</b> (a turnout command), or <b>Value</b> 0-255 (DCC extended: an aspect, a servo angle,
+PWM, a sound track).</li>
+<li>Example: a route on board 1 with steps <i>#5 straight</i>, <i>#9 curved</i>, <i>#20 value 1</i>. On board 2 an
+absolute input with DCC address 5 sets its servo straight, one with address 9 curved, and a signal on address 20
+shows aspect 1.</li>
+<li>The wait time between the steps is also the time between the commands, so the turnouts move one after another.</li>
+<li><b>Own address</b>: switched on or off directly (a toggle or absolute input, DCC), the output sends its own
+address, curved or straight. Leave it at <i>none</i> when you only use it in routes.</li>
+<li><b>Only without a PC.</b> With the program connected the serial line is the program's: nothing is sent or
+passed on. On the layout the link starts 5 seconds after power-up.</li>
+<li>A DFPlayer can stay on the same TX line; it ignores these commands.</li>
+<li>Not on a <b>DCCnext</b>: it has no D1 on its terminals.</li>
+</ul>
