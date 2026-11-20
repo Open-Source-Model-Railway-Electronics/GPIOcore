@@ -2,13 +2,13 @@
 <ul>
 <li><b>Nom</b> : jusqu'à 16 lettres, enregistré sur la carte. Le programme retrouve le fichier de cette carte (noms des
 entrées et sorties) grâce à ce nom ; donnez donc à chaque carte son propre nom.</li>
-<li><b>Type de carte</b> : Arduino Uno, Arduino Nano, DCCnext ou Jack of all trades. Il détermine les broches disponibles.</li>
-<li><b>Temporisation propre à chaque étape d'itinéraire</b> : désactivé = chaque étape attend le même temps (réglé
+<li><b>Type de carte</b> : Arduino Nano, DCCnext ou Jack of all trades. Il détermine les broches disponibles.</li>
+<li><b>Temporisation propre à chaque étape d'itinéraire</b> (niveau Avancé et plus) : désactivé = chaque étape attend le même temps (réglé
 en dessous) et les itinéraires utilisent deux fois moins de mémoire. Activé = chaque étape a sa propre attente.</li>
-<li><b>Enclenchement des itinéraires</b> : ce qui se passe quand un itinéraire est lancé alors qu'un autre est encore
+<li><b>Enclenchement des itinéraires</b> (niveau Avancé et plus) : ce qui se passe quand un itinéraire est lancé alors qu'un autre est encore
 en cours. <i>Désactivé</i> = les deux s'exécutent, <i>activé</i> = le second est ignoré, <i>automatique</i> = les
 itinéraires qui manœuvrent un aiguillage s'exécutent un par un, ceux qui n'ont que de l'éclairage peuvent s'exécuter
 ensemble.</li>
 </ul>
-<p>Broches avec une fonction fixe sur chaque carte : <b>D2</b> (entrée DCC), <b>D13</b> (LED de config) et <b>A7</b>
-(bouton de config).</p>
+<p>Broches avec une fonction fixe sur chaque carte : <b>D2</b> (entrée DCC et bouton de config), <b>D13</b> (LED de config) et
+<b>D0 / D1</b> (la ligne série).</p>

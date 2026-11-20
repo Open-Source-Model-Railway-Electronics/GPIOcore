@@ -25,12 +25,9 @@ Windows crée un port COM pour lui (parfois deux : prenez le port « sortant »)
 </ol>
 <p>En cas d'échec : le module n'est pas en mode AT (clignotement rapide = mode normal), le câblage est faux, ou la diode
 manque ou est montée à l'envers. D'autres modules (HC-06, certains clones) ne connaissent pas ces commandes.</p>
-<p><b>Connexion par Bluetooth</b> : l'ouverture du port COM Bluetooth ne réinitialise pas la carte. Si rien sur la carte
-n'utilise D0 ou D1, son port série reste ouvert et le programme se connecte simplement. Si quelque chose les utilise
-(une entrée ou une sortie sur D0/D1, ou un effet sonore), la carte ferme son port série 5 secondes après le démarrage
-(D0/D1 deviennent des broches normales). Quand vous cliquez alors sur <i>Connecter</i>, le programme
+<p><b>Connexion par Bluetooth</b> : l'ouverture du port COM Bluetooth ne réinitialise pas la carte, et 5 secondes après le
+démarrage la ligne série est devenue la liaison entre cartes. Quand vous cliquez donc sur <i>Connecter</i>, le programme
 affiche <i>« En attente de la carte &mdash; appuyez brièvement sur son bouton de config »</i>. Appuyez <b>brièvement</b> sur
-le bouton de config (A7) : la carte rouvre son port série pendant 5 secondes et s'annonce, et le programme se connecte.
+le bouton de config (D2) : la carte rend la ligne au programme pendant 5 secondes et s'annonce, et le programme se connecte.
 Le programme attend cela jusqu'à 30 secondes.</p>
-<p>Tant que le programme est connecté, D0 et D1 appartiennent au port série : ne les utilisez pas pour des entrées ou des
-sorties sur une carte équipée d'un HC-05.</p>
+<p>Une carte équipée d'un HC-05 ne peut pas utiliser la liaison entre cartes en même temps : toutes deux ont besoin de D0 / D1.</p>

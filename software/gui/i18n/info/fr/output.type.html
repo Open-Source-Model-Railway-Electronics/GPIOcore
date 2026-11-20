@@ -16,6 +16,7 @@ le tube néon ont besoin de broches PWM.</li>
 <li><b>PWM</b> — une luminosité pour une lampe ou un ruban de LED, éventuellement avec un fondu lent (jour et nuit).</li>
 <li><b>Signal de block</b> — un signal automatique (feux A–D) : la carte choisit elle-même l'aspect à partir des détecteurs de son propre block et du block suivant.</li>
 <li><b>Effet sonore</b> — un lecteur MP3 (DFPlayer Mini) sur D1 : une cloche, un sifflet, une annonce. L'entrée choisit la piste. Ne joue que si aucun PC n'est connecté.</li>
+<li><b>Liaison entre cartes (TX)</b> — envoie des commandes à d'autres cartes par TX (D1) : à chaque étape d'itinéraire une adresse DCC avec dévié / direct ou une valeur. Ne fonctionne que si aucun PC n'est connecté.</li>
 <li><b>Non utilisé</b> — rien n'est branché.</li>
 </ul>
 <p><b>Important pour les bobines :</b> une broche Arduino ne peut pas piloter une bobine directement. Utilisez une carte

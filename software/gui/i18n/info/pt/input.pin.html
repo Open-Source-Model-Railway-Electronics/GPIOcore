@@ -5,7 +5,7 @@ Não é precisa resistência: a placa activa a sua própria resistência "pull-u
 <pre>  pino D7 ---[ botão ]--- GND</pre>
 <ul>
 <li><b>Não</b> ligue um botão a 5 V ou 12 V: isso pode danificar o Arduino.</li>
-<li><b>D2</b> (entrada DCC), <b>D13</b> (LED de configuração) e <b>A7</b> (botão de configuração) não podem ser usados.</li>
+<li><b>D2</b> (entrada DCC e botão de configuração), <b>D13</b> (LED de configuração) e <b>D0 / D1</b> (a linha série) não podem ser usados.</li>
 <li><b>A6</b> (só Arduino Nano) é uma entrada apenas analógica sem pull-up: acrescente uma resistência de 10 k&Omega; do pino a 5 V.</li>
 <li>Os pinos já utilizados aparecem a <b>vermelho</b>. Escolher um retira-o à outra entrada ou saída, que passa a
 <i>não utilizada</i>.</li>

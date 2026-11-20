@@ -1,13 +1,12 @@
-<h3>Pinnarna D0 och D1</h3>
-<p>D0 och D1 är ledningarna som Arduinon använder för att prata med det här programmet via USB. Nyare kort kan ändå använda dem för
-din anläggning:</p>
+<h3>D0 och D1: serielinjen</h3>
+<p>D0 (RX) och D1 (TX) är aldrig en ingångs- eller utgångspinne: de är kortets serielinje. Fyra saker kan använda den:
+det här programmet (via USB eller Bluetooth), <b>kortlänken</b> till andra kort, en <b>DFPlayer</b> på TX och en
+<b>HC-05</b> Bluetooth-modul.</p>
 <ul>
-<li>När kortet startar väntar det <b>5 sekunder</b> på det här programmet.</li>
-<li>Om programmet ansluter förblir D0 / D1 reserverade för USB medan du konfigurerar. Saker på de pinnarna fungerar
-då <b>inte</b>.</li>
-<li>Om inget ansluter (normal drift på anläggningen) blir D0 / D1 vanliga pinnar. När inget sitter på
-D0 / D1 (ingen ingång eller utgång, ingen ljudeffekt) förblir de USB-ledningar: programmet kan ansluta när som helst.</li>
-<li>Ett kort tryck på config-knappen (Nano) gör dem till USB-ledningar igen i 5 sekunder, så att programmet kan
-ansluta utan återställning.</li>
+<li>När kortet startar väntar det <b>5 sekunder</b> på det här programmet. Om programmet ansluter tillhör linjen
+programmet medan du konfigurerar: kortlänken och DFPlayern gör då ingenting.</li>
+<li>Om inget ansluter (normal drift på anläggningen) blir linjen <b>kortlänken</b> (9600 baud): det som
+kommer in på RX skickas vidare till TX och körs som ett DCC-kommando; kortlänksutgångar och en DFPlayer använder TX.</li>
+<li>Att öppna USB-porten återställer kortet, så programmet ansluter inom de 5 sekunderna. Via Bluetooth sker ingen
+återställning: tryck <b>kort</b> på config-knappen, så tillhör linjen programmet igen i 5 sekunder.</li>
 </ul>
-<p>Använd dem för enkla saker som lysdioder. Undvik tung last på D0: den kan störa uppladdning av ny firmware.</p>

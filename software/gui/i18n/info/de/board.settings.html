@@ -2,12 +2,12 @@
 <ul>
 <li><b>Name</b>: bis zu 16 Zeichen, auf der Platine gespeichert. Über diesen Namen findet das Programm die Datei dieser
 Platine (Namen der Eingänge und Ausgänge), geben Sie also jeder Platine einen eigenen Namen.</li>
-<li><b>Platinentyp</b>: Arduino Uno, Arduino Nano, DCCnext oder Jack of all trades. Er bestimmt, welche Pins es gibt.</li>
-<li><b>Eigene Wartezeit pro Fahrstraßen-Schritt</b>: aus = jeder Schritt wartet gleich lange (unten einstellbar) und
+<li><b>Platinentyp</b>: Arduino Nano, DCCnext oder Jack of all trades. Er bestimmt, welche Pins es gibt.</li>
+<li><b>Eigene Wartezeit pro Fahrstraßen-Schritt</b> (ab Stufe Fortgeschritten): aus = jeder Schritt wartet gleich lange (unten einstellbar) und
 Fahrstraßen brauchen nur halb so viel Speicher. Ein = jeder Schritt hat seine eigene Wartezeit.</li>
-<li><b>Fahrstraßen-Verriegelung</b>: was passiert, wenn eine Fahrstraße gestartet wird, während eine andere noch läuft.
+<li><b>Fahrstraßen-Verriegelung</b> (ab Stufe Fortgeschritten): was passiert, wenn eine Fahrstraße gestartet wird, während eine andere noch läuft.
 <i>Aus</i> = beide laufen, <i>ein</i> = die zweite wird ignoriert, <i>automatisch</i> = Fahrstraßen, die eine Weiche
 stellen, laufen nacheinander, Fahrstraßen nur mit Beleuchtung dürfen gleichzeitig laufen.</li>
 </ul>
-<p>Pins mit fester Aufgabe auf jeder Platine: <b>D2</b> (DCC-Eingang), <b>D13</b> (Konfig-LED) und <b>A7</b>
-(Konfig-Taster).</p>
+<p>Pins mit fester Aufgabe auf jeder Platine: <b>D2</b> (DCC-Eingang und Konfig-Taster), <b>D13</b> (Konfig-LED) und
+<b>D0 / D1</b> (die serielle Leitung).</p>

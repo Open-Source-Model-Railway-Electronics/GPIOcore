@@ -5,7 +5,7 @@ Rezistor není potřeba: deska zapne svůj vlastní vnitřní rezistor „pull-u
 <pre>  pin D7 ---[ tlačítko ]--- GND</pre>
 <ul>
 <li><b>Nepřipojujte</b> tlačítko na 5 V ani 12 V: může to poškodit Arduino.</li>
-<li><b>D2</b> (DCC vstup), <b>D13</b> (LED konfigurace) a <b>A7</b> (tlačítko konfigurace) nelze použít.</li>
+<li><b>D2</b> (DCC vstup a tlačítko konfigurace), <b>D13</b> (LED konfigurace) a <b>D0 / D1</b> (sériová linka) nelze použít.</li>
 <li><b>A6</b> (jen Arduino Nano) je čistě analogový vstup bez pull-upu: přidejte rezistor 10 k&Omega; z pinu na 5 V.</li>
 <li>Používané piny jsou <b>červené</b>. Zvolením takového pinu ho vezmete jinému vstupu nebo výstupu, který se stane
 <i>nepoužitým</i>.</li>

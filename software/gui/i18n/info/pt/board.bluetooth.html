@@ -25,12 +25,9 @@ O Windows cria uma porta COM para ele (por vezes duas: use a de "saída"). Escol
 </ol>
 <p>Se falhar: o módulo não está em modo AT (piscar rápido = modo normal), as ligações estão erradas, ou o díodo
 falta ou está ao contrário. Outros módulos (HC-06, alguns clones) não conhecem estes comandos.</p>
-<p><b>Ligar por Bluetooth</b>: abrir a porta COM Bluetooth não reinicia a placa. Quando nada na
-placa usa D0 ou D1, a sua porta série fica aberta e o programa liga-se simplesmente. Quando algo os usa
-(uma entrada ou saída em D0/D1, ou um efeito sonoro), a placa fecha a sua porta série 5 segundos após o arranque
-(D0/D1 passam a ser pinos normais). Então, quando clica em <i>Ligar</i>, o programa
-mostra <i>"A aguardar a placa &mdash; prima brevemente o seu botão de configuração"</i>. Prima o botão de configuração (A7)
-<b>brevemente</b>: a placa volta a abrir a sua porta série durante 5 segundos e anuncia-se, e o programa liga-se.
+<p><b>Ligar por Bluetooth</b>: abrir a porta COM Bluetooth não reinicia a placa, e 5 segundos após o arranque a linha série
+passou a ser a ligação entre placas. Por isso, quando clica em <i>Ligar</i>, o programa
+mostra <i>"A aguardar a placa &mdash; prima brevemente o seu botão de configuração"</i>. Prima o botão de configuração (D2)
+<b>brevemente</b>: a placa devolve a linha ao programa durante 5 segundos e anuncia-se, e o programa liga-se.
 O programa espera até 30 segundos por isso.</p>
-<p>Enquanto o programa está ligado, D0 e D1 pertencem à porta série: não os use para entradas ou saídas numa
-placa com um HC-05.</p>
+<p>Uma placa com um HC-05 não pode usar ao mesmo tempo a ligação entre placas: ambos precisam de D0 / D1.</p>

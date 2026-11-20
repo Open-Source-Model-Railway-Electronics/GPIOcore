@@ -1,0 +1,23 @@
+<h3>Panelkapcsolat (TX): parancsok más paneleknek</h3>
+<p>Több panel dolgozhat együtt egy vezetéklánc segítségével: az egyik panel <b>TX (D1)</b> lába a következő panel
+<b>RX (D0)</b> lábára, közös GND-vel. A parancsot fogadó panel azonnal továbbadja, és úgy hajtja végre, mintha a DCC-központtól
+érkezett volna: minden, az adott <b>DCC-címmel</b> rendelkező bemenet a szokásos módon reagál. A többi panelen nincs mit beállítani:
+állítsa be őket normál DCC-dekóderként.</p>
+<pre>  1. panel TX (D1) ----&gt; 2. panel RX (D0)
+  2. panel TX (D1) ----&gt; 3. panel RX (D0)
+  GND ------------------- GND</pre>
+<ul>
+<li><b>Egy panelkapcsolat-kimenet elég.</b> Tegye egy vágányútba; minden lépés kiválasztja a <b>címet</b> (1-255) és a
+<b>Kitérő irány</b> vagy <b>Egyenes</b> értéket (váltóparancs), vagy az <b>Érték</b> 0-255 tartományban (kiterjesztett DCC: jelzési kép, szervószög,
+PWM, hangsáv).</li>
+<li>Példa: egy vágányút az 1. panelen a <i>#5 egyenes</i>, <i>#9 kitérő irány</i>, <i>#20 érték 1</i> lépésekkel. A 2. panelen
+az 5-ös DCC-című abszolút bemenet egyenesbe állítja a szervóját, a 9-es című kitérő irányba, a 20-as című jelző pedig
+az 1-es jelzési képet mutatja.</li>
+<li>A lépések közötti várakozási idő egyben a parancsok közötti idő is, így a váltók egymás után állnak át.</li>
+<li><b>Saját cím</b>: közvetlen be- vagy kikapcsoláskor (átváltó vagy abszolút bemenet, DCC) a kimenet a saját
+címét küldi, kitérő irányba vagy egyenesbe. Hagyja <i>nincs</i> értéken, ha csak vágányutakban használja.</li>
+<li><b>Csak PC nélkül.</b> Amíg a program csatlakoztatva van, a soros vonal a programé: semmi sem megy ki, és semmi sem
+kerül továbbadásra. A terepasztalon a kapcsolat a bekapcsolás után 5 másodperccel indul.</li>
+<li>A DFPlayer maradhat ugyanazon a TX vonalon; ezeket a parancsokat figyelmen kívül hagyja.</li>
+<li><b>DCCnext</b> esetén nem használható: nincs D1 a sorkapcsain.</li>
+</ul>

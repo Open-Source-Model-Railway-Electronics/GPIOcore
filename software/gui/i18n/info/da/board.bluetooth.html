@@ -25,12 +25,9 @@ Windows opretter en COM-port til det (nogle gange to: brug den "udgående"). Væ
 </ol>
 <p>Hvis det ikke lykkes: modulet er ikke i AT-tilstand (hurtig blink = normal tilstand), tilslutningen er forkert, eller dioden
 mangler eller vender forkert. Andre moduler (HC-06, nogle kloner) kender ikke disse kommandoer.</p>
-<p><b>Forbinde via Bluetooth</b>: når Bluetooth-COM-porten åbnes, nulstilles printet ikke. Når intet på
-printet bruger D0 eller D1, forbliver dets serielle port åben, og programmet forbinder bare. Når noget bruger dem
-(en indgang eller udgang på D0/D1, eller en lydeffekt), lukker printet sin serielle port 5 sekunder efter opstart
-(D0/D1 bliver normale pins). Når du så klikker på <i>Forbind</i>, viser programmet
-<i>"Venter på printet &mdash; tryk kort på dets config-knap"</i>. Tryk <b>kort</b> på config-knappen (A7):
-printet åbner sin serielle port igen i 5 sekunder og melder sig, og programmet forbinder.
+<p><b>Forbinde via Bluetooth</b>: når Bluetooth-COM-porten åbnes, nulstilles printet ikke. 5 sekunder efter opstart er den serielle
+linje blevet til printforbindelsen. Når du så klikker på <i>Forbind</i>, viser programmet
+<i>"Venter på printet &mdash; tryk kort på dets config-knap"</i>. Tryk <b>kort</b> på config-knappen (D2):
+printet giver linjen tilbage til programmet i 5 sekunder og melder sig, og programmet forbinder.
 Programmet venter op til 30 sekunder på det.</p>
-<p>Mens programmet er forbundet, hører D0 og D1 til den serielle port: brug dem ikke til indgange eller udgange på et
-print med HC-05.</p>
+<p>Et print med HC-05 kan ikke bruge printforbindelsen på samme tid: begge har brug for D0/D1.</p>

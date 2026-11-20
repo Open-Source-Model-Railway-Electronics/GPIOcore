@@ -1,8 +1,8 @@
 <h3>Typ płytki</h3>
 <p>Typ płytki decyduje, które piny program oferuje i jak się nazywają.</p>
 <ul>
-<li><b>Arduino Nano</b>: piny D3&ndash;D12 i A0&ndash;A5, D0 / D1 od poziomu Zaawansowany oraz <b>A6</b> (tylko
-wejście analogowe).</li>
+<li><b>Arduino Nano</b>: piny D3&ndash;D12 i A0&ndash;A5, oraz <b>A6</b> i <b>A7</b> (tylko
+wejście analogowe). D0 / D1 to linia szeregowa (łącze między płytkami, DFPlayer, Bluetooth), nigdy pin.</li>
 <li><b>DCCnext</b> (firmy ArCoMoRa): gotowa płytka z wejściem DCC i zaciskami śrubowymi. Program wszędzie używa
 nadrukowanych na płytce <b>numerów portów P1&ndash;P16</b>: na listach pinów (&bdquo;P1 (D3)&rdquo;), w obszarze
 roboczym i w ostrzeżeniach. Oferowane jest tylko tych 16 portów: bez D0, D1, D2, D13, A6 ani A7.</li>
@@ -12,8 +12,7 @@ roboczym i w ostrzeżeniach. Oferowane jest tylko tych 16 portów: bez D0, D1, D
 <tr><th>Port DCCnext</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Pin Arduino</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p><b>D2</b> (DCC) i <b>D13</b> (LED konfiguracji) są zarezerwowane na każdej płytce. Przycisk konfiguracji (<b>A7</b>)
-istnieje tylko w Nano: DCCnext nie ma przycisku konfiguracji.
+<p><b>D2</b> (wejście DCC i przycisk konfiguracji) i <b>D13</b> (LED konfiguracji) są zarezerwowane na każdej płytce.
 Ściemnianie (PWM) działa na D3, D5, D6, D9, D10 i D11 (DCCnext P1, P3, P4, P7, P8 i P9).</p>
 <p>Plik utworzony dla innego typu płytki zachowuje wszystkie swoje piny. Pin, którego ta płytka nie ma, jest pokazany
 z ostrzeżeniem, jak każdy inny pin, którego nie można użyć: wybierz dla niego inny pin.</p>

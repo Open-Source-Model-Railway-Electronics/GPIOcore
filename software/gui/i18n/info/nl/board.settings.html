@@ -2,12 +2,12 @@
 <ul>
 <li><b>Naam</b>: maximaal 16 letters, bewaard op het board. Aan deze naam herkent het programma het bestand van dit
 board (namen van ingangen en uitgangen), dus geef elk board een eigen naam.</li>
-<li><b>Boardtype</b>: Arduino Uno, Arduino Nano, DCCnext of Jack of all trades. Het bepaalt welke pinnen er zijn.</li>
-<li><b>Eigen wachttijd per rijwegstap</b>: uit = elke stap wacht even lang (hieronder in te stellen) en rijwegen
+<li><b>Boardtype</b>: Arduino Nano, DCCnext of Jack of all trades. Het bepaalt welke pinnen er zijn.</li>
+<li><b>Eigen wachttijd per rijwegstap</b> (niveau Gevorderd en hoger): uit = elke stap wacht even lang (hieronder in te stellen) en rijwegen
 gebruiken de helft van het geheugen. Aan = elke stap heeft zijn eigen wachttijd.</li>
-<li><b>Rijwegvergrendeling</b>: wat er gebeurt als een rijweg wordt gestart terwijl een andere nog loopt.
+<li><b>Rijwegvergrendeling</b> (niveau Gevorderd en hoger): wat er gebeurt als een rijweg wordt gestart terwijl een andere nog loopt.
 <i>Uit</i> = ze lopen allebei, <i>aan</i> = de tweede wordt genegeerd, <i>automatisch</i> = rijwegen die een wissel
 omzetten lopen één voor één, rijwegen met alleen verlichting mogen tegelijk lopen.</li>
 </ul>
-<p>Pinnen met een vaste taak op elk board: <b>D2</b> (DCC-ingang), <b>D13</b> (config-LED) en <b>A7</b>
-(config-knop).</p>
+<p>Pinnen met een vaste taak op elk board: <b>D2</b> (DCC-ingang en config-knop), <b>D13</b> (config-LED) en
+<b>D0 / D1</b> (de seriële lijn).</p>

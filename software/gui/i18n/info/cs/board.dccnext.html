@@ -1,8 +1,8 @@
 <h3>Typ desky</h3>
 <p>Typ desky určuje, které piny program nabízí a jak se jmenují.</p>
 <ul>
-<li><b>Arduino Nano</b>: piny D3&ndash;D12 a A0&ndash;A5, D0 / D1 od úrovně Pokročilý a <b>A6</b> (jen analogový
-vstup).</li>
+<li><b>Arduino Nano</b>: piny D3&ndash;D12 a A0&ndash;A5, a <b>A6</b> a <b>A7</b> (jen analogový
+vstup). D0 / D1 jsou sériová linka (propojení desek, DFPlayer, Bluetooth), nikdy pin.</li>
 <li><b>DCCnext</b> (od ArCoMoRa): hotová deska s DCC vstupem a šroubovými svorkami. Program všude používá
 <b>čísla portů P1&ndash;P16</b> natištěná na desce: v seznamech pinů (&bdquo;P1 (D3)&ldquo;), na
 plátně a ve varováních. Nabízí se jen těchto 16 portů: žádné D0, D1, D2, D13, A6 ani A7.</li>
@@ -12,8 +12,7 @@ plátně a ve varováních. Nabízí se jen těchto 16 portů: žádné D0, D1, 
 <tr><th>Port DCCnext</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Pin Arduina</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p><b>D2</b> (DCC) a <b>D13</b> (LED konfigurace) jsou rezervované na každé desce. Tlačítko konfigurace (<b>A7</b>)
-existuje jen u Nano: DCCnext tlačítko konfigurace nemá.
+<p><b>D2</b> (DCC vstup a tlačítko konfigurace) a <b>D13</b> (LED konfigurace) jsou rezervované na každé desce.
 Stmívání (PWM) funguje na D3, D5, D6, D9, D10 a D11 (DCCnext P1, P3, P4, P7, P8 a P9).</p>
 <p>Soubor vytvořený pro jiný typ desky si ponechá všechny své piny. Pin, který tato deska nemá, se zobrazí s varováním,
 jako každý jiný pin, který nelze použít: zvolte pro něj jiný pin.</p>

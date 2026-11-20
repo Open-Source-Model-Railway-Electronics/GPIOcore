@@ -25,12 +25,9 @@ Windows skapar en COM-port för den (ibland två: använd den "utgående"). Väl
 </ol>
 <p>Om det inte fungerar: modulen är inte i AT-läge (snabb blinkning = normalt läge), kopplingen är fel, eller dioden
 saknas eller sitter åt fel håll. Andra moduler (HC-06, vissa kloner) känner inte till dessa kommandon.</p>
-<p><b>Ansluta via Bluetooth</b>: att öppna Bluetooth-COM-porten återställer inte kortet. När inget på
-kortet använder D0 eller D1 förblir dess serieport öppen och programmet ansluter helt enkelt. När något använder dem
-(en ingång eller utgång på D0/D1, eller en ljudeffekt) stänger kortet sin serieport 5 sekunder efter start
-(D0/D1 blir vanliga pinnar). När du då klickar på <i>Anslut</i> visar programmet
-<i>"Väntar på kortet &mdash; tryck kort på dess config-knapp (Nano)&hellip;"</i>. Tryck <b>kort</b> på config-knappen (A7):
-kortet öppnar sin serieport igen i 5 sekunder och anmäler sig, och programmet ansluter.
+<p><b>Ansluta via Bluetooth</b>: att öppna Bluetooth-COM-porten återställer inte kortet. 5 sekunder efter start har serielinjen
+blivit kortlänken. När du då klickar på <i>Anslut</i> visar programmet
+<i>"Väntar på kortet &mdash; tryck kort på dess config-knapp (Nano)&hellip;"</i>. Tryck <b>kort</b> på config-knappen (D2):
+kortet ger tillbaka linjen till programmet i 5 sekunder och anmäler sig, och programmet ansluter.
 Programmet väntar upp till 30 sekunder på det.</p>
-<p>Medan programmet är anslutet hör D0 och D1 till serieporten: använd dem inte för ingångar eller utgångar på ett
-kort med HC-05.</p>
+<p>Ett kort med HC-05 kan inte använda kortlänken samtidigt: båda behöver D0/D1.</p>

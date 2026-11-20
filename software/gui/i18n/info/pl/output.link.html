@@ -1,0 +1,23 @@
+<h3>Łącze między płytkami (TX): polecenia dla innych płytek</h3>
+<p>Kilka płytek współpracuje przez łańcuch przewodów: <b>TX (D1)</b> jednej płytki do <b>RX (D0)</b> następnej,
+ze wspólnym GND. Płytka, która otrzyma polecenie, przekazuje je dalej od razu i wykonuje je tak, jakby przyszło z centrali
+DCC: każde wejście z tym <b>adresem DCC</b> reaguje jak zwykle. Pozostałe płytki nie wymagają żadnych ustawień: skonfiguruj
+je jak zwykły dekoder DCC.</p>
+<pre>  płytka 1 TX (D1) ----&gt; płytka 2 RX (D0)
+  płytka 2 TX (D1) ----&gt; płytka 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>Wystarczy jedno wyjście łącza.</b> Umieść je w przebiegu; każdy krok wybiera <b>adres</b> (1-255) oraz
+<b>Na bok</b> lub <b>Na wprost</b> (polecenie zwrotnicy), albo <b>Wartość</b> 0-255 (rozszerzone DCC: sygnał, kąt serwa,
+PWM, utwór dźwiękowy).</li>
+<li>Przykład: przebieg na płytce 1 z krokami <i>#5 na wprost</i>, <i>#9 na bok</i>, <i>#20 wartość 1</i>. Na płytce 2
+wejście bezwzględne z adresem DCC 5 ustawia swoje serwo na wprost, z adresem 9 na bok, a semafor pod adresem 20
+pokazuje sygnał 1.</li>
+<li>Czas oczekiwania między krokami jest też czasem między poleceniami, więc zwrotnice przestawiają się jedna po drugiej.</li>
+<li><b>Własny adres</b>: przy bezpośrednim włączaniu lub wyłączaniu (wejście Przełącz lub Bezwzględny, DCC) wyjście wysyła swój własny
+adres, na bok lub na wprost. Zostaw <i>brak</i>, gdy używasz go tylko w przebiegach.</li>
+<li><b>Tylko bez komputera.</b> Gdy program jest połączony, linia szeregowa należy do programu: nic nie jest wysyłane
+ani przekazywane. Na makiecie łącze startuje 5 sekund po włączeniu zasilania.</li>
+<li>DFPlayer może zostać na tej samej linii TX; ignoruje te polecenia.</li>
+<li>Nie w <b>DCCnext</b>: nie ma D1 na zaciskach.</li>
+</ul>

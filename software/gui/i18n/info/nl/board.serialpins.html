@@ -1,14 +1,13 @@
-<h3>Pinnen D0 en D1</h3>
-<p>D0 en D1 zijn de draden waarmee de Arduino via USB met dit programma praat. Nieuwere boards kunnen ze toch voor
-je baan gebruiken:</p>
+<h3>D0 en D1: de seriële lijn</h3>
+<p>D0 (RX) en D1 (TX) zijn nooit een ingang of uitgang: ze vormen de seriële lijn van het board. Vier dingen kunnen er gebruik van maken:
+dit programma (via USB of Bluetooth), de <b>boardkoppeling</b> naar andere boards, een <b>DFPlayer</b> op TX en een
+<b>HC-05</b> Bluetooth-module.</p>
 <ul>
-<li>Als het board opstart, wacht het <b>5 seconden</b> op dit programma.</li>
-<li>Als het programma verbindt, blijven D0 / D1 gereserveerd voor USB zolang je instelt. Wat op die pinnen zit werkt
-dan <b>niet</b>.</li>
-<li>Als er niets verbindt (normaal gebruik op de baan), worden D0 / D1 gewone pinnen. Zit er niets op
-D0 / D1 (geen ingang of uitgang, geen geluidseffect), dan blijven het USB-draden: het programma kan altijd verbinden.</li>
-<li>Een korte druk op de config-knop (Nano) maakt ze weer 5 seconden lang USB-draden, zodat het programma zonder
-reset kan verbinden.</li>
+<li>Als het board opstart, wacht het <b>5 seconden</b> op dit programma. Als het programma verbindt, is de lijn van het
+programma zolang je instelt: de boardkoppeling en de DFPlayer doen dan niets.</li>
+<li>Als er niets verbindt (normaal gebruik op de baan), wordt de lijn de <b>boardkoppeling</b> (9600 baud): wat op RX
+binnenkomt wordt doorgegeven naar TX en uitgevoerd als DCC-commando; uitgangen van de boardkoppeling en een DFPlayer
+gebruiken TX.</li>
+<li>Het openen van de USB-poort reset het board, dus het programma verbindt binnen die 5 seconden. Via Bluetooth is er
+geen reset: druk <b>kort</b> op de config-knop, dan is de lijn 5 seconden lang weer van het programma.</li>
 </ul>
-<p>Gebruik ze voor eenvoudige dingen zoals LED's. Zet geen zware belasting op D0: dat kan het uploaden van nieuwe
-firmware verstoren.</p>

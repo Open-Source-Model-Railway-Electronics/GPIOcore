@@ -1,9 +1,8 @@
-<h3>Przycisk konfiguracji (A7) i ustawianie serw sterownikiem</h3>
+<h3>Przycisk konfiguracji (D2) i ustawianie serw sterownikiem</h3>
 <p>Bez komputera możesz ustawić położenia krańcowe serw przyciskiem konfiguracji i ręcznym sterownikiem DCC.</p>
-<p><b>Uwaga:</b> przycisk konfiguracji (A7) istnieje tylko w Arduino <b>Nano</b>. DCCnext nie ma
-A7, więc nie ma przycisku konfiguracji: ustaw położenia krańcowe serw w programie (albo przez sterowanie z telefonu).</p>
-<p><b>Połączenia:</b> przycisk od <b>A7</b> do <b>GND</b> oraz rezystor 10 k&Omega; od A7 do <b>5 V</b>
-(A7 nie ma wbudowanego rezystora podciągającego). Dioda LED z rezystorem na <b>D13</b> pokazuje tryb (większość Arduino już ją ma).</p>
+<p><b>Połączenia:</b> przycisk od <b>D2</b> do <b>GND</b>. D2 jest też wejściem DCC: DCC cały czas zmienia jego poziom,
+wciśnięty przycisk trzyma go w stanie niskim i właśnie tego szuka płytka (1 ms niski bez przerwy). Dioda LED
+z rezystorem na <b>D13</b> pokazuje tryb (większość Arduino już ją ma).</p>
 <ol>
 <li>Przytrzymaj przycisk konfiguracji przez <b>2 sekundy</b>: LED zaczyna migać. Jesteś w trybie konfiguracji.</li>
 <li>Naciśnij go <b>krótko</b>: zostaje wybrane następne serwo i przestawia się, żebyś widział, które to jest. Naciśnij
@@ -19,10 +18,9 @@ ponownie, aby przejść do następnego serwa.</li>
 <li>Ponownie przytrzymaj przycisk konfiguracji przez 2 sekundy: LED świeci ciągle. Powrót do normalnej pracy.</li>
 </ol>
 <p>Nowe położenia są zapisywane od razu. Gdy później połączysz program, odczyta je z płytki.</p>
-<p><b>Krótkie naciśnięcie poza trybem konfiguracji = tryb GUI.</b> 5 sekund po starcie płytka zamyka port szeregowy,
-jeśli żaden program się nie połączył, a konfiguracja używa D0 lub D1 (stają się wtedy zwykłymi pinami; w przeciwnym
-razie port pozostaje otwarty). <b>Krótkie</b> naciśnięcie przycisku konfiguracji (LED świeci ciągle, nie w
-trybie konfiguracji) otwiera go ponownie na 5 sekund i płytka się zgłasza, więc program może się połączyć bez
+<p><b>Krótkie naciśnięcie poza trybem konfiguracji = tryb GUI.</b> 5 sekund po starcie bez programu linia szeregowa
+staje się łączem między płytkami. <b>Krótkie</b> naciśnięcie przycisku konfiguracji (LED świeci ciągle, nie w
+trybie konfiguracji) oddaje ją programowi na 5 sekund i płytka się zgłasza, więc program może się połączyć bez
 resetu, na przykład przez Bluetooth (zob. <i>Pomoc &gt; Bluetooth (HC-05)</i>). Gdy program pokazuje <i>„Czekam
 na płytkę”</i>, to jest moment, żeby go nacisnąć.</p>
-<p>Dlatego <b>D13</b> i <b>A7</b> nigdy nie mogą być używane do wejść ani wyjść.</p>
+<p>Dlatego <b>D2</b> i <b>D13</b> nigdy nie mogą być używane do wejść ani wyjść.</p>

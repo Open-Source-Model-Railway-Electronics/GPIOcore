@@ -1,0 +1,23 @@
+<h3>Collegamento tra schede (TX): comandi ad altre schede</h3>
+<p>Più schede lavorano insieme tramite una catena di fili: <b>TX (D1)</b> di una scheda a <b>RX (D0)</b> della
+successiva, con un GND in comune. Una scheda che riceve un comando lo passa subito oltre e lo esegue come se arrivasse dalla
+centrale DCC: ogni ingresso con quell'<b>indirizzo DCC</b> reagisce come al solito. Le altre schede non hanno bisogno di
+impostazioni: configurale come un normale decoder DCC.</p>
+<pre>  scheda 1 TX (D1) ----&gt; scheda 2 RX (D0)
+  scheda 2 TX (D1) ----&gt; scheda 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>Basta un'uscita di collegamento tra schede.</b> Mettila in un itinerario; ogni passo sceglie l'<b>indirizzo</b>
+(1-255) e <b>Deviato</b> o <b>Dritto</b> (un comando di scambio), oppure <b>Valore</b> 0-255 (DCC esteso: un aspetto, un angolo
+di servo, PWM, una traccia sonora).</li>
+<li>Esempio: un itinerario sulla scheda 1 con i passi <i>#5 dritto</i>, <i>#9 deviato</i>, <i>#20 valore 1</i>. Sulla scheda 2
+un ingresso assoluto con indirizzo DCC 5 mette il suo servo dritto, uno con indirizzo 9 deviato, e un segnale con indirizzo 20
+mostra l'aspetto 1.</li>
+<li>Il tempo di attesa tra i passi è anche il tempo tra i comandi, quindi gli scambi si muovono uno dopo l'altro.</li>
+<li><b>Indirizzo proprio</b>: quando viene comandata direttamente (un ingresso commuta o assoluto, DCC), l'uscita invia il proprio
+indirizzo, deviato o dritto. Lascialo su <i>nessuno</i> se la usi solo negli itinerari.</li>
+<li><b>Solo senza PC.</b> Con il programma collegato la linea seriale è del programma: non viene inviato né passato niente.
+Sul plastico il collegamento parte 5 secondi dopo l'accensione.</li>
+<li>Un DFPlayer può restare sulla stessa linea TX; ignora questi comandi.</li>
+<li>Non su un <b>DCCnext</b>: non ha D1 sui suoi morsetti.</li>
+</ul>

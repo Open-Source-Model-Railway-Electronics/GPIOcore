@@ -1,14 +1,12 @@
-<h3>Piny D0 i D1</h3>
-<p>D0 i D1 to linie, przez które Arduino rozmawia z tym programem przez USB. Nowsze płytki mogą ich mimo to używać
-na makiecie:</p>
+<h3>D0 i D1: linia szeregowa</h3>
+<p>D0 (RX) i D1 (TX) nigdy nie są pinem wejściowym ani wyjściowym: to linia szeregowa płytki. Mogą z niej korzystać
+cztery rzeczy: ten program (przez USB lub Bluetooth), <b>łącze między płytkami</b>, <b>DFPlayer</b> na TX oraz moduł
+Bluetooth <b>HC-05</b>.</p>
 <ul>
-<li>Po starcie płytka czeka <b>5 sekund</b> na ten program.</li>
-<li>Jeśli program się połączy, D0 / D1 pozostają zarezerwowane dla USB podczas konfigurowania. To, co jest na tych
-pinach, <b>nie</b> działa wtedy.</li>
-<li>Jeśli nic się nie połączy (normalna praca na makiecie), D0 / D1 stają się zwykłymi pinami. Gdy na
-D0 / D1 nic nie ma (żadnego wejścia ani wyjścia, żadnego efektu dźwiękowego), pozostają liniami USB: program może
-się połączyć w każdej chwili.</li>
-<li>Krótkie naciśnięcie przycisku konfiguracji (Nano) ponownie zamienia je w linie USB na 5 sekund, więc program
-może się połączyć bez resetu.</li>
+<li>Po starcie płytka czeka <b>5 sekund</b> na ten program. Jeśli program się połączy, linia należy do programu na czas
+konfigurowania: łącze między płytkami i DFPlayer nic wtedy nie robią.</li>
+<li>Jeśli nic się nie połączy (normalna praca na makiecie), linia staje się <b>łączem między płytkami</b> (9600 bodów):
+to, co przychodzi na RX, jest przekazywane na TX i wykonywane jako polecenie DCC; wyjścia łącza i DFPlayer używają TX.</li>
+<li>Otwarcie portu USB resetuje płytkę, więc program łączy się w ciągu tych 5 sekund. Przez Bluetooth nie ma resetu:
+naciśnij przycisk konfiguracji <b>krótko</b>, a linia znów należy do programu na 5 sekund.</li>
 </ul>
-<p>Używaj ich do prostych rzeczy, takich jak diody LED. Unikaj dużych obciążeń na D0: mogą zakłócać wgrywanie nowego firmware.</p>

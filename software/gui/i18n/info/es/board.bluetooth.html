@@ -25,12 +25,9 @@ Windows crea un puerto COM para él (a veces dos: use el "saliente"). Elija ese 
 </ol>
 <p>Si falla: el módulo no está en modo AT (parpadeo rápido = modo normal), el cableado está mal, o el diodo falta o está
 al revés. Otros módulos (HC-06, algunos clones) no conocen estos comandos.</p>
-<p><b>Conectar por Bluetooth</b>: abrir el puerto COM de Bluetooth no reinicia la placa. Si nada en la placa usa D0 ni D1,
-su puerto serie sigue abierto y el programa simplemente se conecta. Si algo los usa (una entrada o salida en D0/D1, o un
-efecto de sonido), la placa cierra su puerto serie 5 segundos después del arranque (D0/D1 pasan a ser pines normales).
-Entonces, al hacer clic en <i>Conectar</i>, el programa
+<p><b>Conectar por Bluetooth</b>: abrir el puerto COM de Bluetooth no reinicia la placa, y 5 segundos después del
+arranque la línea serie se ha convertido en el enlace entre placas. Así que, al hacer clic en <i>Conectar</i>, el programa
 muestra <i>"Esperando la placa &mdash; pulse brevemente su botón de configuración"</i>. Pulse <b>brevemente</b> el botón de
-configuración (A7): la placa vuelve a abrir su puerto serie durante 5 segundos y se anuncia, y el programa se conecta.
+configuración (D2): la placa devuelve la línea al programa durante 5 segundos y se anuncia, y el programa se conecta.
 El programa espera hasta 30 segundos.</p>
-<p>Mientras el programa está conectado, D0 y D1 pertenecen al puerto serie: no los use para entradas ni salidas en una
-placa con un HC-05.</p>
+<p>Una placa con un HC-05 no puede usar el enlace entre placas a la vez: ambos necesitan D0 / D1.</p>

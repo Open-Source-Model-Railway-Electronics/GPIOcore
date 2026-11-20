@@ -25,12 +25,9 @@ Windows utworzy dla niego port COM (czasem dwa: użyj „wychodzącego”). Wybi
 </ol>
 <p>Jeśli się nie uda: moduł nie jest w trybie AT (szybkie miganie = tryb normalny), połączenia są błędne albo
 brakuje diody lub jest wlutowana odwrotnie. Inne moduły (HC-06, niektóre klony) nie znają tych poleceń.</p>
-<p><b>Łączenie przez Bluetooth</b>: otwarcie portu COM Bluetooth nie resetuje płytki. Gdy nic na płytce nie używa
-D0 ani D1, jej port szeregowy pozostaje otwarty i program po prostu się łączy. Gdy coś ich używa
-(wejście lub wyjście na D0/D1 albo efekt dźwiękowy), płytka zamyka port szeregowy 5 sekund po starcie
-(D0/D1 stają się zwykłymi pinami). Wtedy po kliknięciu <i>Połącz</i> program
+<p><b>Łączenie przez Bluetooth</b>: otwarcie portu COM Bluetooth nie resetuje płytki. 5 sekund po starcie linia szeregowa
+stała się łączem między płytkami. Dlatego po kliknięciu <i>Połącz</i> program
 pokazuje <i>„Czekam na płytkę &mdash; krótko naciśnij jej przycisk konfiguracji (Nano)&hellip;”</i>. Naciśnij przycisk
-konfiguracji (A7) <b>krótko</b>: płytka ponownie otwiera port szeregowy na 5 sekund i zgłasza się, a program się łączy.
+konfiguracji (D2) <b>krótko</b>: płytka oddaje linię programowi na 5 sekund i zgłasza się, a program się łączy.
 Program czeka na to do 30 sekund.</p>
-<p>Gdy program jest połączony, D0 i D1 należą do portu szeregowego: na płytce z HC-05 nie używaj ich do wejść ani
-wyjść.</p>
+<p>Płytka z HC-05 nie może jednocześnie używać łącza między płytkami: oba potrzebują D0/D1.</p>

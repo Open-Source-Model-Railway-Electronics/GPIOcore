@@ -1,9 +1,8 @@
-<h3>Config-knapp (A7) och inlärning av servon med handkontrollen</h3>
+<h3>Config-knapp (D2) och inlärning av servon med handkontrollen</h3>
 <p>Utan dator kan du ställa in servonas ändlägen med config-knappen och din DCC-handkontroll.</p>
-<p><b>Obs:</b> config-knappen (A7) finns bara på en Arduino <b>Nano</b>. Ett DCCnext har ingen
-A7, så där finns ingen config-knapp: ställ i stället in servonas ändlägen i programmet (eller med mobilfjärrkontrollen).</p>
-<p><b>Koppling:</b> en tryckknapp från <b>A7</b> till <b>GND</b>, plus ett 10 k&Omega; motstånd från A7 till <b>5 V</b>
-(A7 har inget inbyggt pull-up-motstånd). En lysdiod med motstånd på <b>D13</b> visar läget (de flesta Arduino har redan en).</p>
+<p><b>Koppling:</b> en tryckknapp från <b>D2</b> till <b>GND</b>. D2 är också DCC-ingången: DCC ändrar hela tiden dess nivå,
+en nedtryckt knapp håller den låg, och det är det kortet letar efter (1 ms låg utan avbrott). En lysdiod
+med motstånd på <b>D13</b> visar läget (de flesta Arduino har redan en).</p>
 <ol>
 <li>Håll inne config-knappen i <b>2 sekunder</b>: lysdioden börjar blinka. Du är i config-läge.</li>
 <li>Tryck <b>kort</b> på den: nästa servo väljs och slår om, så att du ser vilket det är. Tryck igen
@@ -19,10 +18,9 @@ för nästa servo.</li>
 <li>Håll inne config-knappen i 2 sekunder igen: lysdioden lyser fast. Tillbaka till normalt läge.</li>
 </ol>
 <p>De nya lägena sparas direkt. Anslut programmet senare så läser det in dem.</p>
-<p><b>Kort tryck utanför config-läge = GUI-läge.</b> 5 sekunder efter start stänger kortet sin serieport
-när inget program har anslutit och konfigurationen använder D0 eller D1 (de blir vanliga pinnar; annars förblir porten
-öppen). Ett <b>kort</b> tryck på config-knappen (lysdioden lyser fast, inte i
-config-läge) öppnar den igen i 5 sekunder och kortet anmäler sig, så att programmet kan ansluta utan
+<p><b>Kort tryck utanför config-läge = GUI-läge.</b> 5 sekunder efter start utan program blir serielinjen
+kortlänken. Ett <b>kort</b> tryck på config-knappen (lysdioden lyser fast, inte i
+config-läge) ger tillbaka den till programmet i 5 sekunder och kortet anmäler sig, så att programmet kan ansluta utan
 återställning, till exempel via Bluetooth (se <i>Hjälp &gt; Bluetooth (HC-05)</i>). När programmet visar <i>"Väntar på
 kortet"</i> är det dags att trycka.</p>
-<p>Därför kan <b>D13</b> och <b>A7</b> aldrig användas för ingångar eller utgångar.</p>
+<p>Därför kan <b>D2</b> och <b>D13</b> aldrig användas för ingångar eller utgångar.</p>

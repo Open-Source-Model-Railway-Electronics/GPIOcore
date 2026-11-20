@@ -5,7 +5,7 @@ Ingen modstand nødvendig: printet slår sin egen indbyggede "pull-up"-modstand 
 <pre>  pin D7 ---[ knap ]--- GND</pre>
 <ul>
 <li>Tilslut <b>ikke</b> en knap til 5 V eller 12 V: det kan beskadige Arduinoen.</li>
-<li><b>D2</b> (DCC-indgang), <b>D13</b> (config-LED) og <b>A7</b> (config-knap) kan ikke bruges.</li>
+<li><b>D2</b> (DCC-indgang og config-knap), <b>D13</b> (config-LED) og <b>D0 / D1</b> (den serielle linje) kan ikke bruges.</li>
 <li><b>A6</b> (kun Arduino Nano) er en ren analog indgang uden pull-up: tilføj en 10 k&Omega;-modstand fra pinnen til 5 V.</li>
 <li>Pins, der allerede er i brug, vises med <b>rødt</b>. Vælger du en af dem, tages den fra den anden indgang eller udgang, som bliver
 <i>ikke i brug</i>.</li>

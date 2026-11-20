@@ -1,0 +1,23 @@
+<h3>Platinenkopplung (TX): Befehle an andere Platinen</h3>
+<p>Mehrere Platinen arbeiten über eine Kette von Drähten zusammen: <b>TX (D1)</b> einer Platine an <b>RX (D0)</b> der
+nächsten, mit gemeinsamer GND. Eine Platine, die einen Befehl empfängt, gibt ihn sofort weiter und führt ihn aus,
+als käme er von der DCC-Zentrale: Jeder Eingang mit dieser <b>DCC-Adresse</b> reagiert wie gewohnt. Die anderen Platinen
+brauchen keine Einstellung: Richten Sie sie als normalen DCC-Decoder ein.</p>
+<pre>  Platine 1 TX (D1) ----&gt; Platine 2 RX (D0)
+  Platine 2 TX (D1) ----&gt; Platine 3 RX (D0)
+  GND --------------------- GND</pre>
+<ul>
+<li><b>Ein Ausgang für die Platinenkopplung genügt.</b> Legen Sie ihn in eine Fahrstraße; jeder Schritt wählt die <b>Adresse</b>
+(1-255) und <b>Abzweig</b> oder <b>Gerade</b> (ein Weichenbefehl), oder <b>Wert</b> 0-255 (DCC erweitert: ein Signalbild,
+ein Servowinkel, PWM, ein Sound-Titel).</li>
+<li>Beispiel: eine Fahrstraße auf Platine 1 mit den Schritten <i>#5 gerade</i>, <i>#9 abzweig</i>, <i>#20 Wert 1</i>. Auf Platine 2
+stellt ein Absolut-Eingang mit DCC-Adresse 5 seinen Servo gerade, einer mit Adresse 9 auf Abzweig, und ein Signal
+auf Adresse 20 zeigt Signalbild 1.</li>
+<li>Die Wartezeit zwischen den Schritten ist auch die Zeit zwischen den Befehlen, die Weichen stellen also nacheinander um.</li>
+<li><b>Eigene Adresse</b>: Wird direkt geschaltet (ein Umschalt- oder Absolut-Eingang, DCC), sendet der Ausgang seine eigene
+Adresse, Abzweig oder Gerade. Lassen Sie sie auf <i>keine</i>, wenn Sie ihn nur in Fahrstraßen benutzen.</li>
+<li><b>Nur ohne PC.</b> Ist das Programm verbunden, gehört die serielle Leitung dem Programm: Es wird nichts gesendet
+oder weitergegeben. Auf der Anlage startet die Kopplung 5 Sekunden nach dem Einschalten.</li>
+<li>Ein DFPlayer kann an derselben TX-Leitung bleiben; er ignoriert diese Befehle.</li>
+<li>Nicht bei einem <b>DCCnext</b>: Er hat kein D1 an seinen Klemmen.</li>
+</ul>

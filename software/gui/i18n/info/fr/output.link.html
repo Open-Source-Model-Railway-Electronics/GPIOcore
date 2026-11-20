@@ -1,0 +1,23 @@
+<h3>Liaison entre cartes (TX) : commandes vers d'autres cartes</h3>
+<p>Plusieurs cartes travaillent ensemble par une chaîne de fils : <b>TX (D1)</b> d'une carte vers <b>RX (D0)</b> de la
+suivante, avec une masse GND commune. Une carte qui reçoit une commande la retransmet aussitôt et l'exécute comme si elle
+venait de la centrale DCC : toute entrée ayant cette <b>adresse DCC</b> réagit comme d'habitude. Les autres cartes n'ont
+besoin d'aucun réglage : configurez-les comme un décodeur DCC normal.</p>
+<pre>  carte 1 TX (D1) ----&gt; carte 2 RX (D0)
+  carte 2 TX (D1) ----&gt; carte 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>Une seule sortie de liaison entre cartes suffit.</b> Mettez-la dans un itinéraire ; chaque étape choisit l'<b>adresse</b>
+(1-255) et <b>Dévié</b> ou <b>Direct</b> (une commande d'aiguillage), ou <b>Valeur</b> 0-255 (DCC étendu : un aspect, un angle
+de servo, du PWM, une piste sonore).</li>
+<li>Exemple : un itinéraire sur la carte 1 avec les étapes <i>#5 direct</i>, <i>#9 dévié</i>, <i>#20 valeur 1</i>. Sur la carte 2,
+une entrée absolue d'adresse DCC 5 met son servo en direct, une d'adresse 9 en dévié, et un signal d'adresse 20
+affiche l'aspect 1.</li>
+<li>Le temps d'attente entre les étapes est aussi le temps entre les commandes, donc les aiguillages se déplacent l'un après l'autre.</li>
+<li><b>Adresse propre</b> : quand elle est commandée directement (une entrée bascule ou absolue, DCC), la sortie envoie sa propre
+adresse, dévié ou direct. Laissez-la sur <i>aucune</i> si vous ne l'utilisez que dans des itinéraires.</li>
+<li><b>Seulement sans PC.</b> Quand le programme est connecté, la ligne série est celle du programme : rien n'est envoyé
+ni retransmis. Sur le réseau, la liaison démarre 5 secondes après la mise sous tension.</li>
+<li>Un DFPlayer peut rester sur la même ligne TX ; il ignore ces commandes.</li>
+<li>Pas sur un <b>DCCnext</b> : il n'a pas de D1 sur ses borniers.</li>
+</ul>

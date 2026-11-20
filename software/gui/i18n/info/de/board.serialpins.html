@@ -1,15 +1,14 @@
-<h3>Pins D0 und D1</h3>
-<p>D0 und D1 sind die Leitungen, über die der Arduino per USB mit diesem Programm spricht. Neuere Platinen können
-sie trotzdem für Ihre Anlage nutzen:</p>
+<h3>D0 und D1: die serielle Leitung</h3>
+<p>D0 (RX) und D1 (TX) sind nie ein Eingang oder Ausgang: Sie sind die serielle Leitung der Platine. Vier Dinge können sie
+nutzen: dieses Programm (über USB oder Bluetooth), die <b>Platinenkopplung</b> zu anderen Platinen, ein <b>DFPlayer</b> an TX
+und ein <b>HC-05</b>-Bluetooth-Modul.</p>
 <ul>
-<li>Beim Start wartet die Platine <b>5 Sekunden</b> auf dieses Programm.</li>
-<li>Verbindet sich das Programm, bleiben D0 / D1 während der Konfiguration für USB reserviert. Was an diesen Pins
-hängt, funktioniert dann <b>nicht</b>.</li>
-<li>Verbindet sich nichts (normaler Betrieb auf der Anlage), werden D0 / D1 normale Pins. Hängt nichts an
-D0 / D1 (kein Eingang oder Ausgang, kein Soundeffekt), bleiben sie USB-Leitungen: Das Programm kann sich jederzeit
-verbinden.</li>
-<li>Ein kurzer Druck auf den Konfig-Taster (Nano) macht sie für 5 Sekunden wieder zu USB-Leitungen, sodass sich das
-Programm ohne Reset verbinden kann.</li>
+<li>Beim Start wartet die Platine <b>5 Sekunden</b> auf dieses Programm. Verbindet sich das Programm, gehört die Leitung
+während der Konfiguration dem Programm: Platinenkopplung und DFPlayer tun dann nichts.</li>
+<li>Verbindet sich nichts (normaler Betrieb auf der Anlage), wird die Leitung zur <b>Platinenkopplung</b> (9600 Baud): Was an
+RX ankommt, wird an TX weitergegeben und als DCC-Befehl ausgeführt; Ausgänge der Platinenkopplung und ein DFPlayer
+benutzen TX.</li>
+<li>Das Öffnen des USB-Ports setzt die Platine zurück, das Programm verbindet sich also innerhalb dieser 5 Sekunden. Über
+Bluetooth gibt es keinen Reset: Drücken Sie den Konfig-Taster <b>kurz</b>, dann gehört die Leitung 5 Sekunden lang wieder
+dem Programm.</li>
 </ul>
-<p>Nutzen Sie sie für einfache Dinge wie LEDs. Vermeiden Sie große Lasten an D0: Sie können das Hochladen neuer
-Firmware stören.</p>

@@ -1,13 +1,12 @@
-<h3>Pins D0 og D1</h3>
-<p>D0 og D1 er de ledninger, Arduinoen bruger til at tale med dette program via USB. Nyere print kan stadig bruge dem til
-dit anlæg:</p>
+<h3>D0 og D1: den serielle linje</h3>
+<p>D0 (RX) og D1 (TX) er aldrig en indgangs- eller udgangspin: de er printets serielle linje. Fire ting kan bruge den:
+dette program (via USB eller Bluetooth), <b>printforbindelsen</b> til andre print, en <b>DFPlayer</b> på TX og et
+<b>HC-05</b>-Bluetooth-modul.</p>
 <ul>
-<li>Når printet starter, venter det <b>5 sekunder</b> på dette program.</li>
-<li>Hvis programmet forbinder, forbliver D0 / D1 reserveret til USB, mens du konfigurerer. Ting på disse pins virker
-<b>ikke</b> imens.</li>
-<li>Hvis intet forbinder (normal drift på anlægget), bliver D0 / D1 normale pins. Når intet er tilsluttet
-D0 / D1 (ingen indgang eller udgang, ingen lydeffekt), forbliver de USB-ledninger: programmet kan forbinde når som helst.</li>
-<li>Et kort tryk på config-knappen (Nano) gør dem til USB-ledninger igen i 5 sekunder, så programmet kan
-forbinde uden nulstilling.</li>
+<li>Når printet starter, venter det <b>5 sekunder</b> på dette program. Hvis programmet forbinder, tilhører linjen
+programmet, mens du konfigurerer: printforbindelsen og DFPlayeren gør så ingenting.</li>
+<li>Hvis intet forbinder (normal drift på anlægget), bliver linjen til <b>printforbindelsen</b> (9600 baud): det, der
+kommer ind på RX, sendes videre til TX og udføres som en DCC-kommando; printforbindelsesudgange og en DFPlayer bruger TX.</li>
+<li>Når USB-porten åbnes, nulstilles printet, så programmet forbinder inden for de 5 sekunder. Via Bluetooth er der
+ingen nulstilling: tryk <b>kort</b> på config-knappen, så tilhører linjen programmet igen i 5 sekunder.</li>
 </ul>
-<p>Brug dem til enkle ting som LED'er. Undgå tung belastning på D0: det kan forstyrre upload af ny firmware.</p>

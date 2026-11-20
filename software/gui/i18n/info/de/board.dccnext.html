@@ -1,8 +1,8 @@
 <h3>Platinentyp</h3>
 <p>Der Platinentyp bestimmt, welche Pins das Programm anbietet und wie sie heißen.</p>
 <ul>
-<li><b>Arduino Nano</b>: Pins D3&ndash;D12 und A0&ndash;A5, D0 / D1 ab der Stufe Fortgeschritten, und <b>A6</b> (nur
-Analogeingang).</li>
+<li><b>Arduino Nano</b>: Pins D3&ndash;D12 und A0&ndash;A5, sowie <b>A6</b> und <b>A7</b> (nur Analogeingang).
+D0 / D1 sind die serielle Leitung (Platinenkopplung, DFPlayer, Bluetooth), nie ein Pin.</li>
 <li><b>DCCnext</b> (von ArCoMoRa): eine fertige Platine mit DCC-Eingang und Schraubklemmen. Das Programm verwendet überall
 die auf der Platine aufgedruckten <b>Portnummern P1&ndash;P16</b>: in den Pinlisten (&ldquo;P1 (D3)&rdquo;), auf der
 Arbeitsfläche und in Warnungen. Nur diese 16 Ports werden angeboten: kein D0, D1, D2, D13, A6 oder A7.</li>
@@ -12,8 +12,7 @@ Arbeitsfläche und in Warnungen. Nur diese 16 Ports werden angeboten: kein D0, D
 <tr><th>DCCnext-Port</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Arduino-Pin</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p>Auf jeder Platine sind <b>D2</b> (DCC) und <b>D13</b> (Konfig-LED) reserviert. Den Konfig-Taster (<b>A7</b>) gibt es
-nur auf dem Nano: Ein DCCnext hat keinen Konfig-Taster.
+<p>Auf jeder Platine sind <b>D2</b> (DCC-Eingang und Konfig-Taster) und <b>D13</b> (Konfig-LED) reserviert.
 Dimmen (PWM) funktioniert an D3, D5, D6, D9, D10 und D11 (DCCnext P1, P3, P4, P7, P8 und P9).</p>
 <p>Eine Datei, die für einen anderen Platinentyp erstellt wurde, behält alle ihre Pins. Ein Pin, den diese Platine nicht
 hat, wird mit einer Warnung angezeigt, wie jeder andere Pin, der nicht benutzt werden kann: Wählen Sie dafür einen

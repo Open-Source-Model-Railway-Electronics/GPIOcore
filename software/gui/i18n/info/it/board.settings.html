@@ -2,12 +2,12 @@
 <ul>
 <li><b>Nome</b>: fino a 16 lettere, memorizzato sulla scheda. Il programma trova il file di questa scheda (nomi di
 ingressi e uscite) tramite questo nome, quindi dai a ogni scheda un nome diverso.</li>
-<li><b>Tipo di scheda</b>: Arduino Uno, Arduino Nano, DCCnext o Jack of all trades. Determina quali pin esistono.</li>
-<li><b>Tempo di attesa proprio per ogni passo dell'itinerario</b>: disattivato = ogni passo attende lo stesso tempo
+<li><b>Tipo di scheda</b>: Arduino Nano, DCCnext o Jack of all trades. Determina quali pin esistono.</li>
+<li><b>Tempo di attesa proprio per ogni passo dell'itinerario</b> (livello Avanzato e superiore): disattivato = ogni passo attende lo stesso tempo
 (impostato sotto) e gli itinerari usano metà memoria. Attivato = ogni passo ha il proprio tempo di attesa.</li>
-<li><b>Interblocco itinerari</b>: cosa succede quando un itinerario viene avviato mentre un altro è ancora in corso.
+<li><b>Interblocco itinerari</b> (livello Avanzato e superiore): cosa succede quando un itinerario viene avviato mentre un altro è ancora in corso.
 <i>Disattivato</i> = vengono eseguiti entrambi, <i>attivato</i> = il secondo viene ignorato, <i>automatico</i> = gli
 itinerari che muovono uno scambio vengono eseguiti uno alla volta, quelli con sole luci possono essere eseguiti insieme.</li>
 </ul>
-<p>Pin con una funzione fissa su ogni scheda: <b>D2</b> (ingresso DCC), <b>D13</b> (LED di config) e <b>A7</b>
-(pulsante di config).</p>
+<p>Pin con una funzione fissa su ogni scheda: <b>D2</b> (ingresso DCC e pulsante di config), <b>D13</b> (LED di config) e
+<b>D0 / D1</b> (la linea seriale).</p>

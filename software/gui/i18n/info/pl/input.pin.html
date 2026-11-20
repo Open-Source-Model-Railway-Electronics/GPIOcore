@@ -5,7 +5,7 @@ Rezystor nie jest potrzebny: płytka włącza własny wewnętrzny rezystor podci
 <pre>  pin D7 ---[ przycisk ]--- GND</pre>
 <ul>
 <li><b>Nie</b> podłączaj przycisku do 5 V ani 12 V: może to uszkodzić Arduino.</li>
-<li><b>D2</b> (wejście DCC), <b>D13</b> (LED konfiguracji) i <b>A7</b> (przycisk konfiguracji) nie mogą być użyte.</li>
+<li><b>D2</b> (wejście DCC i przycisk konfiguracji), <b>D13</b> (LED konfiguracji) i <b>D0 / D1</b> (linia szeregowa) nie mogą być użyte.</li>
 <li><b>A6</b> (tylko Arduino Nano) to wyłącznie wejście analogowe bez rezystora podciągającego: dodaj rezystor 10 k&Omega; od pinu do 5 V.</li>
 <li>Zajęte piny są <b>czerwone</b>. Wybranie takiego pinu odbiera go innemu wejściu lub wyjściu, które staje się
 <i>nieużywane</i>.</li>

@@ -1,0 +1,23 @@
+<h3>Kortkobling (TX): kommandoer til andre kort</h3>
+<p>Flere kort jobber sammen over en kjede av ledninger: <b>TX (D1)</b> på ett kort til <b>RX (D0)</b> på det neste,
+med felles GND. Et kort som mottar en kommando, sender den videre med en gang og utfører den som om den kom fra
+DCC-sentralen: hver inngang med den <b>DCC-adressen</b> reagerer som vanlig. De andre kortene trenger ingen innstilling:
+sett dem opp som en vanlig DCC-dekoder.</p>
+<pre>  kort 1 TX (D1) ----&gt; kort 2 RX (D0)
+  kort 2 TX (D1) ----&gt; kort 3 RX (D0)
+  GND -------------- GND</pre>
+<ul>
+<li><b>Én kortkoblingsutgang er nok.</b> Legg den i en togvei; hvert trinn velger <b>adressen</b> (1-255) og
+<b>Avvikende</b> eller <b>Rett</b> (en sporvekselkommando), eller <b>Verdi</b> 0-255 (DCC utvidet: et signalbilde, en servovinkel,
+PWM, et lydspor).</li>
+<li>Eksempel: en togvei på kort 1 med trinnene <i>#5 rett</i>, <i>#9 avvikende</i>, <i>#20 verdi 1</i>. På kort 2
+setter en absolutt inngang med DCC-adresse 5 sin servo rett, en med adresse 9 avvikende, og et signal på adresse 20
+viser signalbilde 1.</li>
+<li>Ventetiden mellom trinnene er også tiden mellom kommandoene, så sporvekslene legges om én etter én.</li>
+<li><b>Egen adresse</b>: når den slås på eller av direkte (en veksle- eller absolutt inngang, DCC), sender utgangen sin egen
+adresse, avvikende eller rett. La den stå på <i>ingen</i> hvis du bare bruker den i togveier.</li>
+<li><b>Bare uten PC.</b> Når programmet er tilkoblet, tilhører den serielle linjen programmet: ingenting sendes eller
+videresendes. På anlegget starter koblingen 5 sekunder etter at strømmen er slått på.</li>
+<li>En DFPlayer kan bli på den samme TX-linjen; den ignorerer disse kommandoene.</li>
+<li>Ikke på et <b>DCCnext</b>: det har ingen D1 på terminalene.</li>
+</ul>

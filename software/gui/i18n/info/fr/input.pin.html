@@ -5,7 +5,7 @@ Pas besoin de résistance : la carte active sa propre résistance de « pull-up 
 <pre>  broche D7 ---[ bouton ]--- GND</pre>
 <ul>
 <li>Ne reliez <b>pas</b> un bouton au 5 V ou au 12 V : cela peut endommager l'Arduino.</li>
-<li><b>D2</b> (entrée DCC), <b>D13</b> (LED de config) et <b>A7</b> (bouton de config) ne peuvent pas être utilisées.</li>
+<li><b>D2</b> (entrée DCC et bouton de config), <b>D13</b> (LED de config) et <b>D0 / D1</b> (la ligne série) ne peuvent pas être utilisées.</li>
 <li><b>A6</b> (Arduino Nano seulement) est une entrée purement analogique sans pull-up : ajoutez une résistance de 10 k&Omega; de la broche vers le 5 V.</li>
 <li>Les broches déjà utilisées apparaissent en <b>rouge</b>. En choisir une la retire à l'autre entrée ou sortie, qui
 devient <i>non utilisée</i>.</li>

@@ -25,12 +25,9 @@ A Windows létrehoz hozzá egy COM-portot (néha kettőt: a "kimenő" portot has
 </ol>
 <p>Ha nem sikerül: a modul nincs AT módban (gyors villogás = normál mód), hibás a bekötés, vagy a dióda
 hiányzik, illetve fordítva van beépítve. Más modulok (HC-06, egyes klónok) nem ismerik ezeket a parancsokat.</p>
-<p><b>Csatlakozás Bluetooth-on</b>: a Bluetooth COM-port megnyitása nem indítja újra a panelt. Ha a panelen
-semmi sem használja a D0-t vagy a D1-et, a soros portja nyitva marad, és a program egyszerűen csatlakozik. Ha valami használja őket
-(bemenet vagy kimenet a D0/D1-en, vagy egy hangeffekt), a panel az indulás után 5 másodperccel bezárja a soros portját
-(a D0/D1 normál lábbá válik). Ilyenkor a <i>Csatlakozás</i> gombra kattintva a program ezt
-jelzi ki: <i>"Várakozás a panelre &mdash; nyomja meg röviden a konfiggombját (Nano)&hellip;"</i>. Nyomja meg <b>röviden</b> a konfiggombot (A7):
-a panel 5 másodpercre újra megnyitja a soros portját és jelentkezik, a program pedig csatlakozik.
+<p><b>Csatlakozás Bluetooth-on</b>: a Bluetooth COM-port megnyitása nem indítja újra a panelt. Az indulás után 5 másodperccel a soros vonal
+a panelkapcsolattá vált. Ezért a <i>Csatlakozás</i> gombra kattintva a program ezt
+jelzi ki: <i>"Várakozás a panelre &mdash; nyomja meg röviden a konfiggombját (Nano)&hellip;"</i>. Nyomja meg <b>röviden</b> a konfiggombot (D2):
+a panel 5 másodpercre visszaadja a vonalat a programnak és jelentkezik, a program pedig csatlakozik.
 A program legfeljebb 30 másodpercig vár erre.</p>
-<p>Amíg a program csatlakoztatva van, a D0 és a D1 a soros porthoz tartozik: HC-05-tel ellátott panelen ne használja őket
-bemenetekhez vagy kimenetekhez.</p>
+<p>A HC-05-tel ellátott panel nem használhatja egyszerre a panelkapcsolatot: mindkettőhöz a D0/D1 kell.</p>

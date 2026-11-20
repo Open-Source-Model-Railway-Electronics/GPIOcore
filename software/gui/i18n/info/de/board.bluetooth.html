@@ -25,12 +25,9 @@ Windows legt dafür einen COM-Port an (manchmal zwei: Nehmen Sie den "ausgehende
 </ol>
 <p>Wenn es nicht klappt: Das Modul ist nicht im AT-Modus (schnelles Blinken = normaler Modus), die Verdrahtung stimmt
 nicht, oder die Diode fehlt oder ist falsch herum eingebaut. Andere Module (HC-06, manche Klone) kennen diese Befehle nicht.</p>
-<p><b>Verbinden über Bluetooth</b>: Das Öffnen des Bluetooth-COM-Ports setzt die Platine nicht zurück. Benutzt nichts auf
-der Platine D0 oder D1, bleibt ihre serielle Schnittstelle offen und das Programm verbindet sich einfach. Benutzt etwas
-diese Pins (ein Eingang oder Ausgang an D0/D1 oder ein Soundeffekt), schließt die Platine ihre serielle Schnittstelle
-5 Sekunden nach dem Start (D0/D1 werden normale Pins). Wenn Sie dann auf <i>Verbinden</i> klicken, zeigt das Programm
-<i>"Warte auf die Platine &mdash; Konfig-Taster kurz drücken"</i>. Drücken Sie den Konfig-Taster (A7) <b>kurz</b>:
-Die Platine öffnet ihre serielle Schnittstelle wieder für 5 Sekunden und meldet sich, und das Programm verbindet sich.
+<p><b>Verbinden über Bluetooth</b>: Das Öffnen des Bluetooth-COM-Ports setzt die Platine nicht zurück, und 5 Sekunden nach
+dem Start ist die serielle Leitung zur Platinenkopplung geworden. Wenn Sie also auf <i>Verbinden</i> klicken, zeigt das Programm
+<i>"Warte auf die Platine &mdash; Konfig-Taster kurz drücken"</i>. Drücken Sie den Konfig-Taster (D2) <b>kurz</b>:
+Die Platine gibt die Leitung für 5 Sekunden an das Programm zurück und meldet sich, und das Programm verbindet sich.
 Das Programm wartet darauf bis zu 30 Sekunden.</p>
-<p>Solange das Programm verbunden ist, gehören D0 und D1 der seriellen Schnittstelle: Verwenden Sie sie auf einer
-Platine mit HC-05 nicht für Eingänge oder Ausgänge.</p>
+<p>Eine Platine mit HC-05 kann die Platinenkopplung nicht gleichzeitig benutzen: Beide brauchen D0 / D1.</p>

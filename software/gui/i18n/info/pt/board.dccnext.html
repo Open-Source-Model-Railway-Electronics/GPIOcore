@@ -1,8 +1,8 @@
 <h3>Tipo de placa</h3>
 <p>O tipo de placa determina que pinos o programa oferece e como se chamam.</p>
 <ul>
-<li><b>Arduino Nano</b>: pinos D3&ndash;D12 e A0&ndash;A5, D0 / D1 a partir do nível Avançado, e <b>A6</b> (só entrada
-analógica).</li>
+<li><b>Arduino Nano</b>: pinos D3&ndash;D12 e A0&ndash;A5, e <b>A6</b> e <b>A7</b> (só entrada analógica).
+D0 / D1 são a linha série (ligação entre placas, DFPlayer, Bluetooth), nunca um pino.</li>
 <li><b>DCCnext</b> (da ArCoMoRa): uma placa pronta com entrada DCC e terminais de parafuso. O programa usa os
 <b>números de porta P1&ndash;P16</b> impressos na placa em todo o lado: nas listas de pinos (&ldquo;P1 (D3)&rdquo;), na
 área de trabalho e nos avisos. Só são oferecidas estas 16 portas: sem D0, D1, D2, D13, A6 nem A7.</li>
@@ -12,8 +12,7 @@ analógica).</li>
 <tr><th>Porta DCCnext</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Pino Arduino</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p><b>D2</b> (DCC) e <b>D13</b> (LED de configuração) estão reservados em todas as placas. O botão de configuração (<b>A7</b>) só
-existe no Nano: um DCCnext não tem botão de configuração.
+<p><b>D2</b> (entrada DCC e botão de configuração) e <b>D13</b> (LED de configuração) estão reservados em todas as placas.
 A regulação de intensidade (PWM) funciona em D3, D5, D6, D9, D10 e D11 (DCCnext P1, P3, P4, P7, P8 e P9).</p>
 <p>Um ficheiro feito para outro tipo de placa mantém todos os seus pinos. Um pino que esta placa não tem é mostrado com um aviso,
 como qualquer outro pino que não pode ser usado: escolha outro pino para ele.</p>

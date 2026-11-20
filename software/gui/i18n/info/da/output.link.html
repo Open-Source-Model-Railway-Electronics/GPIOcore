@@ -1,0 +1,23 @@
+<h3>Printforbindelse (TX): kommandoer til andre print</h3>
+<p>Flere print arbejder sammen over en kæde af ledninger: <b>TX (D1)</b> på ét print til <b>RX (D0)</b> på det næste,
+med fælles GND. Et print, der modtager en kommando, sender den videre med det samme og udfører den, som om den kom fra
+DCC-centralen: hver indgang med den <b>DCC-adresse</b> reagerer som sædvanligt. De andre print behøver ingen indstilling:
+sæt dem op som en almindelig DCC-dekoder.</p>
+<pre>  print 1 TX (D1) ----&gt; print 2 RX (D0)
+  print 2 TX (D1) ----&gt; print 3 RX (D0)
+  GND ---------------- GND</pre>
+<ul>
+<li><b>Én printforbindelsesudgang er nok.</b> Læg den i en togvej; hvert trin vælger <b>adressen</b> (1-255) og
+<b>Afvigende</b> eller <b>Lige</b> (en sporskiftekommando), eller <b>Værdi</b> 0-255 (DCC udvidet: et signalbillede, en servovinkel,
+PWM, et lydnummer).</li>
+<li>Eksempel: en togvej på print 1 med trinnene <i>#5 lige</i>, <i>#9 afvigende</i>, <i>#20 værdi 1</i>. På print 2
+sætter en absolut indgang med DCC-adresse 5 sin servo lige, en med adresse 9 afvigende, og et signal på adresse 20
+viser signalbillede 1.</li>
+<li>Ventetiden mellem trinnene er også tiden mellem kommandoerne, så sporskifterne slår om ét ad gangen.</li>
+<li><b>Egen adresse</b>: når den tændes eller slukkes direkte (en skifte- eller absolut indgang, DCC), sender udgangen sin egen
+adresse, afvigende eller lige. Lad den stå på <i>ingen</i>, hvis du kun bruger den i togveje.</li>
+<li><b>Kun uden pc.</b> Når programmet er forbundet, tilhører den serielle linje programmet: der sendes eller
+videresendes intet. På anlægget starter forbindelsen 5 sekunder efter, at strømmen er tændt.</li>
+<li>En DFPlayer kan blive på den samme TX-linje; den ignorerer disse kommandoer.</li>
+<li>Ikke på et <b>DCCnext</b>: det har ingen D1 på sine terminaler.</li>
+</ul>

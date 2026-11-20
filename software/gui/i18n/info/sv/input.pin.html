@@ -5,7 +5,7 @@ Inget motstånd behövs: kortet slår på sitt eget inbyggda "pull-up"-motstånd
 <pre>  pinne D7 ---[ knapp ]--- GND</pre>
 <ul>
 <li>Anslut <b>inte</b> en knapp till 5 V eller 12 V: det kan skada Arduinon.</li>
-<li><b>D2</b> (DCC-ingång), <b>D13</b> (config-lysdiod) och <b>A7</b> (config-knapp) kan inte användas.</li>
+<li><b>D2</b> (DCC-ingång och config-knapp), <b>D13</b> (config-lysdiod) och <b>D0 / D1</b> (serielinjen) kan inte användas.</li>
 <li><b>A6</b> (bara Arduino Nano) är en ren analog ingång utan pull-up: lägg till ett 10 k&Omega; motstånd från pinnen till 5 V.</li>
 <li>Pinnar som redan används visas <b>röda</b>. Väljer du en sådan tas den från den andra ingången eller utgången, som då
 blir <i>används inte</i>.</li>

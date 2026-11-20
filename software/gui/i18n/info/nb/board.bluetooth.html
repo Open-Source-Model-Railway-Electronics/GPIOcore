@@ -25,12 +25,9 @@ Windows oppretter en COM-port for det (noen ganger to: bruk den "utgående"). Ve
 </ol>
 <p>Hvis det ikke virker: modulen er ikke i AT-modus (rask blinking = normal modus), koblingen er feil, eller dioden
 mangler eller står feil vei. Andre moduler (HC-06, noen kloner) kjenner ikke disse kommandoene.</p>
-<p><b>Koble til via Bluetooth</b>: å åpne Bluetooth-COM-porten tilbakestiller ikke kortet. Når ingenting på
-kortet bruker D0 eller D1, forblir seriellporten åpen, og programmet kobler bare til. Når noe bruker dem
-(en inngang eller utgang på D0/D1, eller en lydeffekt), lukker kortet seriellporten 5 sekunder etter oppstart
-(D0/D1 blir vanlige pinner). Når du da klikker på <i>Koble til</i>, viser programmet
-<i>"Venter på kortet &mdash; trykk kort på config-knappen"</i>. Trykk <b>kort</b> på config-knappen (A7):
-kortet åpner seriellporten igjen i 5 sekunder og melder seg, og programmet kobler til.
+<p><b>Koble til via Bluetooth</b>: å åpne Bluetooth-COM-porten tilbakestiller ikke kortet. 5 sekunder etter oppstart har den serielle
+linjen blitt kortkoblingen. Når du da klikker på <i>Koble til</i>, viser programmet
+<i>"Venter på kortet &mdash; trykk kort på config-knappen"</i>. Trykk <b>kort</b> på config-knappen (D2):
+kortet gir linjen tilbake til programmet i 5 sekunder og melder seg, og programmet kobler til.
 Programmet venter opptil 30 sekunder på det.</p>
-<p>Mens programmet er tilkoblet, tilhører D0 og D1 seriellporten: ikke bruk dem til innganger eller utganger på et
-kort med HC-05.</p>
+<p>Et kort med HC-05 kan ikke bruke kortkoblingen samtidig: begge trenger D0/D1.</p>

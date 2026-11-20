@@ -5,7 +5,7 @@ Kein Widerstand nötig: Die Platine schaltet ihren eigenen internen „Pull-up�
 <pre>  Pin D7 ---[ Taster ]--- GND</pre>
 <ul>
 <li>Schließen Sie einen Taster <b>nicht</b> an 5 V oder 12 V an: Das kann den Arduino beschädigen.</li>
-<li><b>D2</b> (DCC-Eingang), <b>D13</b> (Konfig-LED) und <b>A7</b> (Konfig-Taster) können nicht benutzt werden.</li>
+<li><b>D2</b> (DCC-Eingang und Konfig-Taster), <b>D13</b> (Konfig-LED) und <b>D0 / D1</b> (die serielle Leitung) können nicht benutzt werden.</li>
 <li><b>A6</b> (nur Arduino Nano) ist ein reiner Analogeingang ohne Pull-up: Setzen Sie einen 10-k&Omega;-Widerstand vom Pin nach 5 V.</li>
 <li>Bereits belegte Pins erscheinen <b>rot</b>. Wählen Sie einen davon, nehmen Sie ihn dem anderen Eingang oder
 Ausgang weg, der dann <i>nicht benutzt</i> wird.</li>

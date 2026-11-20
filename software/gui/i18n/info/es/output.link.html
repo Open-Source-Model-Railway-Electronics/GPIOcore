@@ -1,0 +1,23 @@
+<h3>Enlace entre placas (TX): órdenes a otras placas</h3>
+<p>Varias placas trabajan juntas mediante una cadena de cables: <b>TX (D1)</b> de una placa a <b>RX (D0)</b> de la
+siguiente, con un GND común. Una placa que recibe una orden la pasa enseguida y la ejecuta como si viniera de la central
+DCC: toda entrada con esa <b>dirección DCC</b> reacciona como de costumbre. Las demás placas no necesitan ningún ajuste:
+configúrelas como un decodificador DCC normal.</p>
+<pre>  placa 1 TX (D1) ----&gt; placa 2 RX (D0)
+  placa 2 TX (D1) ----&gt; placa 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>Una sola salida de enlace entre placas basta.</b> Póngala en un itinerario; cada paso elige la <b>dirección</b>
+(1-255) y <b>Desviado</b> o <b>Recto</b> (una orden de desvío), o <b>Valor</b> 0-255 (DCC extendido: un aspecto, un ángulo
+de servo, PWM, una pista de sonido).</li>
+<li>Ejemplo: un itinerario en la placa 1 con los pasos <i>#5 recto</i>, <i>#9 desviado</i>, <i>#20 valor 1</i>. En la placa 2,
+una entrada absoluta con dirección DCC 5 pone su servo recto, una con dirección 9 desviado, y una señal con dirección 20
+muestra el aspecto 1.</li>
+<li>El tiempo de espera entre los pasos es también el tiempo entre las órdenes, así que los desvíos se mueven uno tras otro.</li>
+<li><b>Dirección propia</b>: cuando se conmuta directamente (una entrada de conmutar o absoluta, DCC), la salida envía su propia
+dirección, desviado o recto. Déjela en <i>ninguna</i> si solo la usa en itinerarios.</li>
+<li><b>Solo sin PC.</b> Con el programa conectado, la línea serie es del programa: no se envía ni se pasa nada.
+En la maqueta, el enlace arranca 5 segundos después del encendido.</li>
+<li>Un DFPlayer puede quedarse en la misma línea TX; ignora estas órdenes.</li>
+<li>No en un <b>DCCnext</b>: no tiene D1 en sus bornas.</li>
+</ul>

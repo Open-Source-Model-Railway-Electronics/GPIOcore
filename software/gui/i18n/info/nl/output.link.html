@@ -1,0 +1,23 @@
+<h3>Boardkoppeling (TX): commando's naar andere boards</h3>
+<p>Meerdere boards werken samen via een ketting van draden: <b>TX (D1)</b> van het ene board naar <b>RX (D0)</b> van het
+volgende, met een gemeenschappelijke GND. Een board dat een commando ontvangt, geeft het meteen door en voert het uit
+alsof het van de DCC-centrale kwam: elke ingang met dat <b>DCC-adres</b> reageert zoals gewoonlijk. De andere boards
+hebben geen instelling nodig: stel ze in als gewone DCC-decoder.</p>
+<pre>  board 1 TX (D1) ----&gt; board 2 RX (D0)
+  board 2 TX (D1) ----&gt; board 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>Eén uitgang voor de boardkoppeling is genoeg.</b> Zet hem in een rijweg; elke stap kiest het <b>adres</b> (1-255)
+en <b>Afbuigend</b> of <b>Rechtdoor</b> (een wisselcommando), of <b>Waarde</b> 0-255 (DCC uitgebreid: een seinbeeld,
+een servohoek, PWM, een geluidstrack).</li>
+<li>Voorbeeld: een rijweg op board 1 met stappen <i>#5 rechtdoor</i>, <i>#9 afbuigend</i>, <i>#20 waarde 1</i>. Op board 2
+zet een absolute ingang met DCC-adres 5 zijn servo rechtdoor, een met adres 9 afbuigend, en een sein op adres 20
+toont seinbeeld 1.</li>
+<li>De wachttijd tussen de stappen is ook de tijd tussen de commando's, zodat de wissels na elkaar omgaan.</li>
+<li><b>Eigen adres</b>: direct geschakeld (een ingang met omschakelen of absoluut, DCC), stuurt de uitgang zijn eigen
+adres, afbuigend of rechtdoor. Laat het op <i>geen</i> staan als je hem alleen in rijwegen gebruikt.</li>
+<li><b>Alleen zonder pc.</b> Met het programma verbonden is de seriële lijn van het programma: er wordt niets verstuurd
+of doorgegeven. Op de baan start de koppeling 5 seconden na het inschakelen.</li>
+<li>Een DFPlayer kan op dezelfde TX-lijn blijven; hij negeert deze commando's.</li>
+<li>Niet op een <b>DCCnext</b>: die heeft geen D1 op zijn klemmen.</li>
+</ul>

@@ -1,14 +1,14 @@
-<h3>Broches D0 et D1</h3>
-<p>D0 et D1 sont les fils par lesquels l'Arduino parle à ce programme via l'USB. Les cartes récentes peuvent quand même
-les utiliser pour votre réseau :</p>
+<h3>D0 et D1 : la ligne série</h3>
+<p>D0 (RX) et D1 (TX) ne sont jamais une entrée ou une sortie : ce sont la ligne série de la carte. Quatre choses peuvent
+l'utiliser : ce programme (par USB ou Bluetooth), la <b>liaison entre cartes</b> vers d'autres cartes, un <b>DFPlayer</b>
+sur TX et un module Bluetooth <b>HC-05</b>.</p>
 <ul>
-<li>Au démarrage, la carte attend ce programme pendant <b>5 secondes</b>.</li>
-<li>Si le programme se connecte, D0 / D1 restent réservées à l'USB pendant la configuration. Ce qui est branché sur ces
-broches ne fonctionne <b>pas</b> à ce moment-là.</li>
-<li>Si rien ne se connecte (utilisation normale sur le réseau), D0 / D1 deviennent des broches normales. Quand rien
-n'est sur D0 / D1 (ni entrée ni sortie, ni effet sonore), elles restent des fils USB : le programme peut se connecter à tout moment.</li>
-<li>Un appui bref sur le bouton de config (Nano) en refait des fils USB pendant 5 secondes, pour que le programme puisse
-se connecter sans reset.</li>
+<li>Au démarrage, la carte attend ce programme pendant <b>5 secondes</b>. Si le programme se connecte, la ligne est celle
+du programme pendant que vous configurez : la liaison entre cartes et le DFPlayer ne font alors rien.</li>
+<li>Si rien ne se connecte (utilisation normale sur le réseau), la ligne devient la <b>liaison entre cartes</b> (9600 bauds) :
+ce qui arrive sur RX est transmis sur TX et exécuté comme une commande DCC ; les sorties de liaison entre cartes et un
+DFPlayer utilisent TX.</li>
+<li>L'ouverture du port USB réinitialise la carte, donc le programme se connecte dans ces 5 secondes. En Bluetooth, il n'y
+a pas de reset : appuyez <b>brièvement</b> sur le bouton de config, la ligne est alors de nouveau celle du programme pendant
+5 secondes.</li>
 </ul>
-<p>Utilisez-les pour des choses simples comme des LED. Évitez les charges lourdes sur D0 : elles peuvent perturber le
-téléversement d'un nouveau firmware.</p>

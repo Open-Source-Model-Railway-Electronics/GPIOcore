@@ -1,9 +1,8 @@
-<h3>Config-knop (A7) en servo's inleren met je handregelaar</h3>
+<h3>Config-knop (D2) en servo's inleren met je handregelaar</h3>
 <p>Zonder computer kun je de eindstanden van servo's instellen met de config-knop en je DCC-handregelaar.</p>
-<p><b>Let op:</b> de config-knop (A7) bestaat alleen op een Arduino <b>Nano</b>. Een DCCnext heeft geen
-A7, dus ook geen config-knop: stel de eindstanden van de servo's dan in met het programma (of met de telefoonbediening).</p>
-<p><b>Bedrading:</b> een drukknop van <b>A7</b> naar <b>GND</b>, plus een weerstand van 10 k&Omega; van A7 naar <b>5 V</b>
-(A7 heeft geen ingebouwde pull-up). Een LED met weerstand op <b>D13</b> toont de modus (de meeste Arduino's hebben er al een).</p>
+<p><b>Bedrading:</b> een drukknop van <b>D2</b> naar <b>GND</b>. D2 is ook de DCC-ingang: DCC verandert de hele tijd van
+niveau, een ingedrukte knop houdt hem laag, en daar let het board op (1 ms laag zonder onderbreking). Een LED
+met weerstand op <b>D13</b> toont de modus (de meeste Arduino's hebben er al een).</p>
 <ol>
 <li>Houd de config-knop <b>2 seconden</b> ingedrukt: de LED gaat knipperen. Je zit nu in de configuratiemodus.</li>
 <li>Druk er <b>kort</b> op: de volgende servo wordt gekozen en gaat om, zodat je ziet welke het is. Druk nog eens
@@ -19,10 +18,9 @@ voor de volgende servo.</li>
 <li>Houd de config-knop opnieuw 2 seconden ingedrukt: de LED blijft aan. Terug naar normaal.</li>
 </ol>
 <p>De nieuwe standen worden meteen bewaard. Verbind je later het programma, dan leest het ze terug.</p>
-<p><b>Kort drukken buiten de configuratiemodus = GUI-modus.</b> 5 seconden na het opstarten sluit het board zijn seriële
-poort als er geen programma verbonden is en de configuratie D0 of D1 gebruikt (dat worden dan gewone pinnen; anders blijft
-de poort open). Een <b>korte</b> druk op de config-knop (LED brandt continu, niet in de
-configuratiemodus) opent hem weer voor 5 seconden en het board meldt zich, zodat het programma zonder
+<p><b>Kort drukken buiten de configuratiemodus = GUI-modus.</b> 5 seconden na het opstarten zonder programma wordt de seriële
+lijn de boardkoppeling. Een <b>korte</b> druk op de config-knop (LED brandt continu, niet in de
+configuratiemodus) geeft hem 5 seconden terug aan het programma en het board meldt zich, zodat het programma zonder
 reset kan verbinden, bijvoorbeeld via Bluetooth (zie <i>Help &gt; Bluetooth (HC-05)</i>). Als het programma <i>"Wachten op
 het board"</i> zegt, is dat het moment om erop te drukken.</p>
-<p>Daarom kunnen <b>D13</b> en <b>A7</b> nooit gebruikt worden voor ingangen of uitgangen.</p>
+<p>Daarom kunnen <b>D2</b> en <b>D13</b> nooit gebruikt worden voor ingangen of uitgangen.</p>

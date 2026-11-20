@@ -5,7 +5,7 @@ Non serve una resistenza: la scheda attiva la propria resistenza di "pull-up" in
 <pre>  pin D7 ---[ pulsante ]--- GND</pre>
 <ul>
 <li><b>Non</b> collegare un pulsante a 5 V o 12 V: può danneggiare l'Arduino.</li>
-<li><b>D2</b> (ingresso DCC), <b>D13</b> (LED di config) e <b>A7</b> (pulsante di config) non possono essere usati.</li>
+<li><b>D2</b> (ingresso DCC e pulsante di config), <b>D13</b> (LED di config) e <b>D0 / D1</b> (la linea seriale) non possono essere usati.</li>
 <li><b>A6</b> (solo Arduino Nano) è un ingresso solo analogico senza pull-up: aggiungi una resistenza da 10 k&Omega; dal pin a 5 V.</li>
 <li>I pin già usati appaiono in <b>rosso</b>. Sceglierne uno lo toglie all'altro ingresso o uscita, che diventa
 <i>non usato</i>.</li>

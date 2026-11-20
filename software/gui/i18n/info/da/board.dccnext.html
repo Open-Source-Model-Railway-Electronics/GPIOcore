@@ -1,8 +1,8 @@
 <h3>Printtype</h3>
 <p>Printtypen bestemmer, hvilke pins programmet tilbyder, og hvad de hedder.</p>
 <ul>
-<li><b>Arduino Nano</b>: pins D3&ndash;D12 og A0&ndash;A5, D0 / D1 fra niveauet Avanceret og op, og <b>A6</b> (kun analog
-indgang).</li>
+<li><b>Arduino Nano</b>: pins D3&ndash;D12 og A0&ndash;A5, og <b>A6</b> og <b>A7</b> (kun analog
+indgang). D0 / D1 er den serielle linje (printforbindelse, DFPlayer, Bluetooth), aldrig en pin.</li>
 <li><b>DCCnext</b> (fra ArCoMoRa): et færdigt print med DCC-indgang og skrueterminaler. Programmet bruger de
 <b>portnumre P1&ndash;P16</b>, der er trykt på printet, overalt: i pinlisterne (&ldquo;P1 (D3)&rdquo;), på
 lærredet og i advarsler. Kun disse 16 porte tilbydes: ingen D0, D1, D2, D13, A6 eller A7.</li>
@@ -12,8 +12,7 @@ lærredet og i advarsler. Kun disse 16 porte tilbydes: ingen D0, D1, D2, D13, A6
 <tr><th>DCCnext-port</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Arduino-pin</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p><b>D2</b> (DCC) og <b>D13</b> (config-LED) er reserveret på alle print. Config-knappen (<b>A7</b>) findes
-kun på Nano: et DCCnext har ingen config-knap.
+<p><b>D2</b> (DCC-indgang og config-knap) og <b>D13</b> (config-LED) er reserveret på alle print.
 Dæmpning (PWM) virker på D3, D5, D6, D9, D10 og D11 (DCCnext P1, P3, P4, P7, P8 og P9).</p>
 <p>En fil, der er lavet til en anden printtype, beholder alle sine pins. En pin, som dette print ikke har, vises med en advarsel,
 ligesom enhver anden pin, der ikke kan bruges: vælg en anden pin til den.</p>

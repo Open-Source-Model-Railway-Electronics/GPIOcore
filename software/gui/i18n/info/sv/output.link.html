@@ -1,0 +1,23 @@
+<h3>Kortlänk (TX): kommandon till andra kort</h3>
+<p>Flera kort arbetar tillsammans över en kedja av trådar: <b>TX (D1)</b> på ett kort till <b>RX (D0)</b> på nästa,
+med gemensam GND. Ett kort som tar emot ett kommando skickar det vidare direkt och kör det som om det kom från
+DCC-centralen: varje ingång med den <b>DCC-adressen</b> reagerar som vanligt. De andra korten behöver ingen inställning:
+ställ in dem som en vanlig DCC-dekoder.</p>
+<pre>  kort 1 TX (D1) ----&gt; kort 2 RX (D0)
+  kort 2 TX (D1) ----&gt; kort 3 RX (D0)
+  GND ------------- GND</pre>
+<ul>
+<li><b>En kortlänksutgång räcker.</b> Lägg den i en tågväg; varje steg väljer <b>adressen</b> (1-255) och
+<b>Avvikande</b> eller <b>Rakt</b> (ett växelkommando), eller <b>Värde</b> 0-255 (DCC utökat: ett signalbild, en servovinkel,
+PWM, ett ljudspår).</li>
+<li>Exempel: en tågväg på kort 1 med stegen <i>#5 rakt</i>, <i>#9 avvikande</i>, <i>#20 värde 1</i>. På kort 2
+ställer en absolut ingång med DCC-adress 5 sitt servo rakt, en med adress 9 avvikande, och en signal på adress 20
+visar signalbild 1.</li>
+<li>Väntetiden mellan stegen är också tiden mellan kommandona, så växlarna slår om en efter en.</li>
+<li><b>Egen adress</b>: när den slås på eller av direkt (en växlande eller absolut ingång, DCC) skickar utgången sin egen
+adress, avvikande eller rakt. Lämna den på <i>ingen</i> om du bara använder den i tågvägar.</li>
+<li><b>Bara utan PC.</b> När programmet är anslutet tillhör serielinjen programmet: inget skickas eller
+förs vidare. På anläggningen startar länken 5 sekunder efter att strömmen slagits på.</li>
+<li>En DFPlayer kan sitta kvar på samma TX-linje; den ignorerar dessa kommandon.</li>
+<li>Inte på ett <b>DCCnext</b>: det har ingen D1 på plintarna.</li>
+</ul>

@@ -1,0 +1,23 @@
+<h3>Propojení desek (TX): povely pro jiné desky</h3>
+<p>Několik desek spolupracuje po řetězu vodičů: <b>TX (D1)</b> jedné desky na <b>RX (D0)</b> další, se společnou GND.
+Deska, která povel přijme, ho okamžitě předá dál a provede ho, jako by přišel z DCC centrály: každý vstup s touto
+<b>DCC adresou</b> reaguje jako obvykle. Ostatní desky nepotřebují žádné nastavení: nastavte je jako běžný
+DCC dekodér.</p>
+<pre>  deska 1 TX (D1) ----&gt; deska 2 RX (D0)
+  deska 2 TX (D1) ----&gt; deska 3 RX (D0)
+  GND ------------------- GND</pre>
+<ul>
+<li><b>Stačí jeden výstup propojení desek.</b> Dejte ho do jízdní cesty; každý krok volí <b>adresu</b> (1-255) a
+<b>Do odbočky</b> nebo <b>Přímo</b> (povel pro výhybku), nebo <b>Hodnotu</b> 0-255 (rozšířené DCC: návěst, úhel serva,
+PWM, zvuková stopa).</li>
+<li>Příklad: jízdní cesta na desce 1 s kroky <i>#5 přímo</i>, <i>#9 do odbočky</i>, <i>#20 hodnota 1</i>. Na desce 2
+absolutní vstup s DCC adresou 5 nastaví své servo přímo, vstup s adresou 9 do odbočky a návěstidlo na adrese 20
+ukáže návěst 1.</li>
+<li>Čekací doba mezi kroky je zároveň doba mezi povely, takže se výhybky přestavují jedna po druhé.</li>
+<li><b>Vlastní adresa</b>: při přímém zapnutí nebo vypnutí (vstup Přepínač nebo Absolutní, DCC) výstup pošle svou vlastní
+adresu, do odbočky nebo přímo. Nechte <i>žádná</i>, když ho používáte jen v jízdních cestách.</li>
+<li><b>Jen bez PC.</b> Když je program připojen, sériová linka patří programu: nic se neodesílá ani nepředává.
+Na kolejišti propojení začne 5 sekund po zapnutí napájení.</li>
+<li>DFPlayer může zůstat na stejné lince TX; tyto povely ignoruje.</li>
+<li>Ne u <b>DCCnext</b>: nemá D1 na svorkách.</li>
+</ul>

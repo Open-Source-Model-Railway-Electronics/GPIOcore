@@ -1,14 +1,12 @@
-<h3>Pines D0 y D1</h3>
-<p>D0 y D1 son los cables por los que el Arduino habla con este programa a través del USB. Las placas más nuevas
-pueden usarlos igualmente para su maqueta:</p>
+<h3>D0 y D1: la línea serie</h3>
+<p>D0 (RX) y D1 (TX) nunca son un pin de entrada o salida: son la línea serie de la placa. Cuatro cosas pueden usarla:
+este programa (por USB o Bluetooth), el <b>enlace entre placas</b> con otras placas, un <b>DFPlayer</b> en TX y un
+módulo Bluetooth <b>HC-05</b>.</p>
 <ul>
-<li>Al arrancar, la placa espera <b>5 segundos</b> a este programa.</li>
-<li>Si el programa se conecta, D0 / D1 quedan reservados para el USB mientras configura. Lo que esté conectado a esos
-pines <b>no</b> funciona entonces.</li>
-<li>Si no se conecta nada (uso normal en la maqueta), D0 / D1 pasan a ser pines normales. Si no hay nada en
-D0 / D1 (ninguna entrada o salida, ningún efecto de sonido), siguen siendo cables USB: el programa puede conectarse en
-cualquier momento.</li>
-<li>Una pulsación breve del botón de configuración (Nano) los vuelve a convertir en cables USB durante 5 segundos, para
-que el programa pueda conectarse sin reiniciar la placa.</li>
+<li>Al arrancar, la placa espera <b>5 segundos</b> a este programa. Si el programa se conecta, la línea es del programa
+mientras configura: el enlace entre placas y el DFPlayer no hacen nada entonces.</li>
+<li>Si no se conecta nada (uso normal en la maqueta), la línea pasa a ser el <b>enlace entre placas</b> (9600 baudios): lo que
+entra por RX se pasa a TX y se ejecuta como una orden DCC; las salidas de enlace entre placas y un DFPlayer usan TX.</li>
+<li>Abrir el puerto USB reinicia la placa, así que el programa se conecta dentro de esos 5 segundos. Por Bluetooth no hay
+reinicio: pulse el botón de configuración <b>brevemente</b> y la línea vuelve a ser del programa durante 5 segundos.</li>
 </ul>
-<p>Úselos para cosas sencillas como LED. Evite cargas grandes en D0: pueden interferir al cargar un firmware nuevo.</p>

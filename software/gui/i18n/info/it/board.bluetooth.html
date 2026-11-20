@@ -25,12 +25,9 @@ Windows crea una porta COM per il modulo (a volte due: usa quella "in uscita"). 
 </ol>
 <p>Se non funziona: il modulo non è in modalità AT (lampeggio veloce = modalità normale), il cablaggio è sbagliato, oppure
 il diodo manca o è montato al contrario. Altri moduli (HC-06, alcuni cloni) non conoscono questi comandi.</p>
-<p><b>Collegarsi via Bluetooth</b>: aprire la porta COM Bluetooth non resetta la scheda. Se niente sulla scheda usa D0 o D1,
-la sua porta seriale resta aperta e il programma si collega e basta. Se qualcosa li usa (un ingresso o un'uscita su D0/D1,
-o un effetto sonoro), la scheda chiude la sua porta seriale 5 secondi dopo l'avvio (D0/D1 diventano pin normali).
-Allora, quando clicchi <i>Connetti</i>, il programma
+<p><b>Collegarsi via Bluetooth</b>: aprire la porta COM Bluetooth non resetta la scheda, e 5 secondi dopo l'avvio la linea
+seriale è diventata il collegamento tra schede. Quindi, quando clicchi <i>Connetti</i>, il programma
 mostra <i>"In attesa della scheda &mdash; premi brevemente il suo pulsante di configurazione"</i>. Premi <b>brevemente</b> il
-pulsante di configurazione (A7): la scheda riapre la sua porta seriale per 5 secondi e si annuncia, e il programma si collega.
+pulsante di configurazione (D2): la scheda restituisce la linea al programma per 5 secondi e si annuncia, e il programma si collega.
 Il programma aspetta fino a 30 secondi.</p>
-<p>Mentre il programma è collegato, D0 e D1 appartengono alla porta seriale: non usarli per ingressi o uscite su una
-scheda con un HC-05.</p>
+<p>Una scheda con un HC-05 non può usare il collegamento tra schede nello stesso tempo: entrambi hanno bisogno di D0 / D1.</p>

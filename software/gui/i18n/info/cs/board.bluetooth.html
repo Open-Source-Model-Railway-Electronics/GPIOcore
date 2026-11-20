@@ -25,12 +25,9 @@ Windows pro něj vytvoří COM port (někdy dva: použijte „odchozí“). Tent
 </ol>
 <p>Pokud to nefunguje: modul není v režimu AT (rychlé blikání = normální režim), zapojení je špatně, nebo dioda
 chybí či je zapojená obráceně. Jiné moduly (HC-06, některé klony) tyto příkazy neznají.</p>
-<p><b>Připojení přes Bluetooth</b>: otevření Bluetooth COM portu desku neresetuje. Když nic na
-desce nepoužívá D0 ani D1, její sériový port zůstává otevřený a program se jednoduše připojí. Když je něco používá
-(vstup nebo výstup na D0/D1, nebo zvukový efekt), deska 5 sekund po startu svůj sériový port zavře
-(z D0/D1 se stanou běžné piny). Když pak kliknete na <i>Připojit</i>, program
-zobrazí <i>„Čekám na desku &mdash; krátce stiskněte její tlačítko konfigurace (Nano)&hellip;“</i>. Stiskněte tlačítko konfigurace (A7)
-<b>krátce</b>: deska znovu otevře sériový port na 5 sekund a ohlásí se, a program se připojí.
+<p><b>Připojení přes Bluetooth</b>: otevření Bluetooth COM portu desku neresetuje. 5 sekund po startu se sériová linka
+stala propojením desek. Když tedy kliknete na <i>Připojit</i>, program
+zobrazí <i>„Čekám na desku &mdash; krátce stiskněte její tlačítko konfigurace (Nano)&hellip;“</i>. Stiskněte tlačítko konfigurace (D2)
+<b>krátce</b>: deska vrátí linku programu na 5 sekund a ohlásí se, a program se připojí.
 Program na to čeká až 30 sekund.</p>
-<p>Dokud je program připojen, D0 a D1 patří sériovému portu: na desce s HC-05 je nepoužívejte pro vstupy ani
-výstupy.</p>
+<p>Deska s HC-05 nemůže současně používat propojení desek: obojí potřebuje D0/D1.</p>

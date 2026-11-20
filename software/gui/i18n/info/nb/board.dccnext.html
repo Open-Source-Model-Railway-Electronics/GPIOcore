@@ -1,8 +1,8 @@
 <h3>Korttype</h3>
 <p>Korttypen bestemmer hvilke pinner programmet tilbyr og hva de heter.</p>
 <ul>
-<li><b>Arduino Nano</b>: pinnene D3&ndash;D12 og A0&ndash;A5, D0 / D1 fra nivået Avansert og oppover, og <b>A6</b> (bare analog
-inngang).</li>
+<li><b>Arduino Nano</b>: pinnene D3&ndash;D12 og A0&ndash;A5, og <b>A6</b> og <b>A7</b> (bare analog
+inngang). D0 / D1 er den serielle linjen (kortkobling, DFPlayer, Bluetooth), aldri en pinne.</li>
 <li><b>DCCnext</b> (fra ArCoMoRa): et ferdig kort med DCC-inngang og skrueterminaler. Programmet bruker
 <b>portnumrene P1&ndash;P16</b> som er trykt på kortet, overalt: i pinnelistene (&ldquo;P1 (D3)&rdquo;), på
 lerretet og i advarsler. Bare disse 16 portene tilbys: ingen D0, D1, D2, D13, A6 eller A7.</li>
@@ -12,8 +12,7 @@ lerretet og i advarsler. Bare disse 16 portene tilbys: ingen D0, D1, D2, D13, A6
 <tr><th>DCCnext-port</th><td>P1&ndash;P10</td><td>P11&ndash;P16</td></tr>
 <tr><th>Arduino-pinne</th><td>D3&ndash;D12</td><td>A0&ndash;A5</td></tr>
 </table>
-<p><b>D2</b> (DCC) og <b>D13</b> (config-LED) er reservert på alle kort. Config-knappen (<b>A7</b>) finnes
-bare på Nano: et DCCnext har ingen config-knapp.
+<p><b>D2</b> (DCC-inngang og config-knapp) og <b>D13</b> (config-LED) er reservert på alle kort.
 Dimming (PWM) virker på D3, D5, D6, D9, D10 og D11 (DCCnext P1, P3, P4, P7, P8 og P9).</p>
 <p>En fil som er laget for en annen korttype, beholder alle pinnene sine. En pinne som dette kortet ikke har, vises med en advarsel,
 som enhver annen pinne som ikke kan brukes: velg en annen pinne for den.</p>

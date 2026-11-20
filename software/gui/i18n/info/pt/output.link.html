@@ -1,0 +1,23 @@
+<h3>Ligação entre placas (TX): comandos para outras placas</h3>
+<p>Várias placas trabalham em conjunto por uma cadeia de fios: <b>TX (D1)</b> de uma placa a <b>RX (D0)</b> da
+seguinte, com um GND comum. Uma placa que recebe um comando passa-o logo adiante e executa-o como se viesse da central
+DCC: toda a entrada com esse <b>endereço DCC</b> reage como de costume. As outras placas não precisam de nenhuma definição:
+configure-as como um descodificador DCC normal.</p>
+<pre>  placa 1 TX (D1) ----&gt; placa 2 RX (D0)
+  placa 2 TX (D1) ----&gt; placa 3 RX (D0)
+  GND -------------------- GND</pre>
+<ul>
+<li><b>Basta uma saída de ligação entre placas.</b> Ponha-a num itinerário; cada passo escolhe o <b>endereço</b>
+(1-255) e <b>Desviado</b> ou <b>Directo</b> (um comando de agulha), ou <b>Valor</b> 0-255 (DCC alargado: um aspecto, um ângulo
+de servo, PWM, uma faixa de som).</li>
+<li>Exemplo: um itinerário na placa 1 com os passos <i>#5 directo</i>, <i>#9 desviado</i>, <i>#20 valor 1</i>. Na placa 2,
+uma entrada absoluta com endereço DCC 5 põe o seu servo directo, uma com endereço 9 desviado, e um sinal com endereço 20
+mostra o aspecto 1.</li>
+<li>O tempo de espera entre os passos é também o tempo entre os comandos, por isso as agulhas movem-se uma a seguir à outra.</li>
+<li><b>Endereço próprio</b>: quando é comandada directamente (uma entrada de comutar ou absoluta, DCC), a saída envia o seu próprio
+endereço, desviado ou directo. Deixe em <i>nenhum</i> se só a usar em itinerários.</li>
+<li><b>Só sem PC.</b> Com o programa ligado, a linha série é do programa: nada é enviado nem passado adiante.
+Na maqueta, a ligação arranca 5 segundos após ligar a alimentação.</li>
+<li>Um DFPlayer pode ficar na mesma linha TX; ignora estes comandos.</li>
+<li>Não num <b>DCCnext</b>: não tem D1 nos seus terminais.</li>
+</ul>

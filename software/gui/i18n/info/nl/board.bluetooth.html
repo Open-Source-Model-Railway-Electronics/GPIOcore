@@ -25,12 +25,9 @@ Windows maakt er een COM-poort voor aan (soms twee: gebruik de "uitgaande"). Kie
 </ol>
 <p>Lukt het niet? Dan staat de module niet in AT-modus (snel knipperen = normale modus), klopt de bedrading niet, of
 ontbreekt de diode of zit hij verkeerd om. Andere modules (HC-06, sommige klonen) kennen deze commando's niet.</p>
-<p><b>Verbinden via Bluetooth</b>: het openen van de Bluetooth-COM-poort reset het board niet. Als niets op het
-board D0 of D1 gebruikt, blijft de seriële poort open en verbindt het programma gewoon. Als er wel iets gebruik van
-maakt (een ingang of uitgang op D0/D1, of een geluidseffect), sluit het board zijn seriële poort 5 seconden na het
-opstarten (D0/D1 worden gewone pinnen). Klik je dan op <i>Verbinden</i>, dan toont het programma
-<i>"Wachten op het board &mdash; druk kort op de config-knop"</i>. Druk <b>kort</b> op de config-knop (A7):
-het board opent zijn seriële poort weer 5 seconden en meldt zich, en het programma verbindt.
+<p><b>Verbinden via Bluetooth</b>: het openen van de Bluetooth-COM-poort reset het board niet, en 5 seconden na het
+opstarten is de seriële lijn de boardkoppeling geworden. Als je dus op <i>Verbinden</i> klikt, toont het programma
+<i>"Wachten op het board &mdash; druk kort op de config-knop"</i>. Druk <b>kort</b> op de config-knop (D2):
+het board geeft de lijn 5 seconden terug aan het programma en meldt zich, en het programma verbindt.
 Het programma wacht daar maximaal 30 seconden op.</p>
-<p>Zolang het programma verbonden is, horen D0 en D1 bij de seriële poort: gebruik ze niet voor ingangen of uitgangen
-op een board met een HC-05.</p>
+<p>Een board met een HC-05 kan de boardkoppeling niet tegelijk gebruiken: beide hebben D0 / D1 nodig.</p>

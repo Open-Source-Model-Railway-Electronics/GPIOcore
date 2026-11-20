@@ -1,9 +1,8 @@
-<h3>Tlačítko konfigurace (A7) a nastavení serv ovladačem</h3>
+<h3>Tlačítko konfigurace (D2) a nastavení serv ovladačem</h3>
 <p>Bez počítače můžete nastavit krajní polohy serv tlačítkem konfigurace a vaším DCC ovladačem.</p>
-<p><b>Poznámka:</b> tlačítko konfigurace (A7) existuje jen u Arduina <b>Nano</b>. DCCnext nemá
-A7, takže nemá ani tlačítko konfigurace: krajní polohy serv nastavte v programu (nebo ovládáním z telefonu).</p>
-<p><b>Zapojení:</b> tlačítko z <b>A7</b> na <b>GND</b> a rezistor 10 k&Omega; z A7 na <b>5 V</b>
-(A7 nemá vestavěný pull-up). LED s rezistorem na <b>D13</b> ukazuje režim (většina Arduin ji už má).</p>
+<p><b>Zapojení:</b> tlačítko z <b>D2</b> na <b>GND</b>. D2 je zároveň DCC vstup: DCC neustále mění jeho úroveň,
+stisknuté tlačítko ho drží v nízké úrovni a právě to deska hledá (1 ms nízká úroveň bez přerušení). LED
+s rezistorem na <b>D13</b> ukazuje režim (většina Arduin ji už má).</p>
 <ol>
 <li>Držte tlačítko konfigurace <b>2 sekundy</b>: LED začne blikat. Jste v režimu konfigurace.</li>
 <li>Stiskněte ho <b>krátce</b>: zvolí se další servo a přestaví se, abyste viděli, které to je. Dalším stiskem
@@ -19,10 +18,9 @@ přejdete na další servo.</li>
 <li>Znovu držte tlačítko konfigurace 2 sekundy: LED trvale svítí. Zpět v normálním provozu.</li>
 </ol>
 <p>Nové polohy se uloží okamžitě. Když později připojíte program, načte je zpět.</p>
-<p><b>Krátký stisk mimo režim konfigurace = režim GUI.</b> 5 sekund po startu deska zavře svůj sériový port,
-pokud se nepřipojil žádný program a konfigurace používá D0 nebo D1 (stanou se z nich běžné piny; jinak port zůstane
-otevřený). <b>Krátký</b> stisk tlačítka konfigurace (LED svítí trvale, mimo
-režim konfigurace) ho znovu otevře na 5 sekund a deska se ohlásí, takže se program může připojit bez
+<p><b>Krátký stisk mimo režim konfigurace = režim GUI.</b> 5 sekund po startu bez programu se sériová linka
+stane propojením desek. <b>Krátký</b> stisk tlačítka konfigurace (LED svítí trvale, mimo
+režim konfigurace) ji na 5 sekund vrátí programu a deska se ohlásí, takže se program může připojit bez
 resetu, například přes Bluetooth (viz <i>Nápověda &gt; Bluetooth (HC-05)</i>). Když program zobrazí <i>„Čekám na
 desku“</i>, je to ten správný okamžik ho stisknout.</p>
-<p>Proto <b>D13</b> a <b>A7</b> nelze nikdy použít pro vstupy ani výstupy.</p>
+<p>Proto <b>D2</b> a <b>D13</b> nelze nikdy použít pro vstupy ani výstupy.</p>

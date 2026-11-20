@@ -1,10 +1,8 @@
-<h3>Pulsante di config (A7) e taratura dei servo con il regolatore</h3>
+<h3>Pulsante di config (D2) e taratura dei servo con il regolatore</h3>
 <p>Senza computer puoi impostare le posizioni finali dei servo con il pulsante di config e il tuo regolatore DCC.</p>
-<p><b>Nota:</b> il pulsante di config (A7) esiste solo su un Arduino <b>Nano</b>. Un DCCnext non ha
-A7, quindi non ha pulsante di config: imposta le posizioni finali dei servo nel programma (o con il telecomando dal
-telefono).</p>
-<p><b>Cablaggio:</b> un pulsante da <b>A7</b> a <b>GND</b>, più una resistenza da 10 k&Omega; da A7 a <b>5 V</b>
-(A7 non ha pull-up interno). Un LED con resistenza su <b>D13</b> mostra la modalità (la maggior parte degli Arduino ne ha già uno).</p>
+<p><b>Cablaggio:</b> un pulsante da <b>D2</b> a <b>GND</b>. D2 è anche l'ingresso DCC: il DCC cambia livello in continuazione,
+un pulsante premuto lo tiene basso, ed è ciò che la scheda cerca (1 ms basso senza interruzione). Un LED con resistenza
+su <b>D13</b> mostra la modalità (la maggior parte degli Arduino ne ha già uno).</p>
 <ol>
 <li>Tieni premuto il pulsante di config per <b>2 secondi</b>: il LED inizia a lampeggiare. Sei nella modalità di configurazione.</li>
 <li>Premilo <b>brevemente</b>: viene selezionato il servo successivo, che si sposta, così vedi quale è. Premi di nuovo
@@ -20,10 +18,9 @@ per il servo successivo.</li>
 <li>Tieni di nuovo premuto il pulsante di config per 2 secondi: il LED resta acceso. Si torna al funzionamento normale.</li>
 </ol>
 <p>Le nuove posizioni vengono memorizzate subito. Quando in seguito colleghi il programma, le rilegge.</p>
-<p><b>Pressione breve fuori dalla modalità di configurazione = modalità GUI.</b> 5 secondi dopo l'avvio la scheda chiude
-la sua porta seriale se nessun programma si è collegato e la configurazione usa D0 o D1 (diventano pin normali;
-altrimenti la porta resta aperta). Una pressione <b>breve</b> sul pulsante di config (LED fisso, non in modalità di
-configurazione) la riapre per 5 secondi e la scheda si annuncia, così il programma può collegarsi senza reset, per
+<p><b>Pressione breve fuori dalla modalità di configurazione = modalità GUI.</b> 5 secondi dopo l'avvio senza programma, la
+linea seriale diventa il collegamento tra schede. Una pressione <b>breve</b> sul pulsante di config (LED fisso, non in modalità di
+configurazione) la restituisce al programma per 5 secondi e la scheda si annuncia, così il programma può collegarsi senza reset, per
 esempio via Bluetooth (vedi <i>Aiuto &gt; Bluetooth (HC-05)</i>). Quando il programma dice <i>"In attesa della
 scheda"</i>, è il momento di premerlo.</p>
-<p>Per questo <b>D13</b> e <b>A7</b> non possono mai essere usati per ingressi o uscite.</p>
+<p>Per questo <b>D2</b> e <b>D13</b> non possono mai essere usati per ingressi o uscite.</p>

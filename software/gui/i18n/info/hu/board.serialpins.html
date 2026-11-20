@@ -1,13 +1,12 @@
-<h3>A D0 és D1 láb</h3>
-<p>A D0 és a D1 azok a vezetékek, amelyeken az Arduino USB-n keresztül kommunikál ezzel a programmal. Az újabb panelek ennek ellenére
-használhatják őket a terepasztalhoz:</p>
+<h3>D0 és D1: a soros vonal</h3>
+<p>A D0 (RX) és a D1 (TX) soha nem bemeneti vagy kimeneti láb: ezek a panel soros vonala. Négy dolog használhatja:
+ez a program (USB-n vagy Bluetooth-on át), a <b>panelkapcsolat</b> más panelek felé, egy <b>DFPlayer</b> a TX-en és egy
+<b>HC-05</b> Bluetooth-modul.</p>
 <ul>
-<li>Induláskor a panel <b>5 másodpercig</b> vár erre a programra.</li>
-<li>Ha a program csatlakozik, a D0 / D1 a konfigurálás idejére az USB számára foglalt marad. Az ezekre a lábakra kötött dolgok
-ekkor <b>nem</b> működnek.</li>
-<li>Ha semmi sem csatlakozik (normál üzem a terepasztalon), a D0 / D1 normál lábbá válik. Ha semmi sincs a
-D0 / D1-en (sem bemenet, sem kimenet, sem hangeffekt), USB-vezeték marad: a program bármikor csatlakozhat.</li>
-<li>A konfiggomb rövid megnyomása (Nano) 5 másodpercre újra USB-vezetékké teszi őket, így a program
-újraindítás nélkül csatlakozhat.</li>
+<li>Induláskor a panel <b>5 másodpercig</b> vár erre a programra. Ha a program csatlakozik, a vonal a konfigurálás
+idejére a programé: a panelkapcsolat és a DFPlayer ekkor nem csinál semmit.</li>
+<li>Ha semmi sem csatlakozik (normál üzem a terepasztalon), a vonal a <b>panelkapcsolattá</b> válik (9600 baud): ami
+az RX-en bejön, azt továbbadja a TX-re, és DCC-parancsként végrehajtja; a panelkapcsolat-kimenetek és a DFPlayer a TX-et használják.</li>
+<li>Az USB-port megnyitása újraindítja a panelt, így a program ezen az 5 másodpercen belül csatlakozik. Bluetooth-on
+nincs újraindítás: nyomja meg a konfiggombot <b>röviden</b>, és a vonal újra 5 másodpercre a programé.</li>
 </ul>
-<p>Egyszerű dolgokra használja őket, például LED-ekre. Kerülje a nagy terhelést a D0-n: zavarhatja az új firmware feltöltését.</p>
