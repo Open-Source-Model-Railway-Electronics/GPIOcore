@@ -498,7 +498,7 @@ private slots:
         QVERIFY(!pinReservedReason(13).isEmpty());          // D13 is not on a DCCnext
         boardOptions().dccNext = false;
         QVERIFY(!pinReservedReason(13).isEmpty());          // config LED on every board
-        QVERIFY(!pinReservedReason(21).isEmpty());          // A7 = config button
+        QVERIFY(pinReservedReason(21).isEmpty());           // A7: an analog input (the config button is on D2)
         boardOptions().serialPinsUsable = false;
         QVERIFY(!pinReservedReason(0).isEmpty());
         boardOptions().serialPinsUsable = true;
@@ -539,10 +539,10 @@ private slots:
         QJsonObject j = BoardSettings().toJson();
         j["type"] = QStringLiteral("uno");
         QCOMPARE(int(BoardSettings::fromJson(j).type), int(BoardNano));
-        // Nano: A6 analog input, A7 the config button
+        // Nano: A6 and A7 analog inputs (the config button is on D2)
         setBoardType(BoardNano);
         QVERIFY(pinReservedReason(20).isEmpty());
-        QCOMPARE(pinReservedReason(21), QStringLiteral("config button"));
+        QVERIFY(pinReservedReason(21).isEmpty());
         QCOMPARE(pinName(14), QStringLiteral("A0"));
     }
 
@@ -780,9 +780,9 @@ private slots:
         QVERIFY(!sim.configSession());
 
         auto shortPress = [&sim] {
-            sim.setAnalogValue(7, 0);
+            sim.setPinLevel(2, false);
             QTest::qWait(150);
-            sim.setAnalogValue(7, AnalogMaxValue);
+            sim.setPinLevel(2, true);
         };
         shortPress();
         QByteArray rx;
@@ -828,9 +828,9 @@ private slots:
         QVERIFY(link.openDevice(sim, false, &err));
         QVERIFY(waiting.wait(3000));
         QVERIFY(link.isWaitingForBoard() && !link.isReady());
-        sim->setAnalogValue(7, 0);                           // short press on the config button
+        sim->setPinLevel(2, false);                           // short press on the config button
         QTest::qWait(150);
-        sim->setAnalogValue(7, AnalogMaxValue);
+        sim->setPinLevel(2, true);
         QTRY_VERIFY(link.caps().known);
         QVERIFY(link.isReady() && !link.isWaitingForBoard());
         QVERIFY(link.caps().bluetooth);
@@ -849,9 +849,9 @@ private slots:
         QVERIFY(!sim.serialIsIO());                          // the window runs
         sim.advanceClock(6000);
         QTRY_VERIFY(sim.serialIsIO());                       // board link
-        sim.setAnalogValue(7, 0);                            // short press
+        sim.setPinLevel(2, false);                            // short press
         QTest::qWait(150);
-        sim.setAnalogValue(7, AnalogMaxValue);
+        sim.setPinLevel(2, true);
         QTRY_VERIFY(!sim.serialIsIO());
         QByteArray announce;
         QTRY_VERIFY((announce += sim.readAll()).size() >= 7);

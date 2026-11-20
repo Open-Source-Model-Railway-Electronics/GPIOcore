@@ -136,10 +136,10 @@ void setup()
 }
 
 // ── Config mode ───────────────────────────────────────────────────────────────
-// Hold A7 for 2 s: config mode on (D13 blinks). A short press selects the next servo and toggles it,
+// Hold the config button (D2) for 2 s: config mode on (D13 blinks). A short press selects the next servo and toggles it,
 // so you can see which one it is. With loco address 9999 on the throttle the selected servo is taught:
 // speed knob + direction = move it, F1 = store as curved, F2 = store as straight, F3 = toggle, F4 = invert frog relays, F5 = next.
-// Hold A7 for 2 s again: back to normal (D13 on).
+// Hold it for 2 s again: back to normal (D13 on).
 // A short press outside config mode is the GUI mode: Serial is opened again for 5 s and the board announces itself.
 uint8_t  configMode ;
 int8_t   selServo = -1 ;
@@ -162,13 +162,22 @@ void selectNextServo()
     selServo = -1 ;                                             // no servo at all
 }
 
+// D2 is the DCC input and the config button. DCC changes its level every 58-116 us; the button holds it
+// at GND. Pressed = LOW for 1 ms without a single HIGH sample.
+uint8_t configButtonDown()
+{
+    for( uint8_t i = 0 ; i < 20 ; i ++ )
+    {
+        if( digitalRead( CONFIG_BUTTON_PIN ) ) return 0 ;
+        delayMicroseconds( 50 ) ;
+    }
+    return 1 ;
+}
+
 void configUpdate()                                             // every 50 ms
 {
-    static uint8_t held, longDone, blink, down ;
-    int level = analogRead( A7 ) ;                             // external pull-up, button to GND
-    if( level < 200 ) down = 1 ;                               // hysteresis: a floating pin between
-    if( level > 800 ) down = 0 ;                               // 200 and 800 does not count as a press
-    if( down )
+    static uint8_t held, longDone, blink ;
+    if( configButtonDown() )
     {
         if( held < 255 ) held ++ ;
         if( held == 40 && !longDone )                           // 40 x 50 ms = 2 s

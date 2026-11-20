@@ -762,8 +762,8 @@ QString pinReservedReason(quint8 pin)
     case 1:  return b.serialPinsUsable ? QString() : trGpio(QT_TRANSLATE_NOOP("Gpio", "Serial TX (GUI link)"));
     case 2:  return trGpio(QT_TRANSLATE_NOOP("Gpio", "DCC input"));
     case 13: return trGpio(QT_TRANSLATE_NOOP("Gpio", "config LED"));
-    case 20: return b.type == BoardNano ? QString() : trGpio(QT_TRANSLATE_NOOP("Gpio", "only on an Arduino Nano"));
-    case 21: return trGpio(QT_TRANSLATE_NOOP("Gpio", "config button"));
+    case 20:
+    case 21: return b.type == BoardNano ? QString() : trGpio(QT_TRANSLATE_NOOP("Gpio", "only on an Arduino Nano"));
     }
     return QString();
 }

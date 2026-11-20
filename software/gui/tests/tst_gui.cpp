@@ -1553,7 +1553,7 @@ private slots:
         QVERIFY(!items(inPin).contains(20) && !items(inPin).contains(21) && items(inPin).contains(13));
         QVERIFY(pinA->itemText(pinA->findData(3)).startsWith(QLatin1String("D3")));
         chooseBoardType(w, BoardNano);
-        QVERIFY(items(inPin).contains(20) && !items(inPin).contains(21));
+        QVERIFY(items(inPin).contains(20) && items(inPin).contains(21));   // A6 and A7 (button on D2)
         QCOMPARE(Ui::outputSummaryPins(view->board().outputs[0]), QStringLiteral("D4"));
     }
 
@@ -2279,9 +2279,9 @@ private slots:
         QVERIFY(link->openDevice(sim, false, &err));
         QTRY_VERIFY(link->isWaitingForBoard());
         QVERIFY(visibleLabel(&w, QStringLiteral("press its config button briefly")));
-        sim->setAnalogValue(7, 0);
+        sim->setPinLevel(2, false);
         QTest::qWait(150);
-        sim->setAnalogValue(7, AnalogMaxValue);
+        sim->setPinLevel(2, true);
         QTRY_VERIFY(link->isReady() && link->caps().known);
         QVERIFY(!visibleLabel(&w, QStringLiteral("press its config button briefly")));
         QVERIFY(popups.texts.isEmpty());                     // no "no board" message

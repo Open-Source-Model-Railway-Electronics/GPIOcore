@@ -26,7 +26,7 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
         pin = inputPinNumber( pin ) ;
     }
     if( pin < 2 ) return false ;                    // D0/D1: the UART (GUI, board link, DFPlayer)
-    if( isReservedPin( pin ) ) return false ;       // D2 = DCC, D13 = config LED, A7 = config button
+    if( isReservedPin( pin ) ) return false ;       // D2 = DCC and the config button, D13 = config LED
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type <= BOARD_NANO ;   // A6/A7: analog inputs, Nano only (type 0 Uno = Nano)
     return true ;
 }

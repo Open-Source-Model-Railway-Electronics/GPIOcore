@@ -34,8 +34,8 @@ const uint16_t DCC_LOCKOUT_MS = 500 ;
 
 // ── Board pins with a fixed job: never an input or output ──────────────────────
 const uint8_t  CONFIG_LED_PIN    = 13 ;  // D13: on = normal, blinking = config mode
-const uint8_t  CONFIG_BUTTON_PIN = 21 ;  // A7: config button, analog input with an external pull-up
-inline bool isReservedPin( uint8_t pin ) { return pin == 2 || pin == CONFIG_LED_PIN || pin == CONFIG_BUTTON_PIN ; }
+const uint8_t  CONFIG_BUTTON_PIN = 2 ;   // D2: the DCC input is also the config button (a button to GND)
+inline bool isReservedPin( uint8_t pin ) { return pin == 2 || pin == CONFIG_LED_PIN ; }   // A7 is a normal analog input
 
 
 // ── Sizes ─────────────────────────────────────────────────────────────────────

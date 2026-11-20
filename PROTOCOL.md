@@ -443,7 +443,9 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
   `pinMode` for newly configured pins; an output on D0/D1 is not stopped during the
   serial window.
 
-## 10. Config button (A7), config LED (D13) and teaching servos (firmware, 2026-11-13)
+## 10. Config button (D2, before: A7), config LED (D13) and teaching servos (firmware, 2026-11-13)
+
+**Since 2026-11-20 the button is on D2**, the DCC input: a button to GND holds D2 LOW, DCC changes the level every 58-116 µs. The firmware counts a press when D2 is LOW for 1 ms without one HIGH sample (sampled every 50 ms). A7 is a normal analog input again (Nano). Where this section says A7, read D2.
 
 - **A7** = config button: push button to GND, with an **external** 10 kΩ pull-up to 5 V (A7 has no internal
   pull-up). The firmware reads it with `analogRead()` with hysteresis: pressed below 200, released above 800.
