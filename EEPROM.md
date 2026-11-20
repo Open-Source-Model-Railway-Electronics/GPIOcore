@@ -9,7 +9,7 @@ Source: `software/GPIOcore/routes.h` (`EE_*` constants).
 
 | Address (dec) | Address (hex) | Bytes | Contents |
 |---|---|---|---|
-| 0 – 2 | 0x000 – 0x002 | 3 | Magic `'G'` `'2'`, layout version `2` (since the light effect type; 1 = one type per light effect). If this is missing or another version, the board gets default values (delay 0.3 s, Nano, timing off, interlocking auto) |
+| 0 – 2 | 0x000 – 0x002 | 3 | Magic `'G'` `'2'`, layout version `3` (3: steps with an extra byte; 2: the light effect type; 1: one type per light effect). If this is missing or another version, the board gets default values (delay 0.3 s, Nano, timing off, interlocking auto) |
 | 3 | 0x003 | 1 | Board type: 0 Uno, 1 Nano, 2 DCCnext, 3 Jack of all trades |
 | 4 | 0x004 | 1 | Board flags: bit0 reserved (was recorder), bit1 timing per step, bit2-3 interlocking (0 off, 1 on, 2 auto), bit4-7 block signal blink rate x 0.25 Hz (0 = 1 Hz) |
 | 5 | 0x005 | 1 | Fixed wait time after a route step when timing is off, × 0.1 s |
@@ -40,12 +40,13 @@ used for an analog input. A `static_assert` keeps the record at 4 B.
 - Route *r* starts at `262 + (sum of the steps of route 0 … r-1) × step size`. So there are no fixed
   places per route; a route costs exactly as many steps as it has.
 - **Step size** follows the board flag *timing*:
-  - **off** (default): **2 B** — `id | raw`, `value`;
-  - **on**: **4 B** — `id | raw`, `value`, wait time low, wait time high (14 bit × 0.1 s).
+  - **off** (default): **3 B** — `id | raw`, `value`, `extra` (board link target address, else 0);
+  - **on**: **5 B** — `id | raw`, `value`, wait time low, wait time high (14 bit × 0.1 s), `extra`.
+  (Layout 3; before that 2 / 4 B without the extra byte.) Pool 762 B: 254 steps (timing off), 152 (on).
 - If a route gets longer or shorter, the routes behind it shift. Switching timing on/off converts the whole pool.
 - The slot of a **toggle or absolute input** is normally empty. With *own values* it contains 2 steps with
   bit 5 (`STEP_VALUES`, 0x20) in byte 0: the value for state 0 and for state 1 (`PROTOCOL.md` §4). Byte 0 is
-  stored unchanged, so the marker also stays when timing is off (2 B per step).
+  stored unchanged, so the marker also stays when timing is off (3 B per step).
 
 | Timing | Step | Fits in 762 B | 16 routes × 16 steps (256) |
 |---|---|---|---|

@@ -68,7 +68,7 @@ int fwOutputState(int index, uint8_t *out)
     return n;
 }
 
-// <index> <addr H> <addr L> <pin byte> <type> <output> <level> <steps> <step 4 bytes ...>
+// <index> <addr H> <addr L> <pin byte> <type> <output> <level> <steps> <step 5 bytes ...>
 int fwInputState(int index, uint8_t *out)
 {
     const InputSettings &s = input[index].eedata;
@@ -84,7 +84,7 @@ int fwInputState(int index, uint8_t *out)
     for (uint8_t i = 0; i < routeCount[index]; ++i)
     {
         readStep(uint8_t(index), i, out + n);
-        n += 4;
+        n += STEP_BYTES;
     }
     return n;
 }

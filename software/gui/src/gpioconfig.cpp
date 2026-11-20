@@ -25,9 +25,10 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
     { "lightEffect",     QT_TRANSLATE_NOOP("Gpio", "Light effect"),      2, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "A light effect: swing light, fireplace, TL tube, welder or photographer.") },
     { "boardLink",       QT_TRANSLATE_NOOP("Gpio", "Board link (TX)"),   1, false, false, ParamKind::Link,       0,
-      QT_TRANSLATE_NOOP("Gpio", "Sends commands to the next board over TX (D1), board to board. Basic: a route step "
-                                "sets a turnout address on the boards down the line, straight or curved. Extended: a "
-                                "value (servo angle, aspect, PWM, track) to one address. Only without a PC connected.") },
+      QT_TRANSLATE_NOOP("Gpio", "Sends commands to the next boards over TX (D1), board to board. Each route step chooses "
+                                "the address: curved or straight (a turnout command), or a value 0-255 (DCC extended: "
+                                "aspect, servo angle, PWM, track). Switched on / off it sends its own address, if set. "
+                                "Only without a PC connected.") },
     { "unused8",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
     { "unused9",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
@@ -286,11 +287,12 @@ bool decodeOutput(const QByteArray &p, int &index, OutputConfig &c)
 QByteArray encodeStep(const RouteStep &s)
 {
     const quint16 d = qMin<quint16>(s.delay, MaxStepDelay);
-    QByteArray b(4, '\0');
+    QByteArray b(StepBytes, '\0');
     b[0] = char((s.output & 0x0F) | (s.raw ? 0x10 : 0) | (s.values ? 0x20 : 0));
     b[1] = char(s.value);
     b[2] = char(d & 0xFF);
     b[3] = char((d >> 8) & 0x3F);
+    b[4] = char(s.extra);
     return b;
 }
 
@@ -303,6 +305,7 @@ RouteStep decodeStep(const char *bytes)
     s.values = (b[0] & 0x20) != 0;
     s.value  = b[1];
     s.delay  = quint16(b[2] | (b[3] & 0x3F) << 8);
+    s.extra  = b[4];
     return s;
 }
 
@@ -314,14 +317,14 @@ StepKind stepKind(quint8 outputType)
     case FourToneSignal: return StepKind::Aspect;
     case Pwm:            return StepKind::PwmValue;
     case SoundEffect:    return StepKind::Track;
-    case BoardLink:      return StepKind::LinkTurnout;
+    case BoardLink:      return StepKind::Link;
     }
     return StepKind::State;
 }
 
 StepKind stepKind(const OutputConfig &o)
 {
-    return o.type == BoardLink && o.linkExtended() ? StepKind::LinkValue : stepKind(o.type);
+    return stepKind(o.type);
 }
 
 static RouteStep stepFor(int output, StepKind kind)
@@ -333,8 +336,7 @@ static RouteStep stepFor(int output, StepKind kind)
     case StepKind::Aspect:      s.raw = true;  s.value = 0;   break;
     case StepKind::PwmValue:    s.raw = true;  s.value = 255; break;
     case StepKind::Track:       s.raw = true;  s.value = 1;   break;
-    case StepKind::LinkTurnout: s.raw = true;  s.value = linkStepValue(1, true); break;
-    case StepKind::LinkValue:   s.raw = true;  s.value = 0;   break;
+    case StepKind::Link:        s.raw = false; s.value = 1;   s.extra = 1; break;   // address 1 straight
     default:                    s.raw = false; s.value = 1;   break;
     }
     return s;
@@ -386,8 +388,6 @@ void InputConfig::setCustomValues(bool on, quint8 outputType)
             s.value = quint8(k);                     // curved / straight, as without custom values
         else if (k == 0 && (stepKind(outputType) == StepKind::PwmValue || stepKind(outputType) == StepKind::Track))
             s.value = 0;                             // off: dark / stop
-        else if (stepKind(outputType) == StepKind::LinkTurnout)
-            s.value = linkStepValue(1, k == 1);      // address 1: off = curved, on = straight
         s.delay  = 0;
         s.values = true;
         route.append(s);
@@ -471,6 +471,7 @@ QJsonObject InputConfig::toJson() const
             QJsonObject v;
             v["value"] = int(s.value);
             v["raw"]   = s.raw;
+            if (s.extra) v["address"] = int(s.extra);   // board link
             values.append(v);
         }
         o["values"] = values;
@@ -483,6 +484,7 @@ QJsonObject InputConfig::toJson() const
         step["value"]  = int(s.value);
         step["raw"]    = s.raw;
         step["delay"]  = int(s.delay);       // 0.1 s units
+        if (s.extra) step["address"] = int(s.extra);   // board link: the target address
         steps.append(step);
     }
     o["route"] = steps;
@@ -518,6 +520,7 @@ InputConfig InputConfig::fromJson(const QJsonObject &o)
         s.value  = quint8(step.contains("value") ? step["value"].toInt() : step["state"].toInt());  // "state": older files
         s.raw    = step["raw"].toBool(false);
         s.delay  = quint16(step.contains("delay") ? step["delay"].toInt() : DefaultStepDelay);
+        s.extra  = quint8(step["address"].toInt());
         c.route.append(s);
     }
     const QJsonArray values = o["values"].toArray();
@@ -530,6 +533,7 @@ InputConfig InputConfig::fromJson(const QJsonObject &o)
             s.output = c.outputId;
             s.value  = quint8(v.toObject()["value"].toInt());
             s.raw    = v.toObject()["raw"].toBool(false);
+            s.extra  = quint8(v.toObject()["address"].toInt());
             s.delay  = 0;
             s.values = true;
             c.route.append(s);

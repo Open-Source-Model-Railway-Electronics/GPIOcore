@@ -179,7 +179,7 @@ void DeviceLink::writeRoute(int route, const QVector<Gpio::RouteStep> &steps)
     {
         const int n = qMin(RouteChunkSteps, total - first);
         QByteArray p;
-        p.append(char(4 + 4 * n));      // extended length, includes itself
+        p.append(char(4 + Gpio::StepBytes * n));   // extended length, includes itself
         p.append(char(route));
         p.append(char(total));
         p.append(char(first));
@@ -620,11 +620,11 @@ void DeviceLink::handleFrame(const Frame &f)
             const int route = m_current.index;
             const int total = qMin(int(f.byte(2)), Gpio::MaxRouteSteps);
             const int first = f.byte(3);
-            const int n     = (f.payload.size() - 4) / 4;
+            const int n     = (f.payload.size() - 4) / Gpio::StepBytes;
             if (first == 0)
                 m_routeBuf[route].clear();
             for (int i = 0; i < n && m_routeBuf[route].size() < total; ++i)
-                m_routeBuf[route].append(Gpio::decodeStep(f.payload.constData() + 4 + 4 * i));
+                m_routeBuf[route].append(Gpio::decodeStep(f.payload.constData() + 4 + Gpio::StepBytes * i));
             complete(true);
             if (m_routeBuf[route].size() < total && n > 0)
             {

@@ -298,7 +298,7 @@ configuration uses D0/D1).
 
 ## 4. Routes
 
-### Step = 4 bytes
+### Step = 5 bytes (firmware 2026-11-20, EEPROM layout 3)
 
 ```text
 byte 0 : bits 0-3 output id (0-15) | bit 4 raw value | bit 5 STEP_VALUES (custom value) | bits 6-7 reserved (0)
@@ -306,18 +306,22 @@ byte 1 : value   raw = 0: state 0 = curved, 1 = straight
                  raw = 1: aspect 0-255 (signal), angle 10-170 (servo), PWM 0-255, track 0-255 (sound, 0 = stop)
 byte 2 : wait time bits 0-7
 byte 3 : bits 0-5 = wait time bits 8-13 | bits 6-7 reserved (0)
+byte 4 : extra   board link output: the target address 1-255 (0 = the output's own address); otherwise 0
 wait   : 14 bits of 0.1 s = 0 .. 1638.3 s (~27 min), time after this step before the next one
 ```
 
-Example: output 13, aspect 200, wait time 1638.3 s → `1D C8 FF 3F`.
+Example: output 13, aspect 200, wait time 1638.3 s, extra 42 → `1D C8 FF 3F 2A`.
+
+A **board link** step (§12): raw = 0 sends a basic frame (curved / straight) to the address in byte 4,
+raw = 1 an extended frame with that value.
 
 - **The GUI chooses the value kind per output type.** Turnouts, lights and relays get curved/straight.
   A 4-aspect signal gets an aspect number. A servo gets curved/straight **or** an angle, and may
   occur several times in one route (intermediate positions). PWM gets a value.
 - **New steps** get a 0.3 s wait time.
-- **Timing off** (board setting, §9): on the wire a step stays 4 bytes, but the decoder stores
-  only byte 0 and 1 (2 B per step) and after each step waits the fixed `delay` from the board settings.
-  When read back, byte 2 and 3 are 0. The GUI hides the wait time column.
+- **Timing off** (board setting, §9): on the wire a step stays 5 bytes, but the decoder stores
+  only byte 0, 1 and 4 (3 B per step) and after each step waits the fixed `delay` from the board settings.
+  When read back, byte 2 and 3 are 0. The GUI hides the wait time column. Timing on: 5 B per step.
 - **The decoder executes a step like this:**
 
 ```cpp
@@ -342,11 +346,11 @@ of the input there); the wait time does not count.
 - For a direct input without own values the GUI sends an **empty route**, so that the slot is empty. The 2
   steps count towards the route pool. In the board file they are stored as `"values": [ {value, raw}, {value, raw} ]`.
 
-### Transfer in pieces of at most 7 steps
+### Transfer in pieces of at most 5 steps
 
 ```text
 GET_ROUTE  82 <route> <first>
-SET_ROUTE  8F <len = 4 + 4n> <route> <total> <first> <step ...>     (also the reply to GET_ROUTE)
+SET_ROUTE  8F <len = 4 + 5n> <route> <total> <first> <step ...>     (also the reply to GET_ROUTE)
 ```
 
 - A route of 16 steps goes in three messages: 7 + 7 + 2. An empty route is one message with
@@ -423,7 +427,7 @@ delay  : fixed wait after each route step when timing is off, x 0.1 s (default 3
   Nano's pin rules to it.
 - **Recorder.** Removed on 2026-11-16 (it needed an external I2C EEPROM on A4/A5, ±4.6 KB flash and ±250 B RAM).
   A4/A5 are always normal pins.
-- **Switching timing on/off.** The decoder converts the stored routes (2 ↔ 4 B per step). If it does not fit
+- **Switching timing on/off.** The decoder converts the stored routes (3 ↔ 5 B per step). If it does not fit
   (timing on with too many steps), the answer is `NACK 4` and the old setting stays.
 - **Interlocking.** A route that is refused by interlocking is ignored (not put in a
   queue): this protects against a wrong button press. "Moving a turnout" = the route
@@ -522,12 +526,10 @@ Address 0 is not used. A board that receives a valid frame on RX (D0) **first pa
 `hops - 1` (not when hops is 0), then runs it like the same DCC command from the track: every input with that
 DCC address reacts as usual. A board in a chain therefore needs no setting; a ring of boards stops after 15 hops.
 
-**Board link output** (type 7, pin A = D1): `data[0]` = its own address (0 = none), `data[1]` bit0 = extended.
-
-| What reaches the output | Basic | Extended |
-|---|---|---|
-| on / off (toggle, absolute, DCC) | frame `<own address> <0/1>`, if it has one | frame `<own address> <0/1>` |
-| a value (route step, custom value, DCC extended) | bits 0-6 = address (1-127), bit 7 = straight | frame `<own address> <value>` |
+**Board link output** (type 7, pin A = D1): `data[0]` = its own address (0 = none). A route step or custom
+value has the target address in its extra byte (§4, byte 4; 0 = the own address): curved / straight sends a
+basic frame, a raw value an extended frame. Switched on / off directly (toggle, absolute, DCC) it sends a basic
+frame to its own address, if it has one. One link output can so reach every address, basic and extended.
 
 Each frame sent is also reported as `OUTPUT_EVENT` state 2 with the value. With the GUI connected the UART is
 the GUI's: nothing is sent or received on the link.

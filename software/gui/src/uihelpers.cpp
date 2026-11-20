@@ -693,13 +693,13 @@ QString stepValueText(const RouteStep &s, quint8 outputType)
 
 QString stepValueText(const RouteStep &s, const OutputConfig &output)
 {
+    if (stepKind(output) == StepKind::Link)          // ⇄5S, ⇄5C, ⇄20=120
+        return s.raw ? QStringLiteral("⇄%1=%2").arg(s.extra).arg(s.value)
+                     : QStringLiteral("⇄%1%2").arg(s.extra).arg(s.value ? QStringLiteral("S") : QStringLiteral("C"));
     if (!s.raw)
         return s.value ? QStringLiteral("S") : QStringLiteral("C");
     switch (stepKind(output))
     {
-    case StepKind::LinkTurnout:       return QStringLiteral("⇄%1%2").arg(linkStepAddress(s.value))
-                                                                   .arg(linkStepStraight(s.value) ? QStringLiteral("S") : QStringLiteral("C"));
-    case StepKind::LinkValue:         return QStringLiteral("⇄=%1").arg(s.value);
     case StepKind::ServoStateOrAngle: return QStringLiteral("%1°").arg(s.value);
     case StepKind::Aspect:            return QStringLiteral("A%1").arg(s.value);
     case StepKind::PwmValue:          return QStringLiteral("P%1").arg(s.value);

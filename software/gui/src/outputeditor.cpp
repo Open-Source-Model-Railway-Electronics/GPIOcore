@@ -369,23 +369,18 @@ void OutputEditor::buildUi()
         for (QComboBox *c : { m_blockOwn, m_blockNext })
             connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] { if (!m_loading) collect(); });
     }
-    { // board link: basic (the route step has the address) or extended (a value to its own address)
+    { // board link: the route steps choose the address; its own address is for on / off
         auto *w = new QWidget;
         auto *f = new QFormLayout(w);
-        m_linkMode = new QComboBox;
-        m_linkMode->setObjectName(QStringLiteral("linkMode"));
-        m_linkMode->addItem(tr("Basic: turnout address + position"), 0);
-        m_linkMode->addItem(tr("Extended: a value to one address"), 1);
-        auto *row = new QHBoxLayout;
-        row->addWidget(m_linkMode, 1);
-        row->addWidget(Info::button(QStringLiteral("output.link")));
-        f->addRow(tr("Sends"), row);
         m_linkAddress = makeSpin(0, 255);
         m_linkAddress->setObjectName(QStringLiteral("linkAddress"));
-        f->addRow(tr("Address"), m_linkAddress);
-        m_linkNote = new QLabel(tr("Basic: each route step chooses the address (1-127) and straight or curved; switched "
-                                   "on or off it sends this address, if set. Extended: route steps and custom values "
-                                   "send their value to this address."));
+        m_linkAddress->setSpecialValueText(tr("none"));
+        auto *row = new QHBoxLayout;
+        row->addWidget(m_linkAddress, 1);
+        row->addWidget(Info::button(QStringLiteral("output.link")));
+        f->addRow(tr("Own address"), row);
+        m_linkNote = new QLabel(tr("Each route step chooses the address (1-255): curved, straight, or a value (DCC "
+                                   "extended). Switched on or off directly, it sends its own address, if set."));
         m_linkNote->setObjectName(QStringLiteral("help"));
         m_linkNote->setWordWrap(true);
         f->addRow(m_linkNote);
@@ -475,11 +470,6 @@ void OutputEditor::buildUi()
     for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm, m_fade,
                      m_linkAddress })
         connect(s, QOverload<int>::of(&QSpinBox::valueChanged), this, onEdit);
-    connect(m_linkMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] {
-        if (m_loading) return;
-        collect();
-        refresh();                       // 'none' only for basic
-    });
 
     // live servo positions while adjusting: at most 4 per second, the newest angle always goes out
     m_liveTimer = new QTimer(this);
@@ -620,12 +610,7 @@ void OutputEditor::refresh()
 
     m_switchTime->setValue(int(qMin<quint32>(m_cfg.switchTime(), 65535)));
     if (m_cfg.type == BoardLink)
-    {
-        Ui::selectData(m_linkMode, m_cfg.linkExtended() ? 1 : 0);
         m_linkAddress->setValue(m_cfg.linkAddress());
-        m_linkAddress->setSpecialValueText(m_cfg.linkExtended() ? QString() : tr("none"));
-        m_linkAddress->setMinimum(m_cfg.linkExtended() ? 1 : 0);
-    }
     m_swingPulse->setValue(m_cfg.swingPulse());
     m_swingPause->setValue(m_cfg.swingPause());
     m_servoMin->setValue(m_cfg.servoMin());
@@ -748,7 +733,7 @@ void OutputEditor::collect()
         m_cfg.setSwing(quint16(m_swingPulse->value()), quint16(m_swingPause->value()));
         break;
     case ParamKind::Link:
-        m_cfg.data = { { quint8(m_linkAddress->value()), quint8(Ui::currentData(m_linkMode)), 0, 0 } };
+        m_cfg.data = { { quint8(m_linkAddress->value()), 0, 0, 0 } };
         break;
     case ParamKind::Servo:
         m_cfg.data[0] = quint8(m_servoMin->value());

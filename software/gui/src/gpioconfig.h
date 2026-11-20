@@ -38,11 +38,8 @@ constexpr int MaxSwingTime = 4095;   // swing on time and pause: 12 bits each, x
 
 enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, Block, Link };
 
-// Board link output, basic: a route step / custom value holds the address (1-127) and the position (bit 7 = straight)
-constexpr int MaxLinkStepAddress = 127;
-inline quint8 linkStepValue(int address, bool straight) { return quint8((address & 0x7F) | (straight ? 0x80 : 0)); }
-inline int    linkStepAddress(quint8 value)  { return value & 0x7F; }
-inline bool   linkStepStraight(quint8 value) { return value & 0x80; }
+// Board link: a route step / custom value has the target address in its extra byte (1-255)
+constexpr int MaxLinkAddress = 255;
 constexpr quint8 SoundPin = 1;   // a sound effect output always uses TX (D1)
 
 struct OutputTypeInfo
@@ -79,9 +76,8 @@ struct OutputConfig
     // union views
     quint32 switchTime() const;
     void    setSwitchTime(quint32 v);
-    // Board link: data[0] = its own address (0 = none), data[1] bit0 = extended (a value to that address)
+    // Board link: data[0] = its own address (0 = none), used when switched on / off
     quint8  linkAddress()  const { return data[0]; }
-    bool    linkExtended() const { return data[1] & 1; }
     // Light effect: data[3] = LightKind; swing: on time and pause 12 bits each in data[0..2], x 10 ms
     quint8  lightEffect() const { return data[3]; }
     void    setLightEffect(quint8 kind) { data[3] = kind; }
@@ -157,7 +153,7 @@ const InputTypeInfo &inputTypeInfo(quint8 type);
 QString inputTypeName(quint8 type);
 QString inputTypeHelp(quint8 type);
 
-// ── Route steps (4 bytes each, see PROTOCOL.md) ────────────────────────────
+// ── Route steps (5 bytes each on the wire, see PROTOCOL.md) ────────────────
 constexpr int     MaxRouteSteps    = 16;      // per route (protocol limit)
 constexpr quint16 MaxStepDelay     = 0x3FFF;  // 14 bits of 0.1 s = 1638.3 s
 constexpr quint16 DefaultStepDelay = 3;       // 0.3 s
@@ -169,18 +165,21 @@ struct RouteStep
     bool    raw    = false;                   // false: curved/straight, true: aspect / angle / PWM
     quint16 delay  = DefaultStepDelay;        // wait after this step, 0.1 s units
     bool    values = false;                   // STEP_VALUES (0x20): a custom value of a toggle / absolute input
+    quint8  extra  = 0;                       // board link: the target address (1-255); otherwise 0
 
     bool operator==(const RouteStep &o) const
-    { return output == o.output && value == o.value && raw == o.raw && delay == o.delay && values == o.values; }
+    { return output == o.output && value == o.value && raw == o.raw && delay == o.delay && values == o.values
+          && extra == o.extra; }
     bool operator!=(const RouteStep &o) const { return !(*this == o); }
 };
 
-QByteArray encodeStep(const RouteStep &s);              // 4 bytes
+constexpr int StepBytes = 5;                            // <id|flags> <value> <wait lo> <wait hi> <extra>
+QByteArray encodeStep(const RouteStep &s);              // StepBytes
 RouteStep  decodeStep(const char *bytes);
 
 // What a route step can set on an output of this type
-// Track: sound effect, 0 = stop. LinkTurnout: board link, address + position. LinkValue: extended board link, a value.
-enum class StepKind { State, ServoStateOrAngle, Aspect, PwmValue, Track, LinkTurnout, LinkValue };
+// Track: sound effect, 0 = stop. Link: board link, address + curved / straight, or address + a value (extended).
+enum class StepKind { State, ServoStateOrAngle, Aspect, PwmValue, Track, Link };
 StepKind   stepKind(quint8 outputType);
 StepKind   stepKind(const OutputConfig &o);          // tells a basic from an extended board link
 RouteStep  defaultStep(int output, quint8 outputType);

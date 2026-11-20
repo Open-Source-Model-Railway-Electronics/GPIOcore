@@ -373,9 +373,9 @@ private slots:
 
     void stepEncoding()
     {
-        RouteStep s; s.output = 13; s.value = 200; s.raw = true; s.delay = MaxStepDelay;
+        RouteStep s; s.output = 13; s.value = 200; s.raw = true; s.delay = MaxStepDelay; s.extra = 0x2A;
         const QByteArray b = encodeStep(s);
-        QCOMPARE(Proto::toHex(b), QStringLiteral("1D C8 FF 3F"));
+        QCOMPARE(Proto::toHex(b), QStringLiteral("1D C8 FF 3F 2A"));   // the extra byte last
         QVERIFY(decodeStep(b.constData()) == s);
     }
 
@@ -665,7 +665,7 @@ private slots:
         Rig r; makeRig(r);
         QCOMPARE(r.link->caps().protocol, 2);
         QCOMPARE(r.link->caps().maxRouteSteps, 16);
-        QCOMPARE(r.link->caps().stepPool, (1024 - 262) / 2);   // the EEPROM pool, timing off: 2 B per step
+        QCOMPARE(r.link->caps().stepPool, (1024 - 262) / 3);   // the EEPROM pool, timing off: 3 B per step
         QVERIFY(r.link->caps().servoLive);
         QVERIFY(r.sim->configSession());
         QCOMPARE(r.errors, 0);
@@ -1559,26 +1559,23 @@ private slots:
         sim.clearLinkSent();
     }
 
-    // A board link output sends: switched on / off its own address (basic), a route step the step's address and
-    // position (basic), or a value to its own address (extended)
+    // A board link output sends: switched on / off its own address (basic); a route step the step's address
+    // (extra byte) with curved / straight (basic) or a value (extended)
     void boardLinkSends()
     {
         SimulatedDevice sim;
         QVERIFY(sim.open(QIODevice::ReadWrite));
         linkMode(sim);
-        OutputConfig basic;
-        basic.type = BoardLink; basic.pinA = SoundPin; basic.data = { { 7, 0, 0, 0 } };
-        sim.setOutput(0, basic);
-        OutputConfig ext;
-        ext.type = BoardLink; ext.pinA = SoundPin; ext.data = { { 20, 1, 0, 0 } };
-        sim.setOutput(1, ext);
+        OutputConfig link;                                   // one board link output for everything
+        link.type = BoardLink; link.pinA = SoundPin; link.data = { { 7, 0, 0, 0 } };
+        sim.setOutput(0, link);
         InputConfig abs;
         abs.type = Latching; abs.address = 10; abs.outputId = 0;
         sim.setInput(0, abs);
         InputConfig route;
         route.type = Route; route.address = 11;
-        RouteStep a; a.output = 0; a.raw = true; a.value = linkStepValue(5, false); a.delay = 0;
-        RouteStep b; b.output = 1; b.raw = true; b.value = 77; b.delay = 0;
+        RouteStep a; a.output = 0; a.value = 0; a.extra = 5; a.delay = 0;                    // address 5 curved
+        RouteStep b; b.output = 0; b.raw = true; b.value = 77; b.extra = 200; b.delay = 0;   // 77 to address 200
         route.route = { a, b };
         sim.setInput(1, route);
         QTest::qWait(150);
@@ -1587,8 +1584,8 @@ private slots:
         sim.dccAccessory(10, 1);                             // on: its own address 7, straight
         QTRY_COMPARE(sim.linkSent(), linkFrame(false, 7, 1));
         sim.clearLinkSent();
-        sim.dccAccessory(11, 1);                             // the route: address 5 curved, then 77 to address 20
-        QTRY_COMPARE(sim.linkSent(), linkFrame(false, 5, 0) + linkFrame(true, 20, 77));
+        sim.dccAccessory(11, 1);                             // the route: address 5 curved, then 77 to address 200
+        QTRY_COMPARE(sim.linkSent(), linkFrame(false, 5, 0) + linkFrame(true, 200, 77));
     }
 
     // A frame on RX is passed on at once (one hop less) and runs as a DCC command; broken frames are ignored

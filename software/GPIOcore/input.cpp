@@ -80,15 +80,17 @@ void Input::setDccAddress( uint16_t address, uint8_t direction )
 void Input::switchOutput()
 {
     uint8_t me = this - input ;
-    uint8_t step[4] ;
+    uint8_t step[STEP_BYTES] ;
     if( routeCount[ me ] == 2 )
     {
         readStep( me, state, step ) ;
         if( step[0] & STEP_VALUES )
         {
             uint8_t id = step[0] & STEP_ID ;
+            routeExtra = step[4] ;
             if( step[0] & STEP_RAW ) { if( callbackRouteValue ) callbackRouteValue( id, step[1] ) ; }
             else                     { if( callbackInput      ) callbackInput( id, step[1], 0 ) ; }
+            routeExtra = 0 ;
             return ;
         }
     }
@@ -162,7 +164,7 @@ uint8_t Input::readPin()
 uint8_t Input::movesTurnout()
 {
     uint8_t route = this - input ;
-    uint8_t step[4] ;
+    uint8_t step[STEP_BYTES] ;
 
     for( uint8_t i = 0 ; i < routeCount[ route ] ; i ++ )
     {
@@ -201,12 +203,14 @@ void Input::triggerOutputs()
 
         if( index < routeCount[ route ] )
         {
-            uint8_t step[4] ;
+            uint8_t step[STEP_BYTES] ;
             readStep( route, index, step ) ;
 
             uint8_t id = step[0] & STEP_ID ;
+            routeExtra = step[4] ;                                                                   // board link: the address
             if( step[0] & STEP_RAW ) { if( callbackRouteValue ) callbackRouteValue( id, step[1] ) ; }  // aspect, angle, PWM
             else                     { callbackInput( id, step[1], 0 ) ; }                            // curved / straight
+            routeExtra = 0 ;
 
             if( board.flags & BOARD_TIMING ) outputTimer.PT = ( ( (uint16_t)( step[3] & 0x3F ) << 8 ) | step[2] ) * 100UL ;
             else                             outputTimer.PT = board.delay * 100UL ;   // wait after this step, x 0.1 s

@@ -19,7 +19,7 @@ void routesBegin()
 
 uint8_t stepSize()
 {
-    return ( board.flags & BOARD_TIMING ) ? 4 : 2 ;
+    return ( board.flags & BOARD_TIMING ) ? 5 : 3 ;
 }
 
 uint16_t routeAddress( uint8_t route, uint8_t step )   // route 16 = end of all routes
@@ -68,17 +68,22 @@ uint8_t resizeRoute( uint8_t route, uint8_t total )
 void readStep( uint8_t route, uint8_t step, uint8_t *b )
 {
     uint16_t a = routeAddress( route, step ) ;
-    b[2] = b[3] = 0 ;
-    for( uint8_t i = 0 ; i < stepSize() ; i ++ ) b[i] = EEPROM.read( a + i ) ;
+    b[0] = EEPROM.read( a ) ;
+    b[1] = EEPROM.read( a + 1 ) ;
+    if( stepSize() == 5 ) { b[2] = EEPROM.read( a + 2 ) ; b[3] = EEPROM.read( a + 3 ) ; b[4] = EEPROM.read( a + 4 ) ; }
+    else                  { b[2] = b[3] = 0 ;                                            b[4] = EEPROM.read( a + 2 ) ; }
 }
 
 void writeStep( uint8_t route, uint8_t step, const uint8_t *b )
 {
     uint16_t a = routeAddress( route, step ) ;
-    for( uint8_t i = 0 ; i < stepSize() ; i ++ ) EEPROM.update( a + i, b[i] ) ;
+    EEPROM.update( a,     b[0] ) ;
+    EEPROM.update( a + 1, b[1] ) ;
+    if( stepSize() == 5 ) { EEPROM.update( a + 2, b[2] ) ; EEPROM.update( a + 3, b[3] ) ; EEPROM.update( a + 4, b[4] ) ; }
+    else                    EEPROM.update( a + 2, b[4] ) ;
 }
 
-// timing on: 2 -> 4 B per step, the new wait time is the fixed board delay. Timing off: 4 -> 2 B.
+// timing on: 3 -> 5 B per step, the new wait time is the fixed board delay. Timing off: 5 -> 3 B.
 uint8_t setTiming( uint8_t on )
 {
     uint16_t steps = usedRouteSteps() ;
@@ -88,13 +93,15 @@ uint8_t setTiming( uint8_t on )
 
     if( on )
     {
-        if( steps * 4 > maxRouteBytes() ) return 0 ;
+        if( steps * 5 > maxRouteBytes() ) return 0 ;
         for( uint16_t s = steps ; s -- > 0 ; )          // from the top down, the pool grows
         {
-            EEPROM.update( EE_POOL + s * 4 + 3, 0 ) ;
-            EEPROM.update( EE_POOL + s * 4 + 2, board.delay ) ;
-            EEPROM.update( EE_POOL + s * 4 + 1, EEPROM.read( EE_POOL + s * 2 + 1 ) ) ;
-            EEPROM.update( EE_POOL + s * 4,     EEPROM.read( EE_POOL + s * 2     ) ) ;
+            uint8_t id = EEPROM.read( EE_POOL + s * 3 ), value = EEPROM.read( EE_POOL + s * 3 + 1 ), extra = EEPROM.read( EE_POOL + s * 3 + 2 ) ;
+            EEPROM.update( EE_POOL + s * 5 + 4, extra ) ;
+            EEPROM.update( EE_POOL + s * 5 + 3, 0 ) ;
+            EEPROM.update( EE_POOL + s * 5 + 2, board.delay ) ;
+            EEPROM.update( EE_POOL + s * 5 + 1, value ) ;
+            EEPROM.update( EE_POOL + s * 5,     id ) ;
         }
         board.flags |= BOARD_TIMING ;
     }
@@ -102,8 +109,10 @@ uint8_t setTiming( uint8_t on )
     {
         for( uint16_t s = 0 ; s < steps ; s ++ )        // from the bottom up, the pool shrinks
         {
-            EEPROM.update( EE_POOL + s * 2,     EEPROM.read( EE_POOL + s * 4     ) ) ;
-            EEPROM.update( EE_POOL + s * 2 + 1, EEPROM.read( EE_POOL + s * 4 + 1 ) ) ;
+            uint8_t id = EEPROM.read( EE_POOL + s * 5 ), value = EEPROM.read( EE_POOL + s * 5 + 1 ), extra = EEPROM.read( EE_POOL + s * 5 + 4 ) ;
+            EEPROM.update( EE_POOL + s * 3,     id ) ;
+            EEPROM.update( EE_POOL + s * 3 + 1, value ) ;
+            EEPROM.update( EE_POOL + s * 3 + 2, extra ) ;
         }
         board.flags &= ~BOARD_TIMING ;
     }

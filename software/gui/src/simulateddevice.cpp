@@ -204,7 +204,7 @@ void SimulatedDevice::sendInput(int i, const InputConfig &c)
     {
         const int n = qMin(Proto::RouteChunkSteps, total - first);
         QByteArray p;
-        p.append(char(4 + 4 * n));
+        p.append(char(4 + StepBytes * n));
         p.append(char(i));
         p.append(char(total));
         p.append(char(first));
@@ -361,8 +361,8 @@ bool SimulatedDevice::handleFrame(char type, const QByteArray &d)
         InputConfig c;
         if (d.size() >= 8 && decodeInput(p, idx, c))
         {
-            for (int k = 0; k < at(7) && 8 + 4 * k + 4 <= d.size(); ++k)
-                c.route.append(decodeStep(d.constData() + 8 + 4 * k));
+            for (int k = 0; k < at(7) && 8 + StepBytes * k + StepBytes <= d.size(); ++k)
+                c.route.append(decodeStep(d.constData() + 8 + StepBytes * k));
             c.name = m_in[idx].name;
             m_in[idx] = c;
         }

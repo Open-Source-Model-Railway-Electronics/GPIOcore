@@ -52,6 +52,7 @@ private:
         QComboBox      *output = nullptr;
         QComboBox      *mode   = nullptr;     // curved / straight [/ angle]
         QSpinBox       *value  = nullptr;     // aspect, PWM or servo angle
+        QSpinBox       *addr   = nullptr;     // board link: the target address
         QToolButton    *pick   = nullptr;     // aspect: choose lamp by lamp
         QDoubleSpinBox *wait   = nullptr;
         QToolButton    *up = nullptr, *down = nullptr, *remove = nullptr;
@@ -59,10 +60,10 @@ private:
 
     void buildUi();
     // The value editor of a route step or a custom value: curved / straight [/ angle], or a raw value
-    void showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *pick, const Gpio::RouteStep &s,
-                       Gpio::StepKind kind);
-    static void readStepValue(const QComboBox *mode, const QSpinBox *value, Gpio::StepKind kind,
-                              Gpio::RouteStep &s);
+    void showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *pick, QSpinBox *addr,
+                       const Gpio::RouteStep &s, Gpio::StepKind kind);
+    static void readStepValue(const QComboBox *mode, const QSpinBox *value, const QSpinBox *addr,
+                              Gpio::StepKind kind, Gpio::RouteStep &s);
     void refresh();
     void collect();
     void applyLevel();                       // user level: the functions offered
@@ -120,6 +121,7 @@ private:
     QComboBox    *m_valueMode[2] {};
     QSpinBox     *m_value[2] {};
     QToolButton  *m_valuePick[2] {};
+    QSpinBox     *m_valueAddr[2] {};
     QGroupBox    *m_routeBox = nullptr;
     QComboBox    *m_routeTrigger = nullptr;   // any / straight only / curved only
     QWidget      *m_routeTriggerRow = nullptr;

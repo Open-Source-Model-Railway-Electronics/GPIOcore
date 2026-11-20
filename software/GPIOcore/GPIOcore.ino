@@ -23,6 +23,7 @@ uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the s
 uint32_t        serialWindowStart = 0 ;     // the serial window: from start-up, or from a short press on the config button
 const uint16_t  SERIAL_WINDOW_MS  = 5000 ;
 uint8_t         btSetupPending ;            // BT_SETUP received
+uint8_t         routeExtra ;                // the extra byte of the route step being run (board link address)
 
 void blockSignals() ;                       // defined below; also for the PC build of the simulator
 void guiMode() ;
@@ -298,18 +299,15 @@ void linkReceive()
     }
 }
 
-// ── Board link output (type boardLink, on TX): data[0] = its address (0 = none), data[1] bit0 = extended.
-//    A value (route step, custom value, DCC extended): extended = that value to its address; basic = bits 0-6
-//    the address, bit 7 straight. On / off: basic, to its own address.
+// ── Board link output (type boardLink, on TX): data[0] = its own address (0 = none).
+//    The address is the route step's extra byte, or the output's own one. Curved / straight (a route step,
+//    on / off) = basic; a value (raw route step, custom value, DCC extended) = extended.
 void linkOutput( uint8_t index, uint8_t isValue, uint8_t state, uint8_t value )
 {
-    const Settings &o = output[index].eedata ;
-    uint8_t extended = o.data[1] & 1 ;
-    uint8_t address  = o.data[0] ;
-    uint8_t v        = isValue ? value : state ;
-    if( isValue && !extended ) { address = value & 0x7F ; v = value >> 7 ; }
-    reportOutput( index, 2, isValue ? value : state ) ;
-    if( address ) linkSend( extended, address, v, LINK_HOPS ) ;
+    uint8_t address = routeExtra ? routeExtra : output[index].eedata.data[0] ;
+    uint8_t v       = isValue ? value : state ;
+    reportOutput( index, 2, v ) ;
+    if( address ) linkSend( isValue, address, v, LINK_HOPS ) ;
 }
 
 void guiMode()                                  // short press: the GUI may connect (also over Bluetooth, no reset)

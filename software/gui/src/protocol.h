@@ -65,12 +65,12 @@ constexpr quint8 ANALOG_VALUE           = 0xD3;
 constexpr quint8 BT_SETUP               = 0xE0;
 constexpr quint8 BT_RESULT              = 0xE3;
 
-// Routes: up to 16 steps of 4 bytes, transferred in chunks of up to 7 steps.
+// Routes: up to 16 steps of 5 bytes, transferred in chunks of up to 5 steps.
 // GET_ROUTE <route> <first step>            -> reply SET_ROUTE
-// SET_ROUTE <len> <route> <total> <first> <n x 4 step bytes>   (extended length)
+// SET_ROUTE <len> <route> <total> <first> <n x 5 step bytes>   (extended length)
 constexpr quint8 GET_ROUTE              = 0x82;
 constexpr quint8 SET_ROUTE              = 0x8F;
-constexpr int    RouteChunkSteps        = 7;     // 4 header + 7 * 4 = 32 = MaxLen
+constexpr int    RouteChunkSteps        = 5;     // 4 header + 5 * 5 = 29 <= MaxLen
 
 // SERVO_LIVE <output> <angle>: move a servo now, nothing is stored.
 constexpr quint8 SERVO_LIVE             = 0xA2;

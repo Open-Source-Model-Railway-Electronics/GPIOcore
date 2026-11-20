@@ -291,14 +291,14 @@ OPCODE( OPCODE_GET_ROUTE )
 
     uint8_t total = routeCount[ route ] ;
     uint8_t n     = first < total ? total - first : 0 ;
-    if( n > 7 ) n = 7 ;                 // max 7 steps per message
+    if( n > 5 ) n = 5 ;                 // max 5 steps per message (4 + 5 x 5 = 29 bytes)
 
     msg->command    = OPCODE_SET_ROUTE ;
-    msg->payload[0] = 4 + 4 * n ;
+    msg->payload[0] = 4 + STEP_BYTES * n ;
     msg->payload[1] = route ;
     msg->payload[2] = total ;
     msg->payload[3] = first ;
-    for( uint8_t i = 0 ; i < n ; i ++ ) readStep( route, first + i, &msg->payload[ 4 + 4 * i ] ) ;
+    for( uint8_t i = 0 ; i < n ; i ++ ) readStep( route, first + i, &msg->payload[ 4 + STEP_BYTES * i ] ) ;
     transceiver.sendMessage( msg ) ;
 }
 
@@ -312,10 +312,10 @@ OPCODE( OPCODE_SET_ROUTE )
 
     if( first == 0 && !resizeRoute( route, total ) ) { transceiver.nack = NACK_FULL ; return ; }
 
-    uint8_t n = ( msg->payload[0] - 4 ) / 4 ;
+    uint8_t n = ( msg->payload[0] - 4 ) / STEP_BYTES ;
     for( uint8_t i = 0 ; i < n && first + i < routeCount[ route ] ; i ++ )
     {
-        writeStep( route, first + i, &msg->payload[ 4 + 4 * i ] ) ;
+        writeStep( route, first + i, &msg->payload[ 4 + STEP_BYTES * i ] ) ;
     }
 }
 
