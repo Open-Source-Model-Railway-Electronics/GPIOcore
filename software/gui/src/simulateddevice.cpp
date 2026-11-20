@@ -281,6 +281,11 @@ void SimulatedDevice::attachFakeHc05(int baud)
     sendFrame('H', bytes({ baud / 2400 }));
 }
 
+void SimulatedDevice::linkReceive(const QByteArray &bytes)
+{
+    sendFrame('S', bytes);                   // the UART receiver: at 9600 baud the firmware reads link frames
+}
+
 void SimulatedDevice::advanceClock(int ms)
 {
     ms = qBound(0, ms, 0xFFFF);
@@ -368,6 +373,9 @@ bool SimulatedDevice::handleFrame(char type, const QByteArray &d)
         break;
     case 'h':
         m_hc05 << QString::fromLatin1(d);
+        break;
+    case 'K':
+        m_link += d;
         break;
     case 'G':
         for (int i = 0; i < 3; ++i) m_globals[i] = at(i) != 0;

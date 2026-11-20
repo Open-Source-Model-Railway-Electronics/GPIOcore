@@ -71,6 +71,10 @@ public:
     // A fake HC-05 in AT mode on D0/D1: answers OK to every AT command it gets at this baud rate (0 = none)
     void attachFakeHc05(int baud);
     QStringList hc05Commands() const { return m_hc05; }      // the AT commands it received, without CR LF
+    // Board link (9600 baud on D0/D1, no GUI): bytes from the previous board, and what this board sent on TX
+    void        linkReceive(const QByteArray &bytes);
+    QByteArray  linkSent() const { return m_link; }
+    void        clearLinkSent() { m_link.clear(); }
     void advanceClock(int ms);                              // the firmware's clock jumps ahead (max 65535 ms)
 
 signals:
@@ -95,6 +99,7 @@ private:
     QByteArray m_rx;                  // serial bytes, readable by the DeviceLink
     int        m_corrupt = 0;
     QStringList m_hc05;
+    QByteArray  m_link;
 
     std::array<Gpio::OutputConfig, Gpio::NumOutputs> m_out;
     std::array<Gpio::InputConfig,  Gpio::NumInputs>  m_in;

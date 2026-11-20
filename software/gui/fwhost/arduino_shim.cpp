@@ -97,7 +97,7 @@ long map(long x, long inMin, long inMax, long outMin, long outMax)
 
 // ── Serial (UART) ─────────────────────────────────────────────────────────────
 // RX: what the GUI sent. TX: what the firmware sends; forwarded as it is at 115200 baud (the GUI's
-// line). At 9600 baud the firmware talks to the DFPlayer (no GUI), that is dropped. At any other
+// line). At 9600 baud it is the board link (and a DFPlayer): kept apart for hostLinkTake(). At any other
 // baud rate (Bluetooth set-up) the GUI gets noise: one 0xF0 per byte, never a valid frame.
 volatile uint8_t UCSR0B;
 HardwareSerial   Serial;
@@ -107,6 +107,8 @@ static uint8_t  rx[RxSize];
 static size_t   rxHead, rxTail;               // ring buffer
 static uint8_t  tx[16384];
 static size_t   txLen;
+static uint8_t  link[4096];                   // TX at 9600 baud: the board link / DFPlayer line
+static size_t   linkLen;
 static unsigned long baud;
 
 // Fake HC-05 (AT mode): hears the firmware's TX at its baud rate, answers "OK\r\n" on RX (D0)
@@ -185,7 +187,7 @@ size_t HardwareSerial::write(uint8_t b)
 {
     if (!(UCSR0B & _BV(TXEN0))) return 1;
     if (hc05Baud && baud == hc05Baud) hc05Hear(b);
-    if (baud == 9600) return 1;
+    if (baud == 9600) { if (linkLen < sizeof(link)) link[linkLen++] = b; return 1; }
     if (txLen < sizeof(tx)) tx[txLen++] = baud == 115200 ? b : 0xF0;
     return 1;
 }
@@ -219,6 +221,15 @@ size_t hostSerialTake(uint8_t *out, size_t max)
     memcpy(out, tx, n);
     memmove(tx, tx + n, txLen - n);
     txLen -= n;
+    return n;
+}
+
+size_t hostLinkTake(uint8_t *out, size_t max)
+{
+    const size_t n = linkLen < max ? linkLen : max;
+    memcpy(out, link, n);
+    memmove(link, link + n, linkLen - n);
+    linkLen -= n;
     return n;
 }
 

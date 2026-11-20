@@ -37,7 +37,7 @@ void Output::set( Settings *data )
     for( uint8_t i = 0 ; i < 7 ; i ++ )
     {
         uint8_t p = oldPins[i] ;
-        if( p == NA || p == 2 || p >= 20 || ( p < 2 && !serialPinsFree() ) ) continue ;
+        if( p == NA || p <= 2 || p >= 20 ) continue ;   // D0/D1 belong to the UART, D2 to DCC
         uint8_t kept = 0 ;
         for( uint8_t j = 0 ; j < 7 ; j ++ ) kept |= ( newPins[j] == p ) ;
         if( !kept ) { digitalWrite( p, LOW ) ; pinMode( p, INPUT ) ; }
@@ -112,9 +112,9 @@ void Output::saveEEPROM()
     
 }
 
-static void outputPin( uint8_t pin )    // D0/D1 only after the boot window (no HELLO)
+static void outputPin( uint8_t pin )    // never D0/D1: the UART (GUI, board link, DFPlayer)
 {
-    if( pin != NA && ( pin > 1 || serialPinsFree() ) ) pinMode( pin, OUTPUT ) ;
+    if( pin != NA && pin > 1 ) pinMode( pin, OUTPUT ) ;
 }
 
 void Output::setPinModes()
@@ -656,7 +656,8 @@ uint8_t Output::update()
             ||       eedata.type == doubleFlashing) { sm.nextState( flashing           ) ; }
             else if( eedata.state == oldPos                                         // only act on a state change
                  ||  eedata.type  == notInUse
-                 ||  eedata.type  == soundEffect )  { }               // sound: played by GPIOcore.ino
+                 ||  eedata.type  == soundEffect                    // sound and board link: GPIOcore.ino
+                 ||  eedata.type  == boardLink   )  { }
             else if( eedata.relayPinA != NA
                  &&  eedata.relayPinB != NA )       { oldPos = eedata.state ; sm.nextState( turnOffRelays ) ; }
             else {                                    oldPos = eedata.state ; sm.nextState( moveActuator  ) ; } }

@@ -112,6 +112,9 @@ private:
     QStringList     m_inputNames;
     QVector<quint8> m_inputTypes;
     QWidget        *m_soundInfo = nullptr;   // sound effect: wiring and SD card help
+    QComboBox      *m_linkMode = nullptr;    // board link: basic / extended (data[1])
+    QSpinBox       *m_linkAddress = nullptr; // board link: its own address (data[0])
+    QLabel         *m_linkNote = nullptr;
 
     QGroupBox      *m_stateBox = nullptr;
     QComboBox      *m_state = nullptr;

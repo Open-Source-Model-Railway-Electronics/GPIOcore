@@ -73,8 +73,8 @@ enum types
     doublePulse,
     doubleFlashing,
     lightEffect,        // one type for all light effects, the effect in Settings.light.effect
-    unusedType7,        // free (were the fireplace, tube and welder types)
-    unusedType8,
+    boardLink,          // board link on TX (D1): sends frames to the next board (data[0] address, data[1] bit0 extended)
+    unusedType8,        // free
     unusedType9,
     fourToneSignal,
     servoType,

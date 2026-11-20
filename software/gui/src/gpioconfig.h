@@ -24,7 +24,8 @@ enum OutputType : quint8
     SingleSteady, SinglePulse, SingleFlashing,
     DoubleSteady, DoublePulse, DoubleFlashing,
     LightEffect,    // 6: all light effects, the effect in data[3] (LightKind)
-    UnusedType7, UnusedType8, UnusedType9,   // free (were fireplace, TL tube and welder)
+    BoardLink,      // 7: board link on TX (D1): sends frames to the next board (data[0] address, data[1] bit0 extended)
+    UnusedType8, UnusedType9,   // free
     FourToneSignal, ServoType, Pwm, OutputNotInUse,
     SoundEffect,    // DFPlayer Mini on TX (D1): the input chooses the track (custom values, route step, DCC extended)
     BlockSignal,    // 15: automatic signal, the board sets its aspect from two block detectors (inputs)
@@ -35,7 +36,13 @@ enum OutputType : quint8
 enum LightKind : quint8 { LightSwing, LightFire, LightTube, LightWelder, LightPhoto, LightKindCount };
 constexpr int MaxSwingTime = 4095;   // swing on time and pause: 12 bits each, x 10 ms
 
-enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, Block };
+enum class ParamKind { None, SwitchTime, Swing, Servo, PwmValue, FourTone, Block, Link };
+
+// Board link output, basic: a route step / custom value holds the address (1-127) and the position (bit 7 = straight)
+constexpr int MaxLinkStepAddress = 127;
+inline quint8 linkStepValue(int address, bool straight) { return quint8((address & 0x7F) | (straight ? 0x80 : 0)); }
+inline int    linkStepAddress(quint8 value)  { return value & 0x7F; }
+inline bool   linkStepStraight(quint8 value) { return value & 0x80; }
 constexpr quint8 SoundPin = 1;   // a sound effect output always uses TX (D1)
 
 struct OutputTypeInfo
@@ -72,6 +79,9 @@ struct OutputConfig
     // union views
     quint32 switchTime() const;
     void    setSwitchTime(quint32 v);
+    // Board link: data[0] = its own address (0 = none), data[1] bit0 = extended (a value to that address)
+    quint8  linkAddress()  const { return data[0]; }
+    bool    linkExtended() const { return data[1] & 1; }
     // Light effect: data[3] = LightKind; swing: on time and pause 12 bits each in data[0..2], x 10 ms
     quint8  lightEffect() const { return data[3]; }
     void    setLightEffect(quint8 kind) { data[3] = kind; }
@@ -169,9 +179,12 @@ QByteArray encodeStep(const RouteStep &s);              // 4 bytes
 RouteStep  decodeStep(const char *bytes);
 
 // What a route step can set on an output of this type
-enum class StepKind { State, ServoStateOrAngle, Aspect, PwmValue, Track };   // Track: sound effect, 0 = stop
+// Track: sound effect, 0 = stop. LinkTurnout: board link, address + position. LinkValue: extended board link, a value.
+enum class StepKind { State, ServoStateOrAngle, Aspect, PwmValue, Track, LinkTurnout, LinkValue };
 StepKind   stepKind(quint8 outputType);
+StepKind   stepKind(const OutputConfig &o);          // tells a basic from an extended board link
 RouteStep  defaultStep(int output, quint8 outputType);
+RouteStep  defaultStep(int output, const OutputConfig &o);
 constexpr quint8 ServoAngleMin = 10, ServoAngleMax = 170;
 
 // Analog inputs (firmware config.h ANALOG_*): the pin byte holds 0x20 | mode << 3 | channel

@@ -1470,7 +1470,7 @@ private slots:
         dist.type = BlockSignal; dist.data = { { 0x02, 0x02, 0x01, 0 } };
         dist.setBlockInputs(5, -1);
         emit oed->changed(1, dist);
-        OutputConfig d0 = view->board().outputs[2];              // a signal whose detector is on D0
+        OutputConfig d0 = view->board().outputs[2];              // a signal whose detector is on A4
         d0.type = BlockSignal; d0.data = { { 0x04, 0x02, 0x01, 0 } };
         d0.setBlockInputs(6, -1);
         emit oed->changed(2, d0);
@@ -1478,18 +1478,9 @@ private slots:
         sensor.type = Sensor; sensor.pin = 19; sensor.address = AddrNone;
         emit ied->changed(5, sensor);
         InputConfig onD0 = view->board().inputs[6];
-        onD0.type = Sensor; onD0.pin = 0; onD0.address = AddrNone;
+        onD0.type = Sensor; onD0.pin = 18; onD0.address = AddrNone;
         emit ied->changed(6, onD0);
         QVERIFY(!view->sensorInput(5));                          // only in the simulation
-        click(view, view->inputRect(6).center());                // D0: a note, not an error
-        bool note = false, error = false;
-        for (QLabel *l : ied->findChildren<QLabel *>())
-        {
-            note  |= l->isVisibleTo(ied) && l->objectName() == QLatin1String("note")
-                  && l->text().startsWith(QLatin1String("D0/D1 are the USB serial pins")) && l->text().contains(QLatin1String("simulator"));
-            error |= l->isVisibleTo(ied) && l->objectName() == QLatin1String("error") && l->text().contains(QLatin1String("D0"));
-        }
-        QVERIFY(note && !error);
 
         w.setMode(MainWindow::ModeSimulate);
         QTRY_VERIFY_WITH_TIMEOUT(view->liveMode(), 5000);
@@ -1511,7 +1502,7 @@ private slots:
         QVERIFY(!view->sensorOccupied(5));
         QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(0), 0x01, 2000);
         QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(1), 0x01, 2000);
-        click(view, view->liveButtonRect(6, 1).center());        // the detector on D0 works in the simulator
+        click(view, view->liveButtonRect(6, 1).center());        // the second detector
         QTRY_COMPARE_WITH_TIMEOUT(view->liveValue(2), 0x04, 2000);
         w.setMode(MainWindow::ModeConfigure);
     }
@@ -1711,12 +1702,12 @@ private slots:
         advanced->trigger();
         QCOMPARE(Ui::level(), int(Ui::Advanced));
         QVERIFY(advanced->isChecked() && !beginner->isChecked());
-        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 3 - 1);   // all but the block signal (and 7-9: free)
+        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 2 - 1);   // all but the block signal (and 8-9: free)
         QVERIFY(!offered(type).contains(BlockSignal));
         QVERIFY(offered(type).contains(FourToneSignal) && offered(type).contains(Pwm) && offered(type).contains(SoundEffect)
                 && offered(type).contains(LightEffect));
         QVERIFY(!offered(fn).contains(3));
-        QVERIFY(offered(pinA).contains(0) && offered(pinA).contains(1));
+        QVERIFY(!offered(pinA).contains(0) && !offered(pinA).contains(1));   // D0/D1: never a pin
         QVERIFY(frogBox->isVisibleTo(oed));
         QVERIFY(readAs->isVisibleTo(ied));
         QVERIFY(startsOn->isVisibleTo(ied));
@@ -1725,7 +1716,7 @@ private slots:
 
         // Expert: + block signal, sensor input, semaphore arm
         expert->trigger();
-        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 3);   // 7-9 are free type values
+        QCOMPARE(offered(type).size(), int(OutputTypeCount) - 2);   // 8-9 are free type values
         QVERIFY(offered(fn).contains(3));
         QVERIFY(checkBox(oed, QStringLiteral("Follows a detector (semaphore arm)"))->isVisibleTo(oed));
         maybeScreenshot(w, "level-expert.png");

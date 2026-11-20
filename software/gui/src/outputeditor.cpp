@@ -21,7 +21,7 @@
 
 using namespace Gpio;
 
-enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal, PageBlock };
+enum Page { PageNone, PageTime, PageSwing, PageServo, PagePwm, PageSignal, PageBlock, PageLink };
 
 static Page pageFor(ParamKind k)
 {
@@ -33,6 +33,7 @@ static Page pageFor(ParamKind k)
     case ParamKind::PwmValue:   return PagePwm;
     case ParamKind::FourTone:   return PageSignal;
     case ParamKind::Block:      return PageBlock;
+    case ParamKind::Link:       return PageLink;
     default:                    break;
     }
     return PageNone;
@@ -368,6 +369,28 @@ void OutputEditor::buildUi()
         for (QComboBox *c : { m_blockOwn, m_blockNext })
             connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] { if (!m_loading) collect(); });
     }
+    { // board link: basic (the route step has the address) or extended (a value to its own address)
+        auto *w = new QWidget;
+        auto *f = new QFormLayout(w);
+        m_linkMode = new QComboBox;
+        m_linkMode->setObjectName(QStringLiteral("linkMode"));
+        m_linkMode->addItem(tr("Basic: turnout address + position"), 0);
+        m_linkMode->addItem(tr("Extended: a value to one address"), 1);
+        auto *row = new QHBoxLayout;
+        row->addWidget(m_linkMode, 1);
+        row->addWidget(Info::button(QStringLiteral("output.link")));
+        f->addRow(tr("Sends"), row);
+        m_linkAddress = makeSpin(0, 255);
+        m_linkAddress->setObjectName(QStringLiteral("linkAddress"));
+        f->addRow(tr("Address"), m_linkAddress);
+        m_linkNote = new QLabel(tr("Basic: each route step chooses the address (1-127) and straight or curved; switched "
+                                   "on or off it sends this address, if set. Extended: route steps and custom values "
+                                   "send their value to this address."));
+        m_linkNote->setObjectName(QStringLiteral("help"));
+        m_linkNote->setWordWrap(true);
+        f->addRow(m_linkNote);
+        m_params->addWidget(w);
+    }
     root->addWidget(m_paramBox);
 
     // State + test
@@ -424,6 +447,8 @@ void OutputEditor::buildUi()
             break;
         case SoundEffect:    m_cfg.data = { { 0, 0, 0, 0 } };     // the input chooses the track
                              m_cfg.pinA = SoundPin;   break;
+        case BoardLink:      m_cfg.data = { { 0, 0, 0, 0 } };     // basic, no address of its own
+                             m_cfg.pinA = SoundPin;   break;
         default:             m_cfg.data = { { 0, 0, 0, 0 } };     break;
         }
         refresh();
@@ -447,8 +472,14 @@ void OutputEditor::buildUi()
     for (auto *c : m_relays) connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     connect(m_invertFrog, &QCheckBox::toggled, this, onEdit);
     connect(m_state, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
-    for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm, m_fade })
+    for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm, m_fade,
+                     m_linkAddress })
         connect(s, QOverload<int>::of(&QSpinBox::valueChanged), this, onEdit);
+    connect(m_linkMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] {
+        if (m_loading) return;
+        collect();
+        refresh();                       // 'none' only for basic
+    });
 
     // live servo positions while adjusting: at most 4 per second, the newest angle always goes out
     m_liveTimer = new QTimer(this);
@@ -588,6 +619,13 @@ void OutputEditor::refresh()
     m_invertFrog->setChecked(m_cfg.invertFrog);
 
     m_switchTime->setValue(int(qMin<quint32>(m_cfg.switchTime(), 65535)));
+    if (m_cfg.type == BoardLink)
+    {
+        Ui::selectData(m_linkMode, m_cfg.linkExtended() ? 1 : 0);
+        m_linkAddress->setValue(m_cfg.linkAddress());
+        m_linkAddress->setSpecialValueText(m_cfg.linkExtended() ? QString() : tr("none"));
+        m_linkAddress->setMinimum(m_cfg.linkExtended() ? 1 : 0);
+    }
     m_swingPulse->setValue(m_cfg.swingPulse());
     m_swingPause->setValue(m_cfg.swingPause());
     m_servoMin->setValue(m_cfg.servoMin());
@@ -630,7 +668,7 @@ void OutputEditor::updateVisibility()
         if (QWidget *label = m_pinForm->labelForField(m_pins[i]))
             label->setVisible(used);
     }
-    m_pins[0]->setEnabled(m_cfg.type != SoundEffect);   // the DFPlayer is always on TX (D1)
+    m_pins[0]->setEnabled(m_cfg.type != SoundEffect && m_cfg.type != BoardLink);   // always TX (D1)
     m_soundInfo->setVisible(m_cfg.type == SoundEffect);
     m_pinBox->setVisible(info.pinCount > 0);
     m_pinBox->setTitle(info.needsPwm ? tr("Pins (PWM capable: %1)").arg(pwmPinNames().join(QLatin1Char(' '))) : tr("Pins"));
@@ -666,7 +704,7 @@ void OutputEditor::applyLevel()
 {
     Ui::offerItems(m_type, [](int t) {
         return Ui::outputTypeLevel(quint8(t)) <= Ui::level()
-            && !(t == SoundEffect && boardOptions().dccNext);   // a DCCnext has no D1 for the DFPlayer
+            && !((t == SoundEffect || t == BoardLink) && boardOptions().dccNext);   // a DCCnext has no D1
     });
 }
 
@@ -691,7 +729,7 @@ void OutputEditor::collect()
     // Unused pins are cleared: the firmware calls pinMode() on every pin != NA.
     for (int i = 0; i < 4; ++i)
         m_cfg.setPin(i, i < info.pinCount ? quint8(Ui::currentData(m_pins[i])) : PinNA);
-    if (m_cfg.type == SoundEffect)
+    if (m_cfg.type == SoundEffect || m_cfg.type == BoardLink)
         m_cfg.pinA = SoundPin;
 
     // Frog interlocking: electrofrog (relay A + B) or unifrog (relay C), never both
@@ -708,6 +746,9 @@ void OutputEditor::collect()
         break;
     case ParamKind::Swing:
         m_cfg.setSwing(quint16(m_swingPulse->value()), quint16(m_swingPause->value()));
+        break;
+    case ParamKind::Link:
+        m_cfg.data = { { quint8(m_linkAddress->value()), quint8(Ui::currentData(m_linkMode)), 0, 0 } };
         break;
     case ParamKind::Servo:
         m_cfg.data[0] = quint8(m_servoMin->value());

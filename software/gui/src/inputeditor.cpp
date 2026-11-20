@@ -47,7 +47,9 @@ InputEditor::InputEditor(QWidget *parent) : QWidget(parent)
     for (int i = 0; i < NumOutputs; ++i)
     {
         m_outputNames << Ui::outputDisplayName(OutputConfig(), i);
-        m_outputTypes << SingleSteady;
+        OutputConfig o;
+        o.type = SingleSteady;
+        m_outputs << o;
     }
     buildUi();
     setInput(0, InputConfig());
@@ -298,7 +300,7 @@ void InputEditor::buildUi()
     }
     connect(m_addStep, &QPushButton::clicked, this, [this] {
         const int out = m_cfg.route.isEmpty() ? 0 : m_cfg.route.last().output;
-        m_cfg.route.append(defaultStep(out, outputType(out)));
+        m_cfg.route.append(defaultStep(out, outputCfg(out)));
         refresh();
         emit changed(m_index, m_cfg);
     });
@@ -383,10 +385,10 @@ void InputEditor::updateAnalog()
     m_useValue->setEnabled(m_liveReading && m_nowValue >= 0);
 }
 
-void InputEditor::setOutputs(const QStringList &names, const QVector<quint8> &types)
+void InputEditor::setOutputs(const QStringList &names, const QVector<OutputConfig> &outputs)
 {
     m_outputNames = names;
-    m_outputTypes = types;
+    m_outputs = outputs;
     m_loading = true;
     fillOutputCombo(m_output);
     for (const StepRow &r : m_rows)
@@ -430,7 +432,7 @@ QString InputEditor::stepSignature() const
 {
     QStringList parts;
     for (const RouteStep &s : m_cfg.route)
-        parts << QStringLiteral("%1:%2").arg(s.output).arg(int(stepKind(outputType(s.output))));
+        parts << QStringLiteral("%1:%2").arg(s.output).arg(int(outputKind(s.output)));
     return parts.join(QLatin1Char(','));
 }
 
@@ -472,7 +474,7 @@ void InputEditor::rebuildSteps()
         connect(pick, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, pick] {
             const int out = pick->currentData().toInt();
             if (m_loading || out < 0) return;
-            m_cfg.route.append(defaultStep(out, outputType(out)));
+            m_cfg.route.append(defaultStep(out, outputCfg(out)));
             refresh();
             emit changed(m_index, m_cfg);
         });
@@ -565,7 +567,7 @@ void InputEditor::updateSteps()
     {
         const RouteStep &s = m_cfg.route[i];
         StepRow &r = m_rows[i];
-        const StepKind kind = stepKind(outputType(s.output));
+        const StepKind kind = outputKind(s.output);
 
         Ui::selectData(r.output, s.output);
         showStepValue(r.mode, r.value, r.pick, s, kind);
@@ -588,13 +590,16 @@ void InputEditor::showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *p
     value->setToolTip(QString());
     value->setSpecialValueText(QString());
     mode->clear();
-    if (kind == StepKind::State || kind == StepKind::ServoStateOrAngle)
+    if (kind == StepKind::State || kind == StepKind::ServoStateOrAngle || kind == StepKind::LinkTurnout)
     {
         mode->addItem(tr("Curved (0)"),   int(ModeCurved));
         mode->addItem(tr("Straight (1)"), int(ModeStraight));
         if (kind == StepKind::ServoStateOrAngle)
             mode->addItem(tr("Angle"), int(ModeAngle));
-        mode->setCurrentIndex(s.raw ? ModeAngle : (s.value ? ModeStraight : ModeCurved));
+        if (kind == StepKind::LinkTurnout)
+            mode->setCurrentIndex(linkStepStraight(s.value) ? ModeStraight : ModeCurved);
+        else
+            mode->setCurrentIndex(s.raw ? ModeAngle : (s.value ? ModeStraight : ModeCurved));
         mode->setVisible(true);
     }
     else
@@ -633,6 +638,22 @@ void InputEditor::showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *p
         value->setVisible(true);
         value->setValue(s.value);
         break;
+    case StepKind::LinkTurnout:
+        value->setRange(1, MaxLinkStepAddress);
+        value->setPrefix(tr("address "));
+        value->setSuffix(QString());
+        value->setToolTip(tr("The DCC address of the turnout on the boards down the line (1-127)"));
+        value->setVisible(true);
+        value->setValue(qMax(1, linkStepAddress(s.value)));
+        break;
+    case StepKind::LinkValue:
+        value->setRange(0, 255);
+        value->setPrefix(tr("value "));
+        value->setSuffix(QString());
+        value->setToolTip(tr("Sent to the board link output's address: servo angle, aspect, PWM or track"));
+        value->setVisible(true);
+        value->setValue(s.value);
+        break;
     case StepKind::State:
         value->setVisible(false);
         break;
@@ -662,8 +683,13 @@ void InputEditor::readStepValue(const QComboBox *mode, const QSpinBox *value, St
     case StepKind::Aspect:
     case StepKind::PwmValue:
     case StepKind::Track:
+    case StepKind::LinkValue:
         s.raw = true;
         s.value = quint8(value->value());
+        break;
+    case StepKind::LinkTurnout:
+        s.raw = true;
+        s.value = linkStepValue(value->value(), mode->currentIndex() == ModeStraight);
         break;
     }
 }
@@ -714,7 +740,7 @@ void InputEditor::refresh()
             if (QWidget *label = form->labelForField(m_valueRow[k]))
                 label->setVisible(show && shown >= Ui::Advanced);
         if (show)
-            showStepValue(m_valueMode[k], m_value[k], m_valuePick[k], m_cfg.route[k], stepKind(outputType(m_cfg.outputId)));
+            showStepValue(m_valueMode[k], m_value[k], m_valuePick[k], m_cfg.route[k], outputKind(m_cfg.outputId));
     }
     m_routeBox->setVisible(fn == FnRoute);
     m_routeTriggerRow->setVisible(fn == FnRoute && shown >= Ui::Advanced);
@@ -777,11 +803,11 @@ void InputEditor::collect()
         {
             // another output: start with the default value for its type, keep the wait
             const quint16 delay = s.delay;
-            s = defaultStep(out, outputType(out));
+            s = defaultStep(out, outputCfg(out));
             s.delay = delay;
             continue;
         }
-        readStepValue(r.mode, r.value, stepKind(outputType(s.output)), s);
+        readStepValue(r.mode, r.value, outputKind(s.output), s);
         s.delay = quint16(std::lround(r.wait->value() * 10.0));
     }
     if (fn == FnDirect)
@@ -792,11 +818,11 @@ void InputEditor::collect()
             m_cfg.route.clear();                                      // switched off
         else if (m_custom->isChecked() && !hadValues)
             m_cfg.setCustomValues(true, t);                           // switched on: defaults for the output
-        else if (hadValues && stepKind(t) != stepKind(outputType(oldOutput)))
+        else if (hadValues && outputKind(m_cfg.outputId) != outputKind(oldOutput))
             m_cfg.setCustomValues(true, t);                           // another kind of output: its defaults
         else if (hadValues)
             for (int k = 0; k < 2; ++k)
-                readStepValue(m_valueMode[k], m_value[k], stepKind(t), m_cfg.route[k]);
+                readStepValue(m_valueMode[k], m_value[k], outputKind(m_cfg.outputId), m_cfg.route[k]);
         if (t == SoundEffect && newTarget && !m_cfg.hasCustomValues())
             m_cfg.setCustomValues(true, t);                           // a sound output plays the input's tracks
     }

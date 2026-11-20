@@ -127,10 +127,10 @@ void Input::update()
 }
 
 // Nano A6/A7 (pin 20/21) are analog only, external pull-up: analogRead() < 512 = pressed (LOW)
-void Input::setPinMode()            // button / contact to GND. A6/A7 (20/21) are analog only, D0/D1 only after the boot window
+void Input::setPinMode()            // button / contact to GND. A6/A7 (20/21) are analog only, D0/D1 never (UART)
 {
     if( isAnalogInput( eedata.pin ) ) { if( ( eedata.pin & 7 ) < 6 ) pinMode( inputPinNumber( eedata.pin ), INPUT ) ; return ; }
-    if( eedata.pin < 20 && ( eedata.pin > 1 || serialPinsFree() ) ) pinMode( eedata.pin, INPUT_PULLUP ) ;
+    if( eedata.pin < 20 && eedata.pin > 1 ) pinMode( eedata.pin, INPUT_PULLUP ) ;
 }
 
 // Analog condition as a button level: LOW = pressed. It must be the same in two samples in a row
@@ -154,7 +154,7 @@ uint8_t Input::readAnalog()
 uint8_t Input::readPin()
 {
     if( isAnalogInput( eedata.pin ) ) return readAnalog() ;
-    if( eedata.pin < 2 && !serialPinsFree() ) return HIGH ;              // D0/D1 still Serial: not pressed
+    if( eedata.pin < 2 ) return HIGH ;                                   // D0/D1 are the UART: never pressed
     if( eedata.pin >= 20 ) return analogRead( eedata.pin ) >= 512 ? HIGH : LOW ;
     return digitalRead( eedata.pin ) ;
 }

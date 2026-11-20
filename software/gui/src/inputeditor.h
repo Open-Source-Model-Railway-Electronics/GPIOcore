@@ -29,8 +29,8 @@ public:
     void setName(const QString &name);      // the user's name of this input, shown in the title
 
     // Output names (the user's name or "Out 3") and types, for pickers and step values
-    void setOutputs(const QStringList &names, const QVector<quint8> &types);
-    void setOutputNames(const QStringList &names) { setOutputs(names, m_outputTypes); }
+    void setOutputs(const QStringList &names, const QVector<Gpio::OutputConfig> &outputs);
+    void setOutputNames(const QStringList &names) { setOutputs(names, m_outputs); }
     void setRouteLimits(const Gpio::RouteLimits &limits, int stepsUsedElsewhere);
     void setTimingEnabled(bool on);         // board setting: own wait time per step
     // warnings (red) and a note (blue, information only, e.g. D0/D1)
@@ -71,13 +71,15 @@ private:
     QString stepSignature() const;
     void fillOutputCombo(QComboBox *combo);
     void addOutputItems(QComboBox *combo);   // "Out n · type"; block signals disabled (not a target)
-    quint8 outputType(int output) const { return m_outputTypes.value(output, Gpio::OutputNotInUse); }
+    quint8 outputType(int output) const { return outputCfg(output).type; }
+    Gpio::OutputConfig outputCfg(int output) const { return m_outputs.value(output, Gpio::OutputConfig()); }
+    Gpio::StepKind outputKind(int output) const { return Gpio::stepKind(outputCfg(output)); }
 
     int               m_index = 0;
     Gpio::InputConfig m_cfg;
     bool              m_loading = false;
     QStringList       m_outputNames;
-    QVector<quint8>   m_outputTypes;
+    QVector<Gpio::OutputConfig> m_outputs;
     Gpio::RouteLimits m_limits;
     bool              m_timing = true;
     int               m_stepsElsewhere = 0;

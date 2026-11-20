@@ -19,13 +19,16 @@ uint16_t        nextEEAddress = 0 ;
 BoardSettings   board ;
 uint16_t        boardEEAddress = EE_BOARD ; // type, flags, delay, name[16]
 uint8_t         configSession  = 0 ;        // 1 after HELLO
-uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the serial window
+uint8_t         serialIsIO     = 0 ;        // 1 when no HELLO came within the serial window: board link mode
 uint32_t        serialWindowStart = 0 ;     // the serial window: from start-up, or from a short press on the config button
 const uint16_t  SERIAL_WINDOW_MS  = 5000 ;
 uint8_t         btSetupPending ;            // BT_SETUP received
 
 void blockSignals() ;                       // defined below; also for the PC build of the simulator
 void guiMode() ;
+void reportOutput( uint8_t index, uint8_t state, uint8_t value ) ;
+void notifyDccAccTurnoutOutput( uint16_t address, uint8_t direction, uint8_t output ) ;
+void notifyDccSigOutputState( uint16_t address, uint8_t state ) ;
 
 
 
@@ -231,45 +234,73 @@ void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uin
     }
 }
 
-// ── Serial window: D0/D1 stay Serial for 5 s after start-up or after a short press on the config button
-uint8_t usesSerialPins()                        // an input, output or relay pin on D0/D1, or a sound effect (TX)
-{
-    for( uint8_t i = 0 ; i < 16 ; i++ )
-    {
-        const Settings &o = output[i].eedata ;
-        if( o.type == soundEffect ) return 1 ;
-        if( o.type != notInUse && outputOnPin( o, 0, 1 ) ) return 1 ;
-        if( input[i].eedata.type != NOT_IN_USE && input[i].eedata.pin < 2 ) return 1 ;
-    }
-    return 0 ;
-}
-
-void serialToIO()                               // no HELLO within the window: D0/D1 become I/O
+// ── Serial window: the UART is the GUI's for 5 s after start-up or after a short press on the config button.
+// Then it becomes the board link (9600 baud): frames from the previous board on RX (D0) are passed on to TX
+// (D1) and run as DCC commands; board link outputs send their own; a DFPlayer on TX hears the same line.
+void serialToIO()                               // no HELLO within the window: board link mode
 {
     Serial.flush() ;
     Serial.end() ;
+    Serial.begin( 9600 ) ;
     serialIsIO = 1 ;
-    for( uint8_t i = 0 ; i < 16 ; i++ )      // a sound effect output: TX (D1) at 9600 baud for the DFPlayer,
-    {                                        // RX stays off so D0 can be an input
-        if( output[i].eedata.type != soundEffect ) continue ;
-        Serial.begin( 9600 ) ;
-        UCSR0B &= ~_BV( RXEN0 ) ;
-        break ;
-    }
-    for( uint8_t i = 0 ; i < 16 ; i++ )
+}
+
+void serialCheck()                              // every 50 ms
+{
+    if( configSession || serialIsIO || millis() - serialWindowStart < SERIAL_WINDOW_MS ) return ;
+    serialToIO() ;
+}
+
+// ── Board link frame (PROTOCOL.md section 11): <start> <address> <value> <check>
+//    start = 0xA0 | extended << 4 | hops left (0-15), check = start ^ address ^ value.
+//    Basic: value = direction (1 = straight), as a DCC accessory command. Extended: value 0-255, as DCC extended.
+//    The four bytes come back to back: after a gap of more than 3 ms a frame starts over.
+const uint8_t LINK_START = 0xA0 ;
+const uint8_t LINK_EXT   = 0x10 ;
+const uint8_t LINK_HOPS  = 0x0F ;
+
+void linkSend( uint8_t extended, uint8_t address, uint8_t value, uint8_t hops )
+{
+    if( !serialIsIO ) return ;                  // the GUI has the UART
+    uint8_t f[4] = { (uint8_t)( LINK_START | ( extended ? LINK_EXT : 0 ) | hops ), address, value, 0 } ;
+    f[3] = f[0] ^ f[1] ^ f[2] ;
+    Serial.write( f, 4 ) ;
+}
+
+void linkReceive()
+{
+    static uint8_t  f[4], n ;
+    static uint16_t last ;
+    while( Serial.available() )
     {
-        output[i].setPinModes() ;
-         input[i].setPinMode() ;
-        if( input[i].eedata.pin < 2 ) input[i].rearm() ;     // D0/D1 start now: their first sample is the starting level
+        uint8_t  b   = Serial.read() ;
+        uint16_t now = millis() ;
+        if( n && (uint16_t)( now - last ) > 3 ) n = 0 ;              // the rest never came: start over
+        last = now ;
+        if( n == 0 && ( b & 0xE0 ) != LINK_START ) continue ;          // not a start byte (DFPlayer, noise)
+        f[n ++] = b ;
+        if( n < 4 ) continue ;
+        n = 0 ;
+        if( ( f[0] ^ f[1] ^ f[2] ) != f[3] || f[1] == 0 ) continue ;  // broken, or address 0
+        uint8_t hops = f[0] & LINK_HOPS ;
+        if( hops ) linkSend( f[0] & LINK_EXT, f[1], f[2], hops - 1 ) ;  // pass it on first: the next board starts at once
+        if( f[0] & LINK_EXT ) notifyDccSigOutputState( f[1], f[2] ) ;
+        else                  notifyDccAccTurnoutOutput( f[1], f[2] & 1, 1 ) ;
     }
 }
 
-// Every 50 ms: after the window without a session, D0/D1 become I/O only when the configuration uses them.
-// Otherwise Serial stays open at 115200, so a GUI can connect any time (USB without reset, Bluetooth).
-void serialCheck()
+// ── Board link output (type boardLink, on TX): data[0] = its address (0 = none), data[1] bit0 = extended.
+//    A value (route step, custom value, DCC extended): extended = that value to its address; basic = bits 0-6
+//    the address, bit 7 straight. On / off: basic, to its own address.
+void linkOutput( uint8_t index, uint8_t isValue, uint8_t state, uint8_t value )
 {
-    if( configSession || serialIsIO || millis() - serialWindowStart < SERIAL_WINDOW_MS ) return ;
-    if( usesSerialPins() ) serialToIO() ;
+    const Settings &o = output[index].eedata ;
+    uint8_t extended = o.data[1] & 1 ;
+    uint8_t address  = o.data[0] ;
+    uint8_t v        = isValue ? value : state ;
+    if( isValue && !extended ) { address = value & 0x7F ; v = value >> 7 ; }
+    reportOutput( index, 2, isValue ? value : state ) ;
+    if( address ) linkSend( extended, address, v, LINK_HOPS ) ;
 }
 
 void guiMode()                                  // short press: the GUI may connect (also over Bluetooth, no reset)
@@ -348,6 +379,7 @@ void btSetup()                                  // blocks up to ~2 s; the GUI ig
 void loop()
 {
     if( !serialIsIO ) transceiver.receive() ;
+    else              linkReceive() ;
     if( btSetupPending ) btSetup() ;
 
     static uint8_t index ;
@@ -415,6 +447,7 @@ void callbackInput( uint8_t index, uint8_t state, uint8_t val )
 {
     uint8_t type = output[index].eedata.type ;
     if( type == blockSignal ) return ;              // automatic: commands are ignored
+    if( type == boardLink ) { linkOutput( index, 0, state, 0 ) ; return ; }
     if( type == soundEffect )                       // without custom values: on = track 1, off = stop
     {
         output[index].eedata.state = state ;        // not stored: no EEPROM wear for sounds
@@ -447,6 +480,7 @@ void callbackRouteValue( uint8_t index, uint8_t value )
 {
     if( output[index].eedata.type == blockSignal ) return ;                                       // automatic
     if( output[index].eedata.type == soundEffect ) { playSound( index, value ) ; return ; }   // value = track, 0 = stop
+    if( output[index].eedata.type == boardLink   ) { linkOutput( index, 1, 0, value ) ; return ; }
     if( output[index].eedata.type == servoType )
     {
         if( value <= 180 ) output[index].moveTo( value ) ;   // at its speed; the degrees are reported
@@ -461,6 +495,7 @@ void callbackInputExt( uint8_t index, uint8_t value )
 {
     if( output[index].eedata.type == servoType ) { if( value <= 180 ) output[index].moveTo( value ) ; return ; }
     if( output[index].eedata.type == soundEffect ) { playSound( index, value ) ; return ; }   // value = track, 0 = stop
+    if( output[index].eedata.type == boardLink   ) { linkOutput( index, 1, 0, value ) ; return ; }
     callbackInput( index, 0, value ) ;
 }
 

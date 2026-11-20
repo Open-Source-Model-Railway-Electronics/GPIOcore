@@ -25,6 +25,7 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
         if( isOutput ) return false ;
         pin = inputPinNumber( pin ) ;
     }
+    if( pin < 2 ) return false ;                    // D0/D1: the UART (GUI, board link, DFPlayer)
     if( isReservedPin( pin ) ) return false ;       // D2 = DCC, D13 = config LED, A7 = config button
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type <= BOARD_NANO ;   // A6/A7: analog inputs, Nano only (type 0 Uno = Nano)
     return true ;
@@ -81,8 +82,10 @@ OPCODE( OPCODE_SET_OUTPUT_DATA )
 {
     uint8_t index = msg->payload[0] ;
     if( index >= 16 ) return ;
+    const uint8_t type = msg->payload[8] ;
     for( uint8_t i = 1 ; i <= 7 ; i ++ )            // pinA-D, relayA-C
     {
+        if( i == 1 && msg->payload[1] == 1 && ( type == soundEffect || type == boardLink ) ) continue ;   // TX
         if( !isValidPin( msg->payload[i], 1 ) ) { transceiver.nack = NACK_INVALID_PIN ; return ; }
     }
     Settings data ;

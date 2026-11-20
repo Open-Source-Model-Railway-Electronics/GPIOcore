@@ -340,6 +340,13 @@ void ConnectionView::drawOutputLive(QPainter &p, int o)
         p.fillRect(QRectF(bar.left(), bar.bottom() - bar.height() * level, bar.width(), bar.height() * level),
                    QColor(0x25, 0x63, 0xEB));
     }
+    else if (c.type == BoardLink)
+    {
+        // the last thing the board sent on the link (OUTPUT_EVENT state 2)
+        const QString text = m_liveRaw[o] ? QStringLiteral("⇄ %1").arg(m_liveValue[o]) : QStringLiteral("⇄");
+        p.setPen(flash > 0 ? QColor(0xF5, 0x9E, 0x0B) : kText);
+        p.drawText(box, Qt::AlignCenter, text);
+    }
     else if (c.type == SoundEffect)
     {
         // the last track the board played (OUTPUT_EVENT state 2), ■ = stop
@@ -553,7 +560,7 @@ void ConnectionView::rebuildWires()
             w.label = w.path.pointAtPercent(0.5);
             if (c.hasCustomValues())             // custom values: "off / on", e.g. "45° / 135°" or "♪■ / ♪7"
             {
-                const quint8 t = m_board.outputs[w.output].type;
+                const OutputConfig &t = m_board.outputs[w.output];
                 w.text = QStringLiteral("%1 / %2").arg(Ui::stepValueText(c.route[0], t), Ui::stepValueText(c.route[1], t));
                 const qreal tw = QFontMetricsF(smallFont()).horizontalAdvance(w.text) + 12;
                 w.labelRect = QRectF(w.label - QPointF(tw / 2, 9), QSizeF(tw, 18));
@@ -571,7 +578,7 @@ void ConnectionView::rebuildWires()
                 w.path  = curve(inputPort(i), outputPort(w.output));
                 w.label = w.path.pointAtPercent(qMax(0.3, 0.82 - 0.14 * dup));
                 w.text  = QStringLiteral("%1 %2").arg(s + 1)
-                              .arg(Ui::stepValueText(steps[s], m_board.outputs[w.output].type));
+                              .arg(Ui::stepValueText(steps[s], m_board.outputs[w.output]));
                 const qreal tw = QFontMetricsF(smallFont()).horizontalAdvance(w.text) + 12;
                 w.labelRect = QRectF(w.label - QPointF(tw / 2, 9), QSizeF(tw, 18));
                 m_wires.append(w);
@@ -746,6 +753,8 @@ void ConnectionView::drawOutput(QPainter &p, int o)
     QString sub = Ui::outputSummaryPins(c);
     if (c.type == SoundEffect)
         sub += QStringLiteral(" · ♪");
+    if (c.type == BoardLink)
+        sub += QStringLiteral(" · ⇄");
     const QString relays = Ui::outputSummaryRelays(c);
     if (!relays.isEmpty()) sub += QStringLiteral("  ·  ") + relays;
     p.setPen(m_outConflict.value(o) ? kRed : kMuted);
@@ -1115,7 +1124,7 @@ bool ConnectionView::event(QEvent *e)
             if (wire.step >= 0)
                 text += tr("\nstep %1: %2, then wait %3")
                             .arg(wire.step + 1)
-                            .arg(Ui::stepValueText(wire.data, m_board.outputs[wire.output].type))
+                            .arg(Ui::stepValueText(wire.data, m_board.outputs[wire.output]))
                             .arg(Ui::delayText(wire.data.delay));
             QToolTip::showText(he->globalPos(), text, this);
         }

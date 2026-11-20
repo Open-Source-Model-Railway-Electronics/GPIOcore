@@ -154,6 +154,8 @@ static void reportChanges()
     uint8_t serial[4096];
     while (size_t n = hostSerialTake(serial, sizeof(serial)))
         send('S', serial, n);
+    while (size_t n = hostLinkTake(serial, sizeof(serial)))
+        send('K', serial, n);
 }
 
 // ── Frames from the GUI ───────────────────────────────────────────────────────

@@ -494,7 +494,7 @@ void MainWindow::buildUi()
         m_edit.outputs[i].name = name;
         m_edit.outputs[i].lampColors = lamps;
         refreshLampRow();
-        m_inEd->setOutputs(outputNames(), outputTypes());
+        m_inEd->setOutputs(outputNames(), outputConfigs());
         userEdited();
     });
     connect(m_outEd, &OutputEditor::liveServo, this, [this](int i, int angle) {
@@ -1135,7 +1135,7 @@ void MainWindow::onOutputReceived(int i, const OutputConfig &c)
     refreshRows();
     if (m_outEd->index() == i && !keep)
         showOutput(i);
-    m_inEd->setOutputs(outputNames(), outputTypes());
+    m_inEd->setOutputs(outputNames(), outputConfigs());
     refreshWarnings();
     updateActions();
 }
@@ -1308,7 +1308,7 @@ void MainWindow::applyPresetNow(const QString &path, bool clearNames)
     showInput(m_inEd->index());
     m_outName->setText(m_edit.outputs[m_outEd->index()].name);
     m_inName->setText(m_edit.inputs[m_inEd->index()].name);
-    m_inEd->setOutputs(outputNames(), outputTypes());
+    m_inEd->setOutputs(outputNames(), outputConfigs());
     refreshRows();
     userEdited();
     markFileDirty();
@@ -1702,7 +1702,7 @@ bool MainWindow::importParts(const QString &path, int sections, bool sameNumbers
     showInput(m_inEd->index());
     m_outName->setText(m_edit.outputs[m_outEd->index()].name);
     m_inName->setText(m_edit.inputs[m_inEd->index()].name);
-    m_inEd->setOutputs(outputNames(), outputTypes());
+    m_inEd->setOutputs(outputNames(), outputConfigs());
     userEdited();
     statusBar()->showMessage(tr("Imported %1 output(s) and %2 input(s) from %3").arg(outs).arg(ins)
                                  .arg(QFileInfo(path).fileName()), 8000);
@@ -1847,7 +1847,7 @@ void MainWindow::refreshRows()
 void MainWindow::refreshAll()
 {
     refreshRows();
-    m_inEd->setOutputs(outputNames(), outputTypes());
+    m_inEd->setOutputs(outputNames(), outputConfigs());
     refreshWarnings();
     updateActions();
 }
@@ -1888,12 +1888,9 @@ QStringList MainWindow::outputNames() const
     return names;
 }
 
-QVector<quint8> MainWindow::outputTypes() const
+QVector<OutputConfig> MainWindow::outputConfigs() const
 {
-    QVector<quint8> t;
-    for (const OutputConfig &o : m_edit.outputs)
-        t << o.type;
-    return t;
+    return QVector<OutputConfig>(m_edit.outputs.begin(), m_edit.outputs.end());
 }
 
 QStringList MainWindow::inputNames() const
@@ -2020,18 +2017,17 @@ QStringList MainWindow::inputWarnings(int i) const
     return w;
 }
 
-// D0/D1: usable, with a caveat on a real board (shown as a note, not as an error)
+// D0/D1 are the serial line (GUI, board link, DFPlayer, Bluetooth): never a pin of their own (files from before)
 static QString serialPinNote()
 {
-    return QCoreApplication::translate("MainWindow", "D0/D1 are the USB serial pins: on the board they only work when no PC "
-                                                     "is connected (5 s after power-up without the GUI). In the simulator "
-                                                     "they always work.");
+    return QCoreApplication::translate("MainWindow", "D0/D1 are the serial line (GUI, board link, DFPlayer, Bluetooth) "
+                                                     "and cannot be used as a pin: choose another pin.");
 }
 
 QString MainWindow::outputNote(int i) const
 {
     const OutputConfig &c = m_edit.outputs[i];
-    if (c.type == SoundEffect)               // D1 by design, see the type help
+    if (c.type == SoundEffect || c.type == BoardLink)   // TX (D1) by design, see the type help
         return QString();
     for (int s = 0; s < outputTypeInfo(c).pinCount; ++s)
         if (c.pin(s) < 2 && !boardOptions().dccNext)          // a DCCnext has no D0/D1: a warning instead

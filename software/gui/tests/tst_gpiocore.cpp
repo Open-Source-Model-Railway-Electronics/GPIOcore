@@ -839,49 +839,29 @@ private slots:
         QCOMPARE(errors.size(), 0);
     }
 
-    // GPIOcore.ino serialCheck(): after the window the serial port only closes when the configuration uses D0/D1
-    // (an input, output or relay pin, or a sound effect on TX). Checked every 50 ms, so a new configuration counts.
-    void serialStaysOpenWithoutD0D1()
+    // GPIOcore.ino serialCheck(): after the serial window without a GUI the UART becomes the board link (9600 baud),
+    // whatever the configuration. A short press on the config button gives the GUI a new window.
+    void serialBecomesBoardLink()
     {
         SimulatedDevice sim;
         QVERIFY(sim.open(QIODevice::ReadWrite));
+        QTest::qWait(200);
+        QVERIFY(!sim.serialIsIO());                          // the window runs
         sim.advanceClock(6000);
-        QTest::qWait(200);
-        QVERIFY(!sim.serialIsIO());                          // factory board: D0/D1 unused, the port stays open
-
-        auto shortPress = [&sim] {
-            sim.setAnalogValue(7, 0);
-            QTest::qWait(150);
-            sim.setAnalogValue(7, AnalogMaxValue);
-            QTRY_VERIFY(!sim.serialIsIO());
-            QByteArray announce;
-            QTRY_VERIFY((announce += sim.readAll()).size() >= 7);
-        };
-        InputConfig d0;
-        d0.type = Sensor; d0.pin = 0;
-        sim.setInput(0, d0);                                 // the configuration now uses D0
-        QTRY_VERIFY(sim.serialIsIO());
-
-        shortPress();
-        sim.setInput(0, SimulatedDevice::factoryDefaults().inputs[0]);
-        OutputConfig sound;
-        sound.type = SoundEffect; sound.pinA = SoundPin;
-        sim.setOutput(5, sound);
-        QTest::qWait(200);
-        QVERIFY(!sim.serialIsIO());                          // the window still runs
-        sim.advanceClock(5100);
-        QTRY_VERIFY(sim.serialIsIO());                       // the DFPlayer needs TX
-
-        shortPress();
-        sim.setOutput(5, SimulatedDevice::factoryDefaults().outputs[5]);
-        sim.advanceClock(5100);
-        QTest::qWait(200);
-        QVERIFY(!sim.serialIsIO());                          // nothing on D0/D1 any more: it stays open
-        sim.write(QByteArray(1, char(Proto::HELLO)));        // a GUI connects later, without a reset
+        QTRY_VERIFY(sim.serialIsIO());                       // board link
+        sim.setAnalogValue(7, 0);                            // short press
+        QTest::qWait(150);
+        sim.setAnalogValue(7, AnalogMaxValue);
+        QTRY_VERIFY(!sim.serialIsIO());
+        QByteArray announce;
+        QTRY_VERIFY((announce += sim.readAll()).size() >= 7);
+        sim.write(QByteArray(1, char(Proto::HELLO)));        // a GUI connects within the window
         QByteArray rx;
         QTRY_VERIFY((rx += sim.readAll()).size() >= 7);
-        QCOMPARE(quint8(rx.at(0)), quint8(Proto::HELLO_GROUP << 4 | 5));
         QTRY_VERIFY(sim.configSession());
+        sim.advanceClock(6000);
+        QTest::qWait(200);
+        QVERIFY(!sim.serialIsIO());                          // the session keeps the UART
     }
 
     // BT_SETUP: the board finds the HC-05 (AT mode) at one of five baud rates and sets 115200 baud and its name.
@@ -1461,13 +1441,13 @@ private slots:
     void firmwareBlockSignals()
     {
         // GPIOcore.ino blockSignals(): Dutch 3-aspect signals, three blocks in a row; sensor k on block k,
-        // signal k protects block k and looks at block k + 1. Block 1's detector is on D0 (simulator: D0 works).
+        // signal k protects block k and looks at block k + 1. Block 1's detector is on A2.
         Rig r; makeRig(r);
         OutputConfig none;
         for (int o = 3; o < NumOutputs; ++o)
             r.sim->setOutput(o, none);                   // frees the default pins
         const quint8 pins[3][3] = { { 3, 4, 5 }, { 6, 7, 8 }, { 9, 10, 11 } };
-        const quint8 sensorPin[3] = { 0, 17, 18 };       // D0, A3, A4
+        const quint8 sensorPin[3] = { 16, 17, 18 };      // A2, A3, A4
         for (int k = 0; k < 3; ++k)
         {
             r.sim->setOutput(k, makeBlockSignal(k, k < 2 ? k + 1 : -1, pins[k][0], pins[k][1], pins[k][2]));
@@ -1509,9 +1489,9 @@ private slots:
         QTRY_COMPARE(aspects(), (QVector<int>{ green, yellow, red }));
         r.sim->setPinLevel(18, true);
         QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
-        r.sim->setPinLevel(0, false);                    // block 1 on D0
+        r.sim->setPinLevel(16, false);                   // block 1 on A2
         QTRY_COMPARE(aspects(), (QVector<int>{ red, green, green }));
-        r.sim->setPinLevel(0, true);
+        r.sim->setPinLevel(16, true);
         QTRY_COMPARE(aspects(), (QVector<int>{ green, green, green }));
 
         // manual commands are ignored: a DCC extended value for an input on signal 2
@@ -1556,37 +1536,130 @@ private slots:
         QCOMPARE(r.errors, 0);
     }
 
-    // Board-to-board link without extra firmware: a second block signal with only lamp A on TX (D1) watches the
-    // same detector. Occupied = D1 LOW (all lamps off), free = D1 HIGH (lamp A on); D1 sinks the LED of an
-    // optocoupler on the next board, whose RX (D0) is a Sensor input there. One extra output, no extra input.
-    void blockSignalRelayOnTx()
+
+    // ── Board link (GPIOcore.ino, PROTOCOL.md): 4-byte frames on 9600 baud ─────────────────────
+    static QByteArray linkFrame(bool extended, int address, int value, int hops = 15)
+    {
+        const quint8 start = quint8(0xA0 | (extended ? 0x10 : 0) | hops);
+        QByteArray f;
+        f.append(char(start)); f.append(char(address)); f.append(char(value));
+        f.append(char(start ^ quint8(address) ^ quint8(value)));
+        return f;
+    }
+
+    static void linkMode(SimulatedDevice &sim)
+    {
+        for (int o = 0; o < NumOutputs; ++o)
+            sim.setOutput(o, OutputConfig());
+        for (int i = 0; i < NumInputs; ++i)
+            sim.setInput(i, InputConfig());
+        sim.advanceClock(5100);                              // no GUI: after the window the UART is the board link
+        QTRY_VERIFY(sim.serialIsIO());
+        QTest::qWait(100);
+        sim.clearLinkSent();
+    }
+
+    // A board link output sends: switched on / off its own address (basic), a route step the step's address and
+    // position (basic), or a value to its own address (extended)
+    void boardLinkSends()
     {
         SimulatedDevice sim;
         QVERIFY(sim.open(QIODevice::ReadWrite));
-        OutputConfig none;
-        for (int o = 0; o < NumOutputs; ++o)
-            sim.setOutput(o, none);
-        InputConfig det;
-        det.type = Sensor; det.pin = 5;
-        sim.setInput(4, det);
-        sim.setOutput(0, makeBlockSignal(4, -1, 3, PinNA, 6));   // the signal itself: green D3, red D6
-        OutputConfig relay = makeBlockSignal(4, -1, 1, PinNA, PinNA);
-        relay.data[0] = 0x00;                                    // own block occupied: off = LOW
-        relay.data[1] = 0x01;                                    // (no next block)
-        relay.data[2] = 0x01;                                    // free: lamp A on = HIGH
-        sim.setOutput(1, relay);
-        sim.advanceClock(5100);                                  // no GUI: after the window D0/D1 are I/O
-        QTRY_VERIFY(sim.serialIsIO());
-        QTRY_COMPARE(int(sim.pin(1).level), 1);                  // free
-        QCOMPARE(int(sim.pin(3).level), 1);                      // green
+        linkMode(sim);
+        OutputConfig basic;
+        basic.type = BoardLink; basic.pinA = SoundPin; basic.data = { { 7, 0, 0, 0 } };
+        sim.setOutput(0, basic);
+        OutputConfig ext;
+        ext.type = BoardLink; ext.pinA = SoundPin; ext.data = { { 20, 1, 0, 0 } };
+        sim.setOutput(1, ext);
+        InputConfig abs;
+        abs.type = Latching; abs.address = 10; abs.outputId = 0;
+        sim.setInput(0, abs);
+        InputConfig route;
+        route.type = Route; route.address = 11;
+        RouteStep a; a.output = 0; a.raw = true; a.value = linkStepValue(5, false); a.delay = 0;
+        RouteStep b; b.output = 1; b.raw = true; b.value = 77; b.delay = 0;
+        route.route = { a, b };
+        sim.setInput(1, route);
         QTest::qWait(150);
-        sim.setPinLevel(5, false);                               // a train in the block
-        QTRY_COMPARE(int(sim.pin(1).level), 0);
-        QCOMPARE(int(sim.pin(6).level), 1);                      // red at the same time
-        QCOMPARE(int(sim.pin(3).level), 0);
-        sim.setPinLevel(5, true);
-        QTRY_COMPARE(int(sim.pin(1).level), 1);
-        QCOMPARE(int(sim.pin(3).level), 1);
+        sim.clearLinkSent();
+
+        sim.dccAccessory(10, 1);                             // on: its own address 7, straight
+        QTRY_COMPARE(sim.linkSent(), linkFrame(false, 7, 1));
+        sim.clearLinkSent();
+        sim.dccAccessory(11, 1);                             // the route: address 5 curved, then 77 to address 20
+        QTRY_COMPARE(sim.linkSent(), linkFrame(false, 5, 0) + linkFrame(true, 20, 77));
+    }
+
+    // A frame on RX is passed on at once (one hop less) and runs as a DCC command; broken frames are ignored
+    void boardLinkReceives()
+    {
+        SimulatedDevice sim;
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        linkMode(sim);
+        OutputConfig lamp;
+        lamp.type = SingleSteady; lamp.pinA = 3;
+        sim.setOutput(0, lamp);
+        OutputConfig servo;
+        servo.type = ServoType; servo.pinA = 9; servo.data = { { 30, 150, 1, 0 } };
+        sim.setOutput(1, servo);
+        InputConfig in;
+        in.type = Latching; in.address = 5; in.outputId = 0;
+        sim.setInput(0, in);
+        in.address = 6; in.outputId = 1;
+        sim.setInput(1, in);
+        QTest::qWait(150);
+        sim.clearLinkSent();
+
+        sim.linkReceive(linkFrame(false, 5, 1, 3));          // basic: address 5 straight
+        QTRY_COMPARE(int(sim.pin(3).level), 1);
+        QTRY_COMPARE(sim.linkSent(), linkFrame(false, 5, 1, 2));
+        sim.clearLinkSent();
+        QByteArray broken = linkFrame(false, 5, 0);
+        broken[3] = char(broken.at(3) ^ 0x01);
+        sim.linkReceive(broken);
+        QTest::qWait(200);
+        QCOMPARE(int(sim.pin(3).level), 1);                  // ignored
+        QVERIFY(sim.linkSent().isEmpty());                   // and not passed on
+        sim.linkReceive(linkFrame(false, 5, 0, 0));          // no hops left: runs, not passed on
+        QTRY_COMPARE(int(sim.pin(3).level), 0);
+        QTest::qWait(100);
+        QVERIFY(sim.linkSent().isEmpty());
+        sim.linkReceive(linkFrame(true, 6, 120, 0));         // extended: the servo goes to 120 degrees
+        QTRY_COMPARE_WITH_TIMEOUT(sim.servoPosition(1), 120, 3000);
+    }
+
+    // Two boards: the master's DCC input switches its link output, the slave's turnout input on that address
+    // follows (the slave needs no setting for it)
+    void boardLinkChain()
+    {
+        SimulatedDevice master, slave;
+        QVERIFY(master.open(QIODevice::ReadWrite));
+        QVERIFY(slave.open(QIODevice::ReadWrite));
+        linkMode(master);
+        linkMode(slave);
+        OutputConfig link;
+        link.type = BoardLink; link.pinA = SoundPin; link.data = { { 5, 0, 0, 0 } };
+        master.setOutput(0, link);
+        InputConfig button;
+        button.type = Latching; button.address = 100; button.outputId = 0;
+        master.setInput(0, button);
+        OutputConfig lamp;
+        lamp.type = SingleSteady; lamp.pinA = 4;
+        slave.setOutput(0, lamp);
+        InputConfig turnout;
+        turnout.type = Latching; turnout.address = 5; turnout.outputId = 0;
+        slave.setInput(0, turnout);
+        QTest::qWait(150);
+        master.clearLinkSent();
+        QObject::connect(&master, &SimulatedDevice::stateChanged, &master, [&] {     // the wire TX -> RX
+            if (!master.linkSent().isEmpty()) { slave.linkReceive(master.linkSent()); master.clearLinkSent(); }
+        });
+        master.dccAccessory(100, 1);
+        QTRY_COMPARE(int(slave.pin(4).level), 1);
+        master.dccAccessory(100, 0);
+        QTRY_COMPARE(int(slave.pin(4).level), 0);
+        QTRY_COMPARE(slave.linkSent(), linkFrame(false, 5, 1, 14) + linkFrame(false, 5, 0, 14));   // passed on
     }
 
     // One light effect type: the effect in data[3], swing times 12 bits each; old files (one type per effect,
@@ -1608,7 +1681,7 @@ private slots:
         QCOMPARE(outputTypeInfo(o).pinCount, 1);
         o.setLightEffect(LightTube);
         QVERIFY(outputTypeInfo(o).needsPwm);
-        QVERIFY(isUnusedOutputType(7) && isUnusedOutputType(9) && !isUnusedOutputType(LightEffect));
+        QVERIFY(isUnusedOutputType(8) && isUnusedOutputType(9) && !isUnusedOutputType(LightEffect) && !isUnusedOutputType(BoardLink));
 
         const QJsonObject j = o.toJson();
         QCOMPARE(j["type"].toString(), QStringLiteral("lightEffect"));
@@ -1789,6 +1862,9 @@ private slots:
         // output differs (a switch moved while the power was off); a toggle input does nothing. SET_INPUT_DATA
         // starts an input again, so it is the same for a new configuration.
         SimulatedDevice sim;
+        const quint8 pa = sim.output(14).pinA, pb = sim.output(15).pinA;   // D0/D1 are no pins: two freed pins
+        sim.setOutput(14, OutputConfig());
+        sim.setOutput(15, OutputConfig());
         for (int o : { 0, 2 })
         {
             OutputConfig lamp = sim.output(o);               // single steady on D3 / D5, on
@@ -1796,15 +1872,15 @@ private slots:
             sim.setOutput(o, lamp);
         }
         InputConfig absolute;
-        absolute.type = Latching; absolute.pin = 0; absolute.outputId = 0;
+        absolute.type = Latching; absolute.pin = pa; absolute.outputId = 0;
         sim.setInput(0, absolute);
         absolute.pin = 20; absolute.outputId = 2;            // A6, not pressed: equal to the output, nothing to do
         sim.setInput(2, absolute);
         InputConfig toggle;
-        toggle.type = Momentary; toggle.pin = 1; toggle.outputId = 1;
+        toggle.type = Momentary; toggle.pin = pb; toggle.outputId = 1;
         sim.setInput(1, toggle);
-        sim.setPinLevel(0, false);                           // D0 and D1 LOW from the start
-        sim.setPinLevel(1, false);
+        sim.setPinLevel(pa, false);                           // both LOW from the start
+        sim.setPinLevel(pb, false);
         QVERIFY(sim.open(QIODevice::ReadWrite));
         QTest::qWait(300);
         QCOMPARE(int(sim.output(0).state), 0);               // no edge: it followed its switch
@@ -1812,11 +1888,11 @@ private slots:
         QCOMPARE(int(sim.output(1).state), 0);               // the toggle input did nothing
         QCOMPARE(int(sim.output(2).state), 1);
 
-        sim.setPinLevel(0, true);                            // edges as before
+        sim.setPinLevel(pa, true);                            // edges as before
         QTRY_COMPARE(int(sim.output(0).state), 1);
-        sim.setPinLevel(1, true);
+        sim.setPinLevel(pb, true);
         QTest::qWait(150);
-        sim.setPinLevel(1, false);                           // a press toggles
+        sim.setPinLevel(pb, false);                           // a press toggles
         QTRY_COMPARE(int(sim.output(1).state), 1);
 
         OutputConfig lamp = sim.output(3);                   // a new absolute input on A6 (released = 1), output off

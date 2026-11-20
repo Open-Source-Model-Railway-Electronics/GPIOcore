@@ -95,6 +95,7 @@ QString inputSummaryTarget(const Gpio::InputConfig &c);
 
 // Short route step value for wire labels: "S", "C", "45°", "A3", "P128"
 QString stepValueText(const Gpio::RouteStep &s, quint8 outputType);
+QString stepValueText(const Gpio::RouteStep &s, const Gpio::OutputConfig &output);   // a board link's mode counts
 QString delayText(quint16 delay);   // 0.1 s units -> "0.3 s"
 
 } // namespace Ui

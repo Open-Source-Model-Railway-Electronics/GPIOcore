@@ -24,8 +24,10 @@ static const OutputTypeInfo kOutputTypes[OutputTypeCount + 1] =
       QT_TRANSLATE_NOOP("Gpio", "Pins A and B blink alternately (value x 10 ms per half period).") },
     { "lightEffect",     QT_TRANSLATE_NOOP("Gpio", "Light effect"),      2, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "A light effect: swing light, fireplace, TL tube, welder or photographer.") },
-    { "unused7",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
-      QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
+    { "boardLink",       QT_TRANSLATE_NOOP("Gpio", "Board link (TX)"),   1, false, false, ParamKind::Link,       0,
+      QT_TRANSLATE_NOOP("Gpio", "Sends commands to the next board over TX (D1), board to board. Basic: a route step "
+                                "sets a turnout address on the boards down the line, straight or curved. Extended: a "
+                                "value (servo angle, aspect, PWM, track) to one address. Only without a PC connected.") },
     { "unused8",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
       QT_TRANSLATE_NOOP("Gpio", "Output disabled.") },
     { "unused9",         QT_TRANSLATE_NOOP("Gpio", "Not in use"),        0, false, false, ParamKind::None,       0,
@@ -79,7 +81,7 @@ const OutputTypeInfo &lightEffectInfo(quint8 kind)
 
 bool isUnusedOutputType(quint8 type)
 {
-    return type == UnusedType7 || type == UnusedType8 || type == UnusedType9;
+    return type == UnusedType8 || type == UnusedType9;
 }
 
 const OutputTypeInfo &outputTypeInfo(const OutputConfig &c)
@@ -312,23 +314,34 @@ StepKind stepKind(quint8 outputType)
     case FourToneSignal: return StepKind::Aspect;
     case Pwm:            return StepKind::PwmValue;
     case SoundEffect:    return StepKind::Track;
+    case BoardLink:      return StepKind::LinkTurnout;
     }
     return StepKind::State;
 }
 
-RouteStep defaultStep(int output, quint8 outputType)
+StepKind stepKind(const OutputConfig &o)
+{
+    return o.type == BoardLink && o.linkExtended() ? StepKind::LinkValue : stepKind(o.type);
+}
+
+static RouteStep stepFor(int output, StepKind kind)
 {
     RouteStep s;
     s.output = output;
-    switch (stepKind(outputType))
+    switch (kind)
     {
-    case StepKind::Aspect:   s.raw = true;  s.value = 0;   break;
-    case StepKind::PwmValue: s.raw = true;  s.value = 255; break;
-    case StepKind::Track:    s.raw = true;  s.value = 1;   break;
-    default:                 s.raw = false; s.value = 1;   break;
+    case StepKind::Aspect:      s.raw = true;  s.value = 0;   break;
+    case StepKind::PwmValue:    s.raw = true;  s.value = 255; break;
+    case StepKind::Track:       s.raw = true;  s.value = 1;   break;
+    case StepKind::LinkTurnout: s.raw = true;  s.value = linkStepValue(1, true); break;
+    case StepKind::LinkValue:   s.raw = true;  s.value = 0;   break;
+    default:                    s.raw = false; s.value = 1;   break;
     }
     return s;
 }
+
+RouteStep defaultStep(int output, quint8 outputType)        { return stepFor(output, stepKind(outputType)); }
+RouteStep defaultStep(int output, const OutputConfig &o)    { return stepFor(output, stepKind(o)); }
 
 // ── InputConfig ─────────────────────────────────────────────────────────────
 quint8 InputConfig::pinByte() const
@@ -373,6 +386,8 @@ void InputConfig::setCustomValues(bool on, quint8 outputType)
             s.value = quint8(k);                     // curved / straight, as without custom values
         else if (k == 0 && (stepKind(outputType) == StepKind::PwmValue || stepKind(outputType) == StepKind::Track))
             s.value = 0;                             // off: dark / stop
+        else if (stepKind(outputType) == StepKind::LinkTurnout)
+            s.value = linkStepValue(1, k == 1);      // address 1: off = curved, on = straight
         s.delay  = 0;
         s.values = true;
         route.append(s);

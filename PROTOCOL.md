@@ -94,7 +94,8 @@ In `SET_OUTPUT_DATA` / `GET_OUTPUT_DATA` the `state` byte carries `state` in **b
 | 4 | double pulse | A, B | `uint32` LE pulse time × 10 ms |
 | 5 | double flashing | A, B | `uint32` LE half period × 10 ms |
 | 6 | light effect | per effect | `data[3]` = effect: 0 swing light (A, B), 1 fireplace (A, B, PWM), 2 TL tube (A, PWM), 3 welder (A), 4 photographer (A). Swing: on time = `data[0] \| (data[1] & 0x0F) << 8`, pause = `data[1] >> 4 \| data[2] << 4`, 12 bits each × 10 ms; other effects: `data[0..2]` unused (0) |
-| 7–9 | free | – | not used (EEPROM layout 1 had fireplace, TL tube and welder here) |
+| 7 | board link (TX) | A = D1 (fixed) | `data[0]` = own address (0 = none), `data[1]` bit0 = extended; see §12 |
+| 8–9 | free | – | not used (EEPROM layout 1 had fireplace, TL tube and welder here) |
 | 10 | 4-aspect signal | A–D | `data[0]` = aspect: bits 0–3 on, bits 4–7 flashing (set by DCC-ext or a route; the GUI leaves it as it is), `data[1]` = flashing frequency in 0.1 Hz, `data[2]`/`data[3]` unused (0) |
 | 11 | servo | A (+ relays) | `data[0]` angle at state 0, `data[1]` angle at state 1, `data[2]` speed in ms/° (≥ 1), `data[3]` = 0, or semaphore arm (below) |
 | 12 | PWM | A (PWM) | `data[0]` = brightness 0–255, `data[1]` = fade time in s for a full change 0→255 (0 = immediate, max. 255 s). The output takes one step towards the new brightness every `data[1] × 1000 / 255` ms (own values, route step, DCC-ext); at start-up it fades up from 0. `OUTPUT_EVENT` reports the target value immediately |
@@ -498,3 +499,33 @@ COM port for it. Connecting over that port does not reset the board: press the c
 **Simulator.** `gpiocore_fw_host` can attach a fake HC-05 (frame `'H' <baud÷2400>`) that answers `OK` to every AT
 command at that baud rate and reports what it received (`'h'`); bytes the firmware sends at a baud rate other than
 115200 (and 9600, the DFPlayer) reach the GUI as noise (`F0` per byte), never as valid frames.
+
+## 12. Board link (board to board, firmware 2026-11-20)
+
+D0/D1 are never an input or output pin any more: they are the serial line. For 5 s after start-up (or after
+a short press on the config button) the GUI can connect at 115200 baud. Without a GUI the UART then switches
+to **9600 baud: the board link**. A DFPlayer on TX hears the same line and ignores the link frames.
+
+**Frame** (4 bytes, back to back; after a gap of more than 3 ms a receiver starts over):
+
+```
+<start> <address> <value> <check>
+start  = 0xA0 | extended << 4 | hops      (101x hhhh; hops = how many boards may still pass it on, 0-15)
+check  = start ^ address ^ value          (XOR)
+basic    : value = position, 1 = straight, 0 = curved   -> runs as a DCC accessory command for <address>
+extended : value 0-255 (angle, aspect, PWM, track)    -> runs as a DCC extended command for <address>
+```
+
+Address 0 is not used. A board that receives a valid frame on RX (D0) **first passes it on** on TX (D1) with
+`hops - 1` (not when hops is 0), then runs it like the same DCC command from the track: every input with that
+DCC address reacts as usual. A board in a chain therefore needs no setting; a ring of boards stops after 15 hops.
+
+**Board link output** (type 7, pin A = D1): `data[0]` = its own address (0 = none), `data[1]` bit0 = extended.
+
+| What reaches the output | Basic | Extended |
+|---|---|---|
+| on / off (toggle, absolute, DCC) | frame `<own address> <0/1>`, if it has one | frame `<own address> <0/1>` |
+| a value (route step, custom value, DCC extended) | bits 0-6 = address (1-127), bit 7 = straight | frame `<own address> <value>` |
+
+Each frame sent is also reported as `OUTPUT_EVENT` state 2 with the value. With the GUI connected the UART is
+the GUI's: nothing is sent or received on the link.

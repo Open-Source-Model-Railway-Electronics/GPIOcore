@@ -139,9 +139,6 @@ int outputLevel(const OutputConfig &c)
     int l = outputTypeLevel(c.type);
     if (info.relays && (c.relayA != PinNA || c.relayB != PinNA || c.relayC != PinNA))
         l = qMax(l, int(Advanced));                       // frog relays
-    for (int k = 0; k < info.pinCount; ++k)
-        if (c.pin(k) < 2)
-            l = qMax(l, int(Advanced));                   // D0 / D1
     if (c.type == ServoType && c.servoFollows() >= 0)
         l = Expert;                                       // semaphore arm
     return l;
@@ -152,8 +149,8 @@ int inputLevel(const InputConfig &c, bool timing)
     if (c.type == InputNotInUse)
         return Beginner;
     int l = inputTypeLevel(c.type);
-    if (c.isAnalog() || c.hasCustomValues() || c.pin < 2 || (timing && isRouteType(c.type)))
-        l = qMax(l, int(Advanced));                       // analog, custom values, D0 / D1, own wait per step
+    if (c.isAnalog() || c.hasCustomValues() || (timing && isRouteType(c.type)))
+        l = qMax(l, int(Advanced));                       // analog, custom values, own wait per step
     return l;
 }
 
@@ -179,15 +176,13 @@ QStringList levelFeatures(const BoardConfig &b, int above)
         case FourToneSignal: add(Advanced, QObject::tr("4-aspect signals"));  break;
         case Pwm:            add(Advanced, QObject::tr("PWM"));               break;
         case SoundEffect:    add(Advanced, QObject::tr("sound effects"));     break;
+        case BoardLink:      add(Advanced, QObject::tr("board link"));        break;
         default:             add(outputTypeLevel(o.type), QObject::tr("light effects")); break;
         }
         if (o.servoFollows() >= 0)
             add(Expert, QObject::tr("semaphore arms"));
         if (outputTypeInfo(o).relays && (o.relayA != PinNA || o.relayB != PinNA || o.relayC != PinNA))
             add(Advanced, QObject::tr("frog relays"));
-        for (int k = 0; k < outputTypeInfo(o).pinCount; ++k)
-            if (o.pin(k) < 2 && o.type != SoundEffect)
-                add(Advanced, QObject::tr("D0 / D1"));
     }
     for (const InputConfig &i : b.inputs)
     {
@@ -197,7 +192,6 @@ QStringList levelFeatures(const BoardConfig &b, int above)
         if (i.type == RouteStraight || i.type == RouteCurved)  add(Advanced, QObject::tr("routes on straight or curved only"));
         if (i.isAnalog())                                      add(Advanced, QObject::tr("analog inputs"));
         if (i.hasCustomValues())                               add(Advanced, QObject::tr("custom values"));
-        if (i.pin < 2)                                         add(Advanced, QObject::tr("D0 / D1"));
         if (b.board.timing && isRouteType(i.type))             add(Advanced, QObject::tr("own wait time per route step"));
     }
     return f;
@@ -348,6 +342,7 @@ QColor outputTypeColor(quint8 type)
     case Pwm:            return QColor(0xEC, 0x48, 0x99);
     case OutputNotInUse: return QColor(0xCB, 0xD5, 0xE1);
     case SoundEffect:    return QColor(0x0D, 0x94, 0x88);
+    case BoardLink:      return QColor(0x7C, 0x3A, 0xED);
     case BlockSignal:    return QColor(0x65, 0xA3, 0x0D);
     }
     return QColor(0x94, 0xA3, 0xB8);
@@ -403,12 +398,13 @@ void fillPinCombo(QComboBox *combo, bool output)
         QString reserved = pinReservedReason(pin);
         if (reserved.isEmpty() && output) reserved = pinOutputReason(pin);
         const QString note     = pinNote(pin);
+        if (pin < 2)
+            continue;                    // D0/D1: the serial line (GUI, board link, DFPlayer), never a pin
         if ((pin == 20 || pin == 21) && !reserved.isEmpty())
             continue;                    // A6/A7 only appear where they can be used
         if (boardOptions().dccNext && !dccNextPort(pin))
             continue;                    // DCCnext: only its ports P1-P16
         if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
-        else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio(QT_TRANSLATE_NOOP("Gpio", "serial pin")));
         else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio(QT_TRANSLATE_NOOP("Gpio", "analog input only")));
         combo->addItem(text, int(pin));
         combo->setItemData(combo->count() - 1, text, Qt::UserRole + 1);       // text without 'in use'
@@ -417,8 +413,6 @@ void fillPinCombo(QComboBox *combo, bool output)
         if (!note.isEmpty())
             combo->setItemData(combo->count() - 1, note, Qt::ToolTipRole);
     }
-    if (level() == Beginner)                 // D0 / D1 (serial pins) from Advanced on
-        offerItems(combo, [](int pin) { return pin >= 2; });
 }
 
 void selectData(QComboBox *combo, int value, const QString &unknownText)
@@ -590,7 +584,7 @@ void markUsedPins(QComboBox *combo, bool forOutput, int selfIndex, int share)
 }
 
 int pinShare(const InputConfig &c)  { return c.isAnalog() ? ShareAnalog : ShareNone; }
-int pinShare(const OutputConfig &c) { return c.type == SoundEffect ? ShareSound : ShareNone; }
+int pinShare(const OutputConfig &c) { return c.type == SoundEffect || c.type == BoardLink ? ShareSound : ShareNone; }
 
 bool pinClash(const QVector<PinUse> &users)
 {
@@ -689,10 +683,20 @@ QString inputSummaryTarget(const InputConfig &c)
 
 QString stepValueText(const RouteStep &s, quint8 outputType)
 {
+    OutputConfig o;
+    o.type = outputType;
+    return stepValueText(s, o);
+}
+
+QString stepValueText(const RouteStep &s, const OutputConfig &output)
+{
     if (!s.raw)
         return s.value ? QStringLiteral("S") : QStringLiteral("C");
-    switch (stepKind(outputType))
+    switch (stepKind(output))
     {
+    case StepKind::LinkTurnout:       return QStringLiteral("⇄%1%2").arg(linkStepAddress(s.value))
+                                                                   .arg(linkStepStraight(s.value) ? QStringLiteral("S") : QStringLiteral("C"));
+    case StepKind::LinkValue:         return QStringLiteral("⇄=%1").arg(s.value);
     case StepKind::ServoStateOrAngle: return QStringLiteral("%1°").arg(s.value);
     case StepKind::Aspect:            return QStringLiteral("A%1").arg(s.value);
     case StepKind::PwmValue:          return QStringLiteral("P%1").arg(s.value);
