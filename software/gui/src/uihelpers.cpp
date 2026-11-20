@@ -283,6 +283,9 @@ void applyAppStyle(QApplication &app)
         QPushButton#test { border-color: #93C5FD; color: #1D4ED8; }
         QComboBox, QSpinBox { padding: 3px 6px; border: 1px solid #CBD5E1; border-radius: 5px; background: white; min-height: 20px; }
         QComboBox:disabled, QSpinBox:disabled { background: #F1F5F9; }
+        QComboBox QAbstractItemView { outline: 0; border: 1px solid #CBD5E1; background: #FFFFFF; }
+        QComboBox QAbstractItemView::item { padding: 3px 6px; }
+        QComboBox QAbstractItemView::item:selected { background: #2563EB; color: white; }
         QScrollArea { border: none; background: transparent; }
         QStatusBar { background: #FFFFFF; border-top: 1px solid #E2E8F0; }
         QCheckBox::indicator, QRadioButton::indicator { width: 15px; height: 15px; border: 2px solid #8B9AB0; background: #FFFFFF; }

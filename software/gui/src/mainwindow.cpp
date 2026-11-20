@@ -2689,6 +2689,7 @@ void MainWindow::addBlock(bool output)
             if (m_edit.outputs[o].type == OutputNotInUse && outputSources(m_edit, o).isEmpty())
             {
                 m_edit.outputs[o].type = SingleSteady;
+                m_inEd->setOutputs(outputNames(), outputConfigs());   // the route step lists know it at once
                 userEdited();
                 selectOutput(o);
                 return;
@@ -2740,6 +2741,7 @@ void MainWindow::removeSelected()
         if (!freed.isEmpty())
             statusBar()->showMessage(tr("%1 removed; %2 drove it and is now not in use as well.")
                                          .arg(name, freed.join(QStringLiteral(", "))), 8000);
+        m_inEd->setOutputs(outputNames(), outputConfigs());
     }
     closePanels();
     userEdited();

@@ -640,7 +640,7 @@ void InputEditor::showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *p
         break;
     case StepKind::LinkTurnout:
         value->setRange(1, MaxLinkStepAddress);
-        value->setPrefix(tr("address "));
+        value->setPrefix(QStringLiteral("#"));
         value->setSuffix(QString());
         value->setToolTip(tr("The DCC address of the turnout on the boards down the line (1-127)"));
         value->setVisible(true);
@@ -648,7 +648,7 @@ void InputEditor::showStepValue(QComboBox *mode, QSpinBox *value, QToolButton *p
         break;
     case StepKind::LinkValue:
         value->setRange(0, 255);
-        value->setPrefix(tr("value "));
+        value->setPrefix(QString());
         value->setSuffix(QString());
         value->setToolTip(tr("Sent to the board link output's address: servo angle, aspect, PWM or track"));
         value->setVisible(true);
