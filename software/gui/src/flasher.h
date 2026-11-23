@@ -1,11 +1,11 @@
 #pragma once
-// Firmware upload for GPIOcore boards (Arduino Uno / Nano) via avrdude.
+// Firmware upload for IOcore boards (Arduino Uno / Nano) via avrdude.
 //
 // Flasher     : runs avrdude asynchronously through QProcess.
 // FlashDialog : beginner-friendly dialog around Flasher.
 //
 // avrdude is looked up in <exeDir>/tools/avrdude/, then in
-// <GPIOCORE_SOURCE_DIR>/tools/avrdude/ (when that define is set), then in PATH.
+// <IOCORE_SOURCE_DIR>/tools/avrdude/ (when that define is set), then in PATH.
 
 #include <QDialog>
 #include <QObject>
@@ -113,7 +113,7 @@ class FlashDialog : public QDialog
 public:
     explicit FlashDialog(const QString &preselectPort = QString(), QWidget *parent = nullptr);
 
-    // <repo>/release/GPIOcore.hex when it exists, otherwise <exeDir>/GPIOcore.hex.
+    // <repo>/release/IOcore.hex when it exists, otherwise <exeDir>/IOcore.hex.
     static QString defaultHexPath();
 
     bool isBusy() const;

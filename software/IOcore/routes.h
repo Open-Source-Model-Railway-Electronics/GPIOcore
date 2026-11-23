@@ -27,7 +27,7 @@ extern uint8_t routeCount[16] ;
 
 void     routesBegin() ;
 uint8_t  stepSize() ;                                       // in EEPROM: 3 = timing off, 5 = timing on
-extern uint8_t routeExtra ;                                 // the extra byte of the step being run (GPIOcore.ino)
+extern uint8_t routeExtra ;                                 // the extra byte of the step being run (IOcore.ino)
 uint16_t routeAddress( uint8_t route, uint8_t step ) ;
 uint16_t usedRouteSteps() ;
 uint16_t freeRouteSteps() ;

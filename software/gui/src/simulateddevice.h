@@ -1,7 +1,7 @@
 #pragma once
 // Simulated board: a QIODevice on which the real firmware runs.
 //
-// open() starts gpiocore_fw_host (fwhost/, built from software/GPIOcore with an Arduino shim) and
+// open() starts iocore_fw_host (fwhost/, built from software/IOcore with an Arduino shim) and
 // the DeviceLink talks to it like to a serial port. Everything the board does - the protocol, its
 // replies and quirks, routes, interlocking, servo sweeps, frog relays, analog inputs, the DCC
 // lockout, timing - is the firmware's own code. This class only carries the bytes, keeps a copy of
@@ -26,7 +26,7 @@ public:
     explicit SimulatedDevice(QObject *parent = nullptr);
     ~SimulatedDevice() override;
 
-    // gpiocore_fw_host next to the application (or in the build tree); empty if not found
+    // iocore_fw_host next to the application (or in the build tree); empty if not found
     static QString hostProgram();
     // what a factory-fresh board contains (Output::defaults() / Input::defaults(); a test checks
     // it against the firmware), so the GUI is useful offline

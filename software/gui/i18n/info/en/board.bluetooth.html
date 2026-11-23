@@ -17,11 +17,11 @@ the HC-05 is attached.</li>
 2 seconds): the module is in <b>AT mode</b>.</li>
 <li>Connect the program to the board over USB.</li>
 <li>Choose <i>Board &gt; Set up Bluetooth (HC-05)</i> and click <b>Start</b>. The board tries the usual speeds and
-sets the module to <b>115200 baud</b> and the name <b>GPIOcore-&lt;board name&gt;</b>. The PIN stays as it is.
+sets the module to <b>115200 baud</b> and the name <b>IOcore-&lt;board name&gt;</b>. The PIN stays as it is.
 This takes a few seconds.</li>
 <li>Unplug the board and plug it in again, <b>without</b> holding the button.</li>
-<li>In the Windows Bluetooth settings pair <b>GPIOcore&hellip;</b> (PIN <b>1234</b>, or 0000 on some modules).
-Windows creates a COM port for it (sometimes two: use the "outgoing" one). Choose that port in GPIOcore.</li>
+<li>In the Windows Bluetooth settings pair <b>IOcore&hellip;</b> (PIN <b>1234</b>, or 0000 on some modules).
+Windows creates a COM port for it (sometimes two: use the "outgoing" one). Choose that port in IOcore.</li>
 </ol>
 <p>If it fails: the module is not in AT mode (fast blinking = normal mode), the wiring is wrong, or the diode is
 missing or the wrong way round. Other modules (HC-06, some clones) do not know these commands.</p>

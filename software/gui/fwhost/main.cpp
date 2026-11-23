@@ -1,4 +1,4 @@
-// gpiocore_fw_host: the real GPIOcore firmware (software/GPIOcore) running on the PC.
+// iocore_fw_host: the real IOcore firmware (software/IOcore) running on the PC.
 //
 // The GUI's simulator (src/simulateddevice.cpp) starts this program and talks to it through
 // stdin / stdout in small frames:   <type> <length lo> <length hi> <payload ...>
@@ -52,7 +52,7 @@
 #include <unistd.h>
 #endif
 
-extern const char *version;      // src/version.h, defined in GPIOcore.ino
+extern const char *version;      // src/version.h, defined in IOcore.ino
 
 // ── Clock ─────────────────────────────────────────────────────────────────────
 using Clock = std::chrono::steady_clock;
@@ -214,7 +214,7 @@ static void handleFrames()
         case 'F': fwDccFunctions(address, at(f, 2)); break;
         case 'H': hostHc05(uint32_t(at(f, 0)) * 2400); break;
         case 'T': hostDelay(uint32_t(at(f, 0) | at(f, 1) << 8)); break;
-        default:  fprintf(stderr, "gpiocore_fw_host: unknown frame '%c'\n", f.type); break;
+        default:  fprintf(stderr, "iocore_fw_host: unknown frame '%c'\n", f.type); break;
         }
         frames.pop_front();
     }
@@ -252,7 +252,7 @@ int main(int argc, char **argv)
             eepromFile = argv[++i];
         else
         {
-            fprintf(stderr, "usage: %s [--eeprom <file>]   (talks to the GPIOcore GUI on stdin / stdout)\n", argv[0]);
+            fprintf(stderr, "usage: %s [--eeprom <file>]   (talks to the IOcore GUI on stdin / stdout)\n", argv[0]);
             return 2;
         }
     }

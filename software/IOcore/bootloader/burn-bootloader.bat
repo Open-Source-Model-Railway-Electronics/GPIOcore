@@ -2,11 +2,11 @@
 setlocal
 rem Burn the Arduino Nano bootloader (Optiboot) on an ATmega328P through its ICSP pins.
 rem For boards you build yourself: afterwards the board takes firmware over its serial / USB port
-rem like a Nano (GPIOcore: Board > Flash firmware..., "Arduino Uno / Nano (new bootloader)").
+rem like a Nano (IOcore: Board > Flash firmware..., "Arduino Uno / Nano (new bootloader)").
 rem
 rem   burn-bootloader.bat COM5          programmer: an Arduino running ArduinoISP, on COM5
 rem   burn-bootloader.bat usbasp        programmer: a USBasp
-rem   burn-bootloader.bat COM5 all      bootloader and the GPIOcore firmware in one go
+rem   burn-bootloader.bat COM5 all      bootloader and the IOcore firmware in one go
 rem
 rem Fuses as the Arduino IDE sets them for a Nano (ATmega328P, 16 MHz crystal):
 rem   lfuse 0xFF (external crystal), hfuse 0xDA (512-word boot section, start in the bootloader),
@@ -18,8 +18,8 @@ set "AVRDUDE=%HERE%..\tools\avrdude\avrdude.exe"
 set "CONF=%HERE%..\tools\avrdude\avrdude.conf"
 set "HEX=%HERE%optiboot_atmega328.hex"
 set "WHAT=the bootloader"
-if /i "%~2"=="all" set "HEX=%HERE%GPIOcore_with_bootloader.hex"
-if /i "%~2"=="all" set "WHAT=the bootloader and the GPIOcore firmware"
+if /i "%~2"=="all" set "HEX=%HERE%IOcore_with_bootloader.hex"
+if /i "%~2"=="all" set "WHAT=the bootloader and the IOcore firmware"
 
 if "%~1"=="" goto usage
 rem programmer; a new chip runs at 1 MHz until its fuses are set, so a USBasp talks slowly (-B 10) in step 1
@@ -64,5 +64,5 @@ echo Burns the Arduino Nano bootloader on an ATmega328P through its ICSP pins.
 echo.
 echo   %~nx0 COM5          programmer: an Arduino running ArduinoISP, on COM5
 echo   %~nx0 usbasp        programmer: a USBasp
-echo   %~nx0 COM5 all      bootloader and the GPIOcore firmware in one go
+echo   %~nx0 COM5 all      bootloader and the IOcore firmware in one go
 exit /b 1

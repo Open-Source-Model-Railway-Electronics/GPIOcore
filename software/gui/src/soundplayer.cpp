@@ -47,7 +47,7 @@ SoundPlayer::~SoundPlayer() = default;
 QString SoundPlayer::defaultFolder()
 {
     return QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
-        .filePath(QStringLiteral("GPIOcore/sounds"));
+        .filePath(QStringLiteral("IOcore/sounds"));
 }
 
 void SoundPlayer::setBackend(Backend *backend)

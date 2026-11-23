@@ -12,14 +12,14 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QApplication::setApplicationName(QStringLiteral("GPIOcore Configurator"));
+    QApplication::setApplicationName(QStringLiteral("IOcore Configurator"));
     QApplication::setWindowIcon(QIcon(QStringLiteral(":/ui/oshw.svg")));   // the Open Source Hardware gear
     QApplication::setOrganizationName(QStringLiteral("Train-Science"));
     QApplication::setApplicationVersion(QStringLiteral(PROJECT_VERSION_STRING));
     Ui::applyAppStyle(app);
 
     QCommandLineParser cli;
-    cli.setApplicationDescription(QStringLiteral("Configure GPIOcore boards over the serial port."));
+    cli.setApplicationDescription(QStringLiteral("Configure IOcore boards over the serial port."));
     cli.addHelpOption();
     cli.addVersionOption();
     QCommandLineOption demo(QStringLiteral("demo"), QStringLiteral("Connect to the built-in firmware simulator."));
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     }
     Lang::install(app, cli.value(lang)); // before any window is created
 
-    // The user's folders in Documents\GPIOcore, so they are there to find from the first start
+    // The user's folders in Documents\IOcore, so they are there to find from the first start
     // (here and not in the installer: it runs as administrator, maybe as another user)
     QDir().mkpath(MainWindow::boardsDir());
     if (QSettings().value(QStringLiteral("sound/folder")).toString().isEmpty())

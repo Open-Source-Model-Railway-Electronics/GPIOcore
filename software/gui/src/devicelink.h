@@ -1,5 +1,5 @@
 #pragma once
-// Request/response link to a GPIOcore board over any QIODevice
+// Request/response link to an IOcore board over any QIODevice
 // (QSerialPort for real hardware, SimulatedDevice for demo and tests).
 //
 // One transaction is in flight at a time. After each transaction a short
@@ -18,7 +18,7 @@ class QIODevice;
 class QSerialPort;
 
 // What the connected decoder can do, from its HELLO reply.
-// A board that does not answer HELLO is no GPIOcore board (or has very old firmware).
+// A board that does not answer HELLO is no IOcore board (or has very old firmware).
 struct DeviceCaps
 {
     bool known         = false;
@@ -97,7 +97,7 @@ signals:
     void progress(int done, int total);
     void finished(int failures);            // queue became empty
     void errorOccurred(const QString &message);
-    void noBoard(const QString &port);       // the port opened, but no GPIOcore board answered HELLO
+    void noBoard(const QString &port);       // the port opened, but no IOcore board answered HELLO
     // No answer when connecting: waiting (announceWaitMs) for the board to announce itself, which it does
     // after a short press on its config button
     void waitingForBoard();

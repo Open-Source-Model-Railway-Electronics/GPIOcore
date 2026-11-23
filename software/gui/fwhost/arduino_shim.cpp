@@ -1,4 +1,4 @@
-// Arduino core / library emulation for gpiocore_fw_host (see arduino/Arduino.h).
+// Arduino core / library emulation for iocore_fw_host (see arduino/Arduino.h).
 // Single threaded: only the host program's main loop calls into here.
 
 #include <Arduino.h>

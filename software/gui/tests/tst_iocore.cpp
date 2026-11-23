@@ -1,5 +1,5 @@
 // Unit tests: protocol framing, config model and DeviceLink against the
-// simulated board, which runs the real firmware (gpiocore_fw_host).
+// simulated board, which runs the real firmware (iocore_fw_host).
 
 #include "boardtools.h"
 #include "connections.h"
@@ -38,7 +38,7 @@ static BoardConfig sampleBoard()
     return b;
 }
 
-// A device that answers everything except HELLO: no GPIOcore board (or very old firmware)
+// A device that answers everything except HELLO: no IOcore board (or very old firmware)
 class NoHelloDevice : public SimulatedDevice
 {
 public:
@@ -88,7 +88,7 @@ static OutputConfig makeBlockSignal(int own, int next, quint8 a, quint8 b, quint
     return s;
 }
 
-class TestGpioCore : public QObject
+class TestIOcore : public QObject
 {
     Q_OBJECT
 
@@ -743,7 +743,7 @@ private slots:
         QVERIFY(waiting.wait(3000));                        // no HELLO reply: first wait for an announce
         QVERIFY(link.isOpen() && link.isWaitingForBoard());
         QCOMPARE(errors.size(), 0);
-        QVERIFY(closed.wait(3000));                         // none came: not a GPIOcore board, link closed
+        QVERIFY(closed.wait(3000));                         // none came: not an IOcore board, link closed
         QCOMPARE(errors.size(), 1);
         QTRY_COMPARE(noBoard.size(), 1);                    // the GUI shows a clear message for this one
         QVERIFY(!link.isOpen());
@@ -874,7 +874,7 @@ private slots:
         QVERIFY(sim.linkSent().isEmpty());
     }
 
-    // GPIOcore.ino serialCheck(): after the serial window without a GUI the UART becomes the board link (9600 baud),
+    // IOcore.ino serialCheck(): after the serial window without a GUI the UART becomes the board link (9600 baud),
     // whatever the configuration. A short press on the config button gives the GUI a new window.
     void serialBecomesBoardLink()
     {
@@ -917,7 +917,7 @@ private slots:
         QCOMPARE(result.first().at(1).toInt(), 38400);
         QVERIFY(result.first().at(2).toBool());
         QTRY_COMPARE(r.sim->hc05Commands(),
-                     (QStringList{ "AT", "AT+UART=115200,0,0", "AT+NAME=GPIOcore-Yard2east" }));
+                     (QStringList{ "AT", "AT+UART=115200,0,0", "AT+NAME=IOcore-Yard2east" }));
         QCOMPARE(r.errors, 0);
         r.link->readOutput(0);                               // the session goes on at 115200
         waitFinished(r);
@@ -934,7 +934,7 @@ private slots:
         QVERIFY(result.wait(5000));
         QCOMPARE(result.first().at(0).toInt(), 0);
         QCOMPARE(result.first().at(1).toInt(), 57600);
-        QTRY_COMPARE(r.sim->hc05Commands(), (QStringList{ "AT", "AT+UART=115200,0,0", "AT+NAME=GPIOcore" }));
+        QTRY_COMPARE(r.sim->hc05Commands(), (QStringList{ "AT", "AT+UART=115200,0,0", "AT+NAME=IOcore" }));
         QCOMPARE(r.errors, 0);
     }
 
@@ -1475,7 +1475,7 @@ private slots:
 
     void firmwareBlockSignals()
     {
-        // GPIOcore.ino blockSignals(): Dutch 3-aspect signals, three blocks in a row; sensor k on block k,
+        // IOcore.ino blockSignals(): Dutch 3-aspect signals, three blocks in a row; sensor k on block k,
         // signal k protects block k and looks at block k + 1. Block 1's detector is on A2.
         Rig r; makeRig(r);
         OutputConfig none;
@@ -1572,7 +1572,7 @@ private slots:
     }
 
 
-    // ── Board link (GPIOcore.ino, PROTOCOL.md): 4-byte frames on 9600 baud ─────────────────────
+    // ── Board link (IOcore.ino, PROTOCOL.md): 4-byte frames on 9600 baud ─────────────────────
     static QByteArray linkFrame(bool extended, int address, int value, int hops = 15)
     {
         const quint8 start = quint8(0xA0 | (extended ? 0x10 : 0) | hops);
@@ -1803,7 +1803,7 @@ private slots:
 
     void firmwareServoSemaphore()
     {
-        // GPIOcore.ino blockSignals(): a servo with data[3] bit7 follows a detector: occupied = curved (stop),
+        // IOcore.ino blockSignals(): a servo with data[3] bit7 follows a detector: occupied = curved (stop),
         // free = straight (clear), at its own speed; bit6 swaps them
         Rig r; makeRig(r);
         OutputConfig servo;
@@ -1936,5 +1936,5 @@ private slots:
     }
 };
 
-QTEST_GUILESS_MAIN(TestGpioCore)
-#include "tst_gpiocore.moc"
+QTEST_GUILESS_MAIN(TestIOcore)
+#include "tst_iocore.moc"

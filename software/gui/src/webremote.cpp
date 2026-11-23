@@ -12,7 +12,7 @@
 // ── The phone page (English / Dutch by the phone's language) ───────────────────
 static const char kPage[] = R"HTML(<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GPIOcore remote</title>
+<title>IOcore remote</title>
 <style>
 :root{--bg:#f4f6f9;--card:#fff;--fg:#1f2937;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--red:#dc2626}
 @media (prefers-color-scheme:dark){:root{--bg:#0f172a;--card:#1e293b;--fg:#e2e8f0;--muted:#94a3b8;--line:#334155}}
@@ -30,7 +30,7 @@ input[type=range]{width:100%;height:44px}
 .go{color:#fff!important;border:none!important}.c{background:var(--red)}.s{background:var(--blue)}
 .small{color:var(--muted);font-size:13px;text-align:center;margin-top:10px}.err{color:var(--red);text-align:center;margin:8px}
 </style></head><body>
-<h1>GPIOcore</h1><div class="sub" id="board"></div>
+<h1>IOcore</h1><div class="sub" id="board"></div>
 <div class="list" id="list"></div>
 <div class="card" id="card" style="display:none">
  <div id="title" style="font-weight:600"></div>
@@ -178,7 +178,7 @@ void WebRemote::handle(QTcpSocket *s)
     const QUrlQuery q(url);
     if (q.queryItemValue(QStringLiteral("t")) != m_token)
         return reply(s, 403, "text/plain; charset=utf-8",
-                     "Open the address shown in the GPIOcore program (it contains a code).");
+                     "Open the address shown in the IOcore program (it contains a code).");
     const QString path = url.path();
     const int o = q.queryItemValue(QStringLiteral("o")).toInt();
     if (path == QLatin1String("/"))

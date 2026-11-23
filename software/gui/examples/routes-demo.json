@@ -1,5 +1,5 @@
 {
-  "format": "GPIOcore-config",
+  "format": "IOcore-config",
   "version": 1,
   "outputs": [
     {

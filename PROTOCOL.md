@@ -1,11 +1,11 @@
-# GPIOcore serial protocol
+# IOcore serial protocol
 
 Date: 2026-11-18 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by
-the firmware (`software/GPIOcore`), the Qt GUI and the simulator (`software/gui/src/simulateddevice.cpp`).
+the firmware (`software/IOcore`), the Qt GUI and the simulator (`software/gui/src/simulateddevice.cpp`).
 
-After opening the port the GUI sends `HELLO`. A board that answers is a GPIOcore decoder and reports its
+After opening the port the GUI sends `HELLO`. A board that answers is an IOcore decoder and reports its
 capabilities. If a board does not answer at all, the GUI first waits up to 30 s for the board to announce itself
-(a short press on its config button, §3.1). If nothing comes, the GUI asks you to flash the GPIOcore firmware.
+(a short press on its config button, §3.1). If nothing comes, the GUI asks you to flash the IOcore firmware.
 
 ## 1. Framing
 
@@ -104,7 +104,7 @@ In `SET_OUTPUT_DATA` / `GET_OUTPUT_DATA` the `state` byte carries `state` in **b
 | 15 | block signal | A (B–D optional) | `data[0]` = aspect when its own block is occupied, `data[1]` = aspect when the next block is occupied, `data[2]` = aspect when both are free (aspect = same format as type 10), `data[3]` = own block input (bits 0–3) + next block input (bits 4–7); next = own: no next block (below) |
 
 **Block signal (type 15).** The firmware chooses the aspect itself from two inputs, normally sensors (input
-type 4), every 50 ms (`blockSignals()` in `GPIOcore.ino`): `data[0]` if the own block input is occupied,
+type 4), every 50 ms (`blockSignals()` in `IOcore.ino`): `data[0]` if the own block input is occupied,
 otherwise `data[1]` if there is a next block and its input is occupied, otherwise `data[2]`. "Occupied" =
 the input is in use, has a pin and is pressed (LOW, or the analog condition holds); one input may serve
 several signals. The current aspect is only kept in RAM (no EEPROM writes) and reported as `OUTPUT_EVENT`
@@ -263,7 +263,7 @@ the port causes through DTR. For boards without auto-reset it sends it after `RE
 - A heavy load or a low-impedance circuit on **D0 (RX)** can disturb **uploading firmware**.
   Preferably use them for LEDs, or for relays through a transistor.
 - They do not work during a configuration session. A "Test state" on an output on D0/D1 then does nothing.
-- In the **simulator** (the firmware built for the PC, `GPIOCORE_HOST`, `serialPinsFree()` in `config.h`) D0/D1
+- In the **simulator** (the firmware built for the PC, `IOCORE_HOST`, `serialPinsFree()` in `config.h`) D0/D1
   are always normal pins: the GUI does not talk to it over D0/D1.
 
 The GUI lets you choose D0/D1 if the decoder reports bit0, and offline. It then shows a note (not an error).
@@ -292,7 +292,7 @@ Without `HELLO` within 5 s, D0/D1 become I/O again (when the configuration uses 
 **The GUI.** When it gets no answer to `REQ_VERSION` or `HELLO` while connecting, it does not give up: it shows
 *"Waiting for the board — press its config button briefly (Nano)…"* and listens for up to 30 s
 (`DeviceLink::announceWaitMs`) for the announce. Then it continues with `REQ_VERSION` and `HELLO`. After 30 s it
-shows the "No GPIOcore board answered" message. Disconnect cancels the wait. This is what you need over Bluetooth:
+shows the "No IOcore board answered" message. Disconnect cancels the wait. This is what you need over Bluetooth:
 opening a Bluetooth COM port does not reset the board, so after 5 s its serial port is closed (when the
 configuration uses D0/D1).
 
@@ -381,7 +381,7 @@ timing off 16 × 16 steps fit internally (512 B).
 | Arduino pin | D3–D12 | A0–A5 | D13, D0/D1 (USB), D2 (DCC) |
 
 - PWM works on port 1, 3, 4 and 9 (D3, D5, D6, D11).
-- D9/D10 give no PWM as long as the Servo library is active (timer 1). That also applies to GPIOcore on a
+- D9/D10 give no PWM as long as the Servo library is active (timer 1). That also applies to IOcore on a
   normal Nano.
 - Source: the [DCCNext schematic](https://www.arcomora.com/wp-content/uploads/2024/09/ArsigdecRocRailUK.pdf)
   and the [Mardec 7 manual](https://www.arcomora.com/wp-content/uploads/2021/08/Mardec7UK.pdf).
@@ -390,7 +390,7 @@ timing off 16 × 16 steps fit internally (512 B).
 
 ## 8. Decoder firmware
 
-The details are in `EEPROM.md` and in the commits of `software/GPIOcore`. In short: HELLO with
+The details are in `EEPROM.md` and in the commits of `software/IOcore`. In short: HELLO with
 boot window, board settings (§9), route pool with dynamic allocation, per-step timing,
 interlocking, SERVO_LIVE and `setPosition()`, A6/A7 as analog input, and protecting pin 2.
 
@@ -490,7 +490,7 @@ about every 2 s); AT mode is always 38400 baud. The handler only sets `btSetupPe
 
 1. `Serial.flush()`; for each baud rate 38400, 9600, 57600, 115200, 19200: `Serial.begin(baud)`, empty the input, send
    `AT\r\n`, wait up to 300 ms for `OK`.
-2. Found: `AT+UART=115200,0,0\r\n` (wait for `OK`), then `AT+NAME=GPIOcore\r\n`, or `AT+NAME=GPIOcore-<name>\r\n`
+2. Found: `AT+UART=115200,0,0\r\n` (wait for `OK`), then `AT+NAME=IOcore\r\n`, or `AT+NAME=IOcore-<name>\r\n`
    with the board name (only letters, digits, `-` and `_`, max. 20 characters in total). The PIN is not changed.
 3. `Serial.begin(115200)`, empty the input, send `BT_RESULT` (`E3 status baud÷2400 name_ok`).
 
@@ -499,10 +499,10 @@ answers. The GUI sends nothing else during the set-up (one task, 8 s timeout) an
 a valid `BT_RESULT` frame in the byte stream. The session goes on at 115200 afterwards.
 
 **Afterwards:** unplug the board and plug it in again (without holding the HC-05 button); the HC-05 now runs at
-115200 baud. Pair *GPIOcore…* in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a
+115200 baud. Pair *IOcore…* in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a
 COM port for it. Connecting over that port does not reset the board: press the config button briefly (§3.1).
 
-**Simulator.** `gpiocore_fw_host` can attach a fake HC-05 (frame `'H' <baud÷2400>`) that answers `OK` to every AT
+**Simulator.** `iocore_fw_host` can attach a fake HC-05 (frame `'H' <baud÷2400>`) that answers `OK` to every AT
 command at that baud rate and reports what it received (`'h'`); bytes the firmware sends at a baud rate other than
 115200 (and 9600, the DFPlayer) reach the GUI as noise (`F0` per byte), never as valid frames.
 

@@ -2,8 +2,8 @@
 """
 Build the GUI for end users into <repo>/release/:
 
-    GPIOcoreGUI.exe       the configuration program (Release build) + the Qt files it needs
-    gpiocore_fw_host.exe  the firmware compiled for the PC: the GUI's simulator runs it
+    IOcoreGUI.exe       the configuration program (Release build) + the Qt files it needs
+    iocore_fw_host.exe  the firmware compiled for the PC: the GUI's simulator runs it
     tools/avrdude/        the upload program the GUI uses to put the firmware on a Nano
     examples/             example board files
     presets/              the presets of the toolbar's Preset list (board files)
@@ -25,8 +25,8 @@ from pathlib import Path
 GUI_DIR = Path(__file__).resolve().parent                    # software/gui
 REPO_ROOT = GUI_DIR.parent.parent
 RELEASE_DIR = REPO_ROOT / "release"
-EXE = "GPIOcoreGUI.exe"
-FW_HOST = "gpiocore_fw_host.exe"                             # must be next to EXE (Simulate mode)
+EXE = "IOcoreGUI.exe"
+FW_HOST = "iocore_fw_host.exe"                             # must be next to EXE (Simulate mode)
 
 
 def fail(msg):
@@ -71,11 +71,11 @@ def build_gui():
     env = dict(os.environ)
     env["PATH"] = os.pathsep.join(str(p) for p in extra) + os.pathsep + env.get("PATH", "")
     print(f"[INFO] Qt: {qt}", flush=True)
-    build_dir = Path(tempfile.mkdtemp(prefix="gpiocore_gui_"))
+    build_dir = Path(tempfile.mkdtemp(prefix="iocore_gui_"))
     try:
         run(["cmake", "-S", GUI_DIR, "-B", build_dir, "-G", "Ninja",
              "-DCMAKE_BUILD_TYPE=Release", f"-DCMAKE_PREFIX_PATH={qt}"], env)
-        run(["cmake", "--build", build_dir, "--target", "GPIOcoreGUI", "gpiocore_fw_host"], env)
+        run(["cmake", "--build", build_dir, "--target", "IOcoreGUI", "iocore_fw_host"], env)
         exe = build_dir / EXE
         if not exe.is_file():
             fail(f"{EXE} was not built")

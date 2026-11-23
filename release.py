@@ -28,7 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 RELEASE_DIR = ROOT / "release"
-REPO = ROOT.name
+REPO = "IOcore"                  # the product name (the local folder may still have another name)
 sys.path.insert(0, str(ROOT))
 import build as builder         # noqa: E402  (build.py next to this file: make_setup)
 

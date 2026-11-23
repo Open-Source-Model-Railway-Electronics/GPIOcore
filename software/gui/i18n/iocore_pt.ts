@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es_ES">
+<TS version="2.1" language="pt_PT">
 <context>
     <name>ConnectionView</name>
     <message>
@@ -17,7 +17,7 @@
     <message>
         <location filename="../src/connectionview.cpp" line="240"/>
         <source>□ free</source>
-        <translation>□ libre</translation>
+        <translation>□ livre</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="245"/>
@@ -32,7 +32,7 @@
     <message>
         <location filename="../src/connectionview.cpp" line="264"/>
         <source>▶ press</source>
-        <translation>▶ pulsar</translation>
+        <translation>▶ premir</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="622"/>
@@ -42,12 +42,12 @@
     <message>
         <location filename="../src/connectionview.cpp" line="1080"/>
         <source>Remove connection %1 → %2</source>
-        <translation>Quitar la conexión %1 → %2</translation>
+        <translation>Remover a ligação %1 → %2</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1100"/>
         <source>Remove all connections of %1</source>
-        <translation>Quitar todas las conexiones de %1</translation>
+        <translation>Remover todas as ligações de %1</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1123"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../src/connectionview.cpp" line="697"/>
         <source>now %1</source>
-        <translation>ahora %1</translation>
+        <translation>agora %1</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="790"/>
@@ -67,64 +67,64 @@
     <message>
         <location filename="../src/connectionview.cpp" line="791"/>
         <source>Outputs</source>
-        <translation>Salidas</translation>
+        <translation>Saídas</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="803"/>
         <source>● SIMULATION — click the input buttons</source>
-        <translation>● SIMULACIÓN — haga clic en los botones de las entradas</translation>
+        <translation>● SIMULAÇÃO — clique nos botões das entradas</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="803"/>
         <source>SIMULATION</source>
-        <translation>SIMULACIÓN</translation>
+        <translation>SIMULAÇÃO</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="808"/>
         <source>● LIVE TEST</source>
-        <translation>● PRUEBA EN VIVO</translation>
+        <translation>● TESTE EM DIRECTO</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="813"/>
         <source>CONFIGURING THE BOARD</source>
-        <translation>CONFIGURANDO LA PLACA</translation>
+        <translation>A CONFIGURAR A PLACA</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="834"/>
         <source>drag an output onto an input</source>
-        <translation>arrastre una salida sobre una entrada</translation>
+        <translation>arraste uma saída para uma entrada</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1085"/>
         <source>Set curved (0)</source>
-        <translation>Poner en desviado (0)</translation>
+        <translation>Pôr em desviado (0)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1085"/>
         <source>Set straight (1)</source>
-        <translation>Poner en recto (1)</translation>
+        <translation>Pôr em directo (1)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1088"/>
         <source>Edit value in the input panel</source>
-        <translation>Editar el valor en el panel de entrada</translation>
+        <translation>Editar o valor no painel da entrada</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1090"/>
         <source>Move earlier in the route</source>
-        <translation>Antes en el itinerario</translation>
+        <translation>Mais cedo no itinerário</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1093"/>
         <source>Move later in the route</source>
-        <translation>Después en el itinerario</translation>
+        <translation>Mais tarde no itinerário</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1125"/>
         <source>
 step %1: %2, then wait %3</source>
         <translation>
-paso %1: %2, luego esperar %3</translation>
+passo %1: %2, depois esperar %3</translation>
     </message>
 </context>
 <context>
@@ -132,42 +132,42 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="58"/>
         <source>Serial port lost: %1</source>
-        <translation>Puerto serie perdido: %1</translation>
+        <translation>Porta série perdida: %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="95"/>
         <source>Opened %1</source>
-        <translation>%1 abierto</translation>
+        <translation>%1 aberta</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="101"/>
         <source>Waiting for boot message…</source>
-        <translation>Esperando mensaje de arranque…</translation>
+        <translation>A aguardar mensagem de arranque…</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="133"/>
         <source>Closed %1</source>
-        <translation>%1 cerrado</translation>
+        <translation>%1 fechada</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="365"/>
         <source>No answer to %1, retrying</source>
-        <translation>Sin respuesta a %1, reintentando</translation>
+        <translation>Sem resposta a %1, a tentar de novo</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="379"/>
         <source>No answer to %1</source>
-        <translation>Sin respuesta a %1</translation>
+        <translation>Sem resposta a %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="401"/>
         <source>No answer: waiting for the board (short press on its config button)</source>
-        <translation>Sin respuesta: esperando la placa (pulse brevemente su botón de configuración)</translation>
+        <translation>Sem resposta: a aguardar a placa (prima brevemente o seu botão de configuração)</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="429"/>
         <source>No boot message, requesting version</source>
-        <translation>Sin mensaje de arranque, solicitando versión</translation>
+        <translation>Sem mensagem de arranque, a pedir a versão</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="446"/>
@@ -177,72 +177,72 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="473"/>
         <source>%1 byte(s) of noise ignored during the Bluetooth set-up</source>
-        <translation>%1 byte(s) de ruido ignorados durante la configuración de Bluetooth</translation>
+        <translation>%1 byte(s) de ruído ignorados durante a configuração do Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="515"/>
         <source>NACK (%1) on %2</source>
-        <translation>NACK (%1) en %2</translation>
+        <translation>NACK (%1) em %2</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="524"/>
         <source>Device rejected %1: %2</source>
-        <translation>El dispositivo rechazó %1: %2</translation>
+        <translation>O dispositivo rejeitou %1: %2</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="587"/>
         <source>Protocol v%1: %2 steps per route, %3 steps in total</source>
-        <translation>Protocolo v%1: %2 pasos por itinerario, %3 pasos en total</translation>
+        <translation>Protocolo v%1: %2 passos por itinerário, %3 passos no total</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="669"/>
         <source>The board announced itself</source>
-        <translation>La placa se ha anunciado</translation>
+        <translation>A placa anunciou-se</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="686"/>
         <source>Unsolicited %1 ignored</source>
-        <translation>%1 no solicitado ignorado</translation>
+        <translation>%1 não solicitado ignorado</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="693"/>
-        <source>GPIOcore version &apos;%1&apos;</source>
-        <translation>Versión de GPIOcore &apos;%1&apos;</translation>
+        <source>IOcore version &apos;%1&apos;</source>
+        <translation>Versão IOcore &apos;%1&apos;</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="704"/>
         <source>version request</source>
-        <translation>solicitud de versión</translation>
+        <translation>pedido de versão</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="705"/>
         <source>read input %1</source>
-        <translation>leer entrada %1</translation>
+        <translation>ler entrada %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="706"/>
         <source>read output %1</source>
-        <translation>leer salida %1</translation>
+        <translation>ler saída %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="707"/>
         <source>write input %1</source>
-        <translation>escribir entrada %1</translation>
+        <translation>escrever entrada %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="708"/>
         <source>write output %1</source>
-        <translation>escribir salida %1</translation>
+        <translation>escrever saída %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="719"/>
         <source>Bluetooth set-up</source>
-        <translation>Configuración de Bluetooth</translation>
+        <translation>Configuração do Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="411"/>
-        <source>No answer to HELLO: this is no GPIOcore board, or its firmware is too old. Flash the firmware (Board &gt; Flash firmware).</source>
-        <translation>Sin respuesta a HELLO: no es una placa GPIOcore o su firmware es demasiado antiguo. Grabe el firmware (Placa &gt; Flashear firmware).</translation>
+        <source>No answer to HELLO: this is no IOcore board, or its firmware is too old. Flash the firmware (Board &gt; Flash firmware).</source>
+        <translation>Sem resposta ao HELLO: não é uma placa IOcore ou o firmware é demasiado antigo. Grave o firmware (Placa &gt; Gravar firmware).</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="709"/>
@@ -252,47 +252,47 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="710"/>
         <source>read route %1</source>
-        <translation>leer itinerario %1</translation>
+        <translation>ler itinerário %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="711"/>
         <source>write route %1</source>
-        <translation>escribir itinerario %1</translation>
+        <translation>escrever itinerário %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="712"/>
         <source>live servo %1</source>
-        <translation>servo en vivo %1</translation>
+        <translation>servo em directo %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="713"/>
         <source>read board settings</source>
-        <translation>leer ajustes de la placa</translation>
+        <translation>ler definições da placa</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="714"/>
         <source>write board settings</source>
-        <translation>escribir ajustes de la placa</translation>
+        <translation>escrever definições da placa</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="715"/>
         <source>trigger input %1</source>
-        <translation>activar entrada %1</translation>
+        <translation>accionar entrada %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="716"/>
         <source>read state of output %1</source>
-        <translation>leer estado de la salida %1</translation>
+        <translation>ler estado da saída %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="717"/>
         <source>DCC extended to address %1</source>
-        <translation>DCC extendido a la dirección %1</translation>
+        <translation>DCC estendido para o endereço %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="718"/>
         <source>read analog pin A%1</source>
-        <translation>leer pin analógico A%1</translation>
+        <translation>ler pino analógico A%1</translation>
     </message>
 </context>
 <context>
@@ -304,8 +304,8 @@ paso %1: %2, luego esperar %3</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="394"/>
-        <source>Puts the GPIOcore program (firmware) on your Arduino. Plug the board in with USB, check the settings below and click &lt;b&gt;Flash&lt;/b&gt;. Your settings on the board are normally kept.</source>
-        <translation>Carga el programa GPIOcore (firmware) en su Arduino. Conecte la placa por USB, revise los ajustes de abajo y haga clic en &lt;b&gt;Flashear&lt;/b&gt;. Los ajustes guardados en la placa normalmente se conservan.</translation>
+        <source>Puts the IOcore program (firmware) on your Arduino. Plug the board in with USB, check the settings below and click &lt;b&gt;Flash&lt;/b&gt;. Your settings on the board are normally kept.</source>
+        <translation>Coloca o programa IOcore (firmware) no seu Arduino. Ligue a placa por USB, verifique as definições abaixo e clique em &lt;b&gt;Gravar&lt;/b&gt;. As definições guardadas na placa normalmente mantêm-se.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="407"/>
@@ -315,37 +315,37 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/flasher.cpp" line="408"/>
         <source>Look again for connected boards</source>
-        <translation>Buscar de nuevo placas conectadas</translation>
+        <translation>Procurar novamente placas ligadas</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="412"/>
         <source>Port:</source>
-        <translation>Puerto:</translation>
+        <translation>Porta:</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="416"/>
         <source>Browse…</source>
-        <translation>Examinar…</translation>
+        <translation>Procurar…</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="420"/>
         <source>Firmware file:</source>
-        <translation>Archivo de firmware:</translation>
+        <translation>Ficheiro de firmware:</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="424"/>
         <source>Arduino Uno / Nano (new bootloader)</source>
-        <translation>Arduino Uno / Nano (bootloader nuevo)</translation>
+        <translation>Arduino Uno / Nano (bootloader novo)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="425"/>
         <source>Arduino Nano (old bootloader)</source>
-        <translation>Arduino Nano (bootloader antiguo)</translation>
+        <translation>Arduino Nano (bootloader antigo)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="426"/>
         <source>Via ArduinoISP programmer (advanced)</source>
-        <translation>Mediante programador ArduinoISP (avanzado)</translation>
+        <translation>Através de programador ArduinoISP (avançado)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="432"/>
@@ -355,146 +355,146 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/flasher.cpp" line="435"/>
         <source>&lt;b&gt;Advanced:&lt;/b&gt; choose the port of the &lt;i&gt;programmer&lt;/i&gt; Arduino (running ArduinoISP), wired to the ICSP pins of your board. This also sets the fuses and &lt;b&gt;removes the USB bootloader&lt;/b&gt;: afterwards the board can only be updated with the programmer again. The settings stored on the board are erased.</source>
-        <translation>&lt;b&gt;Avanzado:&lt;/b&gt; elija el puerto del Arduino &lt;i&gt;programador&lt;/i&gt; (con ArduinoISP), cableado a los pines ICSP de su placa. Esto también ajusta los fusibles (fuses) y &lt;b&gt;elimina el bootloader USB&lt;/b&gt;: después, la placa solo se puede actualizar de nuevo con el programador. Los ajustes guardados en la placa se borran.</translation>
+        <translation>&lt;b&gt;Avançado:&lt;/b&gt; escolha a porta do Arduino &lt;i&gt;programador&lt;/i&gt; (com ArduinoISP), ligado aos pinos ICSP da sua placa. Isto também define os fuses e &lt;b&gt;remove o bootloader USB&lt;/b&gt;: depois, a placa só pode voltar a ser actualizada com o programador. As definições guardadas na placa são apagadas.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="444"/>
         <source>Flash</source>
-        <translation>Flashear</translation>
+        <translation>Gravar</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="483"/>
         <source>Close</source>
-        <translation>Cerrar</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="508"/>
         <source>Trying again with the old Nano bootloader…</source>
-        <translation>Reintentando con el bootloader antiguo del Nano…</translation>
+        <translation>A tentar novamente com o bootloader antigo do Nano…</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="509"/>
         <location filename="../src/flasher.cpp" line="573"/>
         <source>Uploading… do not unplug the board.</source>
-        <translation>Cargando… no desconecte la placa.</translation>
+        <translation>A carregar… não desligue a placa.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="529"/>
         <source>(no board found – plug it in and click Refresh)</source>
-        <translation>(no se encontró ninguna placa – conéctela y haga clic en Actualizar)</translation>
+        <translation>(nenhuma placa encontrada – ligue-a e clique em Actualizar)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="544"/>
         <source>Choose firmware file</source>
-        <translation>Elegir archivo de firmware</translation>
+        <translation>Escolher ficheiro de firmware</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="545"/>
         <source>Firmware (*.hex);;All files (*)</source>
-        <translation>Firmware (*.hex);;Todos los archivos (*)</translation>
+        <translation>Firmware (*.hex);;Todos os ficheiros (*)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="560"/>
         <source>The firmware file was not found.</source>
-        <translation>No se encontró el archivo de firmware.</translation>
+        <translation>O ficheiro de firmware não foi encontrado.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="565"/>
         <source>No board found.</source>
-        <translation>No se encontró ninguna placa.</translation>
+        <translation>Nenhuma placa encontrada.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="599"/>
         <source>Done! The new firmware is on the board.</source>
-        <translation>¡Listo! El nuevo firmware está en la placa.</translation>
+        <translation>Concluído! O novo firmware está na placa.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="602"/>
         <source>Your board has the old Nano bootloader. Next time choose &quot;Arduino Nano (old bootloader)&quot;.</source>
-        <translation>Su placa tiene el bootloader antiguo del Nano. La próxima vez elija &quot;Arduino Nano (bootloader antiguo)&quot;.</translation>
+        <translation>A sua placa tem o bootloader antigo do Nano. Da próxima vez escolha &quot;Arduino Nano (bootloader antigo)&quot;.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="610"/>
         <source>Uploading did not work.</source>
-        <translation>La carga no ha funcionado.</translation>
+        <translation>O carregamento não funcionou.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="624"/>
-        <source>The folder &lt;i&gt;tools/avrdude&lt;/i&gt; next to GPIOcoreGUI is missing. Install the program again.</source>
-        <translation>Falta la carpeta &lt;i&gt;tools/avrdude&lt;/i&gt; junto a GPIOcoreGUI. Vuelva a instalar el programa.</translation>
+        <source>The folder &lt;i&gt;tools/avrdude&lt;/i&gt; next to IOcoreGUI is missing. Install the program again.</source>
+        <translation>Falta a pasta &lt;i&gt;tools/avrdude&lt;/i&gt; junto ao IOcoreGUI. Instale o programa novamente.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="626"/>
-        <source>Click &lt;b&gt;Browse…&lt;/b&gt; and choose the GPIOcore &lt;i&gt;.hex&lt;/i&gt; file.</source>
-        <translation>Haga clic en &lt;b&gt;Examinar…&lt;/b&gt; y elija el archivo &lt;i&gt;.hex&lt;/i&gt; de GPIOcore.</translation>
+        <source>Click &lt;b&gt;Browse…&lt;/b&gt; and choose the IOcore &lt;i&gt;.hex&lt;/i&gt; file.</source>
+        <translation>Clique em &lt;b&gt;Procurar…&lt;/b&gt; e escolha o ficheiro &lt;i&gt;.hex&lt;/i&gt; do IOcore.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="628"/>
         <source>Close other programs that use the board (Arduino IDE serial monitor, other configuration tools) and try again.</source>
-        <translation>Cierre otros programas que usen la placa (monitor serie del IDE de Arduino, otras herramientas de configuración) e inténtelo de nuevo.</translation>
+        <translation>Feche outros programas que usem a placa (monitor série do Arduino IDE, outras ferramentas de configuração) e tente novamente.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="631"/>
         <source>Check the USB cable, click &lt;b&gt;Refresh&lt;/b&gt; and choose the right port.</source>
-        <translation>Revise el cable USB, haga clic en &lt;b&gt;Actualizar&lt;/b&gt; y elija el puerto correcto.</translation>
+        <translation>Verifique o cabo USB, clique em &lt;b&gt;Actualizar&lt;/b&gt; e escolha a porta certa.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="634"/>
         <source>Check that the programmer Arduino runs ArduinoISP, that the right port is chosen and that the wires to the board are correct. A 10 µF capacitor between RESET and GND of the programmer often helps.</source>
-        <translation>Compruebe que el Arduino programador ejecuta ArduinoISP, que está elegido el puerto correcto y que los cables a la placa son correctos. Un condensador de 10 µF entre RESET y GND del programador suele ayudar.</translation>
+        <translation>Verifique se o Arduino programador está a executar o ArduinoISP, se a porta certa está escolhida e se os fios para a placa estão correctos. Um condensador de 10 µF entre RESET e GND do programador ajuda muitas vezes.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="637"/>
         <source>Choose another &lt;b&gt;board type&lt;/b&gt; (for example &quot;Arduino Nano (old bootloader)&quot;) and try again. Also check that the right port is chosen and close other programs that use the board.</source>
-        <translation>Elija otro &lt;b&gt;tipo de placa&lt;/b&gt; (por ejemplo &quot;Arduino Nano (bootloader antiguo)&quot;) e inténtelo de nuevo. Compruebe también que está elegido el puerto correcto y cierre otros programas que usen la placa.</translation>
+        <translation>Escolha outro &lt;b&gt;tipo de placa&lt;/b&gt; (por exemplo &quot;Arduino Nano (bootloader antigo)&quot;) e tente novamente. Verifique também se a porta certa está escolhida e feche outros programas que usem a placa.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="640"/>
         <source>Check the six wires between the programmer and the board, and that the board has power.</source>
-        <translation>Revise los seis cables entre el programador y la placa, y que la placa tenga alimentación.</translation>
+        <translation>Verifique os seis fios entre o programador e a placa, e se a placa tem alimentação.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="641"/>
-        <source>This board does not have an ATmega328P chip. GPIOcore needs an Arduino Uno or Nano.</source>
-        <translation>Esta placa no tiene un chip ATmega328P. GPIOcore necesita un Arduino Uno o Nano.</translation>
+        <source>This board does not have an ATmega328P chip. IOcore needs an Arduino Uno or Nano.</source>
+        <translation>Esta placa não tem um chip ATmega328P. O IOcore precisa de um Arduino Uno ou Nano.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="643"/>
         <source>Try again. If it keeps failing, try another USB cable or USB port.</source>
-        <translation>Inténtelo de nuevo. Si sigue fallando, pruebe otro cable USB u otro puerto USB.</translation>
+        <translation>Tente novamente. Se continuar a falhar, experimente outro cabo USB ou outra porta USB.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="647"/>
         <source>Click &lt;b&gt;Show details&lt;/b&gt; to see what happened.</source>
-        <translation>Haga clic en &lt;b&gt;Mostrar detalles&lt;/b&gt; para ver qué ha pasado.</translation>
+        <translation>Clique em &lt;b&gt;Mostrar detalhes&lt;/b&gt; para ver o que aconteceu.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="673"/>
         <source>Hide details</source>
-        <translation>Ocultar detalles</translation>
+        <translation>Ocultar detalhes</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="673"/>
         <source>Show details</source>
-        <translation>Mostrar detalles</translation>
+        <translation>Mostrar detalhes</translation>
     </message>
 </context>
 <context>
     <name>Flasher</name>
     <message>
         <location filename="../src/flasher.cpp" line="167"/>
-        <source>The upload program (avrdude) was not found next to GPIOcoreGUI (tools/avrdude).</source>
-        <translation>No se encontró el programa de carga (avrdude) junto a GPIOcoreGUI (tools/avrdude).</translation>
+        <source>The upload program (avrdude) was not found next to IOcoreGUI (tools/avrdude).</source>
+        <translation>O programa de carregamento (avrdude) não foi encontrado junto ao IOcoreGUI (tools/avrdude).</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="170"/>
         <source>The firmware file was not found: %1</source>
-        <translation>No se encontró el archivo de firmware: %1</translation>
+        <translation>O ficheiro de firmware não foi encontrado: %1</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="173"/>
         <source>No port selected.</source>
-        <translation>No hay ningún puerto seleccionado.</translation>
+        <translation>Nenhuma porta seleccionada.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="308"/>
@@ -504,57 +504,57 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/flasher.cpp" line="312"/>
         <source>Firmware written and checked.</source>
-        <translation>Firmware escrito y verificado.</translation>
+        <translation>Firmware escrito e verificado.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="319"/>
         <source>No answer at 115200 baud. Trying again at 57600 baud (old Nano bootloader)...</source>
-        <translation>Sin respuesta a 115200 baudios. Reintentando a 57600 baudios (bootloader antiguo del Nano)...</translation>
+        <translation>Sem resposta a 115200 baud. A tentar novamente a 57600 baud (bootloader antigo do Nano)...</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="326"/>
         <source>The port could not be opened: another program is using it.</source>
-        <translation>No se pudo abrir el puerto: otro programa lo está usando.</translation>
+        <translation>Não foi possível abrir a porta: outro programa está a usá-la.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="327"/>
         <source>The port could not be opened: the board was not found.</source>
-        <translation>No se pudo abrir el puerto: no se encontró la placa.</translation>
+        <translation>Não foi possível abrir a porta: a placa não foi encontrada.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="328"/>
         <source>The firmware file could not be read.</source>
-        <translation>No se pudo leer el archivo de firmware.</translation>
+        <translation>Não foi possível ler o ficheiro de firmware.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="329"/>
         <source>The board did not answer.</source>
-        <translation>La placa no respondió.</translation>
+        <translation>A placa não respondeu.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="330"/>
         <source>The chip on the board was not recognised.</source>
-        <translation>No se reconoció el chip de la placa.</translation>
+        <translation>O chip da placa não foi reconhecido.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="331"/>
         <source>Writing failed: the check after writing found differences.</source>
-        <translation>Error de escritura: la verificación posterior encontró diferencias.</translation>
+        <translation>Falha na escrita: a verificação após a escrita encontrou diferenças.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="333"/>
         <source>Uploading failed (avrdude exit code %1).</source>
-        <translation>Error en la carga (código de salida de avrdude %1).</translation>
+        <translation>Falha no carregamento (código de saída do avrdude %1).</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="334"/>
         <source>The upload program stopped unexpectedly.</source>
-        <translation>El programa de carga se detuvo de forma inesperada.</translation>
+        <translation>O programa de carregamento parou inesperadamente.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="344"/>
         <source>The upload program (avrdude) could not be started: %1</source>
-        <translation>No se pudo iniciar el programa de carga (avrdude): %1</translation>
+        <translation>Não foi possível iniciar o programa de carregamento (avrdude): %1</translation>
     </message>
 </context>
 <context>
@@ -562,92 +562,92 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="13"/>
         <source>Single steady</source>
-        <translation>Simple fijo</translation>
+        <translation>Simples fixo</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="14"/>
         <source>One pin follows the state.</source>
-        <translation>Un pin sigue el estado.</translation>
+        <translation>Um pino segue o estado.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="15"/>
         <source>Single pulse</source>
-        <translation>Simple pulso</translation>
+        <translation>Simples impulso</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="16"/>
         <source>One pin is pulsed for the switch time (firmware: value x 100 ms).</source>
-        <translation>Un pin recibe un pulso durante el tiempo de conmutación (firmware: valor x 100 ms).</translation>
+        <translation>Um pino recebe um impulso durante o tempo de comutação (firmware: valor x 100 ms).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="17"/>
         <source>Single flashing</source>
-        <translation>Simple intermitente</translation>
+        <translation>Simples intermitente</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="18"/>
         <source>Pin A blinks while the state is on (value x 10 ms per half period).</source>
-        <translation>El pin A parpadea mientras el estado está activo (valor x 10 ms por semiperiodo).</translation>
+        <translation>O pino A pisca enquanto o estado está ligado (valor x 10 ms por meio período).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="19"/>
         <source>Double steady</source>
-        <translation>Doble fijo</translation>
+        <translation>Duplo fixo</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="20"/>
         <source>Pin A = state, pin B = inverted state.</source>
-        <translation>Pin A = estado, pin B = estado invertido.</translation>
+        <translation>Pino A = estado, pino B = estado invertido.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="21"/>
         <source>Double pulse</source>
-        <translation>Doble pulso</translation>
+        <translation>Duplo impulso</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="22"/>
         <source>Turnout coil pair: pin A or B is pulsed (value x 10 ms).</source>
-        <translation>Par de bobinas de un desvío: el pin A o B recibe un pulso (valor x 10 ms).</translation>
+        <translation>Par de bobinas de uma agulha: o pino A ou B recebe um impulso (valor x 10 ms).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="23"/>
         <source>Double flashing</source>
-        <translation>Doble intermitente</translation>
+        <translation>Duplo intermitente</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="24"/>
         <source>Pins A and B blink alternately (value x 10 ms per half period).</source>
-        <translation>Los pines A y B parpadean alternadamente (valor x 10 ms por semiperiodo).</translation>
+        <translation>Os pinos A e B piscam alternadamente (valor x 10 ms por meio período).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Swing light</source>
-        <translation>Luz alterna</translation>
+        <translation>Luz alternada</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="65"/>
         <source>Level crossing style: A, B, pause (values x 10 ms).</source>
-        <translation>Como en un paso a nivel: A, B, pausa (valores x 10 ms).</translation>
+        <translation>Como numa passagem de nível: A, B, pausa (valores x 10 ms).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="66"/>
         <source>Fireplace</source>
-        <translation>Chimenea</translation>
+        <translation>Lareira</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="67"/>
         <source>Random flicker on PWM pins A and B.</source>
-        <translation>Parpadeo aleatorio en los pines PWM A y B.</translation>
+        <translation>Cintilação aleatória nos pinos PWM A e B.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="68"/>
         <source>TL tube</source>
-        <translation>Tubo fluorescente</translation>
+        <translation>Lâmpada fluorescente</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="69"/>
         <source>Fluorescent tube start-up flicker on PWM pin A.</source>
-        <translation>Parpadeo de arranque de un tubo fluorescente en el pin PWM A.</translation>
+        <translation>Cintilação de arranque de uma lâmpada fluorescente no pino PWM A.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="70"/>
@@ -657,17 +657,17 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="71"/>
         <source>Random welding flashes on pin A.</source>
-        <translation>Destellos de soldadura aleatorios en el pin A.</translation>
+        <translation>Clarões de soldadura aleatórios no pino A.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="36"/>
         <source>4-aspect signal</source>
-        <translation>Señal de 4 aspectos</translation>
+        <translation>Sinal de 4 aspectos</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="37"/>
         <source>Four LEDs A-D. The aspect comes from DCC extended (signal) packets or a route; the board keeps the last aspect in EEPROM.</source>
-        <translation>Cuatro LED A-D. El aspecto viene de comandos DCC extendidos (de señal) o de un itinerario; la placa guarda el último aspecto en la EEPROM.</translation>
+        <translation>Quatro LED A-D. O aspecto vem de comandos DCC estendidos (de sinal) ou de um itinerário; a placa guarda o último aspecto na EEPROM.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="38"/>
@@ -677,7 +677,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
         <source>Servo on pin A, sweeps between min and max.</source>
-        <translation>Servo en el pin A, se mueve entre mín. y máx.</translation>
+        <translation>Servo no pino A, move-se entre mín. e máx.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="40"/>
@@ -687,7 +687,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="41"/>
         <source>PWM brightness on pin A. With a fade time it changes slowly to every new value.</source>
-        <translation>Brillo PWM en el pin A. Con un tiempo de fundido cambia despacio a cada nuevo valor.</translation>
+        <translation>Brilho PWM no pino A. Com um tempo de transição muda devagar para cada novo valor.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="32"/>
@@ -696,65 +696,65 @@ paso %1: %2, luego esperar %3</translation>
         <location filename="../src/gpioconfig.cpp" line="99"/>
         <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Not in use</source>
-        <translation>Sin uso</translation>
+        <translation>Não utilizado</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="25"/>
         <source>Light effect</source>
-        <translation>Efecto de luz</translation>
+        <translation>Efeito de luz</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="26"/>
         <source>A light effect: swing light, fireplace, TL tube, welder or photographer.</source>
-        <translation>Un efecto de luz: luz alterna, chimenea, tubo fluorescente, soldador o fotógrafo.</translation>
+        <translation>Um efeito de luz: luz alternada, lareira, lâmpada fluorescente, soldador ou fotógrafo.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="27"/>
         <source>Board link (TX)</source>
-        <translation>Enlace entre placas (TX)</translation>
+        <translation>Ligação entre placas (TX)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="28"/>
         <source>Sends commands to the next boards over TX (D1), board to board. Each route step chooses the address: curved or straight (a turnout command), or a value 0-255 (DCC extended: aspect, servo angle, PWM, track). Switched on / off it sends its own address, if set. Only without a PC connected.</source>
-        <translation>Envía órdenes a las placas siguientes por TX (D1), de placa en placa. Cada paso del itinerario elige la dirección: desviado o recto (una orden de desvío), o un valor 0-255 (DCC extendido: aspecto, ángulo de servo, PWM, pista). Activada/desactivada directamente envía su propia dirección, si está definida. Solo sin PC conectado.</translation>
+        <translation>Envia comandos às placas seguintes por TX (D1), de placa em placa. Cada passo do itinerário escolhe o endereço: desviado ou directo (um comando de agulha), ou um valor 0-255 (DCC estendido: aspecto, ângulo do servo, PWM, faixa). Ligada/desligada directamente envia o seu próprio endereço, se definido. Só sem PC ligado.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="33"/>
         <location filename="../src/gpioconfig.cpp" line="35"/>
         <location filename="../src/gpioconfig.cpp" line="43"/>
         <source>Output disabled.</source>
-        <translation>Salida desactivada.</translation>
+        <translation>Saída desactivada.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="44"/>
         <source>Sound effect</source>
-        <translation>Efecto de sonido</translation>
+        <translation>Efeito sonoro</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="45"/>
         <source>Plays an MP3 track on a DFPlayer Mini wired to TX (D1). The input chooses the track: its custom values, a route step or a DCC extended value (0 = stop); without custom values on = track 1, off = stop. It only plays when no PC is connected: with the GUI connected, D1 is the USB line and the board only reports the track.</source>
-        <translation>Reproduce una pista MP3 en un DFPlayer Mini conectado a TX (D1). La entrada elige la pista: sus valores propios, un paso de itinerario o un valor DCC extendido (0 = parar); sin valores propios, encendido = pista 1, apagado = parar. Solo suena sin PC conectado: con la interfaz conectada, D1 es la línea USB y la placa solo informa de la pista.</translation>
+        <translation>Reproduz uma faixa MP3 num DFPlayer Mini ligado a TX (D1). A entrada escolhe a faixa: os seus valores próprios, um passo de itinerário ou um valor DCC estendido (0 = parar); sem valores próprios, ligado = faixa 1, desligado = parar. Só toca sem PC ligado: com a interface ligada, D1 é a linha USB e a placa apenas indica a faixa.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="49"/>
         <source>Block signal</source>
-        <translation>Señal de bloqueo</translation>
+        <translation>Sinal de bloco</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="50"/>
         <source>Automatic signal with lamps A-D (B-D optional). The board chooses the aspect itself from two block detectors: its own block and the next one. Inputs, routes and DCC cannot set it.</source>
-        <translation>Señal automática con lámparas A-D (B-D opcionales). La placa elige el aspecto por sí misma a partir de dos detectores de bloque: el suyo propio y el siguiente. Las entradas, los itinerarios y el DCC no pueden modificarla.</translation>
+        <translation>Sinal automático com lâmpadas A-D (B-D opcionais). A placa escolhe o aspecto por si própria a partir de dois detectores de bloco: o seu e o seguinte. Entradas, itinerários e DCC não o podem alterar.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="52"/>
         <source>Unknown type</source>
-        <translation>Tipo desconocido</translation>
+        <translation>Tipo desconhecido</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="53"/>
         <location filename="../src/gpioconfig.cpp" line="105"/>
         <source>Type value not known by this GUI.</source>
-        <translation>Valor de tipo desconocido para este programa.</translation>
+        <translation>Valor de tipo desconhecido para este programa.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="72"/>
@@ -764,27 +764,27 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="73"/>
         <source>A camera flash on pin A now and then, sometimes with a pre-flash.</source>
-        <translation>De vez en cuando un flash de cámara en el pin A, a veces con preflash.</translation>
+        <translation>De vez em quando um flash de máquina fotográfica no pino A, às vezes com pré-flash.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="74"/>
         <source>Unknown effect</source>
-        <translation>Efecto desconocido</translation>
+        <translation>Efeito desconhecido</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="75"/>
         <source>Effect value not known by this GUI.</source>
-        <translation>Valor de efecto desconocido para esta GUI.</translation>
+        <translation>Valor de efeito desconhecido para esta GUI.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="96"/>
         <source>Toggle</source>
-        <translation>Conmutar</translation>
+        <translation>Comutar</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="96"/>
         <source>Each press (falling edge) or DCC command toggles the output.</source>
-        <translation>Cada pulsación (flanco descendente) o comando DCC invierte la salida.</translation>
+        <translation>Cada pressão (flanco descendente) ou comando DCC inverte a saída.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="97"/>
@@ -794,19 +794,19 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>The output follows the input level or the DCC direction.</source>
-        <translation>La salida sigue el nivel de la entrada o la dirección DCC.</translation>
+        <translation>A saída segue o nível da entrada ou a direcção DCC.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="98"/>
         <location filename="../src/gpioconfig.cpp" line="103"/>
         <location filename="../src/gpioconfig.cpp" line="104"/>
         <source>Route</source>
-        <translation>Itinerario</translation>
+        <translation>Itinerário</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="98"/>
         <source>Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).</source>
-        <translation>Acciona hasta 16 salidas una tras otra, cada paso con su propio tiempo de espera. Arranca al pulsar el botón o con cualquier comando DCC a su dirección (recto y desviado).</translation>
+        <translation>Acciona até 16 saídas uma após outra, cada passo com o seu próprio tempo de espera. Arranca ao premir o botão ou com qualquer comando DCC para o seu endereço (directo e desviado).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="99"/>
@@ -817,27 +817,27 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="100"/>
         <source>Sensor (occupancy)</source>
-        <translation>Sensor (ocupación)</translation>
+        <translation>Sensor (ocupação)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="100"/>
         <source>An occupancy detector or other sensor. It switches nothing itself; automatic block signals read it.</source>
-        <translation>Un detector de ocupación u otro sensor. No acciona nada por sí mismo; las señales de bloqueo automático lo leen.</translation>
+        <translation>Um detector de ocupação ou outro sensor. Não acciona nada por si; os sinais de cantonamento automático lêem-no.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="103"/>
         <source>Route that starts on a button press, or only on a DCC &apos;straight&apos; command for its address.</source>
-        <translation>Itinerario que se inicia al pulsar el botón, o solo con una orden DCC &apos;recto&apos; para su dirección.</translation>
+        <translation>Itinerário que arranca ao premir o botão, ou só com um comando DCC &apos;directo&apos; para o seu endereço.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="104"/>
         <source>Route that starts on a button press, or only on a DCC &apos;curved&apos; command for its address.</source>
-        <translation>Itinerario que se inicia al pulsar el botón, o solo con una orden DCC &apos;desviado&apos; para su dirección.</translation>
+        <translation>Itinerário que arranca ao premir o botão, ou só com um comando DCC &apos;desviado&apos; para o seu endereço.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="105"/>
         <source>Unknown</source>
-        <translation>Desconocido</translation>
+        <translation>Desconhecido</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="627"/>
@@ -857,17 +857,17 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="762"/>
         <source>not a DCCnext port</source>
-        <translation>no es un puerto DCCnext</translation>
+        <translation>não é uma porta DCCnext</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="765"/>
         <source>Serial RX (GUI link)</source>
-        <translation>Serie RX (enlace GUI)</translation>
+        <translation>Série RX (ligação à GUI)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="766"/>
         <source>Serial TX (GUI link)</source>
-        <translation>Serie TX (enlace GUI)</translation>
+        <translation>Série TX (ligação à GUI)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="767"/>
@@ -882,43 +882,43 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="770"/>
         <source>only on an Arduino Nano</source>
-        <translation>solo en un Arduino Nano</translation>
+        <translation>só num Arduino Nano</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="777"/>
         <location filename="../src/uihelpers.cpp" line="411"/>
         <source>analog input only</source>
-        <translation>solo entrada analógica</translation>
+        <translation>só entrada analógica</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="794"/>
         <source>shared with serial: only active when no GUI is connected</source>
-        <translation>compartido con el serie: solo activo sin GUI conectada</translation>
+        <translation>partilhado com a série: só activo sem GUI ligada</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="796"/>
         <source>analog input without pull-up: add a 10 kOhm resistor to 5 V</source>
-        <translation>entrada analógica sin pull-up: añada una resistencia de 10 kOhm a 5 V</translation>
+        <translation>entrada analógica sem pull-up: adicione uma resistência de 10 kOhm a 5 V</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1918"/>
         <source>Pin A</source>
-        <translation>Pin A</translation>
+        <translation>Pino A</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1918"/>
         <source>Pin B</source>
-        <translation>Pin B</translation>
+        <translation>Pino B</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1919"/>
         <source>Pin C</source>
-        <translation>Pin C</translation>
+        <translation>Pino C</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1919"/>
         <source>Pin D</source>
-        <translation>Pin D</translation>
+        <translation>Pino D</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1920"/>
@@ -938,7 +938,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="396"/>
         <source>—  not used</source>
-        <translation>—  sin uso</translation>
+        <translation>—  não utilizado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="604"/>
@@ -978,22 +978,22 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="680"/>
         <source>(empty route)</source>
-        <translation>(itinerario vacío)</translation>
+        <translation>(itinerário vazio)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="681"/>
         <source>%1 steps</source>
-        <translation>%1 pasos</translation>
+        <translation>%1 passos</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="683"/>
         <source>Output %1</source>
-        <translation>Salida %1</translation>
+        <translation>Saída %1</translation>
     </message>
     <message>
         <location filename="../src/boardtools.cpp" line="72"/>
         <source>Not enough free slots: the file has %1 output(s) and %2 input(s) in use, this board has %3 free output(s) and %4 free input(s). Nothing was imported.</source>
-        <translation>No hay suficientes huecos libres: el archivo tiene %1 salida(s) y %2 entrada(s) en uso, y esta placa tiene %3 salida(s) y %4 entrada(s) libres. No se importó nada.</translation>
+        <translation>Não há posições livres suficientes: o ficheiro tem %1 saída(s) e %2 entrada(s) em uso, e esta placa tem %3 saída(s) e %4 entrada(s) livres. Nada foi importado.</translation>
     </message>
 </context>
 <context>
@@ -1001,12 +1001,12 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/infotexts.cpp" line="43"/>
         <source>No help text for &apos;%1&apos; yet.</source>
-        <translation>Aún no hay explicación para &apos;%1&apos;.</translation>
+        <translation>Ainda não há explicação para &apos;%1&apos;.</translation>
     </message>
     <message>
         <location filename="../src/infotexts.cpp" line="51"/>
         <source>What is this? Click for an explanation.</source>
-        <translation>¿Qué es esto? Haga clic para ver una explicación.</translation>
+        <translation>O que é isto? Clique para ver uma explicação.</translation>
     </message>
 </context>
 <context>
@@ -1014,32 +1014,32 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="93"/>
         <source>Direct control</source>
-        <translation>Control directo</translation>
+        <translation>Controlo directo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="94"/>
         <source>Route</source>
-        <translation>Itinerario</translation>
+        <translation>Itinerário</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="96"/>
         <source>Not in use</source>
-        <translation>Sin uso</translation>
+        <translation>Não utilizado</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="121"/>
         <source>Behaviour</source>
-        <translation>Comportamiento</translation>
+        <translation>Comportamento</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="135"/>
         <source>Triggered by</source>
-        <translation>Activado por</translation>
+        <translation>Accionado por</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="137"/>
         <source>DCC accessory address</source>
-        <translation>Dirección de accesorio DCC</translation>
+        <translation>Endereço de acessório DCC</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="147"/>
@@ -1049,7 +1049,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="179"/>
         <source>Input pin</source>
-        <translation>Pin de entrada</translation>
+        <translation>Pino de entrada</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="210"/>
@@ -1060,17 +1060,17 @@ paso %1: %2, luego esperar %3</translation>
         <location filename="../src/inputeditor.cpp" line="215"/>
         <location filename="../src/inputeditor.cpp" line="459"/>
         <source>Output</source>
-        <translation>Salida</translation>
+        <translation>Saída</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="261"/>
         <source>Route steps</source>
-        <translation>Pasos del itinerario</translation>
+        <translation>Passos do itinerário</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="150"/>
         <source>any command (straight and curved)</source>
-        <translation>cualquier orden (recto y desviado)</translation>
+        <translation>qualquer comando (directo e desviado)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="73"/>
@@ -1080,72 +1080,72 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="77"/>
         <source>A block signal sets its own aspect from its detectors</source>
-        <translation>Una señal de bloqueo fija su propio aspecto a partir de sus detectores</translation>
+        <translation>Um sinal de bloco define o seu próprio aspecto a partir dos seus detectores</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="99"/>
         <source>Function</source>
-        <translation>Función</translation>
+        <translation>Função</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="151"/>
         <source>straight only</source>
-        <translation>solo recto</translation>
+        <translation>só directo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="152"/>
         <source>curved only</source>
-        <translation>solo desviado</translation>
+        <translation>só desviado</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="153"/>
         <source>With &apos;straight only&apos; and &apos;curved only&apos; two routes can share one DCC address, e.g. a level crossing: curved = close, straight = open. A button always starts the route.</source>
-        <translation>Con &apos;solo recto&apos; y &apos;solo desviado&apos; dos itinerarios pueden compartir una dirección DCC, p. ej. un paso a nivel: desviado = cerrar, recto = abrir. Un botón siempre inicia el itinerario.</translation>
+        <translation>Com &apos;só directo&apos; e &apos;só desviado&apos; dois itinerários podem partilhar um endereço DCC, p. ex. uma passagem de nível: desviado = fechar, directo = abrir. Um botão arranca sempre o itinerário.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="159"/>
         <source>Route starts on</source>
-        <translation>El itinerario arranca con</translation>
+        <translation>O itinerário arranca com</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="169"/>
         <source>Digital — button to GND</source>
-        <translation>Digital — pulsador a GND</translation>
+        <translation>Digital — botão para GND</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="170"/>
         <source>Analog — below a value</source>
-        <translation>Analógico — por debajo de un valor</translation>
+        <translation>Analógico — abaixo de um valor</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="171"/>
         <source>Analog — above a value</source>
-        <translation>Analógico — por encima de un valor</translation>
+        <translation>Analógico — acima de um valor</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="172"/>
         <source>Analog — at a value (resistor ladder)</source>
-        <translation>Analógico — en un valor (escalera de resistencias)</translation>
+        <translation>Analógico — num valor (escada de resistências)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="174"/>
         <source>Read as</source>
-        <translation>Leer como</translation>
+        <translation>Ler como</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="184"/>
         <source>Analog pin</source>
-        <translation>Pin analógico</translation>
+        <translation>Pino analógico</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="190"/>
         <source>0 = 0 V, 1023 = 5 V. Stored in steps of 8.</source>
-        <translation>0 = 0 V, 1023 = 5 V. Se guarda en pasos de 8.</translation>
+        <translation>0 = 0 V, 1023 = 5 V. Guardado em passos de 8.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="198"/>
         <source>Threshold</source>
-        <translation>Umbral</translation>
+        <translation>Limiar</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="200"/>
@@ -1155,83 +1155,83 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="201"/>
         <source>Take the reading as the threshold (rounded to a step of 8)</source>
-        <translation>Tomar la lectura como umbral (redondeada a un paso de 8)</translation>
+        <translation>Usar a leitura como limiar (arredondada a um passo de 8)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="206"/>
         <source>Live reading</source>
-        <translation>Lectura en vivo</translation>
+        <translation>Leitura em directo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="217"/>
         <source>Custom values</source>
-        <translation>Valores propios</translation>
+        <translation>Valores próprios</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="218"/>
         <source>Off / curved and on / straight each send their own value, like a route step</source>
-        <translation>Apagado / desviado y encendido / recto envían cada uno su propio valor, como un paso de itinerario</translation>
+        <translation>Desligado / desviado e ligado / directo enviam cada um o seu próprio valor, como um passo de itinerário</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="226"/>
         <source>Off / curved</source>
-        <translation>Apagado / desviado</translation>
+        <translation>Desligado / desviado</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="226"/>
         <source>On / straight</source>
-        <translation>Encendido / recto</translation>
+        <translation>Ligado / directo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="238"/>
         <location filename="../src/inputeditor.cpp" line="509"/>
         <source>The DCC address on the boards down the line (1-255)</source>
-        <translation>La dirección DCC en las placas siguientes de la cadena (1-255)</translation>
+        <translation>O endereço DCC nas placas seguintes da cadeia (1-255)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="273"/>
         <source>+ Add step</source>
-        <translation>+ Añadir paso</translation>
+        <translation>+ Adicionar passo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="274"/>
         <source>Or drag an output onto this input in the canvas</source>
-        <translation>O arrastre una salida sobre esta entrada en el lienzo</translation>
+        <translation>Ou arraste uma saída para esta entrada na área de trabalho</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="372"/>
         <source>Pressed below %1, released again from %2.</source>
-        <translation>Pulsado por debajo de %1, se suelta de nuevo desde %2.</translation>
+        <translation>Premido abaixo de %1, solto de novo a partir de %2.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="375"/>
         <source>Pressed above %1, released again at %2 or lower.</source>
-        <translation>Pulsado por encima de %1, se suelta de nuevo en %2 o menos.</translation>
+        <translation>Premido acima de %1, solto de novo em %2 ou menos.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="378"/>
         <source>Pressed from %1 to %2.</source>
-        <translation>Pulsado de %1 a %2.</translation>
+        <translation>Premido de %1 a %2.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="383"/>
         <source>Now: —</source>
-        <translation>Ahora: —</translation>
+        <translation>Agora: —</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="384"/>
         <source>Needs a board with analog input support (connected or simulated).</source>
-        <translation>Necesita una placa con entradas analógicas (conectada o simulada).</translation>
+        <translation>Requer uma placa com entradas analógicas (ligada ou simulada).</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="388"/>
         <source>Now: %1</source>
-        <translation>Ahora: %1</translation>
+        <translation>Agora: %1</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="388"/>
         <source>Now: …</source>
-        <translation>Ahora: …</translation>
+        <translation>Agora: …</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="459"/>
@@ -1247,17 +1247,17 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="459"/>
         <source>Wait after</source>
-        <translation>Esperar después</translation>
+        <translation>Esperar depois</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="473"/>
         <source>— choose an output —</source>
-        <translation>— elija una salida —</translation>
+        <translation>— escolha uma saída —</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="475"/>
         <source>or drag an output onto this input</source>
-        <translation>o arrastre una salida sobre esta entrada</translation>
+        <translation>ou arraste uma saída para esta entrada</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="514"/>
@@ -1272,18 +1272,18 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="518"/>
         <source>Later</source>
-        <translation>Después</translation>
+        <translation>Depois</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="522"/>
         <source>Delete step %1</source>
-        <translation>Borrar paso %1</translation>
+        <translation>Eliminar passo %1</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="241"/>
         <location filename="../src/inputeditor.cpp" line="533"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation>Elegir el aspecto lámpara por lámpara</translation>
+        <translation>Escolher o aspecto lâmpada a lâmpada</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="613"/>
@@ -1293,12 +1293,12 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="614"/>
         <source>Straight (1)</source>
-        <translation>Recto (1)</translation>
+        <translation>Directo (1)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="616"/>
         <source>Angle</source>
-        <translation>Ángulo</translation>
+        <translation>Ângulo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="636"/>
@@ -1313,7 +1313,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="651"/>
         <source>track </source>
-        <translation>pista </translation>
+        <translation>faixa </translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="653"/>
@@ -1323,12 +1323,12 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="654"/>
         <source>MP3 track 1-255 (0001.mp3 …), 0 = stop</source>
-        <translation>Pista MP3 1-255 (0001.mp3 …), 0 = parar</translation>
+        <translation>Faixa MP3 1-255 (0001.mp3 …), 0 = parar</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="596"/>
         <source>%1 / %2 steps  ·  board total %3 / %4</source>
-        <translation>%1 / %2 pasos  ·  total placa %3 / %4</translation>
+        <translation>%1 / %2 passos  ·  total da placa %3 / %4</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="425"/>
@@ -1339,17 +1339,17 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="662"/>
         <source>DCC extended value for that address: aspect, servo angle, PWM or track</source>
-        <translation>Valor DCC extendido para esa dirección: aspecto, ángulo de servo, PWM o pista</translation>
+        <translation>Valor DCC estendido para esse endereço: aspecto, ângulo do servo, PWM ou faixa</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="721"/>
         <source>Toggle — every press switches the output over</source>
-        <translation>Conmutar — cada pulsación cambia la salida</translation>
+        <translation>Comutar — cada pressão inverte a saída</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="722"/>
         <source>Absolute — the output follows the input</source>
-        <translation>Absoluto — la salida sigue a la entrada</translation>
+        <translation>Absoluto — a saída segue a entrada</translation>
     </message>
 </context>
 <context>
@@ -1360,73 +1360,73 @@ paso %1: %2, luego esperar %3</translation>
         <location filename="../src/mainwindow.cpp" line="2464"/>
         <location filename="../src/mainwindow.cpp" line="2517"/>
         <location filename="../src/mainwindow.cpp" line="2637"/>
-        <source>GPIOcore Configurator</source>
-        <translation>GPIOcore Configurator</translation>
+        <source>IOcore Configurator</source>
+        <translation>IOcore Configurator</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="220"/>
         <source>Board read</source>
-        <translation>Placa leída</translation>
+        <translation>Placa lida</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="225"/>
         <source>Done with %1 error(s)</source>
-        <translation>Terminado con %1 error(es)</translation>
+        <translation>Concluído com %1 erro(s)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="273"/>
         <source>Close (Esc)</source>
-        <translation>Cerrar (Esc)</translation>
+        <translation>Fechar (Esc)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="277"/>
         <source>Remove</source>
-        <translation>Quitar</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="278"/>
         <source>Set this to &apos;not in use&apos; and take it off the canvas</source>
-        <translation>Poner en &apos;sin uso&apos; y quitarlo del lienzo</translation>
+        <translation>Pôr em &apos;não utilizado&apos; e retirar da área de trabalho</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="290"/>
         <source>Name, e.g. &quot;Turnout station left&quot; (kept on this computer)</source>
-        <translation>Nombre, p. ej. &quot;Desvío estación izquierda&quot; (se guarda en este ordenador)</translation>
+        <translation>Nome, p. ex. &quot;Agulha estação esquerda&quot; (guardado neste computador)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="301"/>
         <source>INPUT SETTINGS</source>
-        <translation>AJUSTES DE ENTRADA</translation>
+        <translation>DEFINIÇÕES DA ENTRADA</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="302"/>
         <source>OUTPUT SETTINGS</source>
-        <translation>AJUSTES DE SALIDA</translation>
+        <translation>DEFINIÇÕES DA SAÍDA</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="356"/>
         <source>+ Add input</source>
-        <translation>+ Añadir entrada</translation>
+        <translation>+ Adicionar entrada</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="357"/>
         <source>+ Add output</source>
-        <translation>+ Añadir salida</translation>
+        <translation>+ Adicionar saída</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="358"/>
         <source>Take the next free input and open its settings</source>
-        <translation>Tomar la siguiente entrada libre y abrir sus ajustes</translation>
+        <translation>Usar a próxima entrada livre e abrir as suas definições</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="359"/>
         <source>Take the next free output and open its settings</source>
-        <translation>Tomar la siguiente salida libre y abrir sus ajustes</translation>
+        <translation>Usar a próxima saída livre e abrir as suas definições</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="445"/>
         <source>The board has no room for more route steps (%1 in total)</source>
-        <translation>La placa no tiene espacio para más pasos de itinerario (%1 en total)</translation>
+        <translation>A placa não tem espaço para mais passos de itinerário (%1 no total)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="647"/>
@@ -1446,66 +1446,66 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="656"/>
         <source>Open a board file (Ctrl+O)</source>
-        <translation>Abrir un archivo de placa (Ctrl+O)</translation>
+        <translation>Abrir um ficheiro de placa (Ctrl+O)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="657"/>
         <location filename="../src/mainwindow.cpp" line="754"/>
         <source>Save to this board&apos;s file (Ctrl+S)</source>
-        <translation>Guardar en el archivo de esta placa (Ctrl+S)</translation>
+        <translation>Guardar no ficheiro desta placa (Ctrl+S)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="665"/>
         <source>  Port </source>
-        <translation>  Puerto </translation>
+        <translation>  Porta </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="668"/>
         <source>Refresh port list</source>
-        <translation>Actualizar lista de puertos</translation>
+        <translation>Actualizar lista de portas</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="669"/>
         <location filename="../src/mainwindow.cpp" line="1063"/>
         <location filename="../src/mainwindow.cpp" line="1078"/>
         <source>Connect</source>
-        <translation>Conectar</translation>
+        <translation>Ligar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="683"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
-        <translation>Modificar la configuración: sin conexión, o conectado (marco rojo) para que cada cambio llegue a la placa de inmediato.</translation>
+        <translation>Alterar a configuração: offline, ou ligado (moldura vermelha) para que cada alteração siga logo para a placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="686"/>
         <source>Try your configuration without a board: press the buttons on the inputs and watch the outputs. Nothing can be changed here.</source>
-        <translation>Pruebe su configuración sin placa: pulse los botones de las entradas y observe las salidas. Aquí no se puede cambiar nada.</translation>
+        <translation>Experimente a configuração sem placa: carregue nos botões das entradas e observe as saídas. Aqui nada pode ser alterado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="689"/>
         <source>Press the buttons on the inputs and watch what the real board does. Connects by itself. Blue = straight / on, red = curved / off; servos show their angle.</source>
-        <translation>Pulse los botones de las entradas y vea lo que hace la placa real. Se conecta sola. Azul = recto / encendido, rojo = desviado / apagado; los servos muestran su ángulo.</translation>
+        <translation>Carregue nos botões das entradas e veja o que a placa real faz. Liga-se sozinha. Azul = directo / ligado, vermelho = desviado / desligado; os servos mostram o seu ângulo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="709"/>
         <source>Read board</source>
-        <translation>Leer placa</translation>
+        <translation>Ler placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="713"/>
         <location filename="../src/mainwindow.cpp" line="1793"/>
         <source>Write changes</source>
-        <translation>Escribir cambios</translation>
+        <translation>Escrever alterações</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="715"/>
         <source>Revert</source>
-        <translation>Deshacer cambios</translation>
+        <translation>Anular alterações</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="724"/>
         <source> Preset </source>
-        <translation> Preajuste </translation>
+        <translation> Predefinição </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="726"/>
@@ -1515,7 +1515,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="733"/>
         <source>Which board this is: decides which pins exist</source>
-        <translation>Qué placa es: determina qué pines existen</translation>
+        <translation>Que placa é esta: determina que pinos existem</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="740"/>
@@ -1530,7 +1530,7 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="743"/>
         <source>Board settings…</source>
-        <translation>Ajustes de la placa…</translation>
+        <translation>Definições da placa…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="751"/>
@@ -1545,58 +1545,58 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="782"/>
         <source>&amp;Phone remote…</source>
-        <translation>&amp;Control remoto con el móvil…</translation>
+        <translation>&amp;Comando pelo telemóvel…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="791"/>
         <source>Servos, lights and turnout coils; buttons, DCC addresses and simple routes</source>
-        <translation>Servos, luces y bobinas de desvío; pulsadores, direcciones DCC e itinerarios sencillos</translation>
+        <translation>Servos, luzes e bobinas de agulhas; botões, endereços DCC e itinerários simples</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="792"/>
         <source>Also light effects, signals, PWM, sound, frog relays, analog inputs and custom values</source>
-        <translation>Además efectos de luz, señales, PWM, sonido, relés del corazón, entradas analógicas y valores propios</translation>
+        <translation>Também efeitos de luz, sinais, PWM, som, relés do coração, entradas analógicas e valores próprios</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="793"/>
         <source>Also automatic block signals, sensor inputs and semaphore arms</source>
-        <translation>Además señales de bloqueo automáticas, entradas de sensor y brazos de semáforo</translation>
+        <translation>Também sinais de bloco automáticos, entradas de sensor e braços de semáforo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="804"/>
         <source>What do the levels offer?</source>
-        <translation>¿Qué ofrece cada nivel?</translation>
+        <translation>O que oferece cada nível?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="805"/>
         <location filename="../src/mainwindow.cpp" line="884"/>
         <source>User levels</source>
-        <translation>Niveles de usuario</translation>
+        <translation>Níveis de utilizador</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="817"/>
         <source>Sound folder…</source>
-        <translation>Carpeta de sonidos…</translation>
+        <translation>Pasta de sons…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="820"/>
         <source>Sound folder: 0001.mp3, 0002.mp3 … as on the DFPlayer&apos;s SD card</source>
-        <translation>Carpeta de sonidos: 0001.mp3, 0002.mp3 … como en la tarjeta SD del DFPlayer</translation>
+        <translation>Pasta de sons: 0001.mp3, 0002.mp3 … como no cartão SD do DFPlayer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="825"/>
         <source>Plays a sound effect output&apos;s tracks in Simulate and Live test</source>
-        <translation>Reproduce las pistas de una salida de efecto de sonido en Simular y Prueba en vivo</translation>
+        <translation>Reproduz as faixas de uma saída de efeito sonoro em Simular e Teste em directo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="826"/>
         <source>Mute sounds</source>
-        <translation>Silenciar sonidos</translation>
+        <translation>Silenciar sons</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="883"/>
         <source>&amp;User levels</source>
-        <translation>&amp;Niveles de usuario</translation>
+        <translation>&amp;Níveis de utilizador</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="892"/>
@@ -1611,18 +1611,18 @@ paso %1: %2, luego esperar %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="898"/>
-        <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano, DCCnext) for model railways.</source>
-        <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configura placas GPIOcore (Arduino Nano, DCCnext) para modelismo ferroviario.</translation>
+        <source>&lt;b&gt;IOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures IOcore boards (Arduino Nano, DCCnext) for model railways.</source>
+        <translation>&lt;b&gt;IOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configura placas IOcore (Arduino Nano, DCCnext) para modelismo ferroviário.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1049"/>
         <source>● Simulation</source>
-        <translation>● Simulación</translation>
+        <translation>● Simulação</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1051"/>
         <source>● Connected: %1 (%2)</source>
-        <translation>● Conectado: %1 (%2)</translation>
+        <translation>● Ligado: %1 (%2)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1051"/>
@@ -1632,75 +1632,75 @@ paso %1: %2, luego esperar %3</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1056"/>
         <source>◌ Connecting to %1…</source>
-        <translation>◌ Conectando con %1…</translation>
+        <translation>◌ A ligar a %1…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1058"/>
         <source>○ Offline</source>
-        <translation>○ Sin conexión</translation>
+        <translation>○ Sem ligação</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1120"/>
         <source>Connected. Read board loads its configuration; Write all puts the one on screen on the board. Changes you make now go to the board.</source>
-        <translation>Conectado. Leer placa carga su configuración; Escribir todo pone en la placa la que está en pantalla. Los cambios que haga ahora van a la placa.</translation>
+        <translation>Ligado. Ler placa carrega a configuração da placa; Escrever tudo põe na placa a que está no ecrã. As alterações que fizer agora vão para a placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1177"/>
         <source>Read everything from the board?
 
 What is on screen now is replaced by the board&apos;s configuration. Save it first (Ctrl+S) if you want to keep it.</source>
-        <translation>¿Leer todo de la placa?
+        <translation>Ler tudo da placa?
 
-Lo que ahora está en pantalla se sustituye por la configuración de la placa. Guárdelo primero (Ctrl+S) si quiere conservarlo.</translation>
+O que está agora no ecrã é substituído pela configuração da placa. Guarde-o primeiro (Ctrl+S) se o quiser manter.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1196"/>
         <source>the board</source>
-        <translation>la placa</translation>
+        <translation>a placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1198"/>
         <source>Write the whole configuration on screen to %1?
 
 Everything on the board is replaced.</source>
-        <translation>¿Escribir toda la configuración de la pantalla en %1?
+        <translation>Escrever toda a configuração do ecrã em %1?
 
-Todo lo que hay en la placa se sustituye.</translation>
+Tudo o que está na placa é substituído.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1242"/>
         <source>The board keeps a different value for %1; not sending it again.</source>
-        <translation>La placa mantiene otro valor para %1; no se vuelve a enviar.</translation>
+        <translation>A placa mantém outro valor para %1; não é enviado novamente.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1280"/>
         <source>Cannot read the preset %1</source>
-        <translation>No se puede leer el preajuste %1</translation>
+        <translation>Não é possível ler a predefinição %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1315"/>
         <source>Preset applied</source>
-        <translation>Preajuste aplicado</translation>
+        <translation>Predefinição aplicada</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1363"/>
         <source>Send this configuration to the connected board now?</source>
-        <translation>¿Enviar ahora esta configuración a la placa conectada?</translation>
+        <translation>Enviar agora esta configuração para a placa ligada?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1384"/>
         <source>Loaded %1</source>
-        <translation>%1 cargado</translation>
+        <translation>%1 carregado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2049"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
-        <translation>La configuración tiene cambios que no están guardados en un archivo. ¿Guardarlos?</translation>
+        <translation>A configuração tem alterações que não estão guardadas num ficheiro. Guardá-las?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2144"/>
         <source>straight</source>
-        <translation>recto</translation>
+        <translation>directo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2144"/>
@@ -1710,42 +1710,42 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2169"/>
         <source>Phone remote</source>
-        <translation>Control remoto con el móvil</translation>
+        <translation>Comando pelo telemóvel</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2171"/>
         <source>Adjust servos from your phone: it must be on the same Wi-Fi as this computer. Scan the code with the phone&apos;s camera, or type the address in its browser. Keep this program open; the code changes every time the remote is switched on.</source>
-        <translation>Ajuste los servos desde su móvil: debe estar en la misma red wifi que este ordenador. Escanee el código con la cámara del móvil o escriba la dirección en su navegador. Mantenga este programa abierto; el código cambia cada vez que se activa el control remoto.</translation>
+        <translation>Ajuste os servos a partir do seu telemóvel: tem de estar na mesma rede Wi-Fi que este computador. Leia o código com a câmara do telemóvel ou escreva o endereço no browser dele. Mantenha este programa aberto; o código muda sempre que o comando é ligado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2176"/>
         <source>Allow phones on my network</source>
-        <translation>Permitir móviles en mi red</translation>
+        <translation>Permitir telemóveis na minha rede</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2190"/>
         <source>The first time, Windows may ask whether the program may use the network: allow it for private networks.</source>
-        <translation>La primera vez, Windows puede preguntar si el programa puede usar la red: permítalo para redes privadas.</translation>
+        <translation>Na primeira vez, o Windows pode perguntar se o programa pode usar a rede: permita-o para redes privadas.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2204"/>
         <source>Off</source>
-        <translation>Desactivado</translation>
+        <translation>Desligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2223"/>
         <source>Could not open a network port (8080-8089).</source>
-        <translation>No se pudo abrir un puerto de red (8080-8089).</translation>
+        <translation>Não foi possível abrir uma porta de rede (8080-8089).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2251"/>
         <source>Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and reports back; nothing needs to be connected.</source>
-        <translation>Prueba en vivo: haga clic en ◀ / ▶ o ▶ iniciar en una entrada. La placa conmuta sus pines e informa del estado; no hace falta conectar nada.</translation>
+        <translation>Teste em directo: clique em ◀ / ▶ ou ▶ iniciar numa entrada. A placa comuta os seus pinos e devolve o estado; não é preciso ligar nada.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2270"/>
         <source>DCC extended — address %1</source>
-        <translation>DCC extendido — dirección %1</translation>
+        <translation>DCC estendido — endereço %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2274"/>
@@ -1760,12 +1760,12 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>flashing, opposite phase</source>
-        <translation>intermitente, en contrafase</translation>
+        <translation>intermitente, em oposição de fase</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2300"/>
         <source>Lamp %1</source>
-        <translation>Lámpara %1</translation>
+        <translation>Lâmpada %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2310"/>
@@ -1775,46 +1775,46 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2314"/>
         <source>Sent as if your command station sent a DCC extended accessory command to address %1. Every change is sent straight away.</source>
-        <translation>Se envía como si su central enviara una orden de accesorio DCC extendida a la dirección %1. Cada cambio se envía al instante.</translation>
+        <translation>Enviado como se a sua central enviasse um comando de acessório DCC estendido para o endereço %1. Cada alteração é enviada de imediato.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2319"/>
         <location filename="../src/mainwindow.cpp" line="2370"/>
         <source>Close</source>
-        <translation>Cerrar</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2437"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
-        <translation>La placa es &quot;%1&quot;, la pantalla muestra &quot;%2&quot;. La prueba en vivo muestra el cableado de la pantalla, ¿leer antes la placa?</translation>
+        <translation>A placa é &quot;%1&quot;, o ecrã mostra &quot;%2&quot;. O teste em directo mostra a cablagem do ecrã; ler primeiro a placa?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2443"/>
         <source>Connected to &quot;%1&quot;, the screen shows &quot;%2&quot;. Read board or Write all.</source>
-        <translation>Conectado a &quot;%1&quot;, la pantalla muestra &quot;%2&quot;. Leer placa o Escribir todo.</translation>
+        <translation>Ligado a &quot;%1&quot;, o ecrã mostra &quot;%2&quot;. Ler placa ou Escrever tudo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1749"/>
         <location filename="../src/mainwindow.cpp" line="2464"/>
         <location filename="../src/mainwindow.cpp" line="2518"/>
         <location filename="../src/mainwindow.cpp" line="2637"/>
-        <source>%1 — GPIOcore Configurator</source>
-        <translation>%1 — GPIOcore Configurator</translation>
+        <source>%1 — IOcore Configurator</source>
+        <translation>%1 — IOcore Configurator</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2649"/>
         <source>max. 16 letters, e.g. Station-left</source>
-        <translation>máx. 16 caracteres, p. ej. Estación-izq</translation>
+        <translation>máx. 16 caracteres, p. ex. Estação-esq</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2655"/>
         <source>Start with</source>
-        <translation>Empezar con</translation>
+        <translation>Começar com</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2656"/>
         <source>When you later connect a board and give it this name, these settings belong to it. Use Write all to put them on the board.</source>
-        <translation>Cuando más adelante conecte una placa y le dé este nombre, estos ajustes le pertenecen. Use Escribir todo para ponerlos en la placa.</translation>
+        <translation>Quando mais tarde ligar uma placa e lhe der este nome, estas definições pertencem-lhe. Use Escrever tudo para as pôr na placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2427"/>
@@ -1824,25 +1824,25 @@ Todo lo que hay en la placa se sustituye.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2427"/>
         <source>board without a name</source>
-        <translation>placa sin nombre</translation>
+        <translation>placa sem nome</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2540"/>
         <source>Name this board</source>
-        <translation>Poner nombre a esta placa</translation>
+        <translation>Dar nome a esta placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2541"/>
         <source>This board has no name yet. Give it a short, unique name (max. 16 letters, e.g. &quot;Station-left&quot;).
 The name is stored on the board; your names for inputs and outputs are kept in a file with this name.</source>
-        <translation>Esta placa aún no tiene nombre. Dele un nombre corto y único (máx. 16 letras, p. ej. &quot;Estacion-izq&quot;).
-El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en un archivo con este nombre.</translation>
+        <translation>Esta placa ainda não tem nome. Dê-lhe um nome curto e único (máx. 16 letras, p. ex. &quot;Estacao-esq&quot;).
+O nome é guardado na placa; os seus nomes de entradas e saídas ficam num ficheiro com este nome.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="887"/>
         <location filename="../src/mainwindow.cpp" line="2556"/>
         <source>Board settings</source>
-        <translation>Ajustes de la placa</translation>
+        <translation>Definições da placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="853"/>
@@ -1852,57 +1852,57 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
     <message>
         <location filename="../src/mainwindow.cpp" line="863"/>
         <source>The language changes the next time you start the program.</source>
-        <translation>El idioma cambia la próxima vez que inicie el programa.</translation>
+        <translation>O idioma muda na próxima vez que iniciar o programa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="866"/>
         <source>Automatic (system language)</source>
-        <translation>Automático (idioma del sistema)</translation>
+        <translation>Automático (idioma do sistema)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1394"/>
         <source>Example opened. Save it under a name of your own (Ctrl+S); the example itself is never changed.</source>
-        <translation>Ejemplo abierto. Guárdelo con un nombre propio (Ctrl+S); el ejemplo en sí nunca se modifica.</translation>
+        <translation>Exemplo aberto. Guarde-o com um nome seu (Ctrl+S); o exemplo em si nunca é alterado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1447"/>
         <source>%1 output(s), %2 input(s), %3</source>
-        <translation>%1 salida(s), %2 entrada(s), %3</translation>
+        <translation>%1 saída(s), %2 entrada(s), %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1458"/>
         <source>Open example</source>
-        <translation>Abrir ejemplo</translation>
+        <translation>Abrir exemplo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1460"/>
         <source>Start from an example. It opens like a board file, but without a file name: when you save, you choose a new name, so the example stays as it is.</source>
-        <translation>Empiece a partir de un ejemplo. Se abre como un archivo de placa, pero sin nombre de archivo: al guardar, elige un nombre nuevo, así que el ejemplo queda como está.</translation>
+        <translation>Comece a partir de um exemplo. Abre-se como um ficheiro de placa, mas sem nome de ficheiro: ao guardar, escolhe um nome novo, e assim o exemplo fica como está.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1477"/>
         <source>No examples found in %1</source>
-        <translation>No se encontraron ejemplos en %1</translation>
+        <translation>Nenhum exemplo encontrado em %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1499"/>
         <source>Outputs (%1 in use)</source>
-        <translation>Salidas (%1 en uso)</translation>
+        <translation>Saídas (%1 em uso)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1500"/>
         <source>Inputs (%1 in use)</source>
-        <translation>Entradas (%1 en uso)</translation>
+        <translation>Entradas (%1 em uso)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1501"/>
         <source>Board settings (type, route timing, interlocking)</source>
-        <translation>Ajustes de la placa (tipo, temporización de itinerarios, enclavamiento)</translation>
+        <translation>Definições da placa (tipo, temporização de itinerários, encravamento)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1544"/>
         <source>Exported to %1</source>
-        <translation>Exportado a %1</translation>
+        <translation>Exportado para %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1555"/>
@@ -1913,7 +1913,7 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
     <message>
         <location filename="../src/mainwindow.cpp" line="1557"/>
         <source>Save the items in use of the parts you tick in a board file of their own, with their names, settings and routes, e.g. to make your own example. Import adds them to another board.</source>
-        <translation>Guarda en un archivo de placa propio los elementos en uso de las partes que marque, con sus nombres, ajustes e itinerarios, p. ej. para crear su propio ejemplo. Importar los añade a otra placa.</translation>
+        <translation>Guarda num ficheiro de placa próprio os elementos em uso das partes que assinalar, com os seus nomes, definições e itinerários, p. ex. para criar o seu próprio exemplo. Importar adiciona-os a outra placa.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1563"/>
@@ -1923,17 +1923,17 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
     <message>
         <location filename="../src/mainwindow.cpp" line="1575"/>
         <source>Import from a board file</source>
-        <translation>Importar desde un archivo de placa</translation>
+        <translation>Importar de um ficheiro de placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1591"/>
         <source>Import from %1</source>
-        <translation>Importar desde %1</translation>
+        <translation>Importar de %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1593"/>
         <source>Add the items in use of the parts you tick to this board.</source>
-        <translation>Añade a esta placa los elementos en uso de las partes que marque.</translation>
+        <translation>Adiciona a esta placa os elementos em uso das partes que assinalar.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1597"/>
@@ -1943,17 +1943,17 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
     <message>
         <location filename="../src/mainwindow.cpp" line="1599"/>
         <source>Same numbers (replace): every item goes to its own number</source>
-        <translation>Mismos números (reemplazar): cada elemento va a su propio número</translation>
+        <translation>Mesmos números (substituir): cada elemento vai para o seu próprio número</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1600"/>
         <source>Into free slots: the first free outputs and inputs, links between the imported items are renumbered</source>
-        <translation>En huecos libres: las primeras salidas y entradas libres; los vínculos entre los elementos importados se renumeran</translation>
+        <translation>Em posições livres: as primeiras saídas e entradas livres; as ligações entre os elementos importados são renumeradas</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1608"/>
         <source>A pin that is already in use goes to the imported item: your own item keeps its function, but loses that pin. The items concerned are listed afterwards.</source>
-        <translation>Un pin que ya está en uso pasa al elemento importado: su propio elemento conserva su función, pero pierde ese pin. Los elementos afectados se listan después.</translation>
+        <translation>Um pino que já esteja em uso passa para o elemento importado: o seu elemento mantém a função, mas perde esse pino. Os elementos afectados são listados depois.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1613"/>
@@ -1973,11 +1973,11 @@ El nombre se guarda en la placa; sus nombres de entradas y salidas se guardan en
 %1
 
 Import?</source>
-        <translation>Estos elementos suyos se reemplazan por los del archivo:
+        <translation>Estes elementos seus são substituídos pelos do ficheiro:
 
 %1
 
-¿Importar?</translation>
+Importar?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1678"/>
@@ -1988,96 +1988,96 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="1707"/>
         <source>Imported %1 output(s) and %2 input(s) from %3</source>
-        <translation>Importadas %1 salida(s) y %2 entrada(s) desde %3</translation>
+        <translation>Importadas %1 saída(s) e %2 entrada(s) de %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1710"/>
         <source>Some pins were already in use:
 
 %1</source>
-        <translation>Algunos pines ya estaban en uso:
+        <translation>Alguns pinos já estavam em uso:
 
 %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1724"/>
         <source>This project uses %1 features (%2). The level is set to %1.</source>
-        <translation>Este proyecto usa funciones del nivel %1 (%2). El nivel se ha fijado en %1.</translation>
+        <translation>Este projecto usa funcionalidades do nível %1 (%2). O nível foi definido para %1.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1934"/>
         <source>%1 uses %2, which cannot be used here: %3.</source>
-        <translation>%1 usa %2, que aquí no se puede usar: %3.</translation>
+        <translation>%1 usa %2, que não pode ser usado aqui: %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1939"/>
         <source>%1 (%2) is also used by %3 (%4).</source>
-        <translation>%1 (%2) también lo usa %3 (%4).</translation>
+        <translation>%1 (%2) também é usado por %3 (%4).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1941"/>
         <source>%1 (%2) is also used by %3.</source>
-        <translation>%1 (%2) también lo usa %3.</translation>
+        <translation>%1 (%2) também é usado por %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1950"/>
         <source>Detector %1 is not in use or has no pin: the board never sees that block occupied.</source>
-        <translation>El detector %1 no está en uso o no tiene pin: la placa nunca ve ocupado ese bloque.</translation>
+        <translation>O detector %1 não está em uso ou não tem pino: a placa nunca vê esse bloco ocupado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1961"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on %3 and %4 stops working as soon as at least one servo output exists. Use %5 for PWM, or remove the servo.</source>
-        <translation>%1 (%2): conflicto con los servos. La biblioteca Servo usa el temporizador 1, así que el PWM en %3 y %4 deja de funcionar en cuanto existe al menos una salida de servo. Use %5 para PWM, o elimine el servo.</translation>
+        <translation>%1 (%2): conflito com os servos. A biblioteca Servo usa o temporizador 1, pelo que o PWM em %3 e %4 deixa de funcionar assim que existe pelo menos uma saída de servo. Use %5 para PWM, ou remova o servo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1982"/>
         <source>Pin %1 cannot be used here: %2.</source>
-        <translation>El pin %1 no se puede usar aquí: %2.</translation>
+        <translation>O pino %1 não pode ser usado aqui: %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1986"/>
         <source>Pin %1 is also used by %2.</source>
-        <translation>El pin %1 también lo usa %2.</translation>
+        <translation>O pino %1 também é usado por %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1995"/>
         <source>No pin is set: this sensor never reports its block occupied.</source>
-        <translation>No hay ningún pin definido: este sensor nunca señala su bloque como ocupado.</translation>
+        <translation>Nenhum pino definido: este sensor nunca indica o seu bloco como ocupado.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2002"/>
         <source>Route step %1 sets %2, which is not in use.</source>
-        <translation>El paso %1 del itinerario ajusta %2, que no está en uso.</translation>
+        <translation>O passo %1 do itinerário define %2, que não está em uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2005"/>
         <source>Route step %1 sets %2, a block signal: it ignores the step.</source>
-        <translation>El paso %1 del itinerario ajusta %2, una señal de bloqueo: la señal ignora el paso.</translation>
+        <translation>O passo %1 do itinerário define %2, um sinal de bloco: este ignora o passo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2013"/>
         <source>%1 is not in use.</source>
-        <translation>%1 no está en uso.</translation>
+        <translation>%1 não está em uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2015"/>
         <source>%1 is a block signal: it sets its own aspect and ignores this input.</source>
-        <translation>%1 es una señal de bloqueo: fija su propio aspecto e ignora esta entrada.</translation>
+        <translation>%1 é um sinal de bloco: define o seu próprio aspecto e ignora esta entrada.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2104"/>
         <source>The pin was in use: %1 keeps its settings, but has no pin there now.</source>
-        <translation>El pin estaba en uso: %1 conserva sus ajustes, pero ahora no tiene pin ahí.</translation>
+        <translation>O pino estava em uso: %1 mantém as suas definições, mas agora não tem pino aí.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2143"/>
         <source>Phone: %1 %2 = %3°</source>
-        <translation>Móvil: %1 %2 = %3°</translation>
+        <translation>Telemóvel: %1 %2 = %3°</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2262"/>
         <source>%1 has no DCC address, so it cannot receive a DCC extended command.</source>
-        <translation>%1 no tiene dirección DCC, por lo que no puede recibir un comando DCC extendido.</translation>
+        <translation>%1 não tem endereço DCC, por isso não pode receber um comando DCC estendido.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2361"/>
@@ -2087,12 +2087,12 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2564"/>
         <source>Own wait time per route step</source>
-        <translation>Tiempo de espera propio por paso del itinerario</translation>
+        <translation>Tempo de espera próprio por passo do itinerário</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2566"/>
         <source>Off: every step waits the same time and routes need half the memory</source>
-        <translation>Desactivado: cada paso espera lo mismo y los itinerarios necesitan la mitad de memoria</translation>
+        <translation>Desligado: cada passo espera o mesmo tempo e os itinerários ocupam metade da memória</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2571"/>
@@ -2102,17 +2102,17 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2574"/>
         <source>Off — routes may run at the same time</source>
-        <translation>Desactivado — los itinerarios pueden ejecutarse a la vez</translation>
+        <translation>Desligado — os itinerários podem correr ao mesmo tempo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2575"/>
         <source>On — one route at a time</source>
-        <translation>Activado — un solo itinerario a la vez</translation>
+        <translation>Ligado — um itinerário de cada vez</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2576"/>
         <source>Automatic — turnout routes one at a time, lights in parallel</source>
-        <translation>Automático — itinerarios con desvíos uno a uno, iluminación en paralelo</translation>
+        <translation>Automático — itinerários com agulhas um de cada vez, iluminação em paralelo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2582"/>
@@ -2122,13 +2122,13 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2584"/>
         <source>How fast flashing lamps of block signals blink. 1 Hz = 60 times a minute; 1.5 Hz = 90 a minute.</source>
-        <translation>Velocidad de parpadeo de las lámparas de las señales de cantón. 1 Hz = 60 veces por minuto; 1,5 Hz = 90 por minuto.</translation>
+        <translation>Velocidade a que piscam as lâmpadas dos sinais de bloco. 1 Hz = 60 vezes por minuto; 1,5 Hz = 90 por minuto.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2586"/>
         <location filename="../src/mainwindow.cpp" line="2654"/>
         <source>Name</source>
-        <translation>Nombre</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2587"/>
@@ -2138,42 +2138,42 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2589"/>
         <source>Wait time per step</source>
-        <translation>Espera por paso</translation>
+        <translation>Espera por passo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2590"/>
         <source>Route interlocking</source>
-        <translation>Enclavamiento de itinerarios</translation>
+        <translation>Encravamento de itinerários</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2591"/>
         <source>Block signals flash at</source>
-        <translation>Las señales de cantón parpadean a</translation>
+        <translation>Os sinais de bloco piscam a</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2600"/>
         <source>This board&apos;s firmware cannot store these settings yet; they are only kept in the file.</source>
-        <translation>El firmware de esta placa aún no puede guardar estos ajustes; solo se guardan en el archivo.</translation>
+        <translation>O firmware desta placa ainda não consegue guardar estas definições; ficam guardadas apenas no ficheiro.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2645"/>
         <source>New board</source>
-        <translation>Nueva placa</translation>
+        <translation>Nova placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2697"/>
         <source>All 16 outputs are in use.</source>
-        <translation>Las 16 salidas están en uso.</translation>
+        <translation>As 16 saídas estão todas em uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2709"/>
         <source>All 16 inputs are in use.</source>
-        <translation>Las 16 entradas están en uso.</translation>
+        <translation>As 16 entradas estão todas em uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2742"/>
         <source>%1 removed; %2 drove it and is now not in use as well.</source>
-        <translation>%1 eliminado; %2 lo controlaba y ahora tampoco está en uso.</translation>
+        <translation>%1 removido; %2 comandava-o e agora também deixou de estar em uso.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2773"/>
@@ -2183,7 +2183,7 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2776"/>
         <source>&lt;b&gt;Wiring&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 through a voltage divider: 1 kΩ from D1 to RXD, 2 kΩ from RXD to GND&lt;/li&gt;&lt;li&gt;TXD → D0 through a Schottky diode (BAT85 or 1N5819), &lt;b&gt;cathode (stripe) at the HC-05 TXD&lt;/b&gt;, so USB still works while the HC-05 is attached&lt;/li&gt;&lt;/ul&gt;Hold the button on the HC-05 while you plug in the USB cable (its LED blinks slowly), connect, then click &lt;b&gt;Start&lt;/b&gt;.</source>
-        <translation>&lt;b&gt;Cableado&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 a través de un divisor de tensión: 1 kΩ de D1 a RXD, 2 kΩ de RXD a GND&lt;/li&gt;&lt;li&gt;TXD → D0 a través de un diodo Schottky (BAT85 o 1N5819), &lt;b&gt;cátodo (franja) en el TXD del HC-05&lt;/b&gt;, para que el USB siga funcionando con el HC-05 conectado&lt;/li&gt;&lt;/ul&gt;Mantenga pulsado el botón del HC-05 mientras conecta el cable USB (su LED parpadea lentamente), conéctese y luego haga clic en &lt;b&gt;Iniciar&lt;/b&gt;.</translation>
+        <translation>&lt;b&gt;Ligações&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 através de um divisor de tensão: 1 kΩ de D1 a RXD, 2 kΩ de RXD a GND&lt;/li&gt;&lt;li&gt;TXD → D0 através de um díodo Schottky (BAT85 ou 1N5819), &lt;b&gt;cátodo (risca) no TXD do HC-05&lt;/b&gt;, para que o USB continue a funcionar com o HC-05 ligado&lt;/li&gt;&lt;/ul&gt;Mantenha premido o botão do HC-05 enquanto liga o cabo USB (o seu LED pisca lentamente), estabeleça a ligação e depois clique em &lt;b&gt;Iniciar&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2791"/>
@@ -2193,71 +2193,71 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="2802"/>
         <source>Setting up the HC-05… (a few seconds)</source>
-        <translation>Configurando el HC-05… (unos segundos)</translation>
+        <translation>A configurar o HC-05… (alguns segundos)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2814"/>
-        <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in GPIOcore.</source>
-        <translation>&lt;b&gt;Listo:&lt;/b&gt; el HC-05 ahora funciona a 115200 baudios (respondió a %1 baudios). Desenchufe la placa y vuelva a enchufarla (sin mantener pulsado el botón). Empareje &apos;%2&apos; en los ajustes de Bluetooth de Windows (PIN 1234, o 0000 en algunos módulos); Windows crea un puerto COM para él: elija ese puerto en GPIOcore.</translation>
+        <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in IOcore.</source>
+        <translation>&lt;b&gt;Concluído:&lt;/b&gt; o HC-05 funciona agora a 115200 baud (respondeu a %1 baud). Desligue a placa e volte a ligá-la (sem manter o botão premido). Emparelhe &apos;%2&apos; nas definições de Bluetooth do Windows (PIN 1234, ou 0000 em alguns módulos); o Windows cria uma porta COM para ele: escolha essa porta no IOcore.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2818"/>
         <source>&lt;br&gt;The name could not be set: it keeps its old name.</source>
-        <translation>&lt;br&gt;No se pudo establecer el nombre: conserva el anterior.</translation>
+        <translation>&lt;br&gt;Não foi possível definir o nome: mantém o nome anterior.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2821"/>
         <source>&lt;b&gt;No HC-05 answered.&lt;/b&gt; Likely causes: it is not in AT mode (hold its button while plugging in the USB cable: the LED blinks slowly, about every 2 s), the wiring (TXD → D0, RXD → D1 through the divider), or the diode is missing or the wrong way round (stripe at the HC-05).</source>
-        <translation>&lt;b&gt;Ningún HC-05 respondió.&lt;/b&gt; Causas probables: no está en modo AT (mantenga pulsado su botón al conectar el cable USB: el LED parpadea lentamente, aproximadamente cada 2 s), el cableado (TXD → D0, RXD → D1 a través del divisor), o falta el diodo o está al revés (franja en el HC-05).</translation>
+        <translation>&lt;b&gt;Nenhum HC-05 respondeu.&lt;/b&gt; Causas prováveis: não está em modo AT (mantenha premido o seu botão ao ligar o cabo USB: o LED pisca lentamente, cerca de 2 em 2 s), as ligações (TXD → D0, RXD → D1 através do divisor), ou o díodo falta ou está ao contrário (risca no HC-05).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2827"/>
         <source>&lt;b&gt;The HC-05 answered at %1 baud but refused the new settings.&lt;/b&gt; It is probably not in AT mode: hold its button while plugging in the USB cable (the LED blinks slowly) and try again. Some other modules (HC-06, clones) do not know these commands.</source>
-        <translation>&lt;b&gt;El HC-05 respondió a %1 baudios pero rechazó los nuevos ajustes.&lt;/b&gt; Probablemente no está en modo AT: mantenga pulsado su botón al conectar el cable USB (el LED parpadea lentamente) e inténtelo de nuevo. Algunos otros módulos (HC-06, clones) no conocen estos comandos.</translation>
+        <translation>&lt;b&gt;O HC-05 respondeu a %1 baud mas recusou as novas definições.&lt;/b&gt; Provavelmente não está em modo AT: mantenha premido o seu botão ao ligar o cabo USB (o LED pisca lentamente) e tente novamente. Alguns outros módulos (HC-06, clones) não conhecem estes comandos.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2832"/>
         <source>&lt;b&gt;The board did not answer.&lt;/b&gt; Check the connection and try again.</source>
-        <translation>&lt;b&gt;La placa no respondió.&lt;/b&gt; Revise la conexión e inténtelo de nuevo.</translation>
+        <translation>&lt;b&gt;A placa não respondeu.&lt;/b&gt; Verifique a ligação e tente novamente.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2850"/>
         <source>No preset &quot;%1&quot; in %2</source>
-        <translation>No hay ningún preajuste &quot;%1&quot; en %2</translation>
+        <translation>Nenhuma predefinição &quot;%1&quot; em %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="746"/>
         <source>&amp;File</source>
-        <translation>&amp;Archivo</translation>
+        <translation>&amp;Ficheiro</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="173"/>
         <source>frog relays A %1, B %2, unifrog %3</source>
-        <translation>relés del corazón A %1, B %2, unifrog %3</translation>
+        <translation>relés do coração A %1, B %2, unifrog %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="174"/>
         <location filename="../src/mainwindow.cpp" line="175"/>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>on</source>
-        <translation>encendido</translation>
+        <translation>ligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="174"/>
         <location filename="../src/mainwindow.cpp" line="175"/>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>off</source>
-        <translation>apagado</translation>
+        <translation>desligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="177"/>
         <source>track %1</source>
-        <translation>pista %1</translation>
+        <translation>faixa %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="177"/>
         <source>sound stopped</source>
-        <translation>sonido parado</translation>
+        <translation>som parado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="178"/>
@@ -2267,12 +2267,12 @@ Import?</source>
     <message>
         <location filename="../src/mainwindow.cpp" line="179"/>
         <source>straight / on</source>
-        <translation>recto / encendido</translation>
+        <translation>directo / ligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="179"/>
         <source>curved / off</source>
-        <translation>desviado / apagado</translation>
+        <translation>desviado / desligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="180"/>
@@ -2282,49 +2282,49 @@ Import?</source>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="196"/>
-        <source>No GPIOcore board answered on %1.
+        <source>No IOcore board answered on %1.
 
-Check that the right port is chosen and that the board has the GPIOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
-        <translation>Ninguna placa GPIOcore respondió en %1.
+Check that the right port is chosen and that the board has the IOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
+        <translation>Nenhuma placa IOcore respondeu em %1.
 
-Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware GPIOcore (Placa &gt; Flashear firmware). Una placa que lleva más de 5 segundos funcionando sin el programa necesita una pulsación breve de su botón de configuración (Nano) o un reinicio (desenchufe y vuelva a enchufar el cable USB).</translation>
+Verifique se está escolhida a porta certa e se a placa tem o firmware IOcore (Placa &gt; Gravar firmware). Uma placa que esteja a funcionar há mais de 5 segundos sem o programa precisa de uma pressão breve no botão de configuração (Nano) ou de um reinício (desligue e volte a ligar o cabo USB).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="203"/>
         <location filename="../src/mainwindow.cpp" line="1054"/>
         <source>◌ Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation>◌ Esperando la placa — pulse brevemente su botón de configuración (Nano)…</translation>
+        <translation>◌ A aguardar a placa — prima brevemente o seu botão de configuração (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="204"/>
         <source>Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation>Esperando la placa — pulse brevemente su botón de configuración (Nano)…</translation>
+        <translation>A aguardar a placa — prima brevemente o seu botão de configuração (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="313"/>
         <source>Lamp colours (only shown in the GUI):</source>
-        <translation>Colores de las lámparas (solo se muestran en el programa):</translation>
+        <translation>Cores das lâmpadas (só mostradas no programa):</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="317"/>
         <location filename="../src/mainwindow.cpp" line="323"/>
         <source>Colour of lamp %1</source>
-        <translation>Color de la lámpara %1</translation>
+        <translation>Cor da lâmpada %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="436"/>
         <source>%1 already drives %2</source>
-        <translation>%1 ya controla %2</translation>
+        <translation>%1 já comanda %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="440"/>
         <source>The route of %1 already has %2 steps (maximum)</source>
-        <translation>El itinerario de %1 ya tiene %2 pasos (máximo)</translation>
+        <translation>O itinerário de %1 já tem %2 passos (máximo)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="450"/>
         <source>%1 is a block signal: it sets its own aspect from its detectors, an input cannot switch it.</source>
-        <translation>%1 es una señal de bloqueo: fija su propio aspecto a partir de sus detectores, una entrada no puede conmutarla.</translation>
+        <translation>%1 é um sinal de bloco: define o seu próprio aspecto a partir dos seus detectores, uma entrada não o pode comutar.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="682"/>
@@ -2339,27 +2339,27 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="688"/>
         <source>● Live test</source>
-        <translation>● Prueba en vivo</translation>
+        <translation>● Teste em directo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="723"/>
         <source>Ready-made configurations from %1</source>
-        <translation>Configuraciones ya preparadas de %1</translation>
+        <translation>Configurações prontas de %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="747"/>
         <source>&amp;New board (offline)…</source>
-        <translation>&amp;Nueva placa (sin conexión)…</translation>
+        <translation>&amp;Nova placa (offline)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="748"/>
         <source>&amp;Open configuration…</source>
-        <translation>&amp;Abrir configuración…</translation>
+        <translation>&amp;Abrir configuração…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="757"/>
         <source>Open &amp;example…</source>
-        <translation>Abrir &amp;ejemplo…</translation>
+        <translation>Abrir &amp;exemplo…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="759"/>
@@ -2369,7 +2369,7 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="760"/>
         <source>Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example</source>
-        <translation>Guardar algunas salidas, entradas o los ajustes de la placa en un archivo propio, p. ej. como su propio ejemplo</translation>
+        <translation>Guardar algumas saídas, entradas ou as definições da placa num ficheiro próprio, p. ex. como o seu próprio exemplo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="761"/>
@@ -2379,17 +2379,17 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="762"/>
         <source>Add the outputs, inputs or board settings of another board file to this one</source>
-        <translation>Añadir a esta placa las salidas, entradas o ajustes de otro archivo de placa</translation>
+        <translation>Adicionar a esta placa as saídas, entradas ou definições de outro ficheiro de placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="764"/>
         <source>Open the boards folder</source>
-        <translation>Abrir la carpeta de placas</translation>
+        <translation>Abrir a pasta das placas</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="769"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Salir</translation>
+        <translation>&amp;Sair</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="771"/>
@@ -2399,12 +2399,12 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="779"/>
         <source>Apply a preset…</source>
-        <translation>Aplicar un preajuste…</translation>
+        <translation>Aplicar uma predefinição…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="781"/>
         <source>&amp;Flash firmware…</source>
-        <translation>&amp;Flashear firmware…</translation>
+        <translation>&amp;Gravar firmware…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="783"/>
@@ -2419,7 +2419,7 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="808"/>
         <source>Show unused inputs and outputs</source>
-        <translation>Mostrar entradas y salidas sin uso</translation>
+        <translation>Mostrar entradas e saídas não utilizadas</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="833"/>
@@ -2439,47 +2439,47 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="837"/>
         <source>Dark</source>
-        <translation>Oscuro</translation>
+        <translation>Escuro</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="875"/>
         <source>&amp;Help</source>
-        <translation>Ay&amp;uda</translation>
+        <translation>A&amp;juda</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="876"/>
         <source>&amp;Getting started</source>
-        <translation>&amp;Primeros pasos</translation>
+        <translation>&amp;Primeiros passos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="877"/>
         <source>Getting started</source>
-        <translation>Primeros pasos</translation>
+        <translation>Primeiros passos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="880"/>
         <source>&amp;Configure, simulate and live test</source>
-        <translation>&amp;Configurar, simular y probar en vivo</translation>
+        <translation>&amp;Configurar, simular e testar em directo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="881"/>
         <source>Configure, simulate and live test</source>
-        <translation>Configurar, simular y probar en vivo</translation>
+        <translation>Configurar, simular e testar em directo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="886"/>
         <source>&amp;Board settings</source>
-        <translation>Ajus&amp;tes de la placa</translation>
+        <translation>&amp;Definições da placa</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="889"/>
         <source>Config &amp;button and teaching servos (9999)</source>
-        <translation>&amp;Botón de configuración y ajuste de servos (9999)</translation>
+        <translation>&amp;Botão de configuração e ajuste de servos (9999)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="890"/>
         <source>Config button and teaching servos</source>
-        <translation>Botón de configuración y ajuste de servos</translation>
+        <translation>Botão de configuração e ajuste de servos</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="896"/>
@@ -2489,74 +2489,74 @@ Compruebe que se ha elegido el puerto correcto y que la placa tiene el firmware 
     <message>
         <location filename="../src/mainwindow.cpp" line="922"/>
         <source>no serial ports found</source>
-        <translation>no se encontraron puertos serie</translation>
+        <translation>nenhuma porta série encontrada</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="945"/>
         <source>Select a serial port first, or use Demo.</source>
-        <translation>Seleccione primero un puerto serie, o use Demo.</translation>
+        <translation>Seleccione primeiro uma porta série, ou use Demo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="957"/>
         <source>Could not open %1:
 %2</source>
-        <translation>No se pudo abrir %1:
+        <translation>Não foi possível abrir %1:
 %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1063"/>
         <location filename="../src/mainwindow.cpp" line="1078"/>
         <source>Disconnect</source>
-        <translation>Desconectar</translation>
+        <translation>Desligar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1082"/>
         <source>● %1 — waiting for board…</source>
-        <translation>● %1 — esperando la placa…</translation>
+        <translation>● %1 — a aguardar a placa…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1087"/>
         <source>○ Not connected</source>
-        <translation>○ No conectado</translation>
+        <translation>○ Não ligado</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1105"/>
-        <source>● %1 — GPIOcore %2</source>
-        <translation>● %1 — GPIOcore %2</translation>
+        <source>● %1 — IOcore %2</source>
+        <translation>● %1 — IOcore %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1263"/>
         <source>Apply preset &quot;%1&quot;?
 
 This replaces all outputs and inputs (and their routes).</source>
-        <translation>¿Aplicar el preajuste &quot;%1&quot;?
+        <translation>Aplicar a predefinição &quot;%1&quot;?
 
-Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
+Isto substitui todas as saídas e entradas (e os seus itinerários).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1265"/>
         <source>Also clear the names of inputs and outputs (recommended)</source>
-        <translation>Borrar también los nombres de entradas y salidas (recomendado)</translation>
+        <translation>Apagar também os nomes das entradas e saídas (recomendado)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1953"/>
         <source>The firmware on this board has no sound effect output yet: update the firmware (Board &gt; Flash firmware).</source>
-        <translation>El firmware de esta placa aún no tiene salida de efecto de sonido: actualice el firmware (Placa &gt; Flashear firmware).</translation>
+        <translation>O firmware desta placa ainda não tem saída de efeito sonoro: actualize o firmware (Placa &gt; Gravar firmware).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1991"/>
         <source>The firmware on this board cannot read analog inputs yet: update the firmware (Board &gt; Flash firmware).</source>
-        <translation>El firmware de esta placa aún no puede leer entradas analógicas: actualice el firmware (Placa &gt; Flashear firmware).</translation>
+        <translation>O firmware desta placa ainda não lê entradas analógicas: actualize o firmware (Placa &gt; Gravar firmware).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2023"/>
         <source>D0/D1 are the serial line (GUI, board link, DFPlayer, Bluetooth) and cannot be used as a pin: choose another pin.</source>
-        <translation>D0/D1 son la línea serie (GUI, enlace entre placas, DFPlayer, Bluetooth) y no pueden usarse como pin: elija otro pin.</translation>
+        <translation>D0/D1 são a linha série (GUI, ligação entre placas, DFPlayer, Bluetooth) e não podem ser um pino: escolha outro pino.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2337"/>
         <source>Value on A%1 (0–1023)</source>
-        <translation>Valor en A%1 (0–1023)</translation>
+        <translation>Valor em A%1 (0–1023)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2355"/>
@@ -2566,40 +2566,40 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2366"/>
         <source>1023 = 5 V, nothing pressed. Every input on A%1 reacts: %2</source>
-        <translation>1023 = 5 V, nada pulsado. Cada entrada en A%1 reacciona: %2</translation>
+        <translation>1023 = 5 V, nada premido. Cada entrada em A%1 reage: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1331"/>
         <source>Open configuration</source>
-        <translation>Abrir configuración</translation>
+        <translation>Abrir configuração</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="710"/>
         <source>Load the configuration from the board (replaces what is on screen)</source>
-        <translation>Cargar la configuración desde la placa (sustituye lo que está en pantalla)</translation>
+        <translation>Carregar a configuração da placa (substitui o que está no ecrã)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="711"/>
         <source>Write all</source>
-        <translation>Escribir todo</translation>
+        <translation>Escrever tudo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="712"/>
         <source>Put the whole configuration on screen on the board</source>
-        <translation>Poner en la placa toda la configuración de la pantalla</translation>
+        <translation>Pôr na placa toda a configuração do ecrã</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1332"/>
         <location filename="../src/mainwindow.cpp" line="1568"/>
         <location filename="../src/mainwindow.cpp" line="1576"/>
         <location filename="../src/mainwindow.cpp" line="1735"/>
-        <source>GPIOcore configuration (*.json)</source>
-        <translation>Configuración GPIOcore (*.json)</translation>
+        <source>IOcore configuration (*.json)</source>
+        <translation>Configuração IOcore (*.json)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1733"/>
         <source>Save configuration</source>
-        <translation>Guardar configuración</translation>
+        <translation>Guardar configuração</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1750"/>
@@ -2609,47 +2609,47 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1793"/>
         <source>Write %1 change(s)</source>
-        <translation>Escribir %1 cambio(s)</translation>
+        <translation>Escrever %1 alteração(ões)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1803"/>
         <source>Saving on the board…</source>
-        <translation>Guardando en la placa…</translation>
+        <translation>A guardar na placa…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1803"/>
         <source>%1 change(s) waiting</source>
-        <translation>%1 cambio(s) pendiente(s)</translation>
+        <translation>%1 alteração(ões) em espera</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1805"/>
         <source>%1 unsent change(s)</source>
-        <translation>%1 cambio(s) sin enviar</translation>
+        <translation>%1 alteração(ões) por enviar</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1930"/>
         <source>%1 is not set.</source>
-        <translation>%1 no está definido.</translation>
+        <translation>%1 não está definido.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1945"/>
         <source>%1 (%2) is not PWM capable; %3 needs PWM.</source>
-        <translation>%1 (%2) no admite PWM; %3 necesita PWM.</translation>
+        <translation>%1 (%2) não suporta PWM; %3 precisa de PWM.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1993"/>
         <source>Neither a DCC address nor a pin is set: this input never triggers.</source>
-        <translation>No hay dirección DCC ni pin definidos: esta entrada nunca se activa.</translation>
+        <translation>Nem endereço DCC nem pino definidos: esta entrada nunca é accionada.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2010"/>
         <source>All routes together use %1 steps; the board has room for %2.</source>
-        <translation>Todos los itinerarios juntos usan %1 pasos; la placa tiene espacio para %2.</translation>
+        <translation>Todos os itinerários juntos usam %1 passos; a placa tem espaço para %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2060"/>
         <source>%1 change(s) have not been written to the board. Quit anyway?</source>
-        <translation>%1 cambio(s) no se han escrito en la placa. ¿Salir de todos modos?</translation>
+        <translation>%1 alteração(ões) não foram escritas na placa. Sair mesmo assim?</translation>
     </message>
 </context>
 <context>
@@ -2662,43 +2662,43 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="99"/>
         <source>Effect</source>
-        <translation>Efecto</translation>
+        <translation>Efeito</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="119"/>
         <location filename="../src/outputeditor.cpp" line="659"/>
         <source>Pins</source>
-        <translation>Pines</translation>
+        <translation>Pinos</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="121"/>
         <source>Pin A</source>
-        <translation>Pin A</translation>
+        <translation>Pino A</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="121"/>
         <source>Pin B</source>
-        <translation>Pin B</translation>
+        <translation>Pino B</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="121"/>
         <source>Pin C</source>
-        <translation>Pin C</translation>
+        <translation>Pino C</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="121"/>
         <source>Pin D</source>
-        <translation>Pin D</translation>
+        <translation>Pino D</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="140"/>
         <source>Frog polarity</source>
-        <translation>Polarización del corazón</translation>
+        <translation>Polarização do coração</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="146"/>
         <source>None (dead frog)</source>
-        <translation>Ninguna (corazón aislado)</translation>
+        <translation>Nenhuma (coração isolado)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="147"/>
@@ -2708,17 +2708,17 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="148"/>
         <source>Unifrog — 1 change-over relay</source>
-        <translation>Unifrog — 1 relé conmutado</translation>
+        <translation>Unifrog — 1 relé inversor</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Frog</source>
-        <translation>Corazón</translation>
+        <translation>Coração</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="153"/>
         <source>Relay straight (A)</source>
-        <translation>Relé recto (A)</translation>
+        <translation>Relé directo (A)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="153"/>
@@ -2733,32 +2733,32 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="159"/>
         <source>Relays switch on LOW (inverted)</source>
-        <translation>Los relés conmutan con LOW (invertido)</translation>
+        <translation>Os relés comutam com LOW (invertido)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="160"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
-        <translation>Para módulos de relé que conmutan cuando la entrada está en LOW: los pines de los relés se activan al revés</translation>
+        <translation>Para módulos de relé que comutam quando a entrada está em LOW: os pinos dos relés são accionados ao contrário</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="170"/>
         <source>Parameters</source>
-        <translation>Parámetros</translation>
+        <translation>Parâmetros</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="176"/>
         <source>This type has no parameters.</source>
-        <translation>Este tipo no tiene parámetros.</translation>
+        <translation>Este tipo não tem parâmetros.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="190"/>
         <source>Switch time</source>
-        <translation>Tiempo de conmutación</translation>
+        <translation>Tempo de comutação</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="200"/>
         <source>LED on time</source>
-        <translation>Tiempo LED encendido</translation>
+        <translation>Tempo LED aceso</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="201"/>
@@ -2768,17 +2768,17 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="220"/>
         <source>Live: move the servo while adjusting</source>
-        <translation>En vivo: mover el servo mientras se ajusta</translation>
+        <translation>Em directo: mover o servo durante o ajuste</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="225"/>
         <source>Position 0 (curved)</source>
-        <translation>Posición 0 (desviado)</translation>
+        <translation>Posição 0 (desviado)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="226"/>
         <source>Position 1 (straight)</source>
-        <translation>Posición 1 (recto)</translation>
+        <translation>Posição 1 (directo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="227"/>
@@ -2788,12 +2788,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="230"/>
         <source>Speed</source>
-        <translation>Velocidad</translation>
+        <translation>Velocidade</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="233"/>
         <source>Follows a detector (semaphore arm)</source>
-        <translation>Sigue a un detector (brazo de semáforo)</translation>
+        <translation>Segue um detector (braço de semáforo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="241"/>
@@ -2803,17 +2803,17 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="242"/>
         <source>Swap: occupied = straight</source>
-        <translation>Invertir: ocupado = recto</translation>
+        <translation>Inverter: ocupado = directo</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="244"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
-        <translation>Ocupado = posición 0 (desviado, brazo en parada), libre = posición 1 (recto, vía libre), a la velocidad indicada arriba.</translation>
+        <translation>Ocupado = posição 0 (desviado, braço em paragem), livre = posição 1 (directo, via livre), à velocidade indicada acima.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="266"/>
         <source>Duty cycle</source>
-        <translation>Ciclo de trabajo</translation>
+        <translation>Ciclo de trabalho</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="268"/>
@@ -2823,12 +2823,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="269"/>
         <source>at once</source>
-        <translation>al instante</translation>
+        <translation>de imediato</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="278"/>
         <source>Fade time</source>
-        <translation>Tiempo de fundido</translation>
+        <translation>Tempo de transição</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="288"/>
@@ -2838,12 +2838,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="290"/>
         <source>Flashing</source>
-        <translation>Parpadeo</translation>
+        <translation>Intermitência</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="291"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
-        <translation>Velocidad de parpadeo de las lámparas (1 Hz = una vez por segundo). El aspecto se elige con DCC extendido o en un itinerario.</translation>
+        <translation>Velocidade de intermitência das lâmpadas (1 Hz = uma vez por segundo). O aspecto escolhe-se com DCC estendido ou num itinerário.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="297"/>
@@ -2853,37 +2853,37 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="298"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
-        <translation>Qué número DCC extendido enciende qué lámparas — para iTrain, Rocrail o su central</translation>
+        <translation>Que número DCC estendido mostra que lâmpadas — para o iTrain, o Rocrail ou a sua central</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Unsafe</source>
-        <translation>Parada</translation>
+        <translation>Paragem</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Caution</source>
-        <translation>Anuncio de parada</translation>
+        <translation>Aviso</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Safe</source>
-        <translation>Vía libre</translation>
+        <translation>Via livre</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="324"/>
         <source>Aspect while its own block is occupied</source>
-        <translation>Aspecto cuando su propio bloque está ocupado</translation>
+        <translation>Aspecto quando o seu próprio bloco está ocupado</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="325"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
-        <translation>Aspecto cuando su propio bloque está libre y el siguiente está ocupado</translation>
+        <translation>Aspecto quando o seu próprio bloco está livre e o seguinte está ocupado</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="326"/>
         <source>Aspect while both blocks are free</source>
-        <translation>Aspecto cuando ambos bloques están libres</translation>
+        <translation>Aspecto quando ambos os blocos estão livres</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="332"/>
@@ -2893,57 +2893,57 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="337"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation>Elegir el aspecto lámpara por lámpara</translation>
+        <translation>Escolher o aspecto lâmpada a lâmpada</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="359"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
-        <translation>La placa elige el aspecto por sí misma cada 50 ms: parada mientras su propio bloque está ocupado, anuncio de parada mientras lo está el siguiente, y vía libre en los demás casos. Las entradas, los itinerarios y el DCC no pueden modificarlo. Las lámparas intermitentes parpadean a 1 Hz.</translation>
+        <translation>A placa escolhe o aspecto por si própria a cada 50 ms: paragem enquanto o seu próprio bloco está ocupado, aviso enquanto o seguinte está ocupado, e via livre nos restantes casos. Entradas, itinerários e DCC não o podem alterar. As lâmpadas intermitentes piscam a 1 Hz.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="377"/>
         <source>none</source>
-        <translation>ninguna</translation>
+        <translation>nenhum</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="381"/>
         <source>Own address</source>
-        <translation>Dirección propia</translation>
+        <translation>Endereço próprio</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="382"/>
         <source>Each route step chooses the address (1-255): curved, straight, or a value (DCC extended). Switched on or off directly, it sends its own address, if set.</source>
-        <translation>Cada paso del itinerario elige la dirección (1-255): desviado, recto o un valor (DCC extendido). Activada/desactivada directamente envía su propia dirección, si está definida.</translation>
+        <translation>Cada passo do itinerário escolhe o endereço (1-255): desviado, directo ou um valor (DCC estendido). Ligada/desligada directamente envia o seu próprio endereço, se definido.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="599"/>
         <source>Unknown effect</source>
-        <translation>Efecto desconocido</translation>
+        <translation>Efeito desconhecido</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="659"/>
         <source>Pins (PWM capable: %1)</source>
-        <translation>Pines (compatibles con PWM: %1)</translation>
+        <translation>Pinos (com PWM: %1)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="321"/>
         <source>Own block</source>
-        <translation>Cantón propio</translation>
+        <translation>Cantão próprio</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Next block</source>
-        <translation>Cantón siguiente</translation>
+        <translation>Cantão seguinte</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="555"/>
         <source>— none</source>
-        <translation>— ninguno</translation>
+        <translation>— nenhum</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="638"/>
         <source>Needs a connected board</source>
-        <translation>Requiere una placa conectada</translation>
+        <translation>Requer uma placa ligada</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="392"/>
@@ -2953,27 +2953,27 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="400"/>
         <source>0  (off / curved)</source>
-        <translation>0  (apagado / desviado)</translation>
+        <translation>0  (desligado / desviado)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="401"/>
         <source>1  (on / straight)</source>
-        <translation>1  (encendido / recto)</translation>
+        <translation>1  (ligado / directo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="402"/>
         <source>▶ Test: curved / off</source>
-        <translation>▶ Prueba: desviado / apagado</translation>
+        <translation>▶ Teste: desviado / desligado</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="403"/>
         <source>▶ Test: straight / on</source>
-        <translation>▶ Prueba: recto / encendido</translation>
+        <translation>▶ Teste: directo / ligado</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="406"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
-        <translation>Escribe esta salida en la placa con el estado elegido (también se guarda en la EEPROM)</translation>
+        <translation>Escreve esta saída na placa com o estado escolhido (também guardado na EEPROM)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="409"/>
@@ -2984,7 +2984,7 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
         <location filename="../src/outputeditor.cpp" line="535"/>
         <location filename="../src/outputeditor.cpp" line="595"/>
         <source>Output %1</source>
-        <translation>Salida %1</translation>
+        <translation>Saída %1</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="561"/>
@@ -2994,7 +2994,7 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="606"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
-        <translation>Hay relés Electrofrog y Unifrog definidos a la vez. Solo se permite un modo de corazón: el relé Unifrog se elimina cuando modifique esta salida.</translation>
+        <translation>Estão definidos relés Electrofrog e Unifrog. Só é permitido um modo de coração: o relé Unifrog é removido quando alterar esta saída.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="700"/>
@@ -3004,22 +3004,22 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="701"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
-        <translation>× %1 ms  →  encendido %2 ms, pausa %3 ms</translation>
+        <translation>× %1 ms  →  aceso %2 ms, pausa %3 ms</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="704"/>
         <source>Full sweep ≈ %1 ms</source>
-        <translation>Recorrido completo ≈ %1 ms</translation>
+        <translation>Curso completo ≈ %1 ms</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="706"/>
         <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
-        <translation>Un cambio completo (0 → 255) tarda %1 s, uno a medias %2 s.</translation>
+        <translation>Uma mudança completa (0 → 255) demora %1 s, uma de metade %2 s.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="707"/>
         <source>A new brightness is set at once.</source>
-        <translation>Un nuevo brillo se aplica al instante.</translation>
+        <translation>Um novo brilho é aplicado de imediato.</translation>
     </message>
 </context>
 <context>
@@ -3027,7 +3027,7 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/connectionview.cpp" line="630"/>
         <source>DCC %1 straight</source>
-        <translation>DCC %1 recto</translation>
+        <translation>DCC %1 directo</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="631"/>
@@ -3037,37 +3037,37 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/connectionview.cpp" line="640"/>
         <source>no trigger</source>
-        <translation>sin disparador</translation>
+        <translation>sem accionador</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="478"/>
         <source>lamp %1 flashing</source>
-        <translation>lámpara %1 intermitente</translation>
+        <translation>lâmpada %1 intermitente</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="479"/>
         <source>lamp %1 flashing, opposite phase</source>
-        <translation>lámpara %1 parpadea en contrafase</translation>
+        <translation>lâmpada %1 pisca em contrafase</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="480"/>
         <source>lamp %1 on</source>
-        <translation>lámpara %1 encendida</translation>
+        <translation>lâmpada %1 acesa</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="482"/>
         <source>all lamps off</source>
-        <translation>todas las lámparas apagadas</translation>
+        <translation>todas as lâmpadas apagadas</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="488"/>
         <source>Signal aspect</source>
-        <translation>Aspecto de la señal</translation>
+        <translation>Aspecto do sinal</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="493"/>
         <source>Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation>Elija por lámpara. La lámpara 1 es el pin A, la lámpara 2 el pin B, etc.</translation>
+        <translation>Escolha por lâmpada. A lâmpada 1 é o pino A, a lâmpada 2 o pino B, etc.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="513"/>
@@ -3077,12 +3077,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="522"/>
         <source>off</source>
-        <translation>apagado</translation>
+        <translation>desligado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="522"/>
         <source>on</source>
-        <translation>encendido</translation>
+        <translation>ligado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="522"/>
@@ -3092,27 +3092,27 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="523"/>
         <source>flashing, opposite phase</source>
-        <translation>intermitente, en contrafase</translation>
+        <translation>intermitente, em oposição de fase</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="532"/>
         <source>Lamp %1</source>
-        <translation>Lámpara %1</translation>
+        <translation>Lâmpada %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="447"/>
         <source>Out %1</source>
-        <translation>Sal. %1</translation>
+        <translation>Saí. %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Expert</source>
-        <translation>Experto</translation>
+        <translation>Especialista</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Advanced</source>
-        <translation>Avanzado</translation>
+        <translation>Avançado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
@@ -3122,12 +3122,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="175"/>
         <source>block signals</source>
-        <translation>señales de bloqueo</translation>
+        <translation>sinais de bloco</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="176"/>
         <source>4-aspect signals</source>
-        <translation>señales de 4 aspectos</translation>
+        <translation>sinais de 4 aspectos</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="177"/>
@@ -3137,27 +3137,27 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="178"/>
         <source>sound effects</source>
-        <translation>efectos de sonido</translation>
+        <translation>efeitos sonoros</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="179"/>
         <source>board link</source>
-        <translation>enlace entre placas</translation>
+        <translation>ligação entre placas</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="180"/>
         <source>light effects</source>
-        <translation>efectos de luz</translation>
+        <translation>efeitos de luz</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="183"/>
         <source>semaphore arms</source>
-        <translation>brazos de semáforo</translation>
+        <translation>braços de semáforo</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="185"/>
         <source>frog relays</source>
-        <translation>relés del corazón</translation>
+        <translation>relés do coração</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="191"/>
@@ -3167,7 +3167,7 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="192"/>
         <source>routes on straight or curved only</source>
-        <translation>itinerarios solo en recto o desviado</translation>
+        <translation>itinerários só em directo ou desviado</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="193"/>
@@ -3177,12 +3177,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="194"/>
         <source>custom values</source>
-        <translation>valores propios</translation>
+        <translation>valores próprios</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="195"/>
         <source>own wait time per route step</source>
-        <translation>tiempo de espera propio por paso de itinerario</translation>
+        <translation>tempo de espera próprio por passo de itinerário</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="441"/>
@@ -3197,40 +3197,40 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="490"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation>Elija por lámpara lo que debe mostrar la señal. El número de abajo es el valor DCC extendido correspondiente: introdúzcalo en iTrain, Rocrail o su central. Aquí no cambia nada. La lámpara 1 es el pin A, la lámpara 2 el pin B, etc.</translation>
+        <translation>Escolha por lâmpada o que o sinal deve mostrar. O número abaixo é o valor DCC estendido correspondente: introduza-o no iTrain, no Rocrail ou na sua central. Aqui nada muda. A lâmpada 1 é o pino A, a lâmpada 2 o pino B, etc.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="513"/>
         <source>DCC extended number: %1  (0x%2)</source>
-        <translation>Número DCC extendido: %1  (0x%2)</translation>
+        <translation>Número DCC estendido: %1  (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="576"/>
         <source>shared with: %1</source>
-        <translation>compartido con: %1</translation>
+        <translation>partilhado com: %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="583"/>
         <source>in use: %1</source>
-        <translation>en uso: %1</translation>
+        <translation>em uso: %1</translation>
     </message>
 </context>
 <context>
     <name>SimulatedDevice</name>
     <message>
         <location filename="../src/simulateddevice.cpp" line="90"/>
-        <source>The firmware simulator (gpiocore_fw_host) is missing next to the program.</source>
-        <translation>Falta el simulador de firmware (gpiocore_fw_host) junto al programa.</translation>
+        <source>The firmware simulator (iocore_fw_host) is missing next to the program.</source>
+        <translation>O simulador de firmware (iocore_fw_host) não está junto do programa.</translation>
     </message>
     <message>
         <location filename="../src/simulateddevice.cpp" line="109"/>
         <source>Could not start the firmware simulator: %1</source>
-        <translation>No se pudo iniciar el simulador de firmware: %1</translation>
+        <translation>Não foi possível iniciar o simulador de firmware: %1</translation>
     </message>
     <message>
         <location filename="../src/simulateddevice.cpp" line="129"/>
         <source>The firmware simulator did not start up.</source>
-        <translation>El simulador de firmware no ha arrancado.</translation>
+        <translation>O simulador de firmware não arrancou.</translation>
     </message>
 </context>
 <context>
@@ -3238,12 +3238,12 @@ Esto sustituye todas las salidas y entradas (y sus itinerarios).</translation>
     <message>
         <location filename="../src/soundplayer.cpp" line="100"/>
         <source>Sound effect track %1: choose a sound folder (View &gt; Sound folder…) to hear it.</source>
-        <translation>Pista de efecto de sonido %1: elija una carpeta de sonidos (Ver &gt; Carpeta de sonidos…) para oírla.</translation>
+        <translation>Faixa de efeito sonoro %1: escolha uma pasta de sons (Ver &gt; Pasta de sons…) para a ouvir.</translation>
     </message>
     <message>
         <location filename="../src/soundplayer.cpp" line="107"/>
         <source>%1 not found in %2</source>
-        <translation>No se encontró %1 en %2</translation>
+        <translation>%1 não encontrado em %2</translation>
     </message>
 </context>
 </TS>

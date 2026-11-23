@@ -67,7 +67,7 @@ inline uint16_t blockBlinkHalfMs() { uint8_t n = board.flags >> 4 ; return n ? 2
 extern uint16_t      boardEEAddress ;
 extern uint8_t       configSession ;    // set by HELLO
 extern uint8_t       serialIsIO ;       // 1: no GUI: the UART runs the board link (9600 baud), or D0/D1 are pins
-#ifdef GPIOCORE_HOST
+#ifdef IOCORE_HOST
 inline uint8_t serialPinsAsIO() { return board.flags & BOARD_SERIAL_PINS ; }                  // simulator: the GUI does not use D0/D1
 #else
 inline uint8_t serialPinsAsIO() { return serialIsIO && ( board.flags & BOARD_SERIAL_PINS ) ; }  // board: only without a PC

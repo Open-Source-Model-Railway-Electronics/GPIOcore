@@ -4,7 +4,7 @@ The GUI is written in English. A translation consists of two parts, which you ca
 
 | What | Where | How to translate |
 |---|---|---|
-| **Short UI texts** (buttons, labels, menus, messages) | `i18n/gpiocore_<language>.ts` | Qt Linguist (`C:\Qt\6.10.1\mingw_64\bin\linguist.exe`) |
+| **Short UI texts** (buttons, labels, menus, messages) | `i18n/iocore_<language>.ts` | Qt Linguist (`C:\Qt\6.10.1\mingw_64\bin\linguist.exe`) |
 | **Explanation texts** behind the (i) buttons and *Help → Getting started* | `i18n/info/<language>/<topic>.html` | A plain text editor (HTML) |
 
 `<language>` is the ISO code of the language: `nl`, `de`, `fr`, `en`, and so on.
@@ -18,22 +18,22 @@ The GUI is written in English. A translation consists of two parts, which you ca
 
 A file that is (still) missing automatically falls back to English. So you can translate topic by topic.
 
-**Testing without rebuilding:** also put the folder next to the program (`<folder of GPIOcoreGUI.exe>\i18n\info\de\`).
+**Testing without rebuilding:** also put the folder next to the program (`<folder of IOcoreGUI.exe>\i18n\info\de\`).
 Files there take priority over the built-in ones. Restart the program and click an (i).
 
 ### 2. UI texts
 
 1. Add the language in `CMakeLists.txt`:
    ```cmake
-   set(GPIOCORE_LANGUAGES nl de CACHE STRING "...")
+   set(IOCORE_LANGUAGES nl de CACHE STRING "...")
    ```
-   You can also pass `-DGPIOCORE_LANGUAGES="nl;de"` when configuring.
+   You can also pass `-DIOCORE_LANGUAGES="nl;de"` when configuring.
 2. Create or refresh the `.ts` file. In Qt Creator: *Build → Run CMake*, and then build the target
    **update_translations**. On the command line:
    ```bash
    cmake --build <build-folder> --target update_translations
    ```
-   After that all texts are in `i18n/gpiocore_de.ts`.
+   After that all texts are in `i18n/iocore_de.ts`.
 3. Open that file in **Qt Linguist**. Translate text by text and mark it as "done" (check mark), and save.
 4. Build the program again. The `.qm` file is created and built in automatically.
 

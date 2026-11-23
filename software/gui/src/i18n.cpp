@@ -27,8 +27,8 @@ QString Lang::current()
 QStringList Lang::available()
 {
     QStringList langs { QStringLiteral("en") };
-    // compiled translations: :/i18n/gpiocore_<lang>.qm
-    for (const QString &f : QDir(QStringLiteral(":/i18n")).entryList({ QStringLiteral("gpiocore_*.qm") }))
+    // compiled translations: :/i18n/iocore_<lang>.qm
+    for (const QString &f : QDir(QStringLiteral(":/i18n")).entryList({ QStringLiteral("iocore_*.qm") }))
         langs << f.mid(9, f.size() - 9 - 3);
     // help texts, compiled in or next to the program (i18n/info/<lang>/)
     for (const QString &base : { QStringLiteral(":/info"),
@@ -51,7 +51,7 @@ void Lang::install(QApplication &app, const QString &force)
         return;                                     // the sources are English
 
     auto *own = new QTranslator(&app);
-    if (own->load(QStringLiteral(":/i18n/gpiocore_%1.qm").arg(code)))
+    if (own->load(QStringLiteral(":/i18n/iocore_%1.qm").arg(code)))
         app.installTranslator(own);
 
     // Qt's own texts (standard dialogs: Yes / No, Open / Save, ...)

@@ -1,5 +1,5 @@
 #pragma once
-// Configuration model of a GPIOcore board, mirroring output.h / input.h of
+// Configuration model of an IOcore board, mirroring output.h / input.h of
 // the firmware (including the bitfield widths, so the GUI shows what the
 // device will actually store).
 

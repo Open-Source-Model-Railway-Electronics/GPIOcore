@@ -205,7 +205,7 @@ class TestGui : public QObject
 
     void maybeScreenshot(MainWindow &w, const char *name)
     {
-        const QByteArray dir = qgetenv("GPIOCORE_SHOT_DIR");
+        const QByteArray dir = qgetenv("IOCORE_SHOT_DIR");
         if (dir.isEmpty())
             return;
         QTest::qWait(400);                       // let the side panel slide in
@@ -760,7 +760,7 @@ private slots:
         QVERIFY(!pinA->isEnabled());
         for (QSpinBox *s : oed->findChildren<QSpinBox *>())          // no tracks on the output itself
             QVERIFY(s->specialValueText() != QLatin1String("stop"));
-        if (!qgetenv("GPIOCORE_SHOT_DIR").isEmpty())
+        if (!qgetenv("IOCORE_SHOT_DIR").isEmpty())
         {
             w.resize(1320, 900);
             w.show();
@@ -813,9 +813,9 @@ private slots:
         calls.clear();
         QCOMPARE(player->trackFile(7), QString());
         {
-            SoundPlayer fresh;                                   // nothing chosen: Documents/GPIOcore/sounds
+            SoundPlayer fresh;                                   // nothing chosen: Documents/IOcore/sounds
             QCOMPARE(fresh.folder(), SoundPlayer::defaultFolder());
-            QVERIFY(fresh.folder().endsWith(QLatin1String("/GPIOcore/sounds")));
+            QVERIFY(fresh.folder().endsWith(QLatin1String("/IOcore/sounds")));
             QCOMPARE(QFileInfo(fresh.folder()).dir(), QFileInfo(MainWindow::boardsDir()).dir());   // next to boards
         }
 
@@ -938,7 +938,7 @@ private slots:
             return all + s.readAll();
         };
         QVERIFY(get("GET /?t=wrong").startsWith("HTTP/1.1 403"));
-        QVERIFY(get("GET /?t=" + web.token().toLatin1()).contains("GPIOcore remote"));
+        QVERIFY(get("GET /?t=" + web.token().toLatin1()).contains("IOcore remote"));
         QVERIFY(get("GET /api/state?t=" + web.token().toLatin1()).contains("\"board\":\"T\""));
         QVERIFY(get("POST /api/live?t=" + web.token().toLatin1() + "&o=2&a=123").startsWith("HTTP/1.1 200"));
         QTRY_COMPARE(live, 123);
@@ -1258,10 +1258,10 @@ private slots:
         QVERIFY(visibleLabel(oed, QStringLiteral("yolo1"), QStringLiteral("title")));
         QVERIFY(comboWith(oed, QStringLiteral("Port 1 · %1").arg(inputTypeName(Latching))));
         maybeScreenshot(w, "names.png");
-        if (!qgetenv("GPIOCORE_SHOT_DIR").isEmpty())         // the canvas alone, the trash bin of 'yolo1' shown
+        if (!qgetenv("IOCORE_SHOT_DIR").isEmpty())         // the canvas alone, the trash bin of 'yolo1' shown
         {
             mouse(view, QEvent::MouseMove, view->outputRect(0).center(), Qt::NoButton);
-            view->grab().save(QString::fromLocal8Bit(qgetenv("GPIOCORE_SHOT_DIR")) + QStringLiteral("/names-canvas.png"));
+            view->grab().save(QString::fromLocal8Bit(qgetenv("IOCORE_SHOT_DIR")) + QStringLiteral("/names-canvas.png"));
         }
 
         // a warning: input 1 drives an output that became a block signal
@@ -1414,7 +1414,7 @@ private slots:
                     if (lamps.size() == 4) lamps[1]->setCurrentIndex(2);   // lamp 2 flashing
                     for (QLabel *l : d->findChildren<QLabel *>())
                         if (l->text().startsWith(QLatin1String("DCC extended number"))) shown = l->text();
-                    if (const QByteArray dir = qgetenv("GPIOCORE_SHOT_DIR"); !dir.isEmpty())
+                    if (const QByteArray dir = qgetenv("IOCORE_SHOT_DIR"); !dir.isEmpty())
                         d->grab().save(QString::fromLocal8Bit(dir) + QLatin1String("/aspect-numbers.png"));
                     d->reject();
                 }
@@ -2014,7 +2014,7 @@ private slots:
             seen = true;
             d->findChild<QCheckBox *>(QStringLiteral("partInputs"))->setChecked(false);
             freeSlots = d->findChild<QRadioButton *>(QStringLiteral("importFree"))->isChecked();
-            const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");
+            const QByteArray shots = qgetenv("IOCORE_SHOT_DIR");
             if (!shots.isEmpty()) d->grab().save(QString::fromLocal8Bit(shots) + QStringLiteral("/import-dialog.png"));
             d->accept();
             return true;
@@ -2102,7 +2102,7 @@ private slots:
                             [](QAction *a) { return a->text().endsWith(QLatin1String("(nl)")); }));
 
         // documentation: the start screen with the Preset list open (the list is a window of its own)
-        const QByteArray shots = qgetenv("GPIOCORE_SHOT_DIR");
+        const QByteArray shots = qgetenv("IOCORE_SHOT_DIR");
         if (!shots.isEmpty())
         {
             auto *combo = w.findChild<QComboBox *>(QStringLiteral("presetCombo"));
@@ -2243,10 +2243,10 @@ private slots:
         QVERIFY(!bt->isEnabled());                           // one task at a time
         QTRY_VERIFY_WITH_TIMEOUT(status->text().contains(QLatin1String("Done")), 10000);
         QVERIFY(status->text().contains(QLatin1String("115200 baud")));
-        QVERIFY(status->text().contains(QLatin1String("'GPIOcore")));
+        QVERIFY(status->text().contains(QLatin1String("'IOcore")));
         QVERIFY(start->isEnabled());
         QCOMPARE(sim->hc05Commands().value(1), QStringLiteral("AT+UART=115200,0,0"));
-        QVERIFY(sim->hc05Commands().value(2).startsWith(QLatin1String("AT+NAME=GPIOcore")));
+        QVERIFY(sim->hc05Commands().value(2).startsWith(QLatin1String("AT+NAME=IOcore")));
 
         sim->attachFakeHc05(0);                              // no HC-05 (or not in AT mode): the likely causes
         start->click();

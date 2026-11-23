@@ -1,7 +1,7 @@
-; GPIOcore installer (Inno Setup). Built by release.py, or by hand:
-;   ISCC.exe /DAppVersion=0.1.0 /DSourceDir=..\release installer\GPIOcore.iss
+; IOcore installer (Inno Setup). Built by release.py, or by hand:
+;   ISCC.exe /DAppVersion=0.1.0 /DSourceDir=..\release installer\IOcore.iss
 ; Installs the contents of release/ (GUI, firmware hex, simulator, avrdude, examples, presets)
-; to Program Files\GPIOcore. Board files live in Documents\GPIOcore and are never touched.
+; to Program Files\IOcore. Board files live in Documents\IOcore and are never touched.
 
 #ifndef AppVersion
   #define AppVersion "0.0.0"
@@ -15,20 +15,20 @@
 
 [Setup]
 AppId={{6F3B2C1E-9A4D-4C7B-8E21-5D0A7C3F9B42}
-AppName=GPIOcore
+AppName=IOcore
 AppVersion={#AppVersion}
-AppVerName=GPIOcore {#AppVersion}
+AppVerName=IOcore {#AppVersion}
 AppPublisher=Open-Source-Model-Railway-Electronics
-AppPublisherURL=https://github.com/Open-Source-Model-Railway-Electronics/GPIOcore
-DefaultDirName={autopf}\GPIOcore
-DefaultGroupName=GPIOcore
+AppPublisherURL=https://github.com/Open-Source-Model-Railway-Electronics/IOcore
+DefaultDirName={autopf}\IOcore
+DefaultGroupName=IOcore
 DisableProgramGroupPage=yes
 PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir={#OutputDir}
-OutputBaseFilename=GPIOcore-v{#AppVersion}-setup
-UninstallDisplayIcon={app}\GPIOcoreGUI.exe
+OutputBaseFilename=IOcore-v{#AppVersion}-setup
+UninstallDisplayIcon={app}\IOcoreGUI.exe
 SetupIconFile=..\software\gui\ui\oshw.ico
 Compression=lzma2
 SolidCompression=yes
@@ -47,8 +47,8 @@ Type: filesandordirs; Name: "{app}\presets"
 Type: filesandordirs; Name: "{app}\examples"
 
 [Icons]
-Name: "{autoprograms}\GPIOcore"; Filename: "{app}\GPIOcoreGUI.exe"
-Name: "{autodesktop}\GPIOcore"; Filename: "{app}\GPIOcoreGUI.exe"; Tasks: desktopicon
+Name: "{autoprograms}\IOcore"; Filename: "{app}\IOcoreGUI.exe"
+Name: "{autodesktop}\IOcore"; Filename: "{app}\IOcoreGUI.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\GPIOcoreGUI.exe"; Description: "Start GPIOcore"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\IOcoreGUI.exe"; Description: "Start IOcore"; Flags: nowait postinstall skipifsilent

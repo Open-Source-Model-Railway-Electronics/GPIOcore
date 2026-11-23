@@ -1,7 +1,7 @@
-"""GPIOcore screen-recording deck (16:9) with narration in the speaker notes; opens in LibreOffice Impress.
+"""IOcore screen-recording deck (16:9) with narration in the speaker notes; opens in LibreOffice Impress.
 
     pip install python-pptx
-    python docs/make_presentation.py      -> docs/GPIOcore-presentation.pptx (uses docs/images)
+    python docs/make_presentation.py      -> docs/IOcore-presentation.pptx (uses docs/images)
 """
 import sys
 from pathlib import Path
@@ -13,7 +13,7 @@ from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 
 REPO = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent   # the repository
 IMG = REPO / "docs" / "images"
-OUT = REPO / "docs" / "GPIOcore-presentation.pptx"
+OUT = REPO / "docs" / "IOcore-presentation.pptx"
 
 SLATE = RGBColor(0x1F, 0x2A, 0x33)   # dominant dark
 INK = RGBColor(0x26, 0x32, 0x3C)
@@ -132,12 +132,12 @@ def screenshot_slide(heading, file, alt, items, narration):
 # 1 Title
 s = prs.slides.add_slide(BLANK)
 bg(s, SLATE)
-text(s, 0.8, 2.0, 11.5, 1.3, "GPIOcore", size=66, font=HEAD, bold=True, color=WHITE)
+text(s, 0.8, 2.0, 11.5, 1.3, "IOcore", size=66, font=HEAD, bold=True, color=WHITE)
 text(s, 0.8, 3.3, 11.5, 0.9, "A DCC accessory decoder on an Arduino Nano", size=28, color=AMBER)
 text(s, 0.8, 4.2, 11.5, 0.8, "16 inputs · 16 outputs · routes · configured with a PC program, no code",
      size=20, color=RGBColor(0xC9, 0xD2, 0xD9))
 text(s, 0.8, 6.4, 11.5, 0.5, "Open-Source-Model-Railway-Electronics", size=14, color=RGBColor(0x9A, 0xA8, 0xB4))
-notes(s, "Welcome. In this video I show GPIOcore: a DCC accessory decoder that runs on a plain Arduino Nano. "
+notes(s, "Welcome. In this video I show IOcore: a DCC accessory decoder that runs on a plain Arduino Nano. "
          "It has sixteen inputs and sixteen outputs, it can run routes, and you set it all up with a program "
          "on your PC. No programming needed.")
 
@@ -186,7 +186,7 @@ notes(s, "You need an Arduino Nano or Uno, a DCC signal on pin D2, and a Windows
 s = prs.slides.add_slide(BLANK)
 bg(s, WHITE)
 title(s, "Up and running in four steps")
-steps = [("Unpack", "the release zip and start GPIOcoreGUI.exe"),
+steps = [("Unpack", "the release zip and start IOcoreGUI.exe"),
          ("Flash", "Board → Flash firmware…, pick the port, Flash"),
          ("Connect", "choose the port in the toolbar, Connect"),
          ("Configure", "Read board, or start from a preset or a file")]
@@ -224,7 +224,7 @@ notes(s, "The program is always in one of three modes. Configure, red when conne
          "anything, so you cannot break your setup by accident.")
 
 # 6-9 screenshots
-screenshot_slide("Servos and frogs", "servo-output.png", "A servo output in the GPIOcore Configurator", [
+screenshot_slide("Servos and frogs", "servo-output.png", "A servo output in the IOcore Configurator", [
     ("Two end positions", "curved and straight, 10–170°"),
     ("Speed", "milliseconds per degree"),
     ("Live", "the servo follows the slider"),
@@ -283,10 +283,10 @@ notes(s, "Setting servo positions is easiest at the layout itself. Open the phon
 s = prs.slides.add_slide(BLANK)
 bg(s, SLATE)
 text(s, 0.8, 2.3, 11.5, 1.1, "Try it yourself", size=54, font=HEAD, bold=True, color=WHITE)
-text(s, 0.8, 3.5, 11.5, 0.8, "github.com/Open-Source-Model-Railway-Electronics/GPIOcore", size=24, color=AMBER)
+text(s, 0.8, 3.5, 11.5, 0.8, "github.com/Open-Source-Model-Railway-Electronics/IOcore", size=24, color=AMBER)
 text(s, 0.8, 4.4, 11.5, 0.8, "Firmware, configurator and manual · free to use (CC0)", size=20,
      color=RGBColor(0xC9, 0xD2, 0xD9))
-notes(s, "That was GPIOcore. Everything is on GitHub: the firmware, the configurator and the manual, free to use. "
+notes(s, "That was IOcore. Everything is on GitHub: the firmware, the configurator and the manual, free to use. "
          "Thanks for watching.")
 
 prs.save(OUT)

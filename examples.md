@@ -1,7 +1,7 @@
-# GPIOcore – what you can build with it
+# IOcore – what you can build with it
 
 Ready-made ideas, from simple to clever. Each example says **what you need**, **how to wire it** and
-**what to set in the GPIOcore program**. Words like *input*, *output* and *route* are explained in the
+**what to set in the IOcore program**. Words like *input*, *output* and *route* are explained in the
 [manual](README.md).
 
 Quick reminder:
@@ -18,7 +18,7 @@ Quick reminder:
 
 ## Contents
 
-- [GPIOcore – what you can build with it](#gpiocore--what-you-can-build-with-it)
+- [IOcore – what you can build with it](#iocore--what-you-can-build-with-it)
   - [Contents](#contents)
   - [1. Plain servo decoder](#1-plain-servo-decoder)
   - [2. Servo decoder with frog polarisation](#2-servo-decoder-with-frog-polarisation)

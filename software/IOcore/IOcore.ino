@@ -334,7 +334,7 @@ void guiMode()                                  // short press: the GUI may conn
     sendHelloReply() ;                          // the announce: a waiting GUI sends HELLO
 }
 
-// ── Bluetooth: an HC-05 in AT mode on D0/D1 gets 115200 baud and the name GPIOcore-<board name>
+// ── Bluetooth: an HC-05 in AT mode on D0/D1 gets 115200 baud and the name IOcore-<board name>
 uint8_t btCommand( const char *cmd, const char *arg )   // 1: "OK" within ~300 ms
 {
     while( Serial.available() ) Serial.read() ;
@@ -380,7 +380,7 @@ void btSetup()                                  // blocks up to ~2 s; the GUI ig
         if( btCommand( "AT+UART=115200,0,0", "" ) )
         {
             status = 0 ;
-            nameOk = btCommand( "AT+NAME=GPIOcore", name ) ;
+            nameOk = btCommand( "AT+NAME=IOcore", name ) ;
         }
         break ;
     }

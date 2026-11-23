@@ -1,6 +1,6 @@
-# GPIOcore Configurator (Qt)
+# IOcore Configurator (Qt)
 
-A desktop program to configure a GPIOcore board (Arduino Nano / Uno, or an ArCoMoRa DCCnext) for a model
+A desktop program to configure an IOcore board (Arduino Nano / Uno, or an ArCoMoRa DCCnext) for a model
 railway: outputs, inputs, routes, board settings, with a canvas to link inputs to outputs, pin
 conflict checking, a simulator that runs the real firmware, a live test on the real board and a phone remote
 for servos. The program is in English for now (the translations stay in `i18n/` for later).
@@ -17,7 +17,7 @@ cmake -S . -B build -G Ninja -DCMAKE_PREFIX_PATH=C:/Qt/6.10.1/mingw_64 && cmake 
 ```
 
 Required Qt modules: Widgets, SerialPort, Network, Test (LinguistTools for the translations). The build also
-makes `gpiocore_fw_host`: the firmware in `../GPIOcore` compiled for the PC (with a small Arduino shim in
+makes `iocore_fw_host`: the firmware in `../IOcore` compiled for the PC (with a small Arduino shim in
 `fwhost/`). The simulator runs it, so *Simulate* and the tests use the real firmware.
 
 `build.py` makes a release for end users in `<repo>/release/` (the root `build.py` also builds the firmware).
@@ -66,7 +66,7 @@ button (A7) only exists on the Nano. A file with a pin the board type does not h
 ## Files (File menu)
 
 - **Board files**: every board has a name (stored on the board); its file is
-  `Documents/GPIOcore/boards/<name>.json` (readable JSON, explained in its `about` field). *Save* always asks
+  `Documents/IOcore/boards/<name>.json` (readable JSON, explained in its `about` field). *Save* always asks
   for the file name; the previous version goes to `boards/backup/`. *Read board* takes the names of inputs and
   outputs from the board's file, the board wins for the settings.
 - **New board (offline)…**: a name and a preset to start with (default *Empty: 1 input, 1 output*).
@@ -96,17 +96,17 @@ A preset is a normal board file, so *File → Open* reads it too.
 
 *Connect / Disconnect*, *Read board*, *Write changes*, *Revert*, *Board settings…* (name, board type, wait time
 per step, route interlocking), *Apply a preset…*, *Flash firmware…* (avrdude in `tools/avrdude`, default
-`release/GPIOcore.hex`) and *Phone remote…* (a web page with a QR code to adjust servos from a phone on the same
+`release/IOcore.hex`) and *Phone remote…* (a web page with a QR code to adjust servos from a phone on the same
 Wi-Fi). *View → Theme* (automatic, light, dark).
 
 Start options (handy for tests and documentation):
 
 ```text
-GPIOcoreGUI --demo                      start in Simulate
-GPIOcoreGUI --port COM5                 connect at start
-GPIOcoreGUI --open examples/routes-demo.json --demo
-GPIOcoreGUI --demo --preset 16-servos --screenshot out.png --tab outputs --select 1   (tab: outputs, inputs)
-GPIOcoreGUI --size 1680x900 --theme dark --lang nl     (--lang: a translation for this run, e.g. screenshots)
+IOcoreGUI --demo                      start in Simulate
+IOcoreGUI --port COM5                 connect at start
+IOcoreGUI --open examples/routes-demo.json --demo
+IOcoreGUI --demo --preset 16-servos --screenshot out.png --tab outputs --select 1   (tab: outputs, inputs)
+IOcoreGUI --size 1680x900 --theme dark --lang nl     (--lang: a translation for this run, e.g. screenshots)
 ```
 
 **Inputs and pins:** the pins are `INPUT_PULLUP`, a button or contact goes to GND (pressed = low).
@@ -122,7 +122,7 @@ command (any, or straight / curved only).
 | `src/connections.*`          | linking logic input → output(s): direct / route, steps                               |
 | `src/boardtools.*`           | partial export / import (renumbering)                                                |
 | `src/devicelink.*`           | request / response queue, timeouts, retries, live writing                            |
-| `src/simulateddevice.*`      | the simulator: starts `gpiocore_fw_host` (the real firmware) and talks to it          |
+| `src/simulateddevice.*`      | the simulator: starts `iocore_fw_host` (the real firmware) and talks to it          |
 | `fwhost/`                    | Arduino shim and host program for the firmware on the PC                             |
 | `src/mainwindow.*`           | main window, modes, files, presets, dirty tracking, warnings                         |
 | `src/connectionview.*`       | the canvas: blocks, wires, dragging, live buttons                                    |

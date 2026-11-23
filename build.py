@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 RELEASE_DIR = ROOT / "release"
-REPO = ROOT.name
+REPO = "IOcore"                  # the product name (the local folder may still have another name)
 
 
 def build_scripts():
@@ -39,7 +39,7 @@ def empty(folder):
             shutil.rmtree(item) if item.is_dir() else item.unlink()
         except PermissionError:
             if not item.is_dir():
-                sys.exit(f"[FAIL] {item} is in use: close the program using it (GPIOcoreGUI.exe?) and try again")
+                sys.exit(f"[FAIL] {item} is in use: close the program using it (IOcoreGUI.exe?) and try again")
             empty(item)
 
 

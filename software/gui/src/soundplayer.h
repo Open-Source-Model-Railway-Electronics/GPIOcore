@@ -3,7 +3,7 @@
 // laid out like the MP3 folder on the DFPlayer's SD card: 0001.mp3, 0002.mp3, ... (the firmware plays them by name).
 // Track 0 = stop; a new track interrupts the one that is playing, like the DFPlayer.
 // The folder and mute are kept in QSettings (sound/folder, sound/muted); by default the folder is
-// Documents/GPIOcore/sounds, next to the boards folder.
+// Documents/IOcore/sounds, next to the boards folder.
 
 #include <QObject>
 #include <QString>
@@ -25,7 +25,7 @@ public:
     ~SoundPlayer() override;
 
     void    setBackend(Backend *backend);       // takes ownership (tests); otherwise Qt Multimedia on first use
-    static QString defaultFolder();             // Documents/GPIOcore/sounds
+    static QString defaultFolder();             // Documents/IOcore/sounds
     QString folder() const { return m_folder; }
     void    setFolder(const QString &dir);
     bool    isMuted() const { return m_muted; }

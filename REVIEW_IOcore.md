@@ -1,6 +1,6 @@
-# Review GPIOcore: firmware, Python GUI and new Qt GUI
+# Review IOcore: firmware, Python GUI and new Qt GUI
 
-Date: 2026-11-04 · Scope: the whole `GPIOcore/` folder (firmware, `GUI_Python/`, `GUI/untitled/`)
+Date: 2026-11-04 · Scope: the whole `IOcore/` folder (firmware, `GUI_Python/`, `GUI/untitled/`)
 
 ## Summary
 
@@ -81,7 +81,7 @@ route default, preset broadcast layout, preset 4).
 - **Help:** 17 extended explanation texts for beginners in `software/gui/i18n/info/en/*.html`, plus
   *Help → Getting started*.
 - **Translations:**
-  - UI texts through Qt Linguist (`i18n/gpiocore_<language>.ts`; `gpiocore_nl.ts` created, 269 texts,
+  - UI texts through Qt Linguist (`i18n/iocore_<language>.ts`; `iocore_nl.ts` created, 269 texts,
     not yet translated);
   - explanation texts as HTML per language, with fallback to English;
   - a *View → Language* menu.
@@ -238,7 +238,7 @@ all of them.
 
 ---
 
-## 2. Firmware: outputs (`output.*`, `GPIOcore.ino`)
+## 2. Firmware: outputs (`output.*`, `IOcore.ino`)
 
 ### F7 (H): defaults and presets start at pin 0 (D0/D1 = Serial, D2 = DCC input)
 
@@ -266,7 +266,7 @@ warning in the editor.
 
 ### F8 (H): every DCC/button command overwrites `data[0]`
 
-`GPIOcore.ino:121`: `callbackInput()` always calls `output[index].setVal( val )`. For normal
+`IOcore.ino:121`: `callbackInput()` always calls `output[index].setVal( val )`. For normal
 turnout commands `val` is 0. `pwmVal` shares a union with `servoMin`, the low byte of `switchTime` and
 `swing.pulseTime`. So every operation sets those to 0 and writes that to EEPROM.
 
@@ -396,7 +396,7 @@ empty, but it is good to know.
 ### F18 (L): known TODO: repeated DCC packets
 
 A DCC command station repeats accessory packets. With MOMENTARY the output therefore toggles several times
-(already a TODO in `GPIOcore.ino:161`).
+(already a TODO in `IOcore.ino:161`).
 
 ---
 

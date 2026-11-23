@@ -124,7 +124,7 @@ static QVector<PresetFile> presetFiles()
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    setWindowTitle(tr("GPIOcore Configurator"));
+    setWindowTitle(tr("IOcore Configurator"));
     resize(1600, 900);
 
     m_link = new DeviceLink(this);
@@ -193,8 +193,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     connect(m_link, &DeviceLink::noBoard, this, [this](const QString &port) {
         // a status-bar line is easy to miss: say it clearly (the link is already closed)
         QMessageBox::warning(this, windowTitle(),
-                             tr("No GPIOcore board answered on %1.\n\nCheck that the right port is chosen and that the "
-                                "board has the GPIOcore firmware (Board > Flash firmware). A board that has been running "
+                             tr("No IOcore board answered on %1.\n\nCheck that the right port is chosen and that the "
+                                "board has the IOcore firmware (Board > Flash firmware). A board that has been running "
                                 "for more than 5 seconds without the program needs a short press on its config button "
                                 "(Nano) or a reset (unplug and plug in the USB cable).").arg(port));
     });
@@ -894,7 +894,7 @@ void MainWindow::buildToolbar()
     help->addSeparator();
     help->addAction(tr("&About"), this, [this] {
         QMessageBox::about(this, windowTitle(),
-                           tr("<b>GPIOcore Configurator</b> %1<br><br>Configures GPIOcore boards (Arduino Nano, "
+                           tr("<b>IOcore Configurator</b> %1<br><br>Configures IOcore boards (Arduino Nano, "
                               "DCCnext) for model railways.")
                                .arg(QApplication::applicationVersion()));
     });
@@ -1101,7 +1101,7 @@ void MainWindow::onConnectionChanged()
 void MainWindow::onReady(const QString &version)
 {
     m_connChip->setObjectName(QStringLiteral("chipOk"));
-    m_connChip->setText(tr("● %1 — GPIOcore %2").arg(m_link->portName(), version));
+    m_connChip->setText(tr("● %1 — IOcore %2").arg(m_link->portName(), version));
     m_connChip->style()->unpolish(m_connChip);
     m_connChip->style()->polish(m_connChip);
     updateConnState();
@@ -1328,7 +1328,7 @@ void MainWindow::testOutput(int index, int state)
 void MainWindow::openFile()
 {
     const QString path = QFileDialog::getOpenFileName(this, tr("Open configuration"), boardsDir(),
-                                                      tr("GPIOcore configuration (*.json)"));
+                                                      tr("IOcore configuration (*.json)"));
     if (!path.isEmpty())
         loadFile(path);
 }
@@ -1398,9 +1398,9 @@ bool MainWindow::openExample(const QString &path)
 QString MainWindow::examplesDir()
 {
     const QString local = QCoreApplication::applicationDirPath() + QStringLiteral("/examples");
-#ifdef GPIOCORE_SOURCE_DIR
+#ifdef IOCORE_SOURCE_DIR
     if (!QFileInfo(local).isDir())
-        return QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/examples");   // dev build: the source tree
+        return QStringLiteral(IOCORE_SOURCE_DIR) + QStringLiteral("/examples");   // dev build: the source tree
 #endif
     return local;
 }
@@ -1408,9 +1408,9 @@ QString MainWindow::examplesDir()
 QString MainWindow::presetsDir()
 {
     const QString local = QCoreApplication::applicationDirPath() + QStringLiteral("/presets");
-#ifdef GPIOCORE_SOURCE_DIR
+#ifdef IOCORE_SOURCE_DIR
     if (!QFileInfo(local).isDir())
-        return QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/presets");   // dev build: the source tree
+        return QStringLiteral(IOCORE_SOURCE_DIR) + QStringLiteral("/presets");   // dev build: the source tree
 #endif
     return local;
 }
@@ -1564,7 +1564,7 @@ void MainWindow::exportDialog()
         return;
     QDir().mkpath(boardsDir());
     const QString path = QFileDialog::getSaveFileName(this, tr("Export"), QDir(boardsDir()).filePath(QStringLiteral("export.json")),
-                                                      tr("GPIOcore configuration (*.json)"));
+                                                      tr("IOcore configuration (*.json)"));
     if (!path.isEmpty())
         exportParts(path, sectionsOf(boxes));
 }
@@ -1572,7 +1572,7 @@ void MainWindow::exportDialog()
 void MainWindow::importDialog()
 {
     const QString path = QFileDialog::getOpenFileName(this, tr("Import from a board file"), boardsDir(),
-                                                      tr("GPIOcore configuration (*.json)"));
+                                                      tr("IOcore configuration (*.json)"));
     if (path.isEmpty())
         return;
     BoardConfig file;
@@ -1728,10 +1728,10 @@ void MainWindow::saveFile()
 {
     QDir().mkpath(boardsDir());
     const QString suggested = QDir(boardsDir()).filePath(
-        (m_edit.board.name.isEmpty() ? QStringLiteral("gpiocore") : m_edit.board.name) + QStringLiteral(".json"));
+        (m_edit.board.name.isEmpty() ? QStringLiteral("iocore") : m_edit.board.name) + QStringLiteral(".json"));
     const QString path = QFileDialog::getSaveFileName(this, tr("Save configuration"),
                                                       m_filePath.isEmpty() ? suggested : m_filePath,
-                                                      tr("GPIOcore configuration (*.json)"));
+                                                      tr("IOcore configuration (*.json)"));
     if (path.isEmpty())
         return;
     backupBoardFile(path);
@@ -1744,8 +1744,8 @@ void MainWindow::saveFile()
     f.write(QJsonDocument(m_edit.toJson()).toJson(QJsonDocument::Indented));
     m_filePath = path;
     m_fileDirty = false;
-    setWindowTitle(m_edit.board.name.isEmpty() ? tr("GPIOcore Configurator")
-                                               : tr("%1 — GPIOcore Configurator").arg(m_edit.board.name));
+    setWindowTitle(m_edit.board.name.isEmpty() ? tr("IOcore Configurator")
+                                               : tr("%1 — IOcore Configurator").arg(m_edit.board.name));
     statusBar()->showMessage(tr("Saved %1").arg(QDir::toNativeSeparators(path)), 4000);
 }
 
@@ -2420,7 +2420,7 @@ void MainWindow::setLevel(int level)
 QString MainWindow::boardsDir()
 {
     const QString def = QDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
-                            .filePath(QStringLiteral("GPIOcore/boards"));
+                            .filePath(QStringLiteral("IOcore/boards"));
     return QSettings().value(QStringLiteral("files/boardsDir"), def).toString();
 }
 
@@ -2464,7 +2464,7 @@ void MainWindow::onBoardReceived(const BoardSettings &b)
     }
     m_edit.board = b;
     setBoardType(b.type);
-    setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));
+    setWindowTitle(b.name.isEmpty() ? tr("IOcore Configurator") : tr("%1 — IOcore Configurator").arg(b.name));
     refreshAll();
 }
 
@@ -2517,8 +2517,8 @@ void MainWindow::quickSave()
 void MainWindow::markFileDirty()
 {
     m_fileDirty = true;
-    const QString name = m_edit.board.name.isEmpty() ? tr("GPIOcore Configurator")
-                                                     : tr("%1 — GPIOcore Configurator").arg(m_edit.board.name);
+    const QString name = m_edit.board.name.isEmpty() ? tr("IOcore Configurator")
+                                                     : tr("%1 — IOcore Configurator").arg(m_edit.board.name);
     setWindowTitle(name + QStringLiteral(" *"));
 }
 
@@ -2646,7 +2646,7 @@ void MainWindow::editBoardSettings()
         }
     }
     markFileDirty();
-    setWindowTitle(b.name.isEmpty() ? tr("GPIOcore Configurator") : tr("%1 — GPIOcore Configurator").arg(b.name));
+    setWindowTitle(b.name.isEmpty() ? tr("IOcore Configurator") : tr("%1 — IOcore Configurator").arg(b.name));
 }
 
 void MainWindow::newOfflineBoard()
@@ -2816,7 +2816,7 @@ void MainWindow::setupBluetooth()
     });
     connect(m_link, &DeviceLink::bluetoothResult, d, [this, start, status](int result, int baud, bool nameOk) {
         start->setEnabled(true);
-        QString name = QStringLiteral("GPIOcore");      // as the firmware makes it: letters, digits, - and _
+        QString name = QStringLiteral("IOcore");      // as the firmware makes it: letters, digits, - and _
         for (const QChar c : m_dev.board.name)
             if (name.size() < 20 && c.unicode() < 128 && (c.isLetterOrNumber() || c == QLatin1Char('-') || c == QLatin1Char('_')))
                 name += (name.size() == 8 ? QStringLiteral("-") : QString()) + c;
@@ -2826,7 +2826,7 @@ void MainWindow::setupBluetooth()
             status->setText(tr("<b>Done:</b> the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the "
                                "board and plug it in again (without holding the button). Pair '%2' in Windows "
                                "Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for "
-                               "it — choose that port in GPIOcore.").arg(baud).arg(nameOk ? name : QStringLiteral("HC-05"))
+                               "it — choose that port in IOcore.").arg(baud).arg(nameOk ? name : QStringLiteral("HC-05"))
                             + (nameOk ? QString() : tr("<br>The name could not be set: it keeps its old name.")));
             break;
         case 1:

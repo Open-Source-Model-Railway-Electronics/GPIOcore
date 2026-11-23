@@ -1,11 +1,11 @@
-# GPIOcore — EEPROM usage
+# IOcore — EEPROM usage
 
 Date: 2026-11-12 · ATmega328P (Uno, Nano, DCCnext): **1024 B internal EEPROM**.
 There is no external EEPROM (the recorder that used one was removed on 2026-11-16).
 
 ## 1. Internal EEPROM map (layout 1)
 
-Source: `software/GPIOcore/routes.h` (`EE_*` constants).
+Source: `software/IOcore/routes.h` (`EE_*` constants).
 
 | Address (dec) | Address (hex) | Bytes | Contents |
 |---|---|---|---|

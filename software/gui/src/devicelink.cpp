@@ -407,8 +407,8 @@ void DeviceLink::onAnnounceTimeout()
     if (!m_waiting)
         return;
     m_waiting = false;
-    // every GPIOcore firmware answers HELLO: this is another device or very old firmware
-    emit errorOccurred(tr("No answer to HELLO: this is no GPIOcore board, or its firmware is too old. "
+    // every IOcore firmware answers HELLO: this is another device or very old firmware
+    emit errorOccurred(tr("No answer to HELLO: this is no IOcore board, or its firmware is too old. "
                           "Flash the firmware (Board > Flash firmware)."));
     const QString port = m_portName;
     close();
@@ -690,9 +690,9 @@ void DeviceLink::setReady(const QString &version)
 {
     m_version = version;
     m_ready   = true;
-    emit logMessage(QStringLiteral("INFO"), tr("GPIOcore version '%1'").arg(version));
+    emit logMessage(QStringLiteral("INFO"), tr("IOcore version '%1'").arg(version));
     // Sign on: starts a configuration session (the decoder keeps D0/D1 as serial)
-    // and tells us what it can do. No reply = no GPIOcore board.
+    // and tells us what it can do. No reply = no IOcore board.
     enqueue(Kind::Hello, HELLO, QByteArray(), -1, 300, true);
     emit ready(version);
 }

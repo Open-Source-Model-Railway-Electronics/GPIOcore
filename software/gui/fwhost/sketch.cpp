@@ -1,4 +1,4 @@
-// The GPIOcore sketch, compiled as C++ for the PC, plus the probes the host program uses.
+// The IOcore sketch, compiled as C++ for the PC, plus the probes the host program uses.
 // Like the Arduino builder: Arduino.h first, then prototypes for functions the sketch uses
 // before it defines them.
 
@@ -7,7 +7,7 @@
 
 void reportOutput(uint8_t index, uint8_t state, uint8_t value);
 
-#include "GPIOcore.ino"
+#include "IOcore.ino"
 
 #include "hostapi.h"
 

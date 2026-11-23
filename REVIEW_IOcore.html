@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Review GPIOcore: firmware, Python GUI and new Qt GUI</title><style>
+<title>Review IOcore: firmware, Python GUI and new Qt GUI</title><style>
 :root{--bg:#fff;--fg:#1f2937;--muted:#64748b;--line:#e2e8f0;--code:#f1f5f9;--accent:#2563eb}
 @media (prefers-color-scheme: dark){:root{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--line:#334155;--code:#1e293b;--accent:#60a5fa}}
 body{background:var(--bg);color:var(--fg);font:15px/1.6 'Segoe UI',system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px 16px}
@@ -11,8 +11,8 @@ table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
 th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--code)}
 hr{border:none;border-top:1px solid var(--line);margin:28px 0}
 </style></head><body>
-<h1>Review GPIOcore: firmware, Python GUI and new Qt GUI</h1>
-<p>Date: 2026-11-04 · Scope: the whole <code>GPIOcore/</code> folder (firmware, <code>GUI_Python/</code>, <code>GUI/untitled/</code>)</p>
+<h1>Review IOcore: firmware, Python GUI and new Qt GUI</h1>
+<p>Date: 2026-11-04 · Scope: the whole <code>IOcore/</code> folder (firmware, <code>GUI_Python/</code>, <code>GUI/untitled/</code>)</p>
 <h2>Summary</h2>
 <ul><li>
 <b>Firmware</b>: the basis is good (state machines, EEPROM model, compact protocol), but there are a few
@@ -93,7 +93,7 @@ bug fix: row buttons were deleted while their own click was still running (<code
 </li><li>
 <b>Translations:</b>
 <ul><li>
-UI texts through Qt Linguist (<code>i18n/gpiocore_&lt;language&gt;.ts</code>; <code>gpiocore_nl.ts</code> created, 269 texts,
+UI texts through Qt Linguist (<code>i18n/iocore_&lt;language&gt;.ts</code>; <code>iocore_nl.ts</code> created, 269 texts,
  not yet translated);
 </li><li>
 explanation texts as HTML per language, with fallback to English;
@@ -228,7 +228,7 @@ A host→device message with length 0 (e.g. <code>REQ_VERSION</code> 0x50) is ex
 Every GET first gets the data reply and then another ACK.
 </li></ul>
 <p>---</p>
-<h2>2. Firmware: outputs (<code>output.*</code>, <code>GPIOcore.ino</code>)</h2>
+<h2>2. Firmware: outputs (<code>output.*</code>, <code>IOcore.ino</code>)</h2>
 <h3>F7 (H): defaults and presets start at pin 0 (D0/D1 = Serial, D2 = DCC input)</h3>
 <ul><li>
 <code>output.cpp:49</code> sets <code>eedata.pinA = index ++</code> → output 0..15 = D0..A1.
@@ -250,7 +250,7 @@ After a factory reset <code>loadEEPROM()</code> therefore does <code>pinMode( 2,
     uint8_t pinIndex = 3;</code></pre>
 <p>The Qt GUI marks D0/D1/D2 as reserved, colours conflicts red (table + pin map) and gives a warning in the editor.</p>
 <h3>F8 (H): every DCC/button command overwrites <code>data[0]</code></h3>
-<p><code>GPIOcore.ino:121</code>: <code>callbackInput()</code> always calls <code>output[index].setVal( val )</code>. For normal turnout commands <code>val</code> is 0. <code>pwmVal</code> shares a union with <code>servoMin</code>, the low byte of <code>switchTime</code> and <code>swing.pulseTime</code>. So every operation sets those to 0 and writes that to EEPROM.</p>
+<p><code>IOcore.ino:121</code>: <code>callbackInput()</code> always calls <code>output[index].setVal( val )</code>. For normal turnout commands <code>val</code> is 0. <code>pwmVal</code> shares a union with <code>servoMin</code>, the low byte of <code>switchTime</code> and <code>swing.pulseTime</code>. So every operation sets those to 0 and writes that to EEPROM.</p>
 <pre><code>// was
     output[index].setVal(   val   ) ;
 // becomes
@@ -325,7 +325,7 @@ servos are attached again and again.
 <h3>F17 (L): <code>outputID</code> is 4 bits</h3>
 <p><code>input.h:11</code>: "no output" (0xFF in <code>setupInputs</code>) becomes 15. That is harmless as long as address and pin are also empty, but it is good to know.</p>
 <h3>F18 (L): known TODO: repeated DCC packets</h3>
-<p>A DCC command station repeats accessory packets. With MOMENTARY the output therefore toggles several times (already a TODO in <code>GPIOcore.ino:161</code>).</p>
+<p>A DCC command station repeats accessory packets. With MOMENTARY the output therefore toggles several times (already a TODO in <code>IOcore.ino:161</code>).</p>
 <p>---</p>
 <h2>4. Firmware: other</h2>
 <table><thead><tr><th>ID</th><th>Severity</th><th>Location</th><th>Finding</th></tr></thead><tbody>

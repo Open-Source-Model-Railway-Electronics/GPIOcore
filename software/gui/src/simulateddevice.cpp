@@ -9,7 +9,7 @@
 
 using namespace Gpio;
 
-// The channel to gpiocore_fw_host, both ways: <type> <length lo> <length hi> <payload>
+// The channel to iocore_fw_host, both ways: <type> <length lo> <length hi> <payload>
 // (see fwhost/main.cpp for the frame types).
 
 static QByteArray bytes(std::initializer_list<int> values)
@@ -37,17 +37,17 @@ SimulatedDevice::~SimulatedDevice()
 QString SimulatedDevice::hostProgram()
 {
 #ifdef Q_OS_WIN
-    const QString exe = QStringLiteral("gpiocore_fw_host.exe");
+    const QString exe = QStringLiteral("iocore_fw_host.exe");
 #else
-    const QString exe = QStringLiteral("gpiocore_fw_host");
+    const QString exe = QStringLiteral("iocore_fw_host");
 #endif
     QStringList candidates;
-    const QString env = qEnvironmentVariable("GPIOCORE_FW_HOST");
+    const QString env = qEnvironmentVariable("IOCORE_FW_HOST");
     if (!env.isEmpty())
         candidates << env;
     candidates << QCoreApplication::applicationDirPath() + QLatin1Char('/') + exe;
-#ifdef GPIOCORE_FW_HOST_PATH
-    candidates << QStringLiteral(GPIOCORE_FW_HOST_PATH);   // the build tree
+#ifdef IOCORE_FW_HOST_PATH
+    candidates << QStringLiteral(IOCORE_FW_HOST_PATH);   // the build tree
 #endif
     for (const QString &c : candidates)
         if (QFileInfo(c).isExecutable())
@@ -87,7 +87,7 @@ bool SimulatedDevice::open(OpenMode mode)
     const QString program = hostProgram();
     if (program.isEmpty())
     {
-        setErrorString(tr("The firmware simulator (gpiocore_fw_host) is missing next to the program."));
+        setErrorString(tr("The firmware simulator (iocore_fw_host) is missing next to the program."));
         return false;
     }
     if (!QIODevice::open(mode | QIODevice::Unbuffered))

@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de_DE">
+<TS version="2.1" language="cs_CZ">
 <context>
     <name>ConnectionView</name>
     <message>
         <location filename="../src/connectionview.cpp" line="227"/>
         <location filename="../src/connectionview.cpp" line="245"/>
         <source>value ▾</source>
-        <translation>Wert ▾</translation>
+        <translation>hodnota ▾</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="240"/>
         <source>■ occupied</source>
-        <translation>■ besetzt</translation>
+        <translation>■ obsazeno</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="240"/>
         <source>□ free</source>
-        <translation>□ frei</translation>
+        <translation>□ volno</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="245"/>
         <source>aspect ▾</source>
-        <translation>Signalbild ▾</translation>
+        <translation>návěst ▾</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="264"/>
         <source>▶ start</source>
-        <translation>▶ Start</translation>
+        <translation>▶ start</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="264"/>
         <source>▶ press</source>
-        <translation>▶ drücken</translation>
+        <translation>▶ stisk</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="622"/>
         <source>Sensor</source>
-        <translation>Sensor</translation>
+        <translation>Snímač</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1080"/>
         <source>Remove connection %1 → %2</source>
-        <translation>Verbindung %1 → %2 entfernen</translation>
+        <translation>Odebrat spojení %1 → %2</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1100"/>
         <source>Remove all connections of %1</source>
-        <translation>Alle Verbindungen von %1 entfernen</translation>
+        <translation>Odebrat všechna spojení %1</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1123"/>
@@ -57,74 +57,74 @@
     <message>
         <location filename="../src/connectionview.cpp" line="697"/>
         <source>now %1</source>
-        <translation>jetzt %1</translation>
+        <translation>nyní %1</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="790"/>
         <source>Inputs</source>
-        <translation>Eingänge</translation>
+        <translation>Vstupy</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="791"/>
         <source>Outputs</source>
-        <translation>Ausgänge</translation>
+        <translation>Výstupy</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="803"/>
         <source>● SIMULATION — click the input buttons</source>
-        <translation>● SIMULATION — Tasten der Eingänge anklicken</translation>
+        <translation>● SIMULACE — klikejte na tlačítka vstupů</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="803"/>
         <source>SIMULATION</source>
-        <translation>SIMULATION</translation>
+        <translation>SIMULACE</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="808"/>
         <source>● LIVE TEST</source>
-        <translation>● LIVE-TEST</translation>
+        <translation>● ŽIVÝ TEST</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="813"/>
         <source>CONFIGURING THE BOARD</source>
-        <translation>PLATINE WIRD KONFIGURIERT</translation>
+        <translation>KONFIGURACE DESKY</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="834"/>
         <source>drag an output onto an input</source>
-        <translation>einen Ausgang auf einen Eingang ziehen</translation>
+        <translation>přetáhněte výstup na vstup</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1085"/>
         <source>Set curved (0)</source>
-        <translation>Auf Abzweig stellen (0)</translation>
+        <translation>Nastavit do odbočky (0)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1085"/>
         <source>Set straight (1)</source>
-        <translation>Auf Gerade stellen (1)</translation>
+        <translation>Nastavit přímo (1)</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1088"/>
         <source>Edit value in the input panel</source>
-        <translation>Wert im Eingangsfeld bearbeiten</translation>
+        <translation>Upravit hodnotu v panelu vstupu</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1090"/>
         <source>Move earlier in the route</source>
-        <translation>In der Fahrstraße nach vorne</translation>
+        <translation>Dříve v jízdní cestě</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1093"/>
         <source>Move later in the route</source>
-        <translation>In der Fahrstraße nach hinten</translation>
+        <translation>Později v jízdní cestě</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="1125"/>
         <source>
 step %1: %2, then wait %3</source>
         <translation>
-Schritt %1: %2, danach %3 warten</translation>
+krok %1: %2, pak čekat %3</translation>
     </message>
 </context>
 <context>
@@ -132,167 +132,167 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/devicelink.cpp" line="58"/>
         <source>Serial port lost: %1</source>
-        <translation>Serielle Schnittstelle verloren: %1</translation>
+        <translation>Sériový port ztracen: %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="95"/>
         <source>Opened %1</source>
-        <translation>%1 geöffnet</translation>
+        <translation>%1 otevřen</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="101"/>
         <source>Waiting for boot message…</source>
-        <translation>Warte auf Startmeldung…</translation>
+        <translation>Čekání na úvodní zprávu…</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="133"/>
         <source>Closed %1</source>
-        <translation>%1 geschlossen</translation>
+        <translation>%1 zavřen</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="365"/>
         <source>No answer to %1, retrying</source>
-        <translation>Keine Antwort auf %1, neuer Versuch</translation>
+        <translation>Žádná odpověď na %1, opakuji</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="379"/>
         <source>No answer to %1</source>
-        <translation>Keine Antwort auf %1</translation>
+        <translation>Žádná odpověď na %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="401"/>
         <source>No answer: waiting for the board (short press on its config button)</source>
-        <translation>Keine Antwort: Warte auf die Platine (kurz auf ihren Konfig-Taster drücken)</translation>
+        <translation>Bez odpovědi: čekám na desku (krátce stiskněte její tlačítko konfigurace)</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="429"/>
         <source>No boot message, requesting version</source>
-        <translation>Keine Startmeldung, Version wird abgefragt</translation>
+        <translation>Žádná úvodní zpráva, žádám o verzi</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="446"/>
         <source>Incomplete frame discarded</source>
-        <translation>Unvollständiger Frame verworfen</translation>
+        <translation>Neúplný rámec zahozen</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="473"/>
         <source>%1 byte(s) of noise ignored during the Bluetooth set-up</source>
-        <translation>%1 Byte(s) Rauschen bei der Bluetooth-Einrichtung ignoriert</translation>
+        <translation>Při nastavování Bluetooth bylo ignorováno %1 bajtů šumu</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="515"/>
         <source>NACK (%1) on %2</source>
-        <translation>NACK (%1) auf %2</translation>
+        <translation>NACK (%1) na %2</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="524"/>
         <source>Device rejected %1: %2</source>
-        <translation>Gerät hat %1 abgelehnt: %2</translation>
+        <translation>Zařízení odmítlo %1: %2</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="587"/>
         <source>Protocol v%1: %2 steps per route, %3 steps in total</source>
-        <translation>Protokoll v%1: %2 Schritte pro Fahrstraße, %3 Schritte insgesamt</translation>
+        <translation>Protokol v%1: %2 kroků na jízdní cestu, celkem %3 kroků</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="669"/>
         <source>The board announced itself</source>
-        <translation>Die Platine hat sich gemeldet</translation>
+        <translation>Deska se přihlásila</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="686"/>
         <source>Unsolicited %1 ignored</source>
-        <translation>Unaufgefordertes %1 ignoriert</translation>
+        <translation>Nevyžádané %1 ignorováno</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="693"/>
-        <source>GPIOcore version &apos;%1&apos;</source>
-        <translation>GPIOcore-Version &apos;%1&apos;</translation>
+        <source>IOcore version &apos;%1&apos;</source>
+        <translation>Verze IOcore &apos;%1&apos;</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="704"/>
         <source>version request</source>
-        <translation>Versionsabfrage</translation>
+        <translation>dotaz na verzi</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="705"/>
         <source>read input %1</source>
-        <translation>Eingang %1 lesen</translation>
+        <translation>čtení vstupu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="706"/>
         <source>read output %1</source>
-        <translation>Ausgang %1 lesen</translation>
+        <translation>čtení výstupu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="707"/>
         <source>write input %1</source>
-        <translation>Eingang %1 schreiben</translation>
+        <translation>zápis vstupu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="708"/>
         <source>write output %1</source>
-        <translation>Ausgang %1 schreiben</translation>
+        <translation>zápis výstupu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="719"/>
         <source>Bluetooth set-up</source>
-        <translation>Bluetooth-Einrichtung</translation>
+        <translation>Nastavení Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="411"/>
-        <source>No answer to HELLO: this is no GPIOcore board, or its firmware is too old. Flash the firmware (Board &gt; Flash firmware).</source>
-        <translation>Keine Antwort auf HELLO: Dies ist keine GPIOcore-Platine oder die Firmware ist zu alt. Firmware flashen (Platine &gt; Firmware flashen).</translation>
+        <source>No answer to HELLO: this is no IOcore board, or its firmware is too old. Flash the firmware (Board &gt; Flash firmware).</source>
+        <translation>Žádná odpověď na HELLO: toto není deska IOcore, nebo je její firmware příliš starý. Nahrajte firmware (Deska &gt; Nahrát firmware).</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="709"/>
         <source>hello</source>
-        <translation>Hello</translation>
+        <translation>hello</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="710"/>
         <source>read route %1</source>
-        <translation>Fahrstraße %1 lesen</translation>
+        <translation>čtení jízdní cesty %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="711"/>
         <source>write route %1</source>
-        <translation>Fahrstraße %1 schreiben</translation>
+        <translation>zápis jízdní cesty %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="712"/>
         <source>live servo %1</source>
-        <translation>Live-Servo %1</translation>
+        <translation>servo živě %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="713"/>
         <source>read board settings</source>
-        <translation>Platineneinstellungen lesen</translation>
+        <translation>čtení nastavení desky</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="714"/>
         <source>write board settings</source>
-        <translation>Platineneinstellungen schreiben</translation>
+        <translation>zápis nastavení desky</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="715"/>
         <source>trigger input %1</source>
-        <translation>Eingang %1 auslösen</translation>
+        <translation>spuštění vstupu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="716"/>
         <source>read state of output %1</source>
-        <translation>Zustand von Ausgang %1 lesen</translation>
+        <translation>čtení stavu výstupu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="717"/>
         <source>DCC extended to address %1</source>
-        <translation>DCC extended an Adresse %1</translation>
+        <translation>DCC extended na adresu %1</translation>
     </message>
     <message>
         <location filename="../src/devicelink.cpp" line="718"/>
         <source>read analog pin A%1</source>
-        <translation>Analogpin A%1 lesen</translation>
+        <translation>čtení analogového pinu A%1</translation>
     </message>
 </context>
 <context>
@@ -300,22 +300,22 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/flasher.cpp" line="387"/>
         <source>Update firmware</source>
-        <translation>Firmware aktualisieren</translation>
+        <translation>Aktualizace firmwaru</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="394"/>
-        <source>Puts the GPIOcore program (firmware) on your Arduino. Plug the board in with USB, check the settings below and click &lt;b&gt;Flash&lt;/b&gt;. Your settings on the board are normally kept.</source>
-        <translation>Spielt das GPIOcore-Programm (Firmware) auf Ihren Arduino. Schließen Sie die Platine per USB an, prüfen Sie die Einstellungen unten und klicken Sie auf &lt;b&gt;Flashen&lt;/b&gt;. Ihre Einstellungen auf der Platine bleiben normalerweise erhalten.</translation>
+        <source>Puts the IOcore program (firmware) on your Arduino. Plug the board in with USB, check the settings below and click &lt;b&gt;Flash&lt;/b&gt;. Your settings on the board are normally kept.</source>
+        <translation>Nahraje program IOcore (firmware) do vašeho Arduina. Připojte desku přes USB, zkontrolujte nastavení níže a klikněte na &lt;b&gt;Nahrát&lt;/b&gt;. Nastavení uložená v desce obvykle zůstanou zachována.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="407"/>
         <source>Refresh</source>
-        <translation>Aktualisieren</translation>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="408"/>
         <source>Look again for connected boards</source>
-        <translation>Erneut nach angeschlossenen Platinen suchen</translation>
+        <translation>Znovu vyhledat připojené desky</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="412"/>
@@ -325,236 +325,236 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/flasher.cpp" line="416"/>
         <source>Browse…</source>
-        <translation>Durchsuchen…</translation>
+        <translation>Procházet…</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="420"/>
         <source>Firmware file:</source>
-        <translation>Firmware-Datei:</translation>
+        <translation>Soubor firmwaru:</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="424"/>
         <source>Arduino Uno / Nano (new bootloader)</source>
-        <translation>Arduino Uno / Nano (neuer Bootloader)</translation>
+        <translation>Arduino Uno / Nano (nový bootloader)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="425"/>
         <source>Arduino Nano (old bootloader)</source>
-        <translation>Arduino Nano (alter Bootloader)</translation>
+        <translation>Arduino Nano (starý bootloader)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="426"/>
         <source>Via ArduinoISP programmer (advanced)</source>
-        <translation>Über ArduinoISP-Programmer (fortgeschritten)</translation>
+        <translation>Přes programátor ArduinoISP (pokročilé)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="432"/>
         <source>Board type:</source>
-        <translation>Platinentyp:</translation>
+        <translation>Typ desky:</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="435"/>
         <source>&lt;b&gt;Advanced:&lt;/b&gt; choose the port of the &lt;i&gt;programmer&lt;/i&gt; Arduino (running ArduinoISP), wired to the ICSP pins of your board. This also sets the fuses and &lt;b&gt;removes the USB bootloader&lt;/b&gt;: afterwards the board can only be updated with the programmer again. The settings stored on the board are erased.</source>
-        <translation>&lt;b&gt;Fortgeschritten:&lt;/b&gt; Wählen Sie den Port des &lt;i&gt;Programmer&lt;/i&gt;-Arduinos (mit ArduinoISP), der mit den ICSP-Pins Ihrer Platine verbunden ist. Dabei werden auch die Fuses gesetzt und &lt;b&gt;der USB-Bootloader entfernt&lt;/b&gt;: Danach kann die Platine nur noch mit dem Programmer aktualisiert werden. Die auf der Platine gespeicherten Einstellungen werden gelöscht.</translation>
+        <translation>&lt;b&gt;Pokročilé:&lt;/b&gt; zvolte port Arduina sloužícího jako &lt;i&gt;programátor&lt;/i&gt; (s ArduinoISP), propojeného s piny ICSP vaší desky. Tím se nastaví i pojistky (fuses) a &lt;b&gt;odstraní se USB bootloader&lt;/b&gt;: desku pak půjde aktualizovat jen programátorem. Nastavení uložená v desce se vymažou.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="444"/>
         <source>Flash</source>
-        <translation>Flashen</translation>
+        <translation>Nahrát</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="483"/>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="508"/>
         <source>Trying again with the old Nano bootloader…</source>
-        <translation>Neuer Versuch mit dem alten Nano-Bootloader…</translation>
+        <translation>Nový pokus se starým bootloaderem Nano…</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="509"/>
         <location filename="../src/flasher.cpp" line="573"/>
         <source>Uploading… do not unplug the board.</source>
-        <translation>Wird hochgeladen… Platine nicht abziehen.</translation>
+        <translation>Nahrávání… neodpojujte desku.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="529"/>
         <source>(no board found – plug it in and click Refresh)</source>
-        <translation>(keine Platine gefunden – anschließen und auf Aktualisieren klicken)</translation>
+        <translation>(nenalezena žádná deska – připojte ji a klikněte na Obnovit)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="544"/>
         <source>Choose firmware file</source>
-        <translation>Firmware-Datei wählen</translation>
+        <translation>Zvolit soubor firmwaru</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="545"/>
         <source>Firmware (*.hex);;All files (*)</source>
-        <translation>Firmware (*.hex);;Alle Dateien (*)</translation>
+        <translation>Firmware (*.hex);;Všechny soubory (*)</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="560"/>
         <source>The firmware file was not found.</source>
-        <translation>Die Firmware-Datei wurde nicht gefunden.</translation>
+        <translation>Soubor firmwaru nebyl nalezen.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="565"/>
         <source>No board found.</source>
-        <translation>Keine Platine gefunden.</translation>
+        <translation>Nenalezena žádná deska.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="599"/>
         <source>Done! The new firmware is on the board.</source>
-        <translation>Fertig! Die neue Firmware ist auf der Platine.</translation>
+        <translation>Hotovo! Nový firmware je v desce.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="602"/>
         <source>Your board has the old Nano bootloader. Next time choose &quot;Arduino Nano (old bootloader)&quot;.</source>
-        <translation>Ihre Platine hat den alten Nano-Bootloader. Wählen Sie beim nächsten Mal &quot;Arduino Nano (alter Bootloader)&quot;.</translation>
+        <translation>Vaše deska má starý bootloader Nano. Příště zvolte &quot;Arduino Nano (starý bootloader)&quot;.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="610"/>
         <source>Uploading did not work.</source>
-        <translation>Das Hochladen hat nicht geklappt.</translation>
+        <translation>Nahrání se nezdařilo.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="624"/>
-        <source>The folder &lt;i&gt;tools/avrdude&lt;/i&gt; next to GPIOcoreGUI is missing. Install the program again.</source>
-        <translation>Der Ordner &lt;i&gt;tools/avrdude&lt;/i&gt; neben GPIOcoreGUI fehlt. Installieren Sie das Programm neu.</translation>
+        <source>The folder &lt;i&gt;tools/avrdude&lt;/i&gt; next to IOcoreGUI is missing. Install the program again.</source>
+        <translation>Chybí složka &lt;i&gt;tools/avrdude&lt;/i&gt; vedle IOcoreGUI. Nainstalujte program znovu.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="626"/>
-        <source>Click &lt;b&gt;Browse…&lt;/b&gt; and choose the GPIOcore &lt;i&gt;.hex&lt;/i&gt; file.</source>
-        <translation>Klicken Sie auf &lt;b&gt;Durchsuchen…&lt;/b&gt; und wählen Sie die GPIOcore-Datei &lt;i&gt;.hex&lt;/i&gt;.</translation>
+        <source>Click &lt;b&gt;Browse…&lt;/b&gt; and choose the IOcore &lt;i&gt;.hex&lt;/i&gt; file.</source>
+        <translation>Klikněte na &lt;b&gt;Procházet…&lt;/b&gt; a zvolte soubor &lt;i&gt;.hex&lt;/i&gt; IOcore.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="628"/>
         <source>Close other programs that use the board (Arduino IDE serial monitor, other configuration tools) and try again.</source>
-        <translation>Schließen Sie andere Programme, die die Platine benutzen (serieller Monitor der Arduino IDE, andere Konfigurationsprogramme), und versuchen Sie es erneut.</translation>
+        <translation>Zavřete ostatní programy, které desku používají (sériový monitor Arduino IDE, jiné konfigurační nástroje), a zkuste to znovu.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="631"/>
         <source>Check the USB cable, click &lt;b&gt;Refresh&lt;/b&gt; and choose the right port.</source>
-        <translation>Prüfen Sie das USB-Kabel, klicken Sie auf &lt;b&gt;Aktualisieren&lt;/b&gt; und wählen Sie den richtigen Port.</translation>
+        <translation>Zkontrolujte kabel USB, klikněte na &lt;b&gt;Obnovit&lt;/b&gt; a zvolte správný port.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="634"/>
         <source>Check that the programmer Arduino runs ArduinoISP, that the right port is chosen and that the wires to the board are correct. A 10 µF capacitor between RESET and GND of the programmer often helps.</source>
-        <translation>Prüfen Sie, ob auf dem Programmer-Arduino ArduinoISP läuft, ob der richtige Port gewählt ist und ob die Leitungen zur Platine stimmen. Ein 10-µF-Kondensator zwischen RESET und GND des Programmers hilft oft.</translation>
+        <translation>Zkontrolujte, že na Arduinu-programátoru běží ArduinoISP, že je zvolen správný port a že vodiče k desce jsou zapojeny správně. Často pomůže kondenzátor 10 µF mezi RESET a GND programátoru.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="637"/>
         <source>Choose another &lt;b&gt;board type&lt;/b&gt; (for example &quot;Arduino Nano (old bootloader)&quot;) and try again. Also check that the right port is chosen and close other programs that use the board.</source>
-        <translation>Wählen Sie einen anderen &lt;b&gt;Platinentyp&lt;/b&gt; (zum Beispiel &quot;Arduino Nano (alter Bootloader)&quot;) und versuchen Sie es erneut. Prüfen Sie auch, ob der richtige Port gewählt ist, und schließen Sie andere Programme, die die Platine benutzen.</translation>
+        <translation>Zvolte jiný &lt;b&gt;typ desky&lt;/b&gt; (například &quot;Arduino Nano (starý bootloader)&quot;) a zkuste to znovu. Zkontrolujte také, že je zvolen správný port, a zavřete ostatní programy, které desku používají.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="640"/>
         <source>Check the six wires between the programmer and the board, and that the board has power.</source>
-        <translation>Prüfen Sie die sechs Leitungen zwischen Programmer und Platine und ob die Platine Strom hat.</translation>
+        <translation>Zkontrolujte šest vodičů mezi programátorem a deskou a zda má deska napájení.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="641"/>
-        <source>This board does not have an ATmega328P chip. GPIOcore needs an Arduino Uno or Nano.</source>
-        <translation>Diese Platine hat keinen ATmega328P-Chip. GPIOcore braucht einen Arduino Uno oder Nano.</translation>
+        <source>This board does not have an ATmega328P chip. IOcore needs an Arduino Uno or Nano.</source>
+        <translation>Tato deska nemá čip ATmega328P. IOcore potřebuje Arduino Uno nebo Nano.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="643"/>
         <source>Try again. If it keeps failing, try another USB cable or USB port.</source>
-        <translation>Versuchen Sie es erneut. Klappt es weiterhin nicht, probieren Sie ein anderes USB-Kabel oder einen anderen USB-Port.</translation>
+        <translation>Zkuste to znovu. Pokud se to stále nedaří, zkuste jiný kabel USB nebo jiný port USB.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="647"/>
         <source>Click &lt;b&gt;Show details&lt;/b&gt; to see what happened.</source>
-        <translation>Klicken Sie auf &lt;b&gt;Details anzeigen&lt;/b&gt;, um zu sehen, was passiert ist.</translation>
+        <translation>Klikněte na &lt;b&gt;Zobrazit podrobnosti&lt;/b&gt; a uvidíte, co se stalo.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="673"/>
         <source>Hide details</source>
-        <translation>Details ausblenden</translation>
+        <translation>Skrýt podrobnosti</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="673"/>
         <source>Show details</source>
-        <translation>Details anzeigen</translation>
+        <translation>Zobrazit podrobnosti</translation>
     </message>
 </context>
 <context>
     <name>Flasher</name>
     <message>
         <location filename="../src/flasher.cpp" line="167"/>
-        <source>The upload program (avrdude) was not found next to GPIOcoreGUI (tools/avrdude).</source>
-        <translation>Das Upload-Programm (avrdude) wurde neben GPIOcoreGUI nicht gefunden (tools/avrdude).</translation>
+        <source>The upload program (avrdude) was not found next to IOcoreGUI (tools/avrdude).</source>
+        <translation>Program pro nahrávání (avrdude) nebyl nalezen vedle IOcoreGUI (tools/avrdude).</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="170"/>
         <source>The firmware file was not found: %1</source>
-        <translation>Die Firmware-Datei wurde nicht gefunden: %1</translation>
+        <translation>Soubor firmwaru nebyl nalezen: %1</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="173"/>
         <source>No port selected.</source>
-        <translation>Kein Port gewählt.</translation>
+        <translation>Není zvolen žádný port.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="308"/>
         <source>Cancelled.</source>
-        <translation>Abgebrochen.</translation>
+        <translation>Zrušeno.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="312"/>
         <source>Firmware written and checked.</source>
-        <translation>Firmware geschrieben und geprüft.</translation>
+        <translation>Firmware zapsán a ověřen.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="319"/>
         <source>No answer at 115200 baud. Trying again at 57600 baud (old Nano bootloader)...</source>
-        <translation>Keine Antwort bei 115200 Baud. Neuer Versuch mit 57600 Baud (alter Nano-Bootloader)...</translation>
+        <translation>Žádná odpověď při 115200 Bd. Nový pokus při 57600 Bd (starý bootloader Nano)...</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="326"/>
         <source>The port could not be opened: another program is using it.</source>
-        <translation>Der Port konnte nicht geöffnet werden: Ein anderes Programm benutzt ihn.</translation>
+        <translation>Port nelze otevřít: používá ho jiný program.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="327"/>
         <source>The port could not be opened: the board was not found.</source>
-        <translation>Der Port konnte nicht geöffnet werden: Die Platine wurde nicht gefunden.</translation>
+        <translation>Port nelze otevřít: deska nebyla nalezena.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="328"/>
         <source>The firmware file could not be read.</source>
-        <translation>Die Firmware-Datei konnte nicht gelesen werden.</translation>
+        <translation>Soubor firmwaru nelze přečíst.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="329"/>
         <source>The board did not answer.</source>
-        <translation>Die Platine hat nicht geantwortet.</translation>
+        <translation>Deska neodpověděla.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="330"/>
         <source>The chip on the board was not recognised.</source>
-        <translation>Der Chip auf der Platine wurde nicht erkannt.</translation>
+        <translation>Čip na desce nebyl rozpoznán.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="331"/>
         <source>Writing failed: the check after writing found differences.</source>
-        <translation>Schreiben fehlgeschlagen: Die Prüfung nach dem Schreiben hat Unterschiede gefunden.</translation>
+        <translation>Zápis selhal: kontrola po zápisu našla rozdíly.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="333"/>
         <source>Uploading failed (avrdude exit code %1).</source>
-        <translation>Hochladen fehlgeschlagen (avrdude-Exitcode %1).</translation>
+        <translation>Nahrání selhalo (návratový kód avrdude %1).</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="334"/>
         <source>The upload program stopped unexpectedly.</source>
-        <translation>Das Upload-Programm wurde unerwartet beendet.</translation>
+        <translation>Program pro nahrávání se neočekávaně ukončil.</translation>
     </message>
     <message>
         <location filename="../src/flasher.cpp" line="344"/>
         <source>The upload program (avrdude) could not be started: %1</source>
-        <translation>Das Upload-Programm (avrdude) konnte nicht gestartet werden: %1</translation>
+        <translation>Program pro nahrávání (avrdude) nelze spustit: %1</translation>
     </message>
 </context>
 <context>
@@ -562,112 +562,112 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="13"/>
         <source>Single steady</source>
-        <translation>Einfach Dauer</translation>
+        <translation>Jednoduchý trvalý</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="14"/>
         <source>One pin follows the state.</source>
-        <translation>Ein Pin folgt dem Zustand.</translation>
+        <translation>Jeden pin sleduje stav.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="15"/>
         <source>Single pulse</source>
-        <translation>Einfach Impuls</translation>
+        <translation>Jednoduchý impuls</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="16"/>
         <source>One pin is pulsed for the switch time (firmware: value x 100 ms).</source>
-        <translation>Ein Pin erhält einen Impuls für die Schaltzeit (Firmware: Wert x 100 ms).</translation>
+        <translation>Jeden pin dostane impuls po dobu přestavení (firmware: hodnota x 100 ms).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="17"/>
         <source>Single flashing</source>
-        <translation>Einfach Blinken</translation>
+        <translation>Jednoduché blikání</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="18"/>
         <source>Pin A blinks while the state is on (value x 10 ms per half period).</source>
-        <translation>Pin A blinkt, solange der Zustand ein ist (Wert x 10 ms pro Halbperiode).</translation>
+        <translation>Pin A bliká, dokud je stav zapnutý (hodnota x 10 ms na půlperiodu).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="19"/>
         <source>Double steady</source>
-        <translation>Doppelt Dauer</translation>
+        <translation>Dvojitý trvalý</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="20"/>
         <source>Pin A = state, pin B = inverted state.</source>
-        <translation>Pin A = Zustand, Pin B = invertierter Zustand.</translation>
+        <translation>Pin A = stav, pin B = obrácený stav.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="21"/>
         <source>Double pulse</source>
-        <translation>Doppelimpuls</translation>
+        <translation>Dvojitý impuls</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="22"/>
         <source>Turnout coil pair: pin A or B is pulsed (value x 10 ms).</source>
-        <translation>Spulenpaar einer Weiche: Pin A oder B erhält einen Impuls (Wert x 10 ms).</translation>
+        <translation>Pár cívek výhybky: pin A nebo B dostane impuls (hodnota x 10 ms).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="23"/>
         <source>Double flashing</source>
-        <translation>Wechselblinken</translation>
+        <translation>Dvojité blikání</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="24"/>
         <source>Pins A and B blink alternately (value x 10 ms per half period).</source>
-        <translation>Pins A und B blinken abwechselnd (Wert x 10 ms pro Halbperiode).</translation>
+        <translation>Piny A a B blikají střídavě (hodnota x 10 ms na půlperiodu).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="64"/>
         <source>Swing light</source>
-        <translation>Wechsellicht</translation>
+        <translation>Střídavé světlo</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="65"/>
         <source>Level crossing style: A, B, pause (values x 10 ms).</source>
-        <translation>Wie am Bahnübergang: A, B, Pause (Werte x 10 ms).</translation>
+        <translation>Jako na přejezdu: A, B, pauza (hodnoty x 10 ms).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="66"/>
         <source>Fireplace</source>
-        <translation>Kaminfeuer</translation>
+        <translation>Krb</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="67"/>
         <source>Random flicker on PWM pins A and B.</source>
-        <translation>Zufälliges Flackern an den PWM-Pins A und B.</translation>
+        <translation>Náhodné mihotání na PWM pinech A a B.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="68"/>
         <source>TL tube</source>
-        <translation>Leuchtstoffröhre</translation>
+        <translation>Zářivka</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="69"/>
         <source>Fluorescent tube start-up flicker on PWM pin A.</source>
-        <translation>Startflackern einer Leuchtstoffröhre an PWM-Pin A.</translation>
+        <translation>Blikání zářivky při startu na PWM pinu A.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="70"/>
         <source>Welder</source>
-        <translation>Schweißlicht</translation>
+        <translation>Svářeč</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="71"/>
         <source>Random welding flashes on pin A.</source>
-        <translation>Zufällige Schweißblitze an Pin A.</translation>
+        <translation>Náhodné záblesky sváření na pinu A.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="36"/>
         <source>4-aspect signal</source>
-        <translation>4-begriffiges Signal</translation>
+        <translation>Návěstidlo se 4 návěstmi</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="37"/>
         <source>Four LEDs A-D. The aspect comes from DCC extended (signal) packets or a route; the board keeps the last aspect in EEPROM.</source>
-        <translation>Vier LEDs A-D. Das Signalbild kommt aus DCC-Extended-(Signal-)Befehlen oder einer Fahrstraße; die Platine speichert das letzte Signalbild im EEPROM.</translation>
+        <translation>Čtyři LED A-D. Návěst přichází z rozšířených DCC příkazů (pro návěstidla) nebo z jízdní cesty; deska si poslední návěst pamatuje v EEPROM.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="38"/>
@@ -677,7 +677,7 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="39"/>
         <source>Servo on pin A, sweeps between min and max.</source>
-        <translation>Servo an Pin A, fährt zwischen Min und Max.</translation>
+        <translation>Servo na pinu A, pohybuje se mezi min a max.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="40"/>
@@ -687,7 +687,7 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="41"/>
         <source>PWM brightness on pin A. With a fade time it changes slowly to every new value.</source>
-        <translation>PWM-Helligkeit an Pin A. Mit einer Überblendzeit geht sie langsam zu jedem neuen Wert.</translation>
+        <translation>Jas PWM na pinu A. S dobou přechodu se mění pomalu na každou novou hodnotu.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="32"/>
@@ -696,65 +696,65 @@ Schritt %1: %2, danach %3 warten</translation>
         <location filename="../src/gpioconfig.cpp" line="99"/>
         <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Not in use</source>
-        <translation>Nicht benutzt</translation>
+        <translation>Nepoužito</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="25"/>
         <source>Light effect</source>
-        <translation>Lichteffekt</translation>
+        <translation>Světelný efekt</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="26"/>
         <source>A light effect: swing light, fireplace, TL tube, welder or photographer.</source>
-        <translation>Ein Lichteffekt: Wechsellicht, Kaminfeuer, Leuchtstoffröhre, Schweißlicht oder Fotograf.</translation>
+        <translation>Světelný efekt: střídavé světlo, krb, zářivka, svářeč nebo fotograf.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="27"/>
         <source>Board link (TX)</source>
-        <translation>Platinenkopplung (TX)</translation>
+        <translation>Propojení desek (TX)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="28"/>
         <source>Sends commands to the next boards over TX (D1), board to board. Each route step chooses the address: curved or straight (a turnout command), or a value 0-255 (DCC extended: aspect, servo angle, PWM, track). Switched on / off it sends its own address, if set. Only without a PC connected.</source>
-        <translation>Sendet Befehle über TX (D1) an die nächsten Platinen, von Platine zu Platine. Jeder Fahrstraßenschritt wählt die Adresse: Abzweig oder Gerade (ein Weichenbefehl) oder einen Wert 0-255 (DCC extended: Signalbild, Servowinkel, PWM, Track). Direkt ein/aus geschaltet sendet er seine eigene Adresse, falls gesetzt. Nur ohne verbundenen PC.</translation>
+        <translation>Posílá příkazy dalším deskám přes TX (D1), z desky na desku. Každý krok jízdní cesty volí adresu: do odbočky nebo přímo (povel pro výhybku), nebo hodnotu 0-255 (DCC extended: návěst, úhel serva, PWM, stopa). Přímo zapnuto/vypnuto posílá vlastní adresu, je-li nastavena. Jen bez připojeného PC.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="33"/>
         <location filename="../src/gpioconfig.cpp" line="35"/>
         <location filename="../src/gpioconfig.cpp" line="43"/>
         <source>Output disabled.</source>
-        <translation>Ausgang deaktiviert.</translation>
+        <translation>Výstup vypnut.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="44"/>
         <source>Sound effect</source>
-        <translation>Soundeffekt</translation>
+        <translation>Zvukový efekt</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="45"/>
         <source>Plays an MP3 track on a DFPlayer Mini wired to TX (D1). The input chooses the track: its custom values, a route step or a DCC extended value (0 = stop); without custom values on = track 1, off = stop. It only plays when no PC is connected: with the GUI connected, D1 is the USB line and the board only reports the track.</source>
-        <translation>Spielt einen MP3-Titel auf einem DFPlayer Mini an TX (D1) ab. Der Eingang wählt den Titel: seine eigenen Werte, ein Fahrstraßen-Schritt oder ein DCC-Extended-Wert (0 = Stopp); ohne eigene Werte ein = Titel 1, aus = Stopp. Spielt nur, wenn kein PC angeschlossen ist: Mit verbundener GUI ist D1 die USB-Leitung und die Platine meldet nur den Titel.</translation>
+        <translation>Přehraje skladbu MP3 na DFPlayer Mini připojeném na TX (D1). Skladbu volí vstup: jeho vlastní hodnoty, krok jízdní cesty nebo hodnota DCC extended (0 = stop); bez vlastních hodnot zap = skladba 1, vyp = stop. Hraje jen bez připojeného PC: s připojeným GUI je D1 linka USB a deska jen hlásí skladbu.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="49"/>
         <source>Block signal</source>
-        <translation>Blocksignal</translation>
+        <translation>Autoblokové návěstidlo</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="50"/>
         <source>Automatic signal with lamps A-D (B-D optional). The board chooses the aspect itself from two block detectors: its own block and the next one. Inputs, routes and DCC cannot set it.</source>
-        <translation>Automatisches Signal mit Lampen A-D (B-D optional). Die Platine wählt das Signalbild selbst aus zwei Belegtmeldern: dem des eigenen Blocks und dem des nächsten. Eingänge, Fahrstraßen und DCC können es nicht stellen.</translation>
+        <translation>Samočinné návěstidlo se světly A-D (B-D volitelně). Deska si návěst vybírá sama ze dvou hlásičů: vlastního oddílu a následujícího. Vstupy, jízdní cesty ani DCC ji nenastaví.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="52"/>
         <source>Unknown type</source>
-        <translation>Unbekannter Typ</translation>
+        <translation>Neznámý typ</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="53"/>
         <location filename="../src/gpioconfig.cpp" line="105"/>
         <source>Type value not known by this GUI.</source>
-        <translation>Typwert ist diesem Programm unbekannt.</translation>
+        <translation>Hodnota typu je tomuto programu neznámá.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="72"/>
@@ -764,80 +764,80 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="73"/>
         <source>A camera flash on pin A now and then, sometimes with a pre-flash.</source>
-        <translation>Ab und zu ein Kamerablitz an Pin A, manchmal mit Vorblitz.</translation>
+        <translation>Občas záblesk fotoaparátu na pinu A, někdy s předzábleskem.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="74"/>
         <source>Unknown effect</source>
-        <translation>Unbekannter Effekt</translation>
+        <translation>Neznámý efekt</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="75"/>
         <source>Effect value not known by this GUI.</source>
-        <translation>Effektwert dieser GUI unbekannt.</translation>
+        <translation>Hodnota efektu není tomuto GUI známa.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="96"/>
         <source>Toggle</source>
-        <translation>Umschalten</translation>
+        <translation>Přepínání</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="96"/>
         <source>Each press (falling edge) or DCC command toggles the output.</source>
-        <translation>Jeder Tastendruck (fallende Flanke) oder DCC-Befehl schaltet den Ausgang um.</translation>
+        <translation>Každý stisk (sestupná hrana) nebo DCC příkaz přepne výstup.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>Absolute</source>
-        <translation>Absolut</translation>
+        <translation>Absolutní</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="97"/>
         <source>The output follows the input level or the DCC direction.</source>
-        <translation>Der Ausgang folgt dem Eingangspegel oder der DCC-Richtung.</translation>
+        <translation>Výstup sleduje úroveň vstupu nebo směr DCC.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="98"/>
         <location filename="../src/gpioconfig.cpp" line="103"/>
         <location filename="../src/gpioconfig.cpp" line="104"/>
         <source>Route</source>
-        <translation>Fahrstraße</translation>
+        <translation>Jízdní cesta</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="98"/>
         <source>Sets up to 16 outputs one after another, each step with its own wait time. Starts when the button is pressed, or on any DCC command for its address (straight and curved).</source>
-        <translation>Stellt bis zu 16 Ausgänge nacheinander, jeder Schritt mit eigener Wartezeit. Startet beim Tastendruck oder bei jedem DCC-Befehl an ihre Adresse (Gerade und Abzweig).</translation>
+        <translation>Postupně nastaví až 16 výstupů, každý krok s vlastní dobou čekání. Spustí se stiskem tlačítka nebo jakýmkoli DCC příkazem na svou adresu (přímo i do odbočky).</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="99"/>
         <location filename="../src/gpioconfig.cpp" line="102"/>
         <source>Input disabled.</source>
-        <translation>Eingang deaktiviert.</translation>
+        <translation>Vstup vypnut.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="100"/>
         <source>Sensor (occupancy)</source>
-        <translation>Sensor (Belegtmelder)</translation>
+        <translation>Snímač (obsazení)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="100"/>
         <source>An occupancy detector or other sensor. It switches nothing itself; automatic block signals read it.</source>
-        <translation>Ein Belegtmelder oder anderer Sensor. Er schaltet selbst nichts; automatische Blocksignale lesen ihn.</translation>
+        <translation>Hlásič obsazení nebo jiný snímač. Sám nic nespíná; čtou ho návěstidla automatického bloku.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="103"/>
         <source>Route that starts on a button press, or only on a DCC &apos;straight&apos; command for its address.</source>
-        <translation>Fahrstraße, die per Tastendruck startet oder nur bei einem DCC-Befehl &apos;Gerade&apos; für ihre Adresse.</translation>
+        <translation>Jízdní cesta, která se spustí stiskem tlačítka, nebo jen povelem DCC &apos;přímo&apos; pro její adresu.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="104"/>
         <source>Route that starts on a button press, or only on a DCC &apos;curved&apos; command for its address.</source>
-        <translation>Fahrstraße, die per Tastendruck startet oder nur bei einem DCC-Befehl &apos;Abzweig&apos; für ihre Adresse.</translation>
+        <translation>Jízdní cesta, která se spustí stiskem tlačítka, nebo jen povelem DCC &apos;do odbočky&apos; pro její adresu.</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="105"/>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation>Neznámý</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="627"/>
@@ -857,48 +857,48 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/gpioconfig.cpp" line="762"/>
         <source>not a DCCnext port</source>
-        <translation>kein DCCnext-Anschluss</translation>
+        <translation>není port DCCnext</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="765"/>
         <source>Serial RX (GUI link)</source>
-        <translation>Seriell RX (GUI-Verbindung)</translation>
+        <translation>Sériový RX (spojení s GUI)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="766"/>
         <source>Serial TX (GUI link)</source>
-        <translation>Seriell TX (GUI-Verbindung)</translation>
+        <translation>Sériový TX (spojení s GUI)</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="767"/>
         <source>DCC input</source>
-        <translation>DCC-Eingang</translation>
+        <translation>vstup DCC</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="768"/>
         <source>config LED</source>
-        <translation>Konfig-LED</translation>
+        <translation>LED konfigurace</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="770"/>
         <source>only on an Arduino Nano</source>
-        <translation>nur auf einem Arduino Nano</translation>
+        <translation>jen na Arduino Nano</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="777"/>
         <location filename="../src/uihelpers.cpp" line="411"/>
         <source>analog input only</source>
-        <translation>nur Analogeingang</translation>
+        <translation>jen analogový vstup</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="794"/>
         <source>shared with serial: only active when no GUI is connected</source>
-        <translation>mit Seriell geteilt: nur aktiv, wenn keine GUI verbunden ist</translation>
+        <translation>sdílený se sériovou linkou: funguje jen bez připojeného GUI</translation>
     </message>
     <message>
         <location filename="../src/gpioconfig.cpp" line="796"/>
         <source>analog input without pull-up: add a 10 kOhm resistor to 5 V</source>
-        <translation>Analogeingang ohne Pull-up: 10-kOhm-Widerstand nach 5 V einbauen</translation>
+        <translation>analogový vstup bez pull-up: přidejte rezistor 10 kOhm na 5 V</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1918"/>
@@ -938,7 +938,7 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="396"/>
         <source>—  not used</source>
-        <translation>—  nicht benutzt</translation>
+        <translation>—  nepoužito</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="604"/>
@@ -963,37 +963,37 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="605"/>
         <source>relay A</source>
-        <translation>Relais A</translation>
+        <translation>relé A</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="606"/>
         <source>relay B</source>
-        <translation>Relais B</translation>
+        <translation>relé B</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="606"/>
         <source>relay C</source>
-        <translation>Relais C</translation>
+        <translation>relé C</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="680"/>
         <source>(empty route)</source>
-        <translation>(leere Fahrstraße)</translation>
+        <translation>(prázdná jízdní cesta)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="681"/>
         <source>%1 steps</source>
-        <translation>%1 Schritte</translation>
+        <translation>Kroky: %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="683"/>
         <source>Output %1</source>
-        <translation>Ausgang %1</translation>
+        <translation>Výstup %1</translation>
     </message>
     <message>
         <location filename="../src/boardtools.cpp" line="72"/>
         <source>Not enough free slots: the file has %1 output(s) and %2 input(s) in use, this board has %3 free output(s) and %4 free input(s). Nothing was imported.</source>
-        <translation>Nicht genug freie Plätze: Die Datei benutzt %1 Ausgang/Ausgänge und %2 Eingang/Eingänge, diese Platine hat %3 freie Ausgänge und %4 freie Eingänge. Es wurde nichts importiert.</translation>
+        <translation>Nedostatek volných míst: soubor používá %1 výstupů a %2 vstupů, tato deska má %3 volných výstupů a %4 volných vstupů. Nic nebylo importováno.</translation>
     </message>
 </context>
 <context>
@@ -1001,12 +1001,12 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/infotexts.cpp" line="43"/>
         <source>No help text for &apos;%1&apos; yet.</source>
-        <translation>Noch keine Erklärung für &apos;%1&apos;.</translation>
+        <translation>Pro &apos;%1&apos; zatím není vysvětlení.</translation>
     </message>
     <message>
         <location filename="../src/infotexts.cpp" line="51"/>
         <source>What is this? Click for an explanation.</source>
-        <translation>Was ist das? Klicken für eine Erklärung.</translation>
+        <translation>Co je to? Klikněte pro vysvětlení.</translation>
     </message>
 </context>
 <context>
@@ -1014,32 +1014,32 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="93"/>
         <source>Direct control</source>
-        <translation>Direkt schalten</translation>
+        <translation>Přímé ovládání</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="94"/>
         <source>Route</source>
-        <translation>Fahrstraße</translation>
+        <translation>Jízdní cesta</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="96"/>
         <source>Not in use</source>
-        <translation>Nicht benutzt</translation>
+        <translation>Nepoužito</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="121"/>
         <source>Behaviour</source>
-        <translation>Verhalten</translation>
+        <translation>Chování</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="135"/>
         <source>Triggered by</source>
-        <translation>Ausgelöst durch</translation>
+        <translation>Spouštěno</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="137"/>
         <source>DCC accessory address</source>
-        <translation>DCC-Zubehöradresse</translation>
+        <translation>DCC adresa příslušenství</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="147"/>
@@ -1049,28 +1049,28 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="179"/>
         <source>Input pin</source>
-        <translation>Eingangspin</translation>
+        <translation>Vstupní pin</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="210"/>
         <source>Controls</source>
-        <translation>Steuert</translation>
+        <translation>Ovládá</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="215"/>
         <location filename="../src/inputeditor.cpp" line="459"/>
         <source>Output</source>
-        <translation>Ausgang</translation>
+        <translation>Výstup</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="261"/>
         <source>Route steps</source>
-        <translation>Fahrstraßen-Schritte</translation>
+        <translation>Kroky jízdní cesty</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="150"/>
         <source>any command (straight and curved)</source>
-        <translation>jeder Befehl (Gerade und Abzweig)</translation>
+        <translation>jakýkoli povel (přímo i do odbočky)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="73"/>
@@ -1080,158 +1080,158 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="77"/>
         <source>A block signal sets its own aspect from its detectors</source>
-        <translation>Ein Blocksignal bestimmt sein Signalbild selbst aus seinen Meldern</translation>
+        <translation>Autoblokové návěstidlo si nastavuje návěst samo ze svých hlásičů</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="99"/>
         <source>Function</source>
-        <translation>Funktion</translation>
+        <translation>Funkce</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="151"/>
         <source>straight only</source>
-        <translation>nur Gerade</translation>
+        <translation>jen přímo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="152"/>
         <source>curved only</source>
-        <translation>nur Abzweig</translation>
+        <translation>jen do odbočky</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="153"/>
         <source>With &apos;straight only&apos; and &apos;curved only&apos; two routes can share one DCC address, e.g. a level crossing: curved = close, straight = open. A button always starts the route.</source>
-        <translation>Mit &apos;nur Gerade&apos; und &apos;nur Abzweig&apos; können sich zwei Fahrstraßen eine DCC-Adresse teilen, z. B. ein Bahnübergang: Abzweig = schließen, Gerade = öffnen. Ein Taster startet die Fahrstraße immer.</translation>
+        <translation>S volbami &apos;jen přímo&apos; a &apos;jen do odbočky&apos; mohou dvě jízdní cesty sdílet jednu adresu DCC, např. železniční přejezd: do odbočky = zavřít, přímo = otevřít. Tlačítko spustí jízdní cestu vždy.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="159"/>
         <source>Route starts on</source>
-        <translation>Fahrstraße startet bei</translation>
+        <translation>Jízdní cesta startuje při</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="169"/>
         <source>Digital — button to GND</source>
-        <translation>Digital — Taster nach GND</translation>
+        <translation>Digitálně — tlačítko na GND</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="170"/>
         <source>Analog — below a value</source>
-        <translation>Analog — unter einem Wert</translation>
+        <translation>Analogově — pod hodnotou</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="171"/>
         <source>Analog — above a value</source>
-        <translation>Analog — über einem Wert</translation>
+        <translation>Analogově — nad hodnotou</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="172"/>
         <source>Analog — at a value (resistor ladder)</source>
-        <translation>Analog — bei einem Wert (Widerstandsleiter)</translation>
+        <translation>Analogově — na hodnotě (odporový žebřík)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="174"/>
         <source>Read as</source>
-        <translation>Lesen als</translation>
+        <translation>Číst jako</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="184"/>
         <source>Analog pin</source>
-        <translation>Analogpin</translation>
+        <translation>Analogový pin</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="190"/>
         <source>0 = 0 V, 1023 = 5 V. Stored in steps of 8.</source>
-        <translation>0 = 0 V, 1023 = 5 V. Gespeichert in Schritten von 8.</translation>
+        <translation>0 = 0 V, 1023 = 5 V. Ukládá se v krocích po 8.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="198"/>
         <source>Threshold</source>
-        <translation>Schwellwert</translation>
+        <translation>Práh</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="200"/>
         <source>Use this value</source>
-        <translation>Diesen Wert übernehmen</translation>
+        <translation>Použít tuto hodnotu</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="201"/>
         <source>Take the reading as the threshold (rounded to a step of 8)</source>
-        <translation>Den Messwert als Schwellwert übernehmen (auf einen Schritt von 8 gerundet)</translation>
+        <translation>Převzít měření jako práh (zaokrouhleno na krok 8)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="206"/>
         <source>Live reading</source>
-        <translation>Live-Messwert</translation>
+        <translation>Živé měření</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="217"/>
         <source>Custom values</source>
-        <translation>Eigene Werte</translation>
+        <translation>Vlastní hodnoty</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="218"/>
         <source>Off / curved and on / straight each send their own value, like a route step</source>
-        <translation>Aus / Abzweig und ein / Gerade senden je einen eigenen Wert, wie ein Fahrstraßen-Schritt</translation>
+        <translation>Vyp / do odbočky a zap / přímo posílají každý vlastní hodnotu, jako krok jízdní cesty</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="226"/>
         <source>Off / curved</source>
-        <translation>Aus / Abzweig</translation>
+        <translation>Vyp / do odbočky</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="226"/>
         <source>On / straight</source>
-        <translation>Ein / Gerade</translation>
+        <translation>Zap / přímo</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="238"/>
         <location filename="../src/inputeditor.cpp" line="509"/>
         <source>The DCC address on the boards down the line (1-255)</source>
-        <translation>Die DCC-Adresse auf den Platinen weiter in der Kette (1-255)</translation>
+        <translation>Adresa DCC na dalších deskách v řetězu (1-255)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="273"/>
         <source>+ Add step</source>
-        <translation>+ Schritt hinzufügen</translation>
+        <translation>+ Přidat krok</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="274"/>
         <source>Or drag an output onto this input in the canvas</source>
-        <translation>Oder im Canvas einen Ausgang auf diesen Eingang ziehen</translation>
+        <translation>Nebo na plátně přetáhněte výstup na tento vstup</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="372"/>
         <source>Pressed below %1, released again from %2.</source>
-        <translation>Gedrückt unter %1, wieder losgelassen ab %2.</translation>
+        <translation>Stisknuto pod %1, uvolněno opět od %2.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="375"/>
         <source>Pressed above %1, released again at %2 or lower.</source>
-        <translation>Gedrückt über %1, wieder losgelassen bei %2 oder weniger.</translation>
+        <translation>Stisknuto nad %1, uvolněno opět při %2 nebo méně.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="378"/>
         <source>Pressed from %1 to %2.</source>
-        <translation>Gedrückt von %1 bis %2.</translation>
+        <translation>Stisknuto od %1 do %2.</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="383"/>
         <source>Now: —</source>
-        <translation>Jetzt: —</translation>
+        <translation>Nyní: —</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="384"/>
         <source>Needs a board with analog input support (connected or simulated).</source>
-        <translation>Braucht eine Platine mit Analogeingängen (verbunden oder simuliert).</translation>
+        <translation>Potřebuje desku s analogovými vstupy (připojenou nebo simulovanou).</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="388"/>
         <source>Now: %1</source>
-        <translation>Jetzt: %1</translation>
+        <translation>Nyní: %1</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="388"/>
         <source>Now: …</source>
-        <translation>Jetzt: …</translation>
+        <translation>Nyní: …</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="459"/>
@@ -1242,22 +1242,22 @@ Schritt %1: %2, danach %3 warten</translation>
         <location filename="../src/inputeditor.cpp" line="459"/>
         <location filename="../src/inputeditor.cpp" line="618"/>
         <source>Value</source>
-        <translation>Wert</translation>
+        <translation>Hodnota</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="459"/>
         <source>Wait after</source>
-        <translation>Warten danach</translation>
+        <translation>Čekat poté</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="473"/>
         <source>— choose an output —</source>
-        <translation>— Ausgang wählen —</translation>
+        <translation>— vyberte výstup —</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="475"/>
         <source>or drag an output onto this input</source>
-        <translation>oder einen Ausgang auf diesen Eingang ziehen</translation>
+        <translation>nebo přetáhněte výstup na tento vstup</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="514"/>
@@ -1267,43 +1267,43 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="517"/>
         <source>Earlier</source>
-        <translation>Früher</translation>
+        <translation>Dříve</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="518"/>
         <source>Later</source>
-        <translation>Später</translation>
+        <translation>Později</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="522"/>
         <source>Delete step %1</source>
-        <translation>Schritt %1 löschen</translation>
+        <translation>Smazat krok %1</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="241"/>
         <location filename="../src/inputeditor.cpp" line="533"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation>Signalbild Lampe für Lampe wählen</translation>
+        <translation>Zvolit návěst světlo po světle</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="613"/>
         <source>Curved (0)</source>
-        <translation>Abzweig (0)</translation>
+        <translation>Do odbočky (0)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="614"/>
         <source>Straight (1)</source>
-        <translation>Gerade (1)</translation>
+        <translation>Přímo (1)</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="616"/>
         <source>Angle</source>
-        <translation>Winkel</translation>
+        <translation>Úhel</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="636"/>
         <source>aspect </source>
-        <translation>Signalbild </translation>
+        <translation>návěst </translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="644"/>
@@ -1313,43 +1313,43 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/inputeditor.cpp" line="651"/>
         <source>track </source>
-        <translation>Titel </translation>
+        <translation>skladba </translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="653"/>
         <source>stop</source>
-        <translation>Stopp</translation>
+        <translation>stop</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="654"/>
         <source>MP3 track 1-255 (0001.mp3 …), 0 = stop</source>
-        <translation>MP3-Titel 1-255 (0001.mp3 …), 0 = Stopp</translation>
+        <translation>Skladba MP3 1-255 (0001.mp3 …), 0 = stop</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="596"/>
         <source>%1 / %2 steps  ·  board total %3 / %4</source>
-        <translation>%1 / %2 Schritte  ·  Platine gesamt %3 / %4</translation>
+        <translation>%1 / %2 kroků  ·  deska celkem %3 / %4</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="425"/>
         <location filename="../src/inputeditor.cpp" line="712"/>
         <source>Input %1</source>
-        <translation>Eingang %1</translation>
+        <translation>Vstup %1</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="662"/>
         <source>DCC extended value for that address: aspect, servo angle, PWM or track</source>
-        <translation>DCC-extended-Wert für diese Adresse: Signalbild, Servowinkel, PWM oder Track</translation>
+        <translation>Hodnota DCC extended pro tuto adresu: návěst, úhel serva, PWM nebo stopa</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="721"/>
         <source>Toggle — every press switches the output over</source>
-        <translation>Umschalten — jeder Tastendruck schaltet den Ausgang um</translation>
+        <translation>Přepínání — každý stisk přepne výstup</translation>
     </message>
     <message>
         <location filename="../src/inputeditor.cpp" line="722"/>
         <source>Absolute — the output follows the input</source>
-        <translation>Absolut — der Ausgang folgt dem Eingang</translation>
+        <translation>Absolutní — výstup sleduje vstup</translation>
     </message>
 </context>
 <context>
@@ -1360,99 +1360,99 @@ Schritt %1: %2, danach %3 warten</translation>
         <location filename="../src/mainwindow.cpp" line="2464"/>
         <location filename="../src/mainwindow.cpp" line="2517"/>
         <location filename="../src/mainwindow.cpp" line="2637"/>
-        <source>GPIOcore Configurator</source>
-        <translation>GPIOcore Configurator</translation>
+        <source>IOcore Configurator</source>
+        <translation>IOcore Configurator</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="220"/>
         <source>Board read</source>
-        <translation>Platine gelesen</translation>
+        <translation>Deska načtena</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="225"/>
         <source>Done with %1 error(s)</source>
-        <translation>Fertig mit %1 Fehler(n)</translation>
+        <translation>Hotovo, chyb: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="273"/>
         <source>Close (Esc)</source>
-        <translation>Schließen (Esc)</translation>
+        <translation>Zavřít (Esc)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="277"/>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Odebrat</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="278"/>
         <source>Set this to &apos;not in use&apos; and take it off the canvas</source>
-        <translation>Auf &apos;nicht benutzt&apos; setzen und von der Arbeitsfläche nehmen</translation>
+        <translation>Nastavit na &apos;nepoužito&apos; a odebrat z plochy</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="290"/>
         <source>Name, e.g. &quot;Turnout station left&quot; (kept on this computer)</source>
-        <translation>Name, z. B. &quot;Weiche Bahnhof links&quot; (wird auf diesem Computer gespeichert)</translation>
+        <translation>Název, např. &quot;Výhybka stanice vlevo&quot; (uloží se v tomto počítači)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="301"/>
         <source>INPUT SETTINGS</source>
-        <translation>EINGANGS-EINSTELLUNGEN</translation>
+        <translation>NASTAVENÍ VSTUPU</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="302"/>
         <source>OUTPUT SETTINGS</source>
-        <translation>AUSGANGS-EINSTELLUNGEN</translation>
+        <translation>NASTAVENÍ VÝSTUPU</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="356"/>
         <source>+ Add input</source>
-        <translation>+ Eingang hinzufügen</translation>
+        <translation>+ Přidat vstup</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="357"/>
         <source>+ Add output</source>
-        <translation>+ Ausgang hinzufügen</translation>
+        <translation>+ Přidat výstup</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="358"/>
         <source>Take the next free input and open its settings</source>
-        <translation>Den nächsten freien Eingang nehmen und seine Einstellungen öffnen</translation>
+        <translation>Vzít další volný vstup a otevřít jeho nastavení</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="359"/>
         <source>Take the next free output and open its settings</source>
-        <translation>Den nächsten freien Ausgang nehmen und seine Einstellungen öffnen</translation>
+        <translation>Vzít další volný výstup a otevřít jeho nastavení</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="445"/>
         <source>The board has no room for more route steps (%1 in total)</source>
-        <translation>Die Platine hat keinen Platz für weitere Fahrstraßen-Schritte (%1 insgesamt)</translation>
+        <translation>Deska nemá místo pro další kroky jízdních cest (celkem %1)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="647"/>
         <source>Main</source>
-        <translation>Haupt</translation>
+        <translation>Hlavní</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="654"/>
         <source>Open</source>
-        <translation>Öffnen</translation>
+        <translation>Otevřít</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="655"/>
         <source>Save</source>
-        <translation>Speichern</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="656"/>
         <source>Open a board file (Ctrl+O)</source>
-        <translation>Platinendatei öffnen (Ctrl+O)</translation>
+        <translation>Otevřít soubor desky (Ctrl+O)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="657"/>
         <location filename="../src/mainwindow.cpp" line="754"/>
         <source>Save to this board&apos;s file (Ctrl+S)</source>
-        <translation>In der Datei dieser Platine speichern (Ctrl+S)</translation>
+        <translation>Uložit do souboru této desky (Ctrl+S)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="665"/>
@@ -1462,141 +1462,141 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="668"/>
         <source>Refresh port list</source>
-        <translation>Portliste aktualisieren</translation>
+        <translation>Obnovit seznam portů</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="669"/>
         <location filename="../src/mainwindow.cpp" line="1063"/>
         <location filename="../src/mainwindow.cpp" line="1078"/>
         <source>Connect</source>
-        <translation>Verbinden</translation>
+        <translation>Připojit</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="683"/>
         <source>Change the configuration: offline, or connected (red frame) so every change goes to the board at once.</source>
-        <translation>Die Konfiguration ändern: offline oder verbunden (roter Rahmen), sodass jede Änderung sofort an die Platine geht.</translation>
+        <translation>Změna konfigurace: offline, nebo připojeně (červený rámeček), takže každá změna jde do desky hned.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="686"/>
         <source>Try your configuration without a board: press the buttons on the inputs and watch the outputs. Nothing can be changed here.</source>
-        <translation>Konfiguration ohne Platine ausprobieren: Tasten an den Eingängen drücken und die Ausgänge beobachten. Hier lässt sich nichts ändern.</translation>
+        <translation>Vyzkoušejte konfiguraci bez desky: mačkejte tlačítka vstupů a sledujte výstupy. Zde nelze nic měnit.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="689"/>
         <source>Press the buttons on the inputs and watch what the real board does. Connects by itself. Blue = straight / on, red = curved / off; servos show their angle.</source>
-        <translation>Tasten an den Eingängen drücken und sehen, was die echte Platine tut. Verbindet sich selbst. Blau = Gerade / an, rot = Abzweig / aus; Servos zeigen ihren Winkel.</translation>
+        <translation>Mačkejte tlačítka vstupů a sledujte, co dělá skutečná deska. Připojí se sama. Modrá = přímo / zap., červená = do odbočky / vyp.; serva ukazují svůj úhel.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="709"/>
         <source>Read board</source>
-        <translation>Platine lesen</translation>
+        <translation>Načíst desku</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="713"/>
         <location filename="../src/mainwindow.cpp" line="1793"/>
         <source>Write changes</source>
-        <translation>Änderungen schreiben</translation>
+        <translation>Zapsat změny</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="715"/>
         <source>Revert</source>
-        <translation>Verwerfen</translation>
+        <translation>Vrátit změny</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="724"/>
         <source> Preset </source>
-        <translation> Preset </translation>
+        <translation> Předvolba </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="726"/>
         <source>Apply</source>
-        <translation>Anwenden</translation>
+        <translation>Použít</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="733"/>
         <source>Which board this is: decides which pins exist</source>
-        <translation>Welche Platine das ist: bestimmt, welche Pins es gibt</translation>
+        <translation>Jaká je to deska: určuje, které piny existují</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="740"/>
         <source> Board </source>
-        <translation> Platine </translation>
+        <translation> Deska </translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="703"/>
         <source>Board</source>
-        <translation>Platine</translation>
+        <translation>Deska</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="743"/>
         <source>Board settings…</source>
-        <translation>Platineneinstellungen…</translation>
+        <translation>Nastavení desky…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="751"/>
         <source>&amp;Save</source>
-        <translation>&amp;Speichern</translation>
+        <translation>&amp;Uložit</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="755"/>
         <source>Save &amp;as…</source>
-        <translation>Speichern &amp;unter…</translation>
+        <translation>Uložit &amp;jako…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="782"/>
         <source>&amp;Phone remote…</source>
-        <translation>&amp;Smartphone-Fernbedienung…</translation>
+        <translation>&amp;Ovládání z telefonu…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="791"/>
         <source>Servos, lights and turnout coils; buttons, DCC addresses and simple routes</source>
-        <translation>Servos, Beleuchtung und Weichenspulen; Taster, DCC-Adressen und einfache Fahrstraßen</translation>
+        <translation>Serva, světla a cívky výhybek; tlačítka, adresy DCC a jednoduché jízdní cesty</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="792"/>
         <source>Also light effects, signals, PWM, sound, frog relays, analog inputs and custom values</source>
-        <translation>Außerdem Lichteffekte, Signale, PWM, Sound, Herzstück-Relais, Analogeingänge und eigene Werte</translation>
+        <translation>Také světelné efekty, návěstidla, PWM, zvuk, relé srdcovky, analogové vstupy a vlastní hodnoty</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="793"/>
         <source>Also automatic block signals, sensor inputs and semaphore arms</source>
-        <translation>Außerdem automatische Blocksignale, Sensoreingänge und Formsignal-Flügel</translation>
+        <translation>Také autobloková návěstidla, vstupy snímačů a ramenní návěstidla</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="804"/>
         <source>What do the levels offer?</source>
-        <translation>Was bieten die Stufen?</translation>
+        <translation>Co úrovně nabízejí?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="805"/>
         <location filename="../src/mainwindow.cpp" line="884"/>
         <source>User levels</source>
-        <translation>Benutzerstufen</translation>
+        <translation>Uživatelské úrovně</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="817"/>
         <source>Sound folder…</source>
-        <translation>Sound-Ordner…</translation>
+        <translation>Složka se zvuky…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="820"/>
         <source>Sound folder: 0001.mp3, 0002.mp3 … as on the DFPlayer&apos;s SD card</source>
-        <translation>Sound-Ordner: 0001.mp3, 0002.mp3 … wie auf der SD-Karte des DFPlayers</translation>
+        <translation>Složka se zvuky: 0001.mp3, 0002.mp3 … jako na SD kartě modulu DFPlayer</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="825"/>
         <source>Plays a sound effect output&apos;s tracks in Simulate and Live test</source>
-        <translation>Spielt die Titel eines Soundeffekt-Ausgangs in Simulation und Live-Test ab</translation>
+        <translation>Přehrává skladby výstupu se zvukovým efektem v simulaci a živém testu</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="826"/>
         <source>Mute sounds</source>
-        <translation>Sounds stummschalten</translation>
+        <translation>Ztlumit zvuky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="883"/>
         <source>&amp;User levels</source>
-        <translation>&amp;Benutzerstufen</translation>
+        <translation>&amp;Uživatelské úrovně</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="892"/>
@@ -1611,28 +1611,28 @@ Schritt %1: %2, danach %3 warten</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="898"/>
-        <source>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures GPIOcore boards (Arduino Nano, DCCnext) for model railways.</source>
-        <translation>&lt;b&gt;GPIOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Konfiguriert GPIOcore-Platinen (Arduino Nano, DCCnext) für Modellbahnen.</translation>
+        <source>&lt;b&gt;IOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Configures IOcore boards (Arduino Nano, DCCnext) for model railways.</source>
+        <translation>&lt;b&gt;IOcore Configurator&lt;/b&gt; %1&lt;br&gt;&lt;br&gt;Konfiguruje desky IOcore (Arduino Nano, DCCnext) pro modelové železnice.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1049"/>
         <source>● Simulation</source>
-        <translation>● Simulation</translation>
+        <translation>● Simulace</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1051"/>
         <source>● Connected: %1 (%2)</source>
-        <translation>● Verbunden: %1 (%2)</translation>
+        <translation>● Připojeno: %1 (%2)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1051"/>
         <source>board</source>
-        <translation>Platine</translation>
+        <translation>deska</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1056"/>
         <source>◌ Connecting to %1…</source>
-        <translation>◌ Verbinde mit %1…</translation>
+        <translation>◌ Připojování k %1…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1058"/>
@@ -1642,179 +1642,179 @@ Schritt %1: %2, danach %3 warten</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1120"/>
         <source>Connected. Read board loads its configuration; Write all puts the one on screen on the board. Changes you make now go to the board.</source>
-        <translation>Verbunden. Platine lesen lädt ihre Konfiguration; Alles schreiben überträgt die Konfiguration auf dem Bildschirm auf die Platine. Änderungen, die Sie jetzt vornehmen, gehen an die Platine.</translation>
+        <translation>Připojeno. Načíst desku načte její konfiguraci; Zapsat vše přenese konfiguraci z obrazovky do desky. Změny, které nyní provedete, jdou do desky.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1177"/>
         <source>Read everything from the board?
 
 What is on screen now is replaced by the board&apos;s configuration. Save it first (Ctrl+S) if you want to keep it.</source>
-        <translation>Alles von der Platine lesen?
+        <translation>Načíst vše z desky?
 
-Was jetzt auf dem Bildschirm steht, wird durch die Konfiguration der Platine ersetzt. Speichern Sie es zuerst (Ctrl+S), wenn Sie es behalten möchten.</translation>
+To, co je nyní na obrazovce, bude nahrazeno konfigurací desky. Pokud si to chcete ponechat, nejprve to uložte (Ctrl+S).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1196"/>
         <source>the board</source>
-        <translation>die Platine</translation>
+        <translation>desky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1198"/>
         <source>Write the whole configuration on screen to %1?
 
 Everything on the board is replaced.</source>
-        <translation>Die gesamte Konfiguration auf dem Bildschirm auf %1 schreiben?
+        <translation>Zapsat celou konfiguraci z obrazovky do %1?
 
-Alles auf der Platine wird ersetzt.</translation>
+Vše v desce bude nahrazeno.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1242"/>
         <source>The board keeps a different value for %1; not sending it again.</source>
-        <translation>Die Platine behält für %1 einen anderen Wert; er wird nicht erneut gesendet.</translation>
+        <translation>Deska si pro %1 drží jinou hodnotu; znovu se neodesílá.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1280"/>
         <source>Cannot read the preset %1</source>
-        <translation>Das Preset %1 kann nicht gelesen werden</translation>
+        <translation>Předvolbu %1 nelze přečíst</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1315"/>
         <source>Preset applied</source>
-        <translation>Preset angewendet</translation>
+        <translation>Předvolba použita</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1363"/>
         <source>Send this configuration to the connected board now?</source>
-        <translation>Diese Konfiguration jetzt an die verbundene Platine senden?</translation>
+        <translation>Odeslat tuto konfiguraci nyní do připojené desky?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1384"/>
         <source>Loaded %1</source>
-        <translation>%1 geladen</translation>
+        <translation>Načteno %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2049"/>
         <source>The configuration has changes that are not saved in a file. Save them?</source>
-        <translation>Die Konfiguration hat Änderungen, die nicht in einer Datei gespeichert sind. Speichern?</translation>
+        <translation>Konfigurace obsahuje změny, které nejsou uloženy do souboru. Uložit je?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2144"/>
         <source>straight</source>
-        <translation>Gerade</translation>
+        <translation>přímo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2144"/>
         <source>curved</source>
-        <translation>Abzweig</translation>
+        <translation>do odbočky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2169"/>
         <source>Phone remote</source>
-        <translation>Smartphone-Fernbedienung</translation>
+        <translation>Ovládání z telefonu</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2171"/>
         <source>Adjust servos from your phone: it must be on the same Wi-Fi as this computer. Scan the code with the phone&apos;s camera, or type the address in its browser. Keep this program open; the code changes every time the remote is switched on.</source>
-        <translation>Servos vom Smartphone aus einstellen: Es muss im selben WLAN sein wie dieser Computer. Scannen Sie den Code mit der Kamera des Smartphones oder geben Sie die Adresse in dessen Browser ein. Lassen Sie dieses Programm geöffnet; der Code ändert sich bei jedem Einschalten der Fernbedienung.</translation>
+        <translation>Nastavujte serva z telefonu: musí být ve stejné síti Wi-Fi jako tento počítač. Naskenujte kód fotoaparátem telefonu, nebo zadejte adresu do jeho prohlížeče. Nechte tento program otevřený; kód se mění při každém zapnutí ovládání.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2176"/>
         <source>Allow phones on my network</source>
-        <translation>Smartphones in meinem Netzwerk zulassen</translation>
+        <translation>Povolit telefony v mé síti</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2190"/>
         <source>The first time, Windows may ask whether the program may use the network: allow it for private networks.</source>
-        <translation>Beim ersten Mal fragt Windows eventuell, ob das Programm das Netzwerk benutzen darf: Erlauben Sie es für private Netzwerke.</translation>
+        <translation>Při prvním spuštění se Windows může zeptat, zda program smí používat síť: povolte to pro soukromé sítě.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2204"/>
         <source>Off</source>
-        <translation>Aus</translation>
+        <translation>Vypnuto</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2223"/>
         <source>Could not open a network port (8080-8089).</source>
-        <translation>Es konnte kein Netzwerkport geöffnet werden (8080-8089).</translation>
+        <translation>Nepodařilo se otevřít síťový port (8080-8089).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2251"/>
         <source>Live test: click ◀ / ▶ or ▶ start on an input. The board switches its pins and reports back; nothing needs to be connected.</source>
-        <translation>Live-Test: Klicken Sie an einem Eingang auf ◀ / ▶ oder ▶ Start. Die Platine schaltet ihre Pins und meldet zurück; es muss nichts angeschlossen sein.</translation>
+        <translation>Živý test: klikněte u vstupu na ◀ / ▶ nebo ▶ start. Deska přepne své piny a ohlásí stav zpět; nic nemusí být připojeno.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2270"/>
         <source>DCC extended — address %1</source>
-        <translation>DCC extended — Adresse %1</translation>
+        <translation>DCC extended — adresa %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2274"/>
         <source>Value sent: %1 (0x%2)</source>
-        <translation>Gesendeter Wert: %1 (0x%2)</translation>
+        <translation>Odeslaná hodnota: %1 (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>flashing</source>
-        <translation>blinkend</translation>
+        <translation>bliká</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>flashing, opposite phase</source>
-        <translation>blinkend, gegenphasig</translation>
+        <translation>bliká, v protifázi</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2300"/>
         <source>Lamp %1</source>
-        <translation>Lampe %1</translation>
+        <translation>Světlo %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2310"/>
         <source>PWM value</source>
-        <translation>PWM-Wert</translation>
+        <translation>Hodnota PWM</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2314"/>
         <source>Sent as if your command station sent a DCC extended accessory command to address %1. Every change is sent straight away.</source>
-        <translation>Wird gesendet, als ob Ihre Zentrale einen DCC-extended-Zubehörbefehl an Adresse %1 sendet. Jede Änderung wird sofort gesendet.</translation>
+        <translation>Odesláno, jako by vaše centrála poslala povel DCC extended pro příslušenství na adresu %1. Každá změna se odešle hned.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2319"/>
         <location filename="../src/mainwindow.cpp" line="2370"/>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2437"/>
         <source>The board is &quot;%1&quot;, the screen shows &quot;%2&quot;. The live test shows the screen&apos;s wiring, so read the board first?</source>
-        <translation>Die Platine heißt &quot;%1&quot;, der Bildschirm zeigt &quot;%2&quot;. Der Live-Test zeigt die Verdrahtung des Bildschirms, also zuerst die Platine lesen?</translation>
+        <translation>Deska je „%1“, obrazovka ukazuje „%2“. Živý test ukazuje zapojení z obrazovky, takže nejprve načíst desku?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2443"/>
         <source>Connected to &quot;%1&quot;, the screen shows &quot;%2&quot;. Read board or Write all.</source>
-        <translation>Verbunden mit &quot;%1&quot;, der Bildschirm zeigt &quot;%2&quot;. Platine lesen oder Alles schreiben.</translation>
+        <translation>Připojeno k &quot;%1&quot;, obrazovka zobrazuje &quot;%2&quot;. Načíst desku, nebo Zapsat vše.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1749"/>
         <location filename="../src/mainwindow.cpp" line="2464"/>
         <location filename="../src/mainwindow.cpp" line="2518"/>
         <location filename="../src/mainwindow.cpp" line="2637"/>
-        <source>%1 — GPIOcore Configurator</source>
-        <translation>%1 — GPIOcore Configurator</translation>
+        <source>%1 — IOcore Configurator</source>
+        <translation>%1 — IOcore Configurator</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2649"/>
         <source>max. 16 letters, e.g. Station-left</source>
-        <translation>max. 16 Zeichen, z. B. Bahnhof-links</translation>
+        <translation>max. 16 znaků, např. Stanice-levá</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2655"/>
         <source>Start with</source>
-        <translation>Beginnen mit</translation>
+        <translation>Začít s</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2656"/>
         <source>When you later connect a board and give it this name, these settings belong to it. Use Write all to put them on the board.</source>
-        <translation>Wenn Sie später eine Platine anschließen und ihr diesen Namen geben, gehören diese Einstellungen zu ihr. Mit Alles schreiben übertragen Sie sie auf die Platine.</translation>
+        <translation>Když později připojíte desku a dáte jí tento název, budou tato nastavení patřit k ní. Pomocí Zapsat vše je přenesete do desky.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2427"/>
@@ -1824,141 +1824,141 @@ Alles auf der Platine wird ersetzt.</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2427"/>
         <source>board without a name</source>
-        <translation>Platine ohne Namen</translation>
+        <translation>deska bez názvu</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2540"/>
         <source>Name this board</source>
-        <translation>Platine benennen</translation>
+        <translation>Pojmenovat tuto desku</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2541"/>
         <source>This board has no name yet. Give it a short, unique name (max. 16 letters, e.g. &quot;Station-left&quot;).
 The name is stored on the board; your names for inputs and outputs are kept in a file with this name.</source>
-        <translation>Diese Platine hat noch keinen Namen. Geben Sie ihr einen kurzen, eindeutigen Namen (max. 16 Zeichen, z. B. &quot;Bahnhof-links&quot;).
-Der Name wird auf der Platine gespeichert; Ihre Namen für Eingänge und Ausgänge stehen in einer Datei mit diesem Namen.</translation>
+        <translation>Tato deska ještě nemá název. Dejte jí krátký, jedinečný název (max. 16 znaků, např. &quot;Stanice-vlevo&quot;).
+Název se uloží v desce; vaše názvy vstupů a výstupů se uchovávají v souboru s tímto názvem.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="887"/>
         <location filename="../src/mainwindow.cpp" line="2556"/>
         <source>Board settings</source>
-        <translation>Platineneinstellungen</translation>
+        <translation>Nastavení desky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="853"/>
         <source>Language</source>
-        <translation>Sprache</translation>
+        <translation>Jazyk</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="863"/>
         <source>The language changes the next time you start the program.</source>
-        <translation>Die Sprache ändert sich beim nächsten Programmstart.</translation>
+        <translation>Jazyk se změní při příštím spuštění programu.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="866"/>
         <source>Automatic (system language)</source>
-        <translation>Automatisch (Systemsprache)</translation>
+        <translation>Automaticky (jazyk systému)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1394"/>
         <source>Example opened. Save it under a name of your own (Ctrl+S); the example itself is never changed.</source>
-        <translation>Beispiel geöffnet. Speichern Sie es unter einem eigenen Namen (Ctrl+S); das Beispiel selbst wird nie geändert.</translation>
+        <translation>Příklad byl otevřen. Uložte jej pod vlastním názvem (Ctrl+S); samotný příklad se nikdy nemění.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1447"/>
         <source>%1 output(s), %2 input(s), %3</source>
-        <translation>%1 Ausgang/Ausgänge, %2 Eingang/Eingänge, %3</translation>
+        <translation>výstupů: %1, vstupů: %2, %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1458"/>
         <source>Open example</source>
-        <translation>Beispiel öffnen</translation>
+        <translation>Otevřít příklad</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1460"/>
         <source>Start from an example. It opens like a board file, but without a file name: when you save, you choose a new name, so the example stays as it is.</source>
-        <translation>Mit einem Beispiel beginnen. Es öffnet sich wie eine Platinendatei, aber ohne Dateinamen: Beim Speichern wählen Sie einen neuen Namen, sodass das Beispiel unverändert bleibt.</translation>
+        <translation>Začněte příkladem. Otevře se jako soubor desky, ale bez názvu souboru: při ukládání zvolíte nový název, takže příklad zůstane beze změny.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1477"/>
         <source>No examples found in %1</source>
-        <translation>Keine Beispiele gefunden in %1</translation>
+        <translation>V %1 nebyly nalezeny žádné příklady</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1499"/>
         <source>Outputs (%1 in use)</source>
-        <translation>Ausgänge (%1 benutzt)</translation>
+        <translation>Výstupy (používáno: %1)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1500"/>
         <source>Inputs (%1 in use)</source>
-        <translation>Eingänge (%1 benutzt)</translation>
+        <translation>Vstupy (používáno: %1)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1501"/>
         <source>Board settings (type, route timing, interlocking)</source>
-        <translation>Platineneinstellungen (Typ, Fahrstraßen-Timing, Verriegelung)</translation>
+        <translation>Nastavení desky (typ, časování jízdních cest, vzájemné vyloučení)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1544"/>
         <source>Exported to %1</source>
-        <translation>Exportiert nach %1</translation>
+        <translation>Exportováno do %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1555"/>
         <location filename="../src/mainwindow.cpp" line="1567"/>
         <source>Export</source>
-        <translation>Exportieren</translation>
+        <translation>Export</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1557"/>
         <source>Save the items in use of the parts you tick in a board file of their own, with their names, settings and routes, e.g. to make your own example. Import adds them to another board.</source>
-        <translation>Die benutzten Elemente der angekreuzten Teile in einer eigenen Platinendatei speichern, mit ihren Namen, Einstellungen und Fahrstraßen, z. B. um ein eigenes Beispiel zu erstellen. Importieren fügt sie einer anderen Platine hinzu.</translation>
+        <translation>Uloží používané položky zaškrtnutých částí do samostatného souboru desky, s jejich názvy, nastavením a jízdními cestami, např. pro vytvoření vlastního příkladu. Import je přidá do jiné desky.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1563"/>
         <source>Export…</source>
-        <translation>Exportieren…</translation>
+        <translation>Exportovat…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1575"/>
         <source>Import from a board file</source>
-        <translation>Aus einer Platinendatei importieren</translation>
+        <translation>Importovat ze souboru desky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1591"/>
         <source>Import from %1</source>
-        <translation>Aus %1 importieren</translation>
+        <translation>Import z %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1593"/>
         <source>Add the items in use of the parts you tick to this board.</source>
-        <translation>Die benutzten Elemente der angekreuzten Teile zu dieser Platine hinzufügen.</translation>
+        <translation>Přidá používané položky zaškrtnutých částí do této desky.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1597"/>
         <source>Where to:</source>
-        <translation>Wohin:</translation>
+        <translation>Kam:</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1599"/>
         <source>Same numbers (replace): every item goes to its own number</source>
-        <translation>Gleiche Nummern (ersetzen): Jedes Element kommt auf seine eigene Nummer</translation>
+        <translation>Stejná čísla (nahradit): každá položka jde na své číslo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1600"/>
         <source>Into free slots: the first free outputs and inputs, links between the imported items are renumbered</source>
-        <translation>In freie Plätze: die ersten freien Ausgänge und Eingänge, Verknüpfungen zwischen den importierten Elementen werden neu nummeriert</translation>
+        <translation>Do volných míst: první volné výstupy a vstupy, vazby mezi importovanými položkami se přečíslují</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1608"/>
         <source>A pin that is already in use goes to the imported item: your own item keeps its function, but loses that pin. The items concerned are listed afterwards.</source>
-        <translation>Ein Pin, der bereits benutzt wird, geht an das importierte Element: Ihr eigenes Element behält seine Funktion, verliert aber diesen Pin. Die betroffenen Elemente werden anschließend aufgelistet.</translation>
+        <translation>Pin, který se již používá, připadne importované položce: vaše položka si ponechá funkci, ale tento pin ztratí. Dotčené položky se poté vypíší.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1613"/>
         <source>Import</source>
-        <translation>Importieren</translation>
+        <translation>Importovat</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1643"/>
@@ -1973,11 +1973,11 @@ Der Name wird auf der Platine gespeichert; Ihre Namen für Eingänge und Ausgän
 %1
 
 Import?</source>
-        <translation>Diese Ihrer Elemente werden durch die aus der Datei ersetzt:
+        <translation>Tyto vaše položky budou nahrazeny položkami ze souboru:
 
 %1
 
-Importieren?</translation>
+Importovat?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1678"/>
@@ -1988,96 +1988,96 @@ Importieren?</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="1707"/>
         <source>Imported %1 output(s) and %2 input(s) from %3</source>
-        <translation>%1 Ausgang/Ausgänge und %2 Eingang/Eingänge aus %3 importiert</translation>
+        <translation>Importováno výstupů: %1 a vstupů: %2 z %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1710"/>
         <source>Some pins were already in use:
 
 %1</source>
-        <translation>Einige Pins waren bereits benutzt:
+        <translation>Některé piny se již používaly:
 
 %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1724"/>
         <source>This project uses %1 features (%2). The level is set to %1.</source>
-        <translation>Dieses Projekt benutzt Funktionen der Stufe %1 (%2). Die Stufe wird auf %1 gesetzt.</translation>
+        <translation>Tento projekt používá funkce úrovně %1 (%2). Úroveň je nastavena na %1.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1934"/>
         <source>%1 uses %2, which cannot be used here: %3.</source>
-        <translation>%1 benutzt %2, was hier nicht möglich ist: %3.</translation>
+        <translation>%1 používá %2, což zde nelze použít: %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1939"/>
         <source>%1 (%2) is also used by %3 (%4).</source>
-        <translation>%1 (%2) wird auch von %3 (%4) benutzt.</translation>
+        <translation>%1 (%2) používá také %3 (%4).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1941"/>
         <source>%1 (%2) is also used by %3.</source>
-        <translation>%1 (%2) wird auch von %3 benutzt.</translation>
+        <translation>%1 (%2) používá také %3.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1950"/>
         <source>Detector %1 is not in use or has no pin: the board never sees that block occupied.</source>
-        <translation>Melder %1 ist nicht benutzt oder hat keinen Pin: Die Platine sieht diesen Block nie besetzt.</translation>
+        <translation>Hlásič %1 se nepoužívá nebo nemá pin: deska tento oddíl nikdy neuvidí jako obsazený.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1961"/>
         <source>%1 (%2): conflict with the servo(s). The Servo library uses timer 1, so PWM on %3 and %4 stops working as soon as at least one servo output exists. Use %5 for PWM, or remove the servo.</source>
-        <translation>%1 (%2): Konflikt mit den Servos. Die Servo-Bibliothek benutzt Timer 1, daher funktioniert PWM an %3 und %4 nicht mehr, sobald mindestens ein Servo-Ausgang existiert. Benutzen Sie %5 für PWM oder entfernen Sie den Servo.</translation>
+        <translation>%1 (%2): konflikt se servy. Knihovna Servo používá časovač 1, takže PWM na %3 a %4 přestane fungovat, jakmile existuje alespoň jeden výstup serva. Použijte %5 pro PWM, nebo servo odeberte.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1982"/>
         <source>Pin %1 cannot be used here: %2.</source>
-        <translation>Pin %1 kann hier nicht benutzt werden: %2.</translation>
+        <translation>Pin %1 zde nelze použít: %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1986"/>
         <source>Pin %1 is also used by %2.</source>
-        <translation>Pin %1 wird auch von %2 benutzt.</translation>
+        <translation>Pin %1 používá také %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1995"/>
         <source>No pin is set: this sensor never reports its block occupied.</source>
-        <translation>Es ist kein Pin gesetzt: Dieser Sensor meldet seinen Block nie besetzt.</translation>
+        <translation>Není nastaven žádný pin: tento snímač nikdy nenahlásí obsazení svého oddílu.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2002"/>
         <source>Route step %1 sets %2, which is not in use.</source>
-        <translation>Fahrstraßen-Schritt %1 setzt %2, das nicht benutzt wird.</translation>
+        <translation>Krok jízdní cesty %1 nastavuje %2, které se nepoužívá.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2005"/>
         <source>Route step %1 sets %2, a block signal: it ignores the step.</source>
-        <translation>Fahrstraßen-Schritt %1 setzt %2, ein Blocksignal: Es ignoriert den Schritt.</translation>
+        <translation>Krok jízdní cesty %1 nastavuje %2, autoblokové návěstidlo: krok ignoruje.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2013"/>
         <source>%1 is not in use.</source>
-        <translation>%1 wird nicht benutzt.</translation>
+        <translation>%1 se nepoužívá.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2015"/>
         <source>%1 is a block signal: it sets its own aspect and ignores this input.</source>
-        <translation>%1 ist ein Blocksignal: Es bestimmt sein Signalbild selbst und ignoriert diesen Eingang.</translation>
+        <translation>%1 je autoblokové návěstidlo: samo nastavuje svou návěst a tento vstup ignoruje.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2104"/>
         <source>The pin was in use: %1 keeps its settings, but has no pin there now.</source>
-        <translation>Der Pin wurde benutzt: %1 behält seine Einstellungen, hat dort jetzt aber keinen Pin.</translation>
+        <translation>Pin se používal: %1 si ponechá své nastavení, ale nyní tam nemá žádný pin.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2143"/>
         <source>Phone: %1 %2 = %3°</source>
-        <translation>Smartphone: %1 %2 = %3°</translation>
+        <translation>Telefon: %1 %2 = %3°</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2262"/>
         <source>%1 has no DCC address, so it cannot receive a DCC extended command.</source>
-        <translation>%1 hat keine DCC-Adresse und kann daher keinen DCC-extended-Befehl empfangen.</translation>
+        <translation>%1 nemá adresu DCC, a proto nemůže přijmout rozšířený příkaz DCC.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2361"/>
@@ -2087,12 +2087,12 @@ Importieren?</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2564"/>
         <source>Own wait time per route step</source>
-        <translation>Eigene Wartezeit pro Fahrstraßen-Schritt</translation>
+        <translation>Vlastní čekací doba pro každý krok jízdní cesty</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2566"/>
         <source>Off: every step waits the same time and routes need half the memory</source>
-        <translation>Aus: Jeder Schritt wartet gleich lange und Fahrstraßen brauchen nur halb so viel Speicher</translation>
+        <translation>Vypnuto: každý krok čeká stejně dlouho a jízdní cesty zabírají polovinu paměti</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2571"/>
@@ -2102,17 +2102,17 @@ Importieren?</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2574"/>
         <source>Off — routes may run at the same time</source>
-        <translation>Aus — Fahrstraßen dürfen gleichzeitig laufen</translation>
+        <translation>Vypnuto — jízdní cesty mohou běžet současně</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2575"/>
         <source>On — one route at a time</source>
-        <translation>Ein — immer nur eine Fahrstraße</translation>
+        <translation>Zapnuto — vždy jen jedna jízdní cesta</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2576"/>
         <source>Automatic — turnout routes one at a time, lights in parallel</source>
-        <translation>Automatisch — Fahrstraßen mit Weichen nacheinander, Beleuchtung gleichzeitig</translation>
+        <translation>Automaticky — jízdní cesty s výhybkami postupně, osvětlení souběžně</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2582"/>
@@ -2122,68 +2122,68 @@ Importieren?</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2584"/>
         <source>How fast flashing lamps of block signals blink. 1 Hz = 60 times a minute; 1.5 Hz = 90 a minute.</source>
-        <translation>Wie schnell blinkende Lampen von Blocksignalen blinken. 1 Hz = 60-mal pro Minute; 1,5 Hz = 90-mal pro Minute.</translation>
+        <translation>Jak rychle blikají světla autoblokových návěstidel. 1 Hz = 60krát za minutu; 1,5 Hz = 90krát za minutu.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2586"/>
         <location filename="../src/mainwindow.cpp" line="2654"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2587"/>
         <source>Board type</source>
-        <translation>Platinentyp</translation>
+        <translation>Typ desky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2589"/>
         <source>Wait time per step</source>
-        <translation>Wartezeit pro Schritt</translation>
+        <translation>Čekací doba na krok</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2590"/>
         <source>Route interlocking</source>
-        <translation>Fahrstraßen-Verriegelung</translation>
+        <translation>Vzájemné vyloučení jízdních cest</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2591"/>
         <source>Block signals flash at</source>
-        <translation>Blocksignale blinken mit</translation>
+        <translation>Autobloková návěstidla blikají s</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2600"/>
         <source>This board&apos;s firmware cannot store these settings yet; they are only kept in the file.</source>
-        <translation>Die Firmware dieser Platine kann diese Einstellungen noch nicht speichern; sie stehen nur in der Datei.</translation>
+        <translation>Firmware této desky zatím tato nastavení neumí uložit; uchovávají se jen v souboru.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2645"/>
         <source>New board</source>
-        <translation>Neue Platine</translation>
+        <translation>Nová deska</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2697"/>
         <source>All 16 outputs are in use.</source>
-        <translation>Alle 16 Ausgänge sind belegt.</translation>
+        <translation>Všech 16 výstupů je obsazeno.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2709"/>
         <source>All 16 inputs are in use.</source>
-        <translation>Alle 16 Eingänge sind belegt.</translation>
+        <translation>Všech 16 vstupů je obsazeno.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2742"/>
         <source>%1 removed; %2 drove it and is now not in use as well.</source>
-        <translation>%1 entfernt; %2 wurde davon angesteuert und wird jetzt ebenfalls nicht mehr benutzt.</translation>
+        <translation>%1 odebráno; %2, které ho řídilo, se nyní také nepoužívá.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2773"/>
         <source>Set up Bluetooth (HC-05)</source>
-        <translation>Bluetooth (HC-05) einrichten</translation>
+        <translation>Nastavit Bluetooth (HC-05)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2776"/>
         <source>&lt;b&gt;Wiring&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 through a voltage divider: 1 kΩ from D1 to RXD, 2 kΩ from RXD to GND&lt;/li&gt;&lt;li&gt;TXD → D0 through a Schottky diode (BAT85 or 1N5819), &lt;b&gt;cathode (stripe) at the HC-05 TXD&lt;/b&gt;, so USB still works while the HC-05 is attached&lt;/li&gt;&lt;/ul&gt;Hold the button on the HC-05 while you plug in the USB cable (its LED blinks slowly), connect, then click &lt;b&gt;Start&lt;/b&gt;.</source>
-        <translation>&lt;b&gt;Verdrahtung&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 über einen Spannungsteiler: 1 kΩ von D1 nach RXD, 2 kΩ von RXD nach GND&lt;/li&gt;&lt;li&gt;TXD → D0 über eine Schottky-Diode (BAT85 oder 1N5819), &lt;b&gt;Kathode (Strich) am TXD des HC-05&lt;/b&gt;, damit USB weiterhin funktioniert, während der HC-05 angeschlossen ist&lt;/li&gt;&lt;/ul&gt;Halten Sie die Taste am HC-05 gedrückt, während Sie das USB-Kabel einstecken (seine LED blinkt langsam), verbinden Sie sich und klicken Sie dann auf &lt;b&gt;Start&lt;/b&gt;.</translation>
+        <translation>&lt;b&gt;Zapojení&lt;/b&gt; (HC-05 → Nano):&lt;ul&gt;&lt;li&gt;VCC → 5 V, GND → GND&lt;/li&gt;&lt;li&gt;RXD → D1 přes dělič napětí: 1 kΩ z D1 na RXD, 2 kΩ z RXD na GND&lt;/li&gt;&lt;li&gt;TXD → D0 přes Schottkyho diodu (BAT85 nebo 1N5819), &lt;b&gt;katoda (proužek) na TXD modulu HC-05&lt;/b&gt;, aby USB fungovalo i při připojeném HC-05&lt;/li&gt;&lt;/ul&gt;Při zasouvání kabelu USB držte tlačítko na HC-05 (jeho LED pomalu bliká), připojte se a poté klikněte na &lt;b&gt;Start&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2791"/>
@@ -2193,86 +2193,86 @@ Importieren?</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2802"/>
         <source>Setting up the HC-05… (a few seconds)</source>
-        <translation>HC-05 wird eingerichtet… (einige Sekunden)</translation>
+        <translation>Nastavuji HC-05… (několik sekund)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2814"/>
-        <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in GPIOcore.</source>
-        <translation>&lt;b&gt;Fertig:&lt;/b&gt; Der HC-05 läuft jetzt mit 115200 Baud (er hat bei %1 Baud geantwortet). Ziehen Sie die Platine ab und stecken Sie sie wieder an (ohne die Taste zu halten). Koppeln Sie &apos;%2&apos; in den Bluetooth-Einstellungen von Windows (PIN 1234, bei manchen Modulen 0000); Windows legt dafür einen COM-Port an — wählen Sie diesen Port in GPIOcore.</translation>
+        <source>&lt;b&gt;Done:&lt;/b&gt; the HC-05 now runs at 115200 baud (it answered at %1 baud). Unplug the board and plug it in again (without holding the button). Pair &apos;%2&apos; in Windows Bluetooth settings (PIN 1234, or 0000 on some modules); Windows creates a COM port for it — choose that port in IOcore.</source>
+        <translation>&lt;b&gt;Hotovo:&lt;/b&gt; HC-05 nyní pracuje rychlostí 115200 baudů (odpověděl při %1 baudech). Odpojte desku a znovu ji připojte (bez držení tlačítka). Spárujte &apos;%2&apos; v nastavení Bluetooth ve Windows (PIN 1234, u některých modulů 0000); Windows pro něj vytvoří port COM — tento port zvolte v IOcore.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2818"/>
         <source>&lt;br&gt;The name could not be set: it keeps its old name.</source>
-        <translation>&lt;br&gt;Der Name konnte nicht gesetzt werden: Er behält seinen alten Namen.</translation>
+        <translation>&lt;br&gt;Název se nepodařilo nastavit: zůstává starý název.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2821"/>
         <source>&lt;b&gt;No HC-05 answered.&lt;/b&gt; Likely causes: it is not in AT mode (hold its button while plugging in the USB cable: the LED blinks slowly, about every 2 s), the wiring (TXD → D0, RXD → D1 through the divider), or the diode is missing or the wrong way round (stripe at the HC-05).</source>
-        <translation>&lt;b&gt;Kein HC-05 hat geantwortet.&lt;/b&gt; Mögliche Ursachen: Er ist nicht im AT-Modus (Taste gedrückt halten, während Sie das USB-Kabel einstecken: Die LED blinkt langsam, etwa alle 2 s), die Verdrahtung (TXD → D0, RXD → D1 über den Teiler) oder die Diode fehlt oder ist falsch herum eingebaut (Strich am HC-05).</translation>
+        <translation>&lt;b&gt;Žádný HC-05 neodpověděl.&lt;/b&gt; Pravděpodobné příčiny: není v režimu AT (při zasouvání kabelu USB držte jeho tlačítko: LED pomalu bliká, asi každé 2 s), zapojení (TXD → D0, RXD → D1 přes dělič), nebo chybí dioda či je otočená špatně (proužek na straně HC-05).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2827"/>
         <source>&lt;b&gt;The HC-05 answered at %1 baud but refused the new settings.&lt;/b&gt; It is probably not in AT mode: hold its button while plugging in the USB cable (the LED blinks slowly) and try again. Some other modules (HC-06, clones) do not know these commands.</source>
-        <translation>&lt;b&gt;Der HC-05 hat bei %1 Baud geantwortet, aber die neuen Einstellungen abgelehnt.&lt;/b&gt; Er ist wahrscheinlich nicht im AT-Modus: Taste gedrückt halten, während Sie das USB-Kabel einstecken (die LED blinkt langsam), und erneut versuchen. Manche anderen Module (HC-06, Nachbauten) kennen diese Befehle nicht.</translation>
+        <translation>&lt;b&gt;HC-05 odpověděl při %1 baudech, ale nové nastavení odmítl.&lt;/b&gt; Pravděpodobně není v režimu AT: při zasouvání kabelu USB držte jeho tlačítko (LED pomalu bliká) a zkuste to znovu. Některé jiné moduly (HC-06, klony) tyto příkazy neznají.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2832"/>
         <source>&lt;b&gt;The board did not answer.&lt;/b&gt; Check the connection and try again.</source>
-        <translation>&lt;b&gt;Die Platine hat nicht geantwortet.&lt;/b&gt; Prüfen Sie die Verbindung und versuchen Sie es erneut.</translation>
+        <translation>&lt;b&gt;Deska neodpověděla.&lt;/b&gt; Zkontrolujte připojení a zkuste to znovu.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2850"/>
         <source>No preset &quot;%1&quot; in %2</source>
-        <translation>Kein Preset &quot;%1&quot; in %2</translation>
+        <translation>Žádná předvolba „%1“ v %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="746"/>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Soubor</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="173"/>
         <source>frog relays A %1, B %2, unifrog %3</source>
-        <translation>Herzstück-Relais A %1, B %2, Unifrog %3</translation>
+        <translation>relé srdcovky A %1, B %2, unifrog %3</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="174"/>
         <location filename="../src/mainwindow.cpp" line="175"/>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>on</source>
-        <translation>ein</translation>
+        <translation>zap</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="174"/>
         <location filename="../src/mainwindow.cpp" line="175"/>
         <location filename="../src/mainwindow.cpp" line="2295"/>
         <source>off</source>
-        <translation>aus</translation>
+        <translation>vyp</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="177"/>
         <source>track %1</source>
-        <translation>Titel %1</translation>
+        <translation>skladba %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="177"/>
         <source>sound stopped</source>
-        <translation>Sound gestoppt</translation>
+        <translation>zvuk zastaven</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="178"/>
         <source>value %1</source>
-        <translation>Wert %1</translation>
+        <translation>hodnota %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="179"/>
         <source>straight / on</source>
-        <translation>Gerade / ein</translation>
+        <translation>přímo / zap</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="179"/>
         <source>curved / off</source>
-        <translation>Abzweig / aus</translation>
+        <translation>do odbočky / vyp</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="180"/>
@@ -2282,281 +2282,281 @@ Importieren?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="196"/>
-        <source>No GPIOcore board answered on %1.
+        <source>No IOcore board answered on %1.
 
-Check that the right port is chosen and that the board has the GPIOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
-        <translation>Keine GPIOcore-Platine hat an %1 geantwortet.
+Check that the right port is chosen and that the board has the IOcore firmware (Board &gt; Flash firmware). A board that has been running for more than 5 seconds without the program needs a short press on its config button (Nano) or a reset (unplug and plug in the USB cable).</source>
+        <translation>Na %1 neodpověděla žádná deska IOcore.
 
-Prüfen Sie, ob der richtige Port gewählt ist und die Platine die GPIOcore-Firmware hat (Platine &gt; Firmware flashen). Eine Platine, die schon länger als 5 Sekunden ohne das Programm läuft, braucht einen kurzen Druck auf ihren Konfig-Taster (Nano) oder einen Reset (USB-Kabel abziehen und wieder anstecken).</translation>
+Zkontrolujte, zda je zvolen správný port a zda má deska firmware IOcore (Deska &gt; Nahrát firmware). Deska, která běží déle než 5 sekund bez programu, vyžaduje krátké stisknutí tlačítka konfigurace (Nano) nebo reset (odpojte a znovu připojte kabel USB).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="203"/>
         <location filename="../src/mainwindow.cpp" line="1054"/>
         <source>◌ Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation>◌ Warte auf die Platine — Konfig-Taster kurz drücken (Nano)…</translation>
+        <translation>◌ Čekám na desku — krátce stiskněte její tlačítko konfigurace (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="204"/>
         <source>Waiting for the board — press its config button briefly (Nano)…</source>
-        <translation>Warte auf die Platine — Konfig-Taster kurz drücken (Nano)…</translation>
+        <translation>Čekám na desku — krátce stiskněte její tlačítko konfigurace (Nano)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="313"/>
         <source>Lamp colours (only shown in the GUI):</source>
-        <translation>Lampenfarben (nur in diesem Programm):</translation>
+        <translation>Barvy světel (jen v programu):</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="317"/>
         <location filename="../src/mainwindow.cpp" line="323"/>
         <source>Colour of lamp %1</source>
-        <translation>Farbe von Lampe %1</translation>
+        <translation>Barva světla %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="436"/>
         <source>%1 already drives %2</source>
-        <translation>%1 steuert bereits %2</translation>
+        <translation>%1 už řídí %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="440"/>
         <source>The route of %1 already has %2 steps (maximum)</source>
-        <translation>Die Fahrstraße von %1 hat bereits %2 Schritte (Maximum)</translation>
+        <translation>Jízdní cesta %1 už má %2 kroků (maximum)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="450"/>
         <source>%1 is a block signal: it sets its own aspect from its detectors, an input cannot switch it.</source>
-        <translation>%1 ist ein Blocksignal: Es bestimmt sein Signalbild selbst aus seinen Meldern, ein Eingang kann es nicht schalten.</translation>
+        <translation>%1 je autoblokové návěstidlo: samo si nastavuje návěst ze svých hlásičů, vstup ho nemůže přepnout.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="682"/>
         <source>● Configure</source>
-        <translation>● Konfigurieren</translation>
+        <translation>● Konfigurovat</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="685"/>
         <source>● Simulate</source>
-        <translation>● Simulieren</translation>
+        <translation>● Simulovat</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="688"/>
         <source>● Live test</source>
-        <translation>● Live-Test</translation>
+        <translation>● Živý test</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="723"/>
         <source>Ready-made configurations from %1</source>
-        <translation>Fertige Konfigurationen aus %1</translation>
+        <translation>Hotové konfigurace z %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="747"/>
         <source>&amp;New board (offline)…</source>
-        <translation>&amp;Neue Platine (offline)…</translation>
+        <translation>&amp;Nová deska (offline)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="748"/>
         <source>&amp;Open configuration…</source>
-        <translation>Konfiguration ö&amp;ffnen…</translation>
+        <translation>&amp;Otevřít konfiguraci…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="757"/>
         <source>Open &amp;example…</source>
-        <translation>B&amp;eispiel öffnen…</translation>
+        <translation>Otevřít &amp;příklad…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="759"/>
         <source>&amp;Export…</source>
-        <translation>E&amp;xportieren…</translation>
+        <translation>&amp;Exportovat…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="760"/>
         <source>Save some outputs, inputs or the board settings in a file of their own, e.g. as your own example</source>
-        <translation>Einige Ausgänge, Eingänge oder die Platineneinstellungen in einer eigenen Datei speichern, z. B. als eigenes Beispiel</translation>
+        <translation>Uložit některé výstupy, vstupy nebo nastavení desky do samostatného souboru, např. jako vlastní příklad</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="761"/>
         <source>&amp;Import…</source>
-        <translation>&amp;Importieren…</translation>
+        <translation>&amp;Importovat…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="762"/>
         <source>Add the outputs, inputs or board settings of another board file to this one</source>
-        <translation>Die Ausgänge, Eingänge oder Platineneinstellungen einer anderen Platinendatei zu dieser hinzufügen</translation>
+        <translation>Přidat výstupy, vstupy nebo nastavení desky z jiného souboru desky do této</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="764"/>
         <source>Open the boards folder</source>
-        <translation>Platinen-Ordner öffnen</translation>
+        <translation>Otevřít složku desek</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="769"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Beenden</translation>
+        <translation>&amp;Konec</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="771"/>
         <source>&amp;Board</source>
-        <translation>&amp;Platine</translation>
+        <translation>&amp;Deska</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="779"/>
         <source>Apply a preset…</source>
-        <translation>Preset anwenden…</translation>
+        <translation>Použít předvolbu…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="781"/>
         <source>&amp;Flash firmware…</source>
-        <translation>Firmware &amp;flashen…</translation>
+        <translation>&amp;Nahrát firmware…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="783"/>
         <source>Set up &amp;Bluetooth (HC-05)…</source>
-        <translation>&amp;Bluetooth (HC-05) einrichten…</translation>
+        <translation>Nastavit &amp;Bluetooth (HC-05)…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="787"/>
         <source>&amp;View</source>
-        <translation>&amp;Ansicht</translation>
+        <translation>&amp;Zobrazení</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="808"/>
         <source>Show unused inputs and outputs</source>
-        <translation>Unbenutzte Eingänge und Ausgänge anzeigen</translation>
+        <translation>Zobrazit nepoužité vstupy a výstupy</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="833"/>
         <source>Theme</source>
-        <translation>Design</translation>
+        <translation>Motiv</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="835"/>
         <source>Automatic (Windows)</source>
-        <translation>Automatisch (Windows)</translation>
+        <translation>Automaticky (Windows)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="836"/>
         <source>Light</source>
-        <translation>Hell</translation>
+        <translation>Světlý</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="837"/>
         <source>Dark</source>
-        <translation>Dunkel</translation>
+        <translation>Tmavý</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="875"/>
         <source>&amp;Help</source>
-        <translation>&amp;Hilfe</translation>
+        <translation>&amp;Nápověda</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="876"/>
         <source>&amp;Getting started</source>
-        <translation>&amp;Erste Schritte</translation>
+        <translation>&amp;Začínáme</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="877"/>
         <source>Getting started</source>
-        <translation>Erste Schritte</translation>
+        <translation>Začínáme</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="880"/>
         <source>&amp;Configure, simulate and live test</source>
-        <translation>&amp;Konfigurieren, Simulieren und Live-Test</translation>
+        <translation>&amp;Konfigurace, simulace a živý test</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="881"/>
         <source>Configure, simulate and live test</source>
-        <translation>Konfigurieren, Simulieren und Live-Test</translation>
+        <translation>Konfigurace, simulace a živý test</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="886"/>
         <source>&amp;Board settings</source>
-        <translation>&amp;Platineneinstellungen</translation>
+        <translation>Nastavení &amp;desky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="889"/>
         <source>Config &amp;button and teaching servos (9999)</source>
-        <translation>Konfig-&amp;Taster und Servos einlernen (9999)</translation>
+        <translation>&amp;Tlačítko konfigurace a nastavení serv (9999)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="890"/>
         <source>Config button and teaching servos</source>
-        <translation>Konfig-Taster und Servos einlernen</translation>
+        <translation>Tlačítko konfigurace a nastavení serv</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="896"/>
         <source>&amp;About</source>
-        <translation>Ü&amp;ber</translation>
+        <translation>&amp;O programu</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="922"/>
         <source>no serial ports found</source>
-        <translation>keine seriellen Schnittstellen gefunden</translation>
+        <translation>nenalezeny žádné sériové porty</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="945"/>
         <source>Select a serial port first, or use Demo.</source>
-        <translation>Zuerst eine serielle Schnittstelle wählen oder Demo verwenden.</translation>
+        <translation>Nejprve vyberte sériový port, nebo použijte Demo.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="957"/>
         <source>Could not open %1:
 %2</source>
-        <translation>%1 kann nicht geöffnet werden:
+        <translation>Nelze otevřít %1:
 %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1063"/>
         <location filename="../src/mainwindow.cpp" line="1078"/>
         <source>Disconnect</source>
-        <translation>Trennen</translation>
+        <translation>Odpojit</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1082"/>
         <source>● %1 — waiting for board…</source>
-        <translation>● %1 — warte auf Platine…</translation>
+        <translation>● %1 — čekám na desku…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1087"/>
         <source>○ Not connected</source>
-        <translation>○ Nicht verbunden</translation>
+        <translation>○ Nepřipojeno</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1105"/>
-        <source>● %1 — GPIOcore %2</source>
-        <translation>● %1 — GPIOcore %2</translation>
+        <source>● %1 — IOcore %2</source>
+        <translation>● %1 — IOcore %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1263"/>
         <source>Apply preset &quot;%1&quot;?
 
 This replaces all outputs and inputs (and their routes).</source>
-        <translation>Voreinstellung &quot;%1&quot; anwenden?
+        <translation>Použít předvolbu „%1“?
 
-Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
+Tím se nahradí všechny výstupy a vstupy (a jejich jízdní cesty).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1265"/>
         <source>Also clear the names of inputs and outputs (recommended)</source>
-        <translation>Auch die Namen der Ein- und Ausgänge löschen (empfohlen)</translation>
+        <translation>Smazat také názvy vstupů a výstupů (doporučeno)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1953"/>
         <source>The firmware on this board has no sound effect output yet: update the firmware (Board &gt; Flash firmware).</source>
-        <translation>Die Firmware dieser Platine hat noch keinen Soundeffekt-Ausgang: Firmware aktualisieren (Platine &gt; Firmware flashen).</translation>
+        <translation>Firmware této desky zatím nemá výstup zvukového efektu: aktualizujte firmware (Deska &gt; Nahrát firmware).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1991"/>
         <source>The firmware on this board cannot read analog inputs yet: update the firmware (Board &gt; Flash firmware).</source>
-        <translation>Die Firmware dieser Platine kann noch keine Analogeingänge lesen: Firmware aktualisieren (Platine &gt; Firmware flashen).</translation>
+        <translation>Firmware této desky zatím neumí číst analogové vstupy: aktualizujte firmware (Deska &gt; Nahrát firmware).</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2023"/>
         <source>D0/D1 are the serial line (GUI, board link, DFPlayer, Bluetooth) and cannot be used as a pin: choose another pin.</source>
-        <translation>D0/D1 sind die serielle Leitung (GUI, Platinenkopplung, DFPlayer, Bluetooth) und können kein Pin sein: wählen Sie einen anderen Pin.</translation>
+        <translation>D0/D1 jsou sériová linka (GUI, propojení desek, DFPlayer, Bluetooth) a nemohou být pinem: zvolte jiný pin.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2337"/>
         <source>Value on A%1 (0–1023)</source>
-        <translation>Wert an A%1 (0–1023)</translation>
+        <translation>Hodnota na A%1 (0–1023)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2355"/>
@@ -2566,90 +2566,90 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="2366"/>
         <source>1023 = 5 V, nothing pressed. Every input on A%1 reacts: %2</source>
-        <translation>1023 = 5 V, nichts gedrückt. Jeder Eingang an A%1 reagiert: %2</translation>
+        <translation>1023 = 5 V, nic nestisknuto. Každý vstup na A%1 reaguje: %2</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1331"/>
         <source>Open configuration</source>
-        <translation>Konfiguration öffnen</translation>
+        <translation>Otevřít konfiguraci</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="710"/>
         <source>Load the configuration from the board (replaces what is on screen)</source>
-        <translation>Die Konfiguration von der Platine laden (ersetzt, was auf dem Bildschirm steht)</translation>
+        <translation>Načíst konfiguraci z desky (nahradí to, co je na obrazovce)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="711"/>
         <source>Write all</source>
-        <translation>Alles schreiben</translation>
+        <translation>Zapsat vše</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="712"/>
         <source>Put the whole configuration on screen on the board</source>
-        <translation>Die gesamte Konfiguration auf dem Bildschirm auf die Platine übertragen</translation>
+        <translation>Přenést celou konfiguraci z obrazovky do desky</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1332"/>
         <location filename="../src/mainwindow.cpp" line="1568"/>
         <location filename="../src/mainwindow.cpp" line="1576"/>
         <location filename="../src/mainwindow.cpp" line="1735"/>
-        <source>GPIOcore configuration (*.json)</source>
-        <translation>GPIOcore-Konfiguration (*.json)</translation>
+        <source>IOcore configuration (*.json)</source>
+        <translation>Konfigurace IOcore (*.json)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1733"/>
         <source>Save configuration</source>
-        <translation>Konfiguration speichern</translation>
+        <translation>Uložit konfiguraci</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1750"/>
         <source>Saved %1</source>
-        <translation>%1 gespeichert</translation>
+        <translation>%1 uloženo</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1793"/>
         <source>Write %1 change(s)</source>
-        <translation>%1 Änderung(en) schreiben</translation>
+        <translation>Zapsat změny (%1)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1803"/>
         <source>Saving on the board…</source>
-        <translation>Wird auf der Platine gespeichert…</translation>
+        <translation>Ukládání do desky…</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1803"/>
         <source>%1 change(s) waiting</source>
-        <translation>%1 Änderung(en) ausstehend</translation>
+        <translation>Čekající změny: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1805"/>
         <source>%1 unsent change(s)</source>
-        <translation>%1 nicht gesendete Änderung(en)</translation>
+        <translation>Neodeslané změny: %1</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1930"/>
         <source>%1 is not set.</source>
-        <translation>%1 ist nicht gesetzt.</translation>
+        <translation>%1 není nastaven.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1945"/>
         <source>%1 (%2) is not PWM capable; %3 needs PWM.</source>
-        <translation>%1 (%2) kann kein PWM; %3 braucht PWM.</translation>
+        <translation>%1 (%2) neumí PWM; %3 potřebuje PWM.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1993"/>
         <source>Neither a DCC address nor a pin is set: this input never triggers.</source>
-        <translation>Weder DCC-Adresse noch Pin gesetzt: dieser Eingang löst nie aus.</translation>
+        <translation>Není nastavena DCC adresa ani pin: tento vstup se nikdy nespustí.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2010"/>
         <source>All routes together use %1 steps; the board has room for %2.</source>
-        <translation>Alle Fahrstraßen zusammen nutzen %1 Schritte; die Platine hat Platz für %2.</translation>
+        <translation>Všechny jízdní cesty dohromady používají %1 kroků; deska má místo pro %2.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="2060"/>
         <source>%1 change(s) have not been written to the board. Quit anyway?</source>
-        <translation>%1 Änderung(en) wurden noch nicht auf die Platine geschrieben. Trotzdem beenden?</translation>
+        <translation>Změny (%1) nebyly zapsány do desky. Přesto ukončit?</translation>
     </message>
 </context>
 <context>
@@ -2662,13 +2662,13 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="99"/>
         <source>Effect</source>
-        <translation>Effekt</translation>
+        <translation>Efekt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="119"/>
         <location filename="../src/outputeditor.cpp" line="659"/>
         <source>Pins</source>
-        <translation>Pins</translation>
+        <translation>Piny</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="121"/>
@@ -2693,92 +2693,92 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="140"/>
         <source>Frog polarity</source>
-        <translation>Herzstück-Polarisierung</translation>
+        <translation>Polarita srdcovky</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="146"/>
         <source>None (dead frog)</source>
-        <translation>Keine (isoliertes Herzstück)</translation>
+        <translation>Žádná (izolovaná srdcovka)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="147"/>
         <source>Electrofrog — 2 relays</source>
-        <translation>Electrofrog — 2 Relais</translation>
+        <translation>Electrofrog — 2 relé</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="148"/>
         <source>Unifrog — 1 change-over relay</source>
-        <translation>Unifrog — 1 Umschaltrelais</translation>
+        <translation>Unifrog — 1 přepínací relé</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="152"/>
         <source>Frog</source>
-        <translation>Herzstück</translation>
+        <translation>Srdcovka</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="153"/>
         <source>Relay straight (A)</source>
-        <translation>Relais Gerade (A)</translation>
+        <translation>Relé přímo (A)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="153"/>
         <source>Relay curved (B)</source>
-        <translation>Relais Abzweig (B)</translation>
+        <translation>Relé do odbočky (B)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="153"/>
         <source>Unifrog relay</source>
-        <translation>Unifrog-Relais</translation>
+        <translation>Relé Unifrog</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="159"/>
         <source>Relays switch on LOW (inverted)</source>
-        <translation>Relais schalten bei LOW (invertiert)</translation>
+        <translation>Relé spínají na LOW (invertováno)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="160"/>
         <source>For relay modules that switch on when the input is LOW: the relay pins are driven the other way round</source>
-        <translation>Für Relaismodule, die schalten, wenn der Eingang LOW ist: Die Relais-Pins werden umgekehrt angesteuert</translation>
+        <translation>Pro relé moduly, které sepnou, když je vstup LOW: piny relé se ovládají opačně</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="170"/>
         <source>Parameters</source>
-        <translation>Parameter</translation>
+        <translation>Parametry</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="176"/>
         <source>This type has no parameters.</source>
-        <translation>Dieser Typ hat keine Parameter.</translation>
+        <translation>Tento typ nemá žádné parametry.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="190"/>
         <source>Switch time</source>
-        <translation>Schaltzeit</translation>
+        <translation>Doba přestavení</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="200"/>
         <source>LED on time</source>
-        <translation>LED-Einschaltzeit</translation>
+        <translation>Doba svícení LED</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="201"/>
         <source>Pause</source>
-        <translation>Pause</translation>
+        <translation>Pauza</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="220"/>
         <source>Live: move the servo while adjusting</source>
-        <translation>Live: Servo beim Einstellen mitbewegen</translation>
+        <translation>Živě: servo se při nastavování pohybuje</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="225"/>
         <source>Position 0 (curved)</source>
-        <translation>Stellung 0 (Abzweig)</translation>
+        <translation>Poloha 0 (do odbočky)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="226"/>
         <source>Position 1 (straight)</source>
-        <translation>Stellung 1 (Gerade)</translation>
+        <translation>Poloha 1 (přímo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="227"/>
@@ -2788,32 +2788,32 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="230"/>
         <source>Speed</source>
-        <translation>Geschwindigkeit</translation>
+        <translation>Rychlost</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="233"/>
         <source>Follows a detector (semaphore arm)</source>
-        <translation>Folgt einem Melder (Formsignal-Flügel)</translation>
+        <translation>Sleduje hlásič (ramenní návěstidlo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="241"/>
         <source>Detector</source>
-        <translation>Melder</translation>
+        <translation>Hlásič</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="242"/>
         <source>Swap: occupied = straight</source>
-        <translation>Tauschen: besetzt = Gerade</translation>
+        <translation>Prohodit: obsazeno = přímo</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="244"/>
         <source>Occupied = position 0 (curved, arm at stop), free = position 1 (straight, clear), at the speed above.</source>
-        <translation>Besetzt = Stellung 0 (Abzweig, Flügel auf Halt), frei = Stellung 1 (Gerade, Fahrt), mit der oben eingestellten Geschwindigkeit.</translation>
+        <translation>Obsazeno = poloha 0 (do odbočky, rameno na stůj), volno = poloha 1 (přímo, volno), při rychlosti uvedené výše.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="266"/>
         <source>Duty cycle</source>
-        <translation>Tastgrad</translation>
+        <translation>Střída</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="268"/>
@@ -2823,12 +2823,12 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="269"/>
         <source>at once</source>
-        <translation>sofort</translation>
+        <translation>ihned</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="278"/>
         <source>Fade time</source>
-        <translation>Überblendzeit</translation>
+        <translation>Doba přechodu</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="288"/>
@@ -2838,153 +2838,153 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="290"/>
         <source>Flashing</source>
-        <translation>Blinken</translation>
+        <translation>Blikání</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="291"/>
         <source>How fast flashing lamps blink (1 Hz = once per second). The aspect itself is chosen with DCC extended or in a route.</source>
-        <translation>Wie schnell blinkende Lampen blinken (1 Hz = einmal pro Sekunde). Das Signalbild selbst wählen Sie mit DCC extended oder in einer Fahrstraße.</translation>
+        <translation>Jak rychle blikající světla blikají (1 Hz = jednou za sekundu). Samotnou návěst zvolíte přes DCC extended nebo v jízdní cestě.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="297"/>
         <source>Aspect numbers…</source>
-        <translation>Signalbildnummern…</translation>
+        <translation>Čísla návěstí…</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="298"/>
         <source>Which DCC extended number shows which lamps — for iTrain, Rocrail or your command station</source>
-        <translation>Welche DCC-extended-Nummer welche Lampen zeigt — für iTrain, Rocrail oder Ihre Zentrale</translation>
+        <translation>Které číslo DCC extended zobrazí která světla — pro iTrain, Rocrail nebo vaši centrálu</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Unsafe</source>
-        <translation>Halt</translation>
+        <translation>Stůj</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Caution</source>
-        <translation>Halt erwarten</translation>
+        <translation>Výstraha</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="323"/>
         <source>Safe</source>
-        <translation>Fahrt</translation>
+        <translation>Volno</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="324"/>
         <source>Aspect while its own block is occupied</source>
-        <translation>Signalbild, solange der eigene Block besetzt ist</translation>
+        <translation>Návěst, když je vlastní oddíl obsazen</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="325"/>
         <source>Aspect while its own block is free and the next block is occupied</source>
-        <translation>Signalbild, solange der eigene Block frei und der nächste Block besetzt ist</translation>
+        <translation>Návěst, když je vlastní oddíl volný a následující oddíl obsazen</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="326"/>
         <source>Aspect while both blocks are free</source>
-        <translation>Signalbild, solange beide Blöcke frei sind</translation>
+        <translation>Návěst, když jsou oba oddíly volné</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="332"/>
         <source>aspect </source>
-        <translation>Signalbild </translation>
+        <translation>návěst </translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="337"/>
         <source>Choose the aspect lamp by lamp</source>
-        <translation>Signalbild Lampe für Lampe wählen</translation>
+        <translation>Zvolit návěst světlo po světle</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="359"/>
         <source>The board chooses the aspect itself every 50 ms: unsafe while its own block is occupied, caution while the next block is, otherwise safe. Inputs, routes and DCC cannot set it. Flashing lamps flash at 1 Hz.</source>
-        <translation>Die Platine wählt das Signalbild alle 50 ms selbst: Halt, solange der eigene Block besetzt ist, Halt erwarten, solange es der nächste ist, sonst Fahrt. Eingänge, Fahrstraßen und DCC können es nicht stellen. Blinkende Lampen blinken mit 1 Hz.</translation>
+        <translation>Deska si vybírá návěst sama každých 50 ms: stůj, dokud je vlastní oddíl obsazen, výstraha, dokud je obsazen následující, jinak volno. Vstupy, jízdní cesty ani DCC ji nenastaví. Blikající světla blikají s frekvencí 1 Hz.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="377"/>
         <source>none</source>
-        <translation>keine</translation>
+        <translation>žádná</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="381"/>
         <source>Own address</source>
-        <translation>Eigene Adresse</translation>
+        <translation>Vlastní adresa</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="382"/>
         <source>Each route step chooses the address (1-255): curved, straight, or a value (DCC extended). Switched on or off directly, it sends its own address, if set.</source>
-        <translation>Jeder Fahrstraßenschritt wählt die Adresse (1-255): Abzweig, Gerade oder einen Wert (DCC extended). Direkt ein/aus geschaltet sendet er seine eigene Adresse, falls gesetzt.</translation>
+        <translation>Každý krok jízdní cesty volí adresu (1-255): do odbočky, přímo nebo hodnotu (DCC extended). Přímo zapnuto/vypnuto posílá vlastní adresu, je-li nastavena.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="599"/>
         <source>Unknown effect</source>
-        <translation>Unbekannter Effekt</translation>
+        <translation>Neznámý efekt</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="659"/>
         <source>Pins (PWM capable: %1)</source>
-        <translation>Pins (PWM-fähig: %1)</translation>
+        <translation>Piny (s podporou PWM: %1)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="321"/>
         <source>Own block</source>
-        <translation>Eigener Block</translation>
+        <translation>Vlastní oddíl</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="322"/>
         <source>Next block</source>
-        <translation>Nächster Block</translation>
+        <translation>Následující oddíl</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="555"/>
         <source>— none</source>
-        <translation>— keiner</translation>
+        <translation>— žádný</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="638"/>
         <source>Needs a connected board</source>
-        <translation>Nur mit verbundener Platine</translation>
+        <translation>Vyžaduje připojenou desku</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="392"/>
         <source>State</source>
-        <translation>Zustand</translation>
+        <translation>Stav</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="400"/>
         <source>0  (off / curved)</source>
-        <translation>0  (aus / Abzweig)</translation>
+        <translation>0  (vyp / do odbočky)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="401"/>
         <source>1  (on / straight)</source>
-        <translation>1  (ein / Gerade)</translation>
+        <translation>1  (zap / přímo)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="402"/>
         <source>▶ Test: curved / off</source>
-        <translation>▶ Test: Abzweig / aus</translation>
+        <translation>▶ Test: do odbočky / vyp</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="403"/>
         <source>▶ Test: straight / on</source>
-        <translation>▶ Test: Gerade / ein</translation>
+        <translation>▶ Test: přímo / zap</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="406"/>
         <source>Writes this output to the board with the chosen state (also stored in EEPROM)</source>
-        <translation>Schreibt diesen Ausgang mit dem gewählten Zustand auf die Platine (wird auch im EEPROM gespeichert)</translation>
+        <translation>Zapíše tento výstup do desky se zvoleným stavem (uloží se i do EEPROM)</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="409"/>
         <source>Stored state</source>
-        <translation>Gespeicherter Zustand</translation>
+        <translation>Uložený stav</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="535"/>
         <location filename="../src/outputeditor.cpp" line="595"/>
         <source>Output %1</source>
-        <translation>Ausgang %1</translation>
+        <translation>Výstup %1</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="561"/>
@@ -2994,7 +2994,7 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="606"/>
         <source>Both electrofrog and unifrog relays were set. Only one frog mode is allowed: the unifrog relay is removed when you change this output.</source>
-        <translation>Sowohl Electrofrog- als auch Unifrog-Relais sind gesetzt. Nur eine Herzstück-Art ist erlaubt: das Unifrog-Relais wird entfernt, wenn Sie diesen Ausgang ändern.</translation>
+        <translation>Jsou nastavena relé Electrofrog i Unifrog. Povolen je jen jeden režim srdcovky: relé Unifrog se odstraní, když tento výstup změníte.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="700"/>
@@ -3004,22 +3004,22 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/outputeditor.cpp" line="701"/>
         <source>× %1 ms  →  on %2 ms, pause %3 ms</source>
-        <translation>× %1 ms  →  ein %2 ms, Pause %3 ms</translation>
+        <translation>× %1 ms  →  zap %2 ms, pauza %3 ms</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="704"/>
         <source>Full sweep ≈ %1 ms</source>
-        <translation>Voller Stellweg ≈ %1 ms</translation>
+        <translation>Celý přestavný pohyb ≈ %1 ms</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="706"/>
         <source>A full change (0 → 255) takes %1 s, a half change %2 s.</source>
-        <translation>Eine volle Änderung (0 → 255) dauert %1 s, eine halbe %2 s.</translation>
+        <translation>Plná změna (0 → 255) trvá %1 s, poloviční %2 s.</translation>
     </message>
     <message>
         <location filename="../src/outputeditor.cpp" line="707"/>
         <source>A new brightness is set at once.</source>
-        <translation>Eine neue Helligkeit wird sofort eingestellt.</translation>
+        <translation>Nový jas se nastaví ihned.</translation>
     </message>
 </context>
 <context>
@@ -3027,107 +3027,107 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/connectionview.cpp" line="630"/>
         <source>DCC %1 straight</source>
-        <translation>DCC %1 Gerade</translation>
+        <translation>DCC %1 přímo</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="631"/>
         <source>DCC %1 curved</source>
-        <translation>DCC %1 Abzweig</translation>
+        <translation>DCC %1 do odbočky</translation>
     </message>
     <message>
         <location filename="../src/connectionview.cpp" line="640"/>
         <source>no trigger</source>
-        <translation>kein Auslöser</translation>
+        <translation>bez spouštěče</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="478"/>
         <source>lamp %1 flashing</source>
-        <translation>Lampe %1 blinkt</translation>
+        <translation>lampa %1 bliká</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="479"/>
         <source>lamp %1 flashing, opposite phase</source>
-        <translation>Lampe %1 blinkt gegenphasig</translation>
+        <translation>světlo %1 bliká v protifázi</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="480"/>
         <source>lamp %1 on</source>
-        <translation>Lampe %1 an</translation>
+        <translation>světlo %1 svítí</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="482"/>
         <source>all lamps off</source>
-        <translation>alle Lampen aus</translation>
+        <translation>všechna světla zhasnutá</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="488"/>
         <source>Signal aspect</source>
-        <translation>Signalbild</translation>
+        <translation>Návěst</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="493"/>
         <source>Choose per lamp. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation>Pro Lampe wählen. Lampe 1 ist Pin A, Lampe 2 Pin B usw.</translation>
+        <translation>Zvolte pro každé světlo. Světlo 1 je pin A, světlo 2 pin B atd.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="513"/>
         <source>Value: %1  (0x%2)</source>
-        <translation>Wert: %1  (0x%2)</translation>
+        <translation>Hodnota: %1  (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="522"/>
         <source>off</source>
-        <translation>aus</translation>
+        <translation>vyp</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="522"/>
         <source>on</source>
-        <translation>ein</translation>
+        <translation>zap</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="522"/>
         <source>flashing</source>
-        <translation>blinkend</translation>
+        <translation>bliká</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="523"/>
         <source>flashing, opposite phase</source>
-        <translation>blinkend, gegenphasig</translation>
+        <translation>bliká, v protifázi</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="532"/>
         <source>Lamp %1</source>
-        <translation>Lampe %1</translation>
+        <translation>Světlo %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="447"/>
         <source>Out %1</source>
-        <translation>Ausg. %1</translation>
+        <translation>Výst. %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Expert</source>
-        <translation>Experte</translation>
+        <translation>Expert</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Advanced</source>
-        <translation>Fortgeschritten</translation>
+        <translation>Pokročilý</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="109"/>
         <source>Beginner</source>
-        <translation>Anfänger</translation>
+        <translation>Začátečník</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="175"/>
         <source>block signals</source>
-        <translation>Blocksignale</translation>
+        <translation>autobloková návěstidla</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="176"/>
         <source>4-aspect signals</source>
-        <translation>4-begriffige Signale</translation>
+        <translation>návěstidla se 4 návěstmi</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="177"/>
@@ -3137,100 +3137,100 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/uihelpers.cpp" line="178"/>
         <source>sound effects</source>
-        <translation>Soundeffekte</translation>
+        <translation>zvukové efekty</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="179"/>
         <source>board link</source>
-        <translation>Platinenkopplung</translation>
+        <translation>propojení desek</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="180"/>
         <source>light effects</source>
-        <translation>Lichteffekte</translation>
+        <translation>světelné efekty</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="183"/>
         <source>semaphore arms</source>
-        <translation>Formsignal-Flügel</translation>
+        <translation>ramenní návěstidla</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="185"/>
         <source>frog relays</source>
-        <translation>Herzstück-Relais</translation>
+        <translation>relé srdcovky</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="191"/>
         <source>sensors</source>
-        <translation>Sensoren</translation>
+        <translation>snímače</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="192"/>
         <source>routes on straight or curved only</source>
-        <translation>Fahrstraßen nur auf Gerade oder Abzweig</translation>
+        <translation>jízdní cesty jen přímo nebo jen do odbočky</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="193"/>
         <source>analog inputs</source>
-        <translation>Analogeingänge</translation>
+        <translation>analogové vstupy</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="194"/>
         <source>custom values</source>
-        <translation>eigene Werte</translation>
+        <translation>vlastní hodnoty</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="195"/>
         <source>own wait time per route step</source>
-        <translation>eigene Wartezeit pro Fahrstraßen-Schritt</translation>
+        <translation>vlastní čekací doba pro každý krok jízdní cesty</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="441"/>
         <source>In %1</source>
-        <translation>Eing. %1</translation>
+        <translation>Vst. %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="488"/>
         <source>Aspect numbers</source>
-        <translation>Signalbildnummern</translation>
+        <translation>Čísla návěstí</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="490"/>
         <source>Choose per lamp what the signal should show. The number below is the DCC extended value for it: enter that in iTrain, Rocrail or your command station. Nothing changes here. Lamp 1 is pin A, lamp 2 pin B, and so on.</source>
-        <translation>Wählen Sie pro Lampe, was das Signal zeigen soll. Die Nummer darunter ist der zugehörige DCC-extended-Wert: Geben Sie ihn in iTrain, Rocrail oder Ihrer Zentrale ein. Hier ändert sich nichts. Lampe 1 ist Pin A, Lampe 2 Pin B und so weiter.</translation>
+        <translation>Zvolte pro každé světlo, co má návěstidlo ukazovat. Číslo pod tím je příslušná hodnota DCC extended: zadejte ji v iTrain, Rocrailu nebo ve své centrále. Nic se tu nemění. Světlo 1 je pin A, světlo 2 pin B a tak dále.</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="513"/>
         <source>DCC extended number: %1  (0x%2)</source>
-        <translation>DCC-extended-Nummer: %1  (0x%2)</translation>
+        <translation>Číslo DCC extended: %1  (0x%2)</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="576"/>
         <source>shared with: %1</source>
-        <translation>gemeinsam mit: %1</translation>
+        <translation>sdíleno s: %1</translation>
     </message>
     <message>
         <location filename="../src/uihelpers.cpp" line="583"/>
         <source>in use: %1</source>
-        <translation>belegt: %1</translation>
+        <translation>obsazeno: %1</translation>
     </message>
 </context>
 <context>
     <name>SimulatedDevice</name>
     <message>
         <location filename="../src/simulateddevice.cpp" line="90"/>
-        <source>The firmware simulator (gpiocore_fw_host) is missing next to the program.</source>
-        <translation>Der Firmware-Simulator (gpiocore_fw_host) fehlt neben dem Programm.</translation>
+        <source>The firmware simulator (iocore_fw_host) is missing next to the program.</source>
+        <translation>Simulátor firmwaru (iocore_fw_host) chybí vedle programu.</translation>
     </message>
     <message>
         <location filename="../src/simulateddevice.cpp" line="109"/>
         <source>Could not start the firmware simulator: %1</source>
-        <translation>Der Firmware-Simulator konnte nicht gestartet werden: %1</translation>
+        <translation>Simulátor firmwaru nelze spustit: %1</translation>
     </message>
     <message>
         <location filename="../src/simulateddevice.cpp" line="129"/>
         <source>The firmware simulator did not start up.</source>
-        <translation>Der Firmware-Simulator ist nicht gestartet.</translation>
+        <translation>Simulátor firmwaru se nespustil.</translation>
     </message>
 </context>
 <context>
@@ -3238,12 +3238,12 @@ Dies ersetzt alle Ausgänge und Eingänge (und ihre Fahrstraßen).</translation>
     <message>
         <location filename="../src/soundplayer.cpp" line="100"/>
         <source>Sound effect track %1: choose a sound folder (View &gt; Sound folder…) to hear it.</source>
-        <translation>Soundeffekt-Titel %1: Einen Sound-Ordner wählen (Ansicht &gt; Sound-Ordner…), um ihn zu hören.</translation>
+        <translation>Skladba zvukového efektu %1: zvolte složku se zvuky (Zobrazení &gt; Složka se zvuky…), abyste ji slyšeli.</translation>
     </message>
     <message>
         <location filename="../src/soundplayer.cpp" line="107"/>
         <source>%1 not found in %2</source>
-        <translation>%1 nicht gefunden in %2</translation>
+        <translation>%1 nenalezeno v %2</translation>
     </message>
 </context>
 </TS>

@@ -1,7 +1,7 @@
 {
-  "format": "GPIOcore-config",
+  "format": "IOcore-config",
   "version": 2,
-  "about": "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. See PROTOCOL.md for data[] per type and README.md for how to use the program.",
+  "about": "IOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. See PROTOCOL.md for data[] per type and README.md for how to use the program.",
   "board": {
     "name": "",
     "type": "nano",

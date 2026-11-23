@@ -324,7 +324,7 @@ OPCODE( OPCODE_SERVO_LIVE )             // <output> <angle>: move now, nothing s
 
 #undef OPCODE
 
-extern const char * version ;   // src/version.h, defined in GPIOcore.ino
+extern const char * version ;   // src/version.h, defined in IOcore.ino
 
 void sendMyVersion()
 {

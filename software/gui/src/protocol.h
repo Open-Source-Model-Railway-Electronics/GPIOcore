@@ -1,5 +1,5 @@
 #pragma once
-// GPIOcore serial protocol (host side).
+// IOcore serial protocol (host side).
 //
 // Frame:  <command> <payload ...> <checksum>
 //   command  : high nibble = message group, low nibble = payload length
@@ -61,7 +61,7 @@ constexpr quint8 ANALOG_VALUE           = 0xD3;
 
 // Bluetooth: BT_SETUP (0 bytes) makes the board set up an HC-05 in AT mode on D0/D1 (blocks ~2 s, noise
 // at other baud rates meanwhile), then BT_RESULT <status> <baud / 2400> <name ok>
-// status: 0 = done (115200 baud, name GPIOcore-<board name>), 1 = no HC-05 answered, 2 = AT+UART refused
+// status: 0 = done (115200 baud, name IOcore-<board name>), 1 = no HC-05 answered, 2 = AT+UART refused
 constexpr quint8 BT_SETUP               = 0xE0;
 constexpr quint8 BT_RESULT              = 0xE3;
 

@@ -658,7 +658,7 @@ uint8_t Output::update()
             ||       eedata.type == doubleFlashing) { sm.nextState( flashing           ) ; }
             else if( eedata.state == oldPos                                         // only act on a state change
                  ||  eedata.type  == notInUse
-                 ||  eedata.type  == soundEffect                    // sound and board link: GPIOcore.ino
+                 ||  eedata.type  == soundEffect                    // sound and board link: IOcore.ino
                  ||  eedata.type  == boardLink   )  { }
             else if( eedata.relayPinA != NA
                  &&  eedata.relayPinB != NA )       { oldPos = eedata.state ; sm.nextState( turnOffRelays ) ; }

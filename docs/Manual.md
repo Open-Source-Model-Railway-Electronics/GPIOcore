@@ -1,9 +1,9 @@
-# GPIOcore Manual
+# IOcore Manual
 
-GPIOcore consists of two pieces of software: the **firmware** that runs on the decoder, and the **GUI** (the
+IOcore consists of two pieces of software: the **firmware** that runs on the decoder, and the **GUI** (the
 configurator) that runs on your PC.
 
-With it an Arduino Nano, a DCCnext or a GPIOcore board can do almost anything on your model railway: from one
+With it an Arduino Nano, a DCCnext or an IOcore board can do almost anything on your model railway: from one
 lamp to servos and complete routes. There are light effects, signals that need no settings, sound, and an
 automatic block system that can be functional or just for show.
 
@@ -24,7 +24,7 @@ you control the outputs. Last the advanced features, such as linking boards and 
 
 | Part | What it does |
 |---|---|
-| **Open / Save** | Open or save a board file. Your files are in `Documents\GPIOcore\boards`. |
+| **Open / Save** | Open or save a board file. Your files are in `Documents\IOcore\boards`. |
 | **Port / Connect** | Choose the COM port of your board and click **Connect**. Next to it you see the state: *Offline*, *Connected* or *Simulation*. ⟳ looks for ports again. |
 | **Read board / Write all** | **Read board** loads what is on the board (it replaces what is on screen). **Write all** puts everything on screen on the board. |
 | **Preset** | A ready-made configuration. Choose one and click **Apply**. |
@@ -52,7 +52,7 @@ The **(i)** buttons everywhere in the program explain the thing next to them.
 - **Open example**: ready-made examples, such as a level crossing. Open one and look how it is made.
 - **Export / Import**: save some inputs, outputs or the board settings in a file of their own, or add them from
   another file. Handy to copy a turnout setup to another board.
-- **Open the boards folder**: opens `Documents\GPIOcore\boards`.
+- **Open the boards folder**: opens `Documents\IOcore\boards`.
 
 ![](./images/Board.png)
 
@@ -72,13 +72,13 @@ The **(i)** buttons everywhere in the program explain the thing next to them.
   - *Expert*: also automatic block signals, sensor inputs and semaphore arms.
 - **Show unused inputs and outputs**: also show the empty ones.
 - **Sound folder / Mute sounds**: in Simulate and Live test the PC plays the tracks of a sound effect output. Put
-  them in `Documents\GPIOcore\sounds` with the same names as on the SD card (`0001.mp3`, `0002.mp3`, ...).
+  them in `Documents\IOcore\sounds` with the same names as on the SD card (`0001.mp3`, `0002.mp3`, ...).
 - **Theme**: light or dark. **Language**: works after a restart.
 
 ## Saving your work
 
 - **The board remembers everything itself**, also without power.
-- **Save** (Ctrl+S) stores your setup in a **board file** on your PC, in `Documents\GPIOcore\boards`. The file
+- **Save** (Ctrl+S) stores your setup in a **board file** on your PC, in `Documents\IOcore\boards`. The file
   also has the **names** of your inputs and outputs: those are not stored on the board.
 - The program finds the right file by the **name of the board** (see *Board settings*). So give every board its
   own name.
@@ -255,7 +255,7 @@ Track **0 = stop**. Without custom values: on = track 1, off = stop.
 - D1 is also the USB connection. **Sound only plays when no PC is connected.** With the program connected the
   output shows "♪ 3" instead, so you can still see which track would play.
 - Sound and the board link both use D1: you can use only one of them.
-- In Simulate and Live test the PC plays the track, if you put the same files in `Documents\GPIOcore\sounds`.
+- In Simulate and Live test the PC plays the track, if you put the same files in `Documents\IOcore\sounds`.
 
 ## Block signal
 

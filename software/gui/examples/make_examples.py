@@ -1,11 +1,11 @@
-"""Generate GPIOcore example board files into software/gui/examples."""
+"""Generate IOcore example board files into software/gui/examples."""
 import json
 import sys
 from pathlib import Path
 
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent   # this folder
 PINS = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19]   # D3-D12, A0-A5 (D2 = DCC, D13 = LED)
-ABOUT = ("GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
+ABOUT = ("IOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
          "Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. "
          "See PROTOCOL.md for data[] per type and README.md for how to use the program.")
 
@@ -38,7 +38,7 @@ def board(outputs, inputs, timing=False, interlock="auto", delay=3, type_="nano"
         o["index"] = i
     for i, x in enumerate(inputs):
         x["index"] = i
-    return {"format": "GPIOcore-config", "version": 2, "about": ABOUT,
+    return {"format": "IOcore-config", "version": 2, "about": ABOUT,
             "board": {"name": "", "type": type_, "timing": timing, "interlock": interlock, "delay": delay},
             "outputs": outputs, "inputs": inputs}
 

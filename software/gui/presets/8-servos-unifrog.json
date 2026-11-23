@@ -1,8 +1,8 @@
 {
-  "format": "GPIOcore-config",
+  "format": "IOcore-config",
   "version": 2,
   "presetName": "8 servos + unifrog relay",
-  "about": "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. An analog input has 'analog': {mode below / above / at, channel 0-7 = A0-A7, threshold 0-1016} instead of a pin. A toggle / absolute input may have 'values': [off / curved, on / straight], each {value, raw} like a route step. Output data[4] depends on the type, see PROTOCOL.md section 2.1 (PWM: data[0] brightness, data[1] fade time in s). Input address: DCC accessory address or null. Route steps: output 0-15, value = 0 curved / 1 straight, or with raw = true an aspect / servo angle 10-170 / PWM 0-255, delay = wait after the step in 0.1 s. 'name' fields are only kept in this file.",
+  "about": "IOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. An analog input has 'analog': {mode below / above / at, channel 0-7 = A0-A7, threshold 0-1016} instead of a pin. A toggle / absolute input may have 'values': [off / curved, on / straight], each {value, raw} like a route step. Output data[4] depends on the type, see PROTOCOL.md section 2.1 (PWM: data[0] brightness, data[1] fade time in s). Input address: DCC accessory address or null. Route steps: output 0-15, value = 0 curved / 1 straight, or with raw = true an aspect / servo angle 10-170 / PWM 0-255, delay = wait after the step in 0.1 s. 'name' fields are only kept in this file.",
   "board": {
     "delay": 3,
     "interlock": "auto",

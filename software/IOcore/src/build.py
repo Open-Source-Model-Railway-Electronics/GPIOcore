@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Build the GPIOcore firmware and put the hex straight in <repo>/release/GPIOcore.hex.
+Build the IOcore firmware and put the hex straight in <repo>/release/IOcore.hex.
 Also fills <repo>/release/bootloader/ for boards burnt through ICSP: the Nano bootloader, the firmware
-with that bootloader (GPIOcore_with_bootloader.hex) and burn-bootloader.bat (see bootloader/README.md).
+with that bootloader (IOcore_with_bootloader.hex) and burn-bootloader.bat (see bootloader/README.md).
 
-    python src/build.py            (from software/GPIOcore, or from anywhere)
+    python src/build.py            (from software/IOcore, or from anywhere)
 
 Compiles in a temporary folder that is removed afterwards: no build/ folder is left behind.
 Needs arduino-cli on PATH (or ARDUINO_CLI=<path to arduino-cli>).
@@ -19,13 +19,13 @@ from pathlib import Path
 
 FQBN = "arduino:avr:nano"
 
-SKETCH_DIR = Path(__file__).resolve().parent.parent      # software/GPIOcore
-REPO_ROOT = SKETCH_DIR.parent.parent                     # the GPIOcore repository
+SKETCH_DIR = Path(__file__).resolve().parent.parent      # software/IOcore
+REPO_ROOT = SKETCH_DIR.parent.parent                     # the IOcore repository
 RELEASE_DIR = REPO_ROOT / "release"
-HEX_NAME = "GPIOcore.hex"
+HEX_NAME = "IOcore.hex"
 BOOT_SRC = SKETCH_DIR / "bootloader"                     # optiboot hex, burn script, README
 BOOT_DIR = RELEASE_DIR / "bootloader"
-BOOT_HEX_NAME = "GPIOcore_with_bootloader.hex"
+BOOT_HEX_NAME = "IOcore_with_bootloader.hex"
 
 
 def find_arduino_cli():
@@ -38,7 +38,7 @@ def find_arduino_cli():
 def build():
     cli = find_arduino_cli()
     print(f"[INFO] Building {SKETCH_DIR.name} ({FQBN})")
-    out_dir = Path(tempfile.mkdtemp(prefix="gpiocore_fw_"))
+    out_dir = Path(tempfile.mkdtemp(prefix="iocore_fw_"))
     try:
         code = subprocess.run([cli, "compile", "-b", FQBN, "--output-dir", str(out_dir), str(SKETCH_DIR)]).returncode
         if code != 0:

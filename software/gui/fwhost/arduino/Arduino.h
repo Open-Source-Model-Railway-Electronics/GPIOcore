@@ -1,5 +1,5 @@
 #pragma once
-// Arduino core shim for gpiocore_fw_host: the GPIOcore firmware (software/GPIOcore) compiled for
+// Arduino core shim for iocore_fw_host: the IOcore firmware (software/IOcore) compiled for
 // the PC. Only what the firmware uses is here. Pins, Serial, EEPROM and the clock are emulated in
 // arduino_shim.cpp; the host program (main.cpp) drives them through hostapi.h.
 //
@@ -29,7 +29,7 @@ static const uint8_t A0 = 14, A1 = 15, A2 = 16, A3 = 17, A4 = 18, A5 = 19, A6 = 
 #define NUM_DIGITAL_PINS 22
 #define digitalPinToInterrupt(p) ((p) == 2 ? 0 : (p) == 3 ? 1 : -1)
 
-// AVR bits the firmware touches (GPIOcore.ino: RX off for the DFPlayer)
+// AVR bits the firmware touches (IOcore.ino: RX off for the DFPlayer)
 extern volatile uint8_t UCSR0B;
 #define RXEN0  4
 #define TXEN0  3

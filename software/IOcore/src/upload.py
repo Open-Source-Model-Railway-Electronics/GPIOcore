@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Upload <repo>/release/GPIOcore.hex to an Arduino Nano with the avrdude that ships with the GUI.
+Upload <repo>/release/IOcore.hex to an Arduino Nano with the avrdude that ships with the GUI.
 
     python src/upload.py            pick the port: the only USB serial port, or choose from a list
     python src/upload.py COM9       use this port
     python src/upload.py --build    build first (src/build.py), then upload
 
-Close the GPIOcore GUI connection (or the serial monitor) first: the port can only be used once.
+Close the IOcore GUI connection (or the serial monitor) first: the port can only be used once.
 """
 
 import json
@@ -16,9 +16,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-SKETCH_DIR = Path(__file__).resolve().parent.parent      # software/GPIOcore
+SKETCH_DIR = Path(__file__).resolve().parent.parent      # software/IOcore
 REPO_ROOT = SKETCH_DIR.parent.parent
-HEX_FILE = REPO_ROOT / "release" / "GPIOcore.hex"
+HEX_FILE = REPO_ROOT / "release" / "IOcore.hex"
 AVRDUDE_DIR = REPO_ROOT / "software" / "gui" / "tools" / "avrdude"
 BAUD = "115200"       # new Nano bootloader (Optiboot); use 57600 for the old bootloader
 

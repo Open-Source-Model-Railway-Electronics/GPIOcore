@@ -46,8 +46,8 @@ QStringList avrdudeDirs()
     const QString exeDir = QCoreApplication::applicationDirPath();
     dirs << exeDir + QStringLiteral("/tools/avrdude")
          << exeDir;
-#ifdef GPIOCORE_SOURCE_DIR
-    dirs << QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/tools/avrdude");
+#ifdef IOCORE_SOURCE_DIR
+    dirs << QStringLiteral(IOCORE_SOURCE_DIR) + QStringLiteral("/tools/avrdude");
 #endif
     return dirs;
 }
@@ -164,7 +164,7 @@ void Flasher::flash(const QString &port, const QString &hexPath, Method m)
     QString msg;
     if (findAvrdude().isEmpty()) {
         pre = AvrdudeMissing;
-        msg = tr("The upload program (avrdude) was not found next to GPIOcoreGUI (tools/avrdude).");
+        msg = tr("The upload program (avrdude) was not found next to IOcoreGUI (tools/avrdude).");
     } else if (!QFileInfo(hexPath).isFile()) {
         pre = HexMissing;
         msg = tr("The firmware file was not found: %1").arg(QDir::toNativeSeparators(hexPath));
@@ -361,13 +361,13 @@ void Flasher::finish(bool ok, Failure failure, const QString &summary)
 
 QString FlashDialog::defaultHexPath()
 {
-    const QString name = QStringLiteral("GPIOcore.hex");
+    const QString name = QStringLiteral("IOcore.hex");
     QStringList candidates;
-#ifdef GPIOCORE_SOURCE_DIR
-    // GPIOCORE_SOURCE_DIR is software/gui; the repository root is two levels up.
-    candidates << QDir::cleanPath(QStringLiteral(GPIOCORE_SOURCE_DIR) + QStringLiteral("/../../release/") + name);
+#ifdef IOCORE_SOURCE_DIR
+    // IOCORE_SOURCE_DIR is software/gui; the repository root is two levels up.
+    candidates << QDir::cleanPath(QStringLiteral(IOCORE_SOURCE_DIR) + QStringLiteral("/../../release/") + name);
 #endif
-    // Without the define: look for <dir>/release/GPIOcore.hex above the executable.
+    // Without the define: look for <dir>/release/IOcore.hex above the executable.
     QDir d(QCoreApplication::applicationDirPath());
     for (int i = 0; i < 6; ++i) {
         candidates << d.absoluteFilePath(QStringLiteral("release/") + name);
@@ -391,7 +391,7 @@ FlashDialog::FlashDialog(const QString &preselectPort, QWidget *parent)
 
     // Intro + help button
     auto *introRow = new QHBoxLayout;
-    auto *intro = new QLabel(tr("Puts the GPIOcore program (firmware) on your Arduino. "
+    auto *intro = new QLabel(tr("Puts the IOcore program (firmware) on your Arduino. "
                                 "Plug the board in with USB, check the settings below and click <b>Flash</b>. "
                                 "Your settings on the board are normally kept."), this);
     intro->setWordWrap(true);
@@ -621,9 +621,9 @@ QString FlashDialog::failureHint(Flasher::Failure f) const
     const bool isp = m_method->currentData().toInt() == int(Flasher::ArduinoIsp);
     switch (f) {
     case Flasher::AvrdudeMissing:
-        return tr("The folder <i>tools/avrdude</i> next to GPIOcoreGUI is missing. Install the program again.");
+        return tr("The folder <i>tools/avrdude</i> next to IOcoreGUI is missing. Install the program again.");
     case Flasher::HexMissing:
-        return tr("Click <b>Browse…</b> and choose the GPIOcore <i>.hex</i> file.");
+        return tr("Click <b>Browse…</b> and choose the IOcore <i>.hex</i> file.");
     case Flasher::PortBusy:
         return tr("Close other programs that use the board (Arduino IDE serial monitor, other configuration "
                   "tools) and try again.");
@@ -638,7 +638,7 @@ QString FlashDialog::failureHint(Flasher::Failure f) const
                   "again. Also check that the right port is chosen and close other programs that use the board.");
     case Flasher::Signature:
         return isp ? tr("Check the six wires between the programmer and the board, and that the board has power.")
-                   : tr("This board does not have an ATmega328P chip. GPIOcore needs an Arduino Uno or Nano.");
+                   : tr("This board does not have an ATmega328P chip. IOcore needs an Arduino Uno or Nano.");
     case Flasher::Verify:
         return tr("Try again. If it keeps failing, try another USB cable or USB port.");
     case Flasher::Cancelled:

@@ -577,10 +577,10 @@ bool decodeInput(const QByteArray &p, int &index, InputConfig &c)
 QJsonObject BoardConfig::toJson() const
 {
     QJsonObject root;
-    root["format"]  = QStringLiteral("GPIOcore-config");
+    root["format"]  = QStringLiteral("IOcore-config");
     root["version"] = 2;
     root["about"]   = QStringLiteral(
-        "GPIOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
+        "IOcore board file. 'board' = settings stored on the board; outputs[i] / inputs[i] = output / input i (0-15). "
         "Pins: 0-13 = D0-D13, 14-19 = A0-A5, 20-21 = A6-A7 (Nano, analog input only), null = not used; pin 2 is the DCC input. "
         "An analog input has 'analog': {mode below / above / at, channel 0-7 = A0-A7, threshold 0-1016} instead of a pin. "
         "A toggle / absolute input may have 'values': [off / curved, on / straight], each {value, raw} like a route step. "
@@ -598,9 +598,9 @@ QJsonObject BoardConfig::toJson() const
 
 bool BoardConfig::fromJson(const QJsonObject &root, BoardConfig &out, QString *error)
 {
-    if (root["format"].toString() != QLatin1String("GPIOcore-config"))
+    if (root["format"].toString() != QLatin1String("IOcore-config"))
     {
-        if (error) *error = QStringLiteral("Not a GPIOcore configuration file.");
+        if (error) *error = QStringLiteral("Not an IOcore configuration file.");
         return false;
     }
     const QJsonArray outs = root["outputs"].toArray();
