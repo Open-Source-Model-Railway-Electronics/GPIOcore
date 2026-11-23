@@ -245,6 +245,7 @@ struct BoardSettings
     quint8  interlock = InterlockAuto;
     quint8  delay     = DefaultStepDelay; // 0.1 s units, used when timing is off
     quint8  blockBlink = 0;             // block signals' blink rate x 0.25 Hz, 0 = 1 Hz (flags bits 4-7)
+    bool    serialPins = false;         // flags bit0: D0/D1 are inputs / outputs (without a PC); no board link
 
     double  blockBlinkHz() const { return blockBlink ? blockBlink * 0.25 : 1.0; }
     int     blockBlinkHalfMs() const { return blockBlink ? 2000 / blockBlink : 500; }   // as the firmware
@@ -252,7 +253,7 @@ struct BoardSettings
 
     bool operator==(const BoardSettings &o) const
     { return name == o.name && type == o.type && timing == o.timing
-          && interlock == o.interlock && delay == o.delay && blockBlink == o.blockBlink; }
+          && interlock == o.interlock && delay == o.delay && blockBlink == o.blockBlink && serialPins == o.serialPins; }
     bool operator!=(const BoardSettings &o) const { return !(*this == o); }
 
     QJsonObject toJson() const;
@@ -280,6 +281,7 @@ struct BoardOptions
     quint8 type           = BoardNano;   // never BoardUno
     bool dccNext          = false;   // ArCoMoRa DCCnext: ports 1-10 = D3-D12, 11-16 = A0-A5, no D13
     bool serialPinsUsable = true;    // decoder releases D0/D1 after its boot window
+    bool serialPinsAsIO   = false;   // board setting: D0/D1 offered as pins (no board link)
 };
 BoardOptions &boardOptions();
 void          setBoardType(quint8 type);   // also sets dccNext; Uno (or unknown) = Nano

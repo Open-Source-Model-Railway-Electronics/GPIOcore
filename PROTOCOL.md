@@ -406,7 +406,7 @@ device -> CF <len> <type> <flags> <delay> <name ...> (also SET_BOARD from host -
 len    : 4 + name length (name 0..16 ASCII bytes, no terminator)
 type   : 0 = Arduino Uno (no longer offered: the GUI reads it as a Nano), 1 = Arduino Nano, 2 = DCCnext,
          3 = Jack of all trades
-flags  : bit0   = reserved (was: recorder enabled), ignored and cleared
+flags  : bit0   = D0/D1 as inputs / outputs without a PC; the board link is off (firmware 2026-11-23)
          bit1   = route step timing (per-step wait times stored)
          bit2-3 = route interlocking: 0 = off (all routes may run in parallel)
                                       1 = on  (one route at a time)

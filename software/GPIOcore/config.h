@@ -44,7 +44,7 @@ const int  OUTPUT_DATA_BYTES = 4 ;
 // ── Board settings (PROTOCOL.md section 10) ───────────────────────────────────
 enum boardTypes { BOARD_UNO, BOARD_NANO, BOARD_DCCNEXT, BOARD_JACK } ;
 
-const uint8_t  BOARD_RESERVED     = 0x01 ;  // flags bit0: was 'recorder enabled', ignored
+const uint8_t  BOARD_SERIAL_PINS  = 0x01 ;  // flags bit0: D0/D1 are inputs / outputs without a PC (no board link)
 const uint8_t  BOARD_TIMING       = 0x02 ;  // flags bit1: per-step wait times stored
 const uint8_t  BOARD_INTERLOCK    = 0x0C ;  // flags bit2-3: 0 = off, 1 = on, 2 = auto
 const uint8_t  INTERLOCK_OFF      = 0 ;
@@ -66,6 +66,11 @@ extern BoardSettings board ;
 inline uint16_t blockBlinkHalfMs() { uint8_t n = board.flags >> 4 ; return n ? 2000 / n : 500 ; }
 extern uint16_t      boardEEAddress ;
 extern uint8_t       configSession ;    // set by HELLO
-extern uint8_t       serialIsIO ;       // 1: no GUI, the UART runs the board link (9600 baud)
+extern uint8_t       serialIsIO ;       // 1: no GUI: the UART runs the board link (9600 baud), or D0/D1 are pins
+#ifdef GPIOCORE_HOST
+inline uint8_t serialPinsAsIO() { return board.flags & BOARD_SERIAL_PINS ; }                  // simulator: the GUI does not use D0/D1
+#else
+inline uint8_t serialPinsAsIO() { return serialIsIO && ( board.flags & BOARD_SERIAL_PINS ) ; }  // board: only without a PC
+#endif
 
 bool    isValidPin( uint8_t pin, uint8_t isOutput ) ;   // pin rules, PROTOCOL.md section 9

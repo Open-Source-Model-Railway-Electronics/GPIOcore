@@ -37,7 +37,7 @@ void Output::set( Settings *data )
     for( uint8_t i = 0 ; i < 7 ; i ++ )
     {
         uint8_t p = oldPins[i] ;
-        if( p == NA || p <= 2 || p >= 20 ) continue ;   // D0/D1 belong to the UART, D2 to DCC
+        if( p == NA || p == 2 || p >= 20 || ( p < 2 && !serialPinsAsIO() ) ) continue ;   // D2: DCC, D0/D1: the UART
         uint8_t kept = 0 ;
         for( uint8_t j = 0 ; j < 7 ; j ++ ) kept |= ( newPins[j] == p ) ;
         if( !kept ) { digitalWrite( p, LOW ) ; pinMode( p, INPUT ) ; }
@@ -85,6 +85,8 @@ Settings* Output::get()
 uint8_t Output::setState( uint8_t _state)
 {
     custom = 0 ;                        // a state change ends a custom angle
+    if( _state != eedata.state ) oldPos = eedata.state ;   // a real change is always carried out, also before
+                                                           // the output's first update (the start-up apply)
     eedata.state = _state ;
     saveEEPROM() ;
     return 0 ;
@@ -112,9 +114,9 @@ void Output::saveEEPROM()
     
 }
 
-static void outputPin( uint8_t pin )    // never D0/D1: the UART (GUI, board link, DFPlayer)
+static void outputPin( uint8_t pin )    // D0/D1 only as pins (board setting) and without a PC
 {
-    if( pin != NA && pin > 1 ) pinMode( pin, OUTPUT ) ;
+    if( pin != NA && ( pin > 1 || serialPinsAsIO() ) ) pinMode( pin, OUTPUT ) ;
 }
 
 void Output::setPinModes()

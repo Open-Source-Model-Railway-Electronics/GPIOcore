@@ -1751,7 +1751,7 @@ private slots:
         };
         QCOMPARE(boardSettingsRows(), 2);                    // name, board type
         advanced->trigger();
-        QCOMPARE(boardSettingsRows(), 6);                    // + own wait time, wait time, interlocking, block signal blink
+        QCOMPARE(boardSettingsRows(), 7);                    // + own wait time, wait time, interlocking, blink, D0/D1 as pins
     }
 
     void higherLevelFeaturesHidden()

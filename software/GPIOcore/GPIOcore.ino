@@ -247,12 +247,25 @@ void notifyDccFunc( uint16_t Addr, DCC_ADDR_TYPE AddrType, FN_GROUP FuncGrp, uin
 // ── Serial window: the UART is the GUI's for 5 s after start-up or after a short press on the config button.
 // Then it becomes the board link (9600 baud): frames from the previous board on RX (D0) are passed on to TX
 // (D1) and run as DCC commands; board link outputs send their own; a DFPlayer on TX hears the same line.
-void serialToIO()                               // no HELLO within the window: board link mode
+void serialToIO()                               // no HELLO within the window: board link, or D0/D1 as pins
 {
     Serial.flush() ;
     Serial.end() ;
-    Serial.begin( 9600 ) ;
     serialIsIO = 1 ;
+    if( !( board.flags & BOARD_SERIAL_PINS ) ) { Serial.begin( 9600 ) ; return ; }   // the board link
+    for( uint8_t i = 0 ; i < 16 ; i++ )         // D0/D1 are pins; a sound effect still gets TX (9600, RX off)
+    {
+        if( output[i].eedata.type != soundEffect ) continue ;
+        Serial.begin( 9600 ) ;
+        UCSR0B &= ~_BV( RXEN0 ) ;
+        break ;
+    }
+    for( uint8_t i = 0 ; i < 16 ; i++ )
+    {
+        output[i].setPinModes() ;
+         input[i].setPinMode() ;
+        if( input[i].eedata.pin < 2 ) input[i].rearm() ;     // D0/D1 start now: their first sample is the starting level
+    }
 }
 
 void serialCheck()                              // every 50 ms
@@ -271,7 +284,7 @@ const uint8_t LINK_HOPS  = 0x0F ;
 
 void linkSend( uint8_t extended, uint8_t address, uint8_t value, uint8_t hops )
 {
-    if( !serialIsIO ) return ;                  // the GUI has the UART
+    if( !serialIsIO || ( board.flags & BOARD_SERIAL_PINS ) ) return ;   // the GUI has the UART, or D0/D1 are pins
     uint8_t f[4] = { (uint8_t)( LINK_START | ( extended ? LINK_EXT : 0 ) | hops ), address, value, 0 } ;
     f[3] = f[0] ^ f[1] ^ f[2] ;
     Serial.write( f, 4 ) ;
@@ -386,7 +399,7 @@ void btSetup()                                  // blocks up to ~2 s; the GUI ig
 void loop()
 {
     if( !serialIsIO ) transceiver.receive() ;
-    else              linkReceive() ;
+    else if( !( board.flags & BOARD_SERIAL_PINS ) ) linkReceive() ;
     if( btSetupPending ) btSetup() ;
 
     static uint8_t index ;

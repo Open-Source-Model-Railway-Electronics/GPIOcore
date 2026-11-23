@@ -25,7 +25,6 @@ bool isValidPin( uint8_t pin, uint8_t isOutput )
         if( isOutput ) return false ;
         pin = inputPinNumber( pin ) ;
     }
-    if( pin < 2 ) return false ;                    // D0/D1: the UART (GUI, board link, DFPlayer)
     if( isReservedPin( pin ) ) return false ;       // D2 = DCC and the config button, D13 = config LED
     if( pin >= 20 ) return !isOutput && pin <= 21 && board.type <= BOARD_NANO ;   // A6/A7: analog inputs, Nano only (type 0 Uno = Nano)
     return true ;
@@ -262,7 +261,6 @@ OPCODE( OPCODE_SET_BOARD )
     uint8_t oldFlags = board.flags ;
     uint8_t flags    = msg->payload[2] ;
 
-    flags &= ~BOARD_RESERVED ;
     board.flags = ( flags & ~BOARD_TIMING ) | ( oldFlags & BOARD_TIMING ) ;   // other flags first, then convert the pool
     if( usedRouteSteps() * stepSize() > maxRouteBytes()
     ||  !setTiming( ( flags & BOARD_TIMING ) ? 1 : 0 ) )

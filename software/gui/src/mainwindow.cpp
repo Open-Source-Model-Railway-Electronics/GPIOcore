@@ -632,6 +632,7 @@ void MainWindow::updateInputEditorLimits()
 void MainWindow::setBoardType(int type)
 {
     Gpio::setBoardType(quint8(type));
+    boardOptions().serialPinsAsIO = m_edit.board.serialPins;   // D0/D1 in the pin lists or not
     m_edit.board.type = boardOptions().type;           // Uno = Nano
     QSettings().setValue(QStringLiteral("board/type"), int(m_edit.board.type));
     m_inEd->setTimingEnabled(m_edit.board.timing);
@@ -2017,11 +2018,15 @@ QStringList MainWindow::inputWarnings(int i) const
     return w;
 }
 
-// D0/D1 are the serial line (GUI, board link, DFPlayer, Bluetooth): never a pin of their own (files from before)
+// D0/D1: pins only with the board setting (then only without a PC); otherwise the serial line
 static QString serialPinNote()
 {
+    if (boardOptions().serialPinsAsIO)
+        return QCoreApplication::translate("MainWindow", "D0/D1 work as pins only when no PC is connected (5 s after "
+                                                         "power-up without the program). In the simulator they always work.");
     return QCoreApplication::translate("MainWindow", "D0/D1 are the serial line (GUI, board link, DFPlayer, Bluetooth) "
-                                                     "and cannot be used as a pin: choose another pin.");
+                                                     "and cannot be used as a pin: choose another pin, or switch on "
+                                                     "'D0 / D1 as inputs and outputs' in the board settings.");
 }
 
 QString MainWindow::outputNote(int i) const
@@ -2589,9 +2594,17 @@ void MainWindow::editBoardSettings()
     form->addRow(tr("Wait time per step"), delay);
     form->addRow(tr("Route interlocking"), interlock);
     form->addRow(tr("Block signals flash at"), blink);
+    auto *serialIo = new QCheckBox(tr("D0 / D1 as inputs and outputs (no board link)"));
+    serialIo->setObjectName(QStringLiteral("serialPinsAsIO"));
+    serialIo->setChecked(m_edit.board.serialPins);
+    serialIo->setToolTip(tr("Without a PC, D0 and D1 are then normal pins, e.g. to pass a detector to the next "
+                            "board. The board link is off."));
+    form->addRow(QString(), serialIo);
+    if (boardOptions().dccNext)              // no D0/D1 on its terminals
+        serialIo->hide();
     if (Ui::level() < Ui::Advanced)          // Beginner: name and board type only (the rest is kept as it is)
         for (QWidget *w : { static_cast<QWidget *>(timing), static_cast<QWidget *>(delay), static_cast<QWidget *>(interlock),
-                            static_cast<QWidget *>(blink) })
+                            static_cast<QWidget *>(blink), static_cast<QWidget *>(serialIo) })
         {
             w->hide();
             if (QWidget *label = form->labelForField(w)) label->hide();
@@ -2619,6 +2632,7 @@ void MainWindow::editBoardSettings()
     b.delay     = quint8(qRound(delay->value() * 10));
     b.interlock = quint8(interlock->currentIndex());
     b.blockBlink = BoardSettings::blockBlinkFromHz(blink->value());
+    b.serialPins = serialIo->isChecked();
     m_edit.board = b;
     setBoardType(b.type);
     m_inEd->setTimingEnabled(b.timing);

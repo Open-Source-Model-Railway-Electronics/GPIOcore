@@ -689,7 +689,8 @@ void OutputEditor::applyLevel()
 {
     Ui::offerItems(m_type, [](int t) {
         return Ui::outputTypeLevel(quint8(t)) <= Ui::level()
-            && !((t == SoundEffect || t == BoardLink) && boardOptions().dccNext);   // a DCCnext has no D1
+            && !((t == SoundEffect || t == BoardLink) && boardOptions().dccNext)    // a DCCnext has no D1
+            && !(t == BoardLink && boardOptions().serialPinsAsIO);                  // D0/D1 are pins: no link
     });
 }
 

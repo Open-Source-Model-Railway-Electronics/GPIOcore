@@ -649,6 +649,7 @@ QJsonObject BoardSettings::toJson() const
     o["interlock"] = QString::fromLatin1(kInterlockKeys[interlock < 3 ? interlock : InterlockAuto]);
     o["delay"]     = int(delay);
     o["blockSignalBlinkHz"] = blockBlinkHz();
+    if (serialPins) o["serialPinsAsIO"] = true;
     return o;
 }
 
@@ -672,6 +673,7 @@ BoardSettings BoardSettings::fromJson(const QJsonObject &o)
         if (il == QLatin1String(kInterlockKeys[i])) b.interlock = i;
     b.delay = quint8(qBound(0, o["delay"].toInt(DefaultStepDelay), 255));
     b.blockBlink = blockBlinkFromHz(o["blockSignalBlinkHz"].toDouble(1.0));
+    b.serialPins = o["serialPinsAsIO"].toBool(false);
     return b;
 }
 
@@ -679,7 +681,8 @@ QByteArray encodeBoard(const BoardSettings &b)
 {
     QByteArray p;
     p.append(char(b.type));
-    p.append(char((b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2) | ((b.blockBlink & 0x0F) << 4)));
+    p.append(char((b.serialPins ? 0x01 : 0) | (b.timing ? 0x02 : 0) | ((b.interlock & 0x03) << 2)
+                  | ((b.blockBlink & 0x0F) << 4)));
     p.append(char(b.delay));
     p.append(cleanBoardName(b.name).toLatin1());
     return p;
@@ -690,7 +693,7 @@ bool decodeBoard(const QByteArray &p, BoardSettings &b)
     if (p.size() < 3)
         return false;
     b.type      = quint8(p.at(0)) < BoardTypeCount && p.at(0) != BoardUno ? quint8(p.at(0)) : quint8(BoardNano);
-    // bit 0 (was 'recorder on') is ignored
+    b.serialPins = p.at(1) & 0x01;                   // D0/D1 as pins (was 'recorder on' long ago)
     b.timing    = p.at(1) & 0x02;
     b.interlock = quint8((p.at(1) >> 2) & 0x03);
     if (b.interlock > InterlockAuto) b.interlock = InterlockAuto;

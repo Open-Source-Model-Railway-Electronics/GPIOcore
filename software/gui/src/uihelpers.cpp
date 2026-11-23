@@ -401,13 +401,14 @@ void fillPinCombo(QComboBox *combo, bool output)
         QString reserved = pinReservedReason(pin);
         if (reserved.isEmpty() && output) reserved = pinOutputReason(pin);
         const QString note     = pinNote(pin);
-        if (pin < 2 || pin == 2 || pin == 13)
-            continue;                    // D0/D1: the serial line; D2: DCC + config button; D13: config LED
+        if ((pin < 2 && (!boardOptions().serialPinsAsIO || boardOptions().dccNext)) || pin == 2 || pin == 13)
+            continue;                    // D0/D1: the serial line (unless the board setting); D2: DCC + button; D13: LED
         if ((pin == 20 || pin == 21) && !reserved.isEmpty())
             continue;                    // A6/A7 only appear where they can be used
         if (boardOptions().dccNext && !dccNextPort(pin))
             continue;                    // DCCnext: only its ports P1-P16
         if (!reserved.isEmpty()) text += QStringLiteral("  (%1)").arg(reserved);
+        else if (pin < 2)          text += QStringLiteral("  (%1)").arg(trGpio(QT_TRANSLATE_NOOP("Gpio", "serial pin")));
         else if (pin >= 20)        text += QStringLiteral("  (%1)").arg(trGpio(QT_TRANSLATE_NOOP("Gpio", "analog input only")));
         combo->addItem(text, int(pin));
         combo->setItemData(combo->count() - 1, text, Qt::UserRole + 1);       // text without 'in use'

@@ -7,6 +7,9 @@ this program (over USB or Bluetooth), the <b>board link</b> to other boards, a <
 program's while you configure: the board link and the DFPlayer do nothing then.</li>
 <li>If nothing connects (normal operation on the layout), the line becomes the <b>board link</b> (9600 baud): what
 comes in on RX is passed on to TX and runs as a DCC command; board link outputs and a DFPlayer use TX.</li>
+<li><b>Board setting "D0 / D1 as inputs and outputs"</b> (Advanced level): then D0 and D1 are normal pins when no
+program is connected, for example to pass a detector to the next board (high / low, through an optocoupler). The
+board link is off then.</li>
 <li>Opening the USB port resets the board, so the program connects within those 5 seconds. Over Bluetooth there
 is no reset: press the config button <b>briefly</b>, then the line is the program's again for 5 seconds.</li>
 </ul>

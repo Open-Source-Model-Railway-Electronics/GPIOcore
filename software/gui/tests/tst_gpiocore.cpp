@@ -397,8 +397,10 @@ private slots:
         QCOMPARE(int(InputConfig::fromJson(QJsonObject{ { "type", "feedback" }, { "pin", 8 } }).type), int(InputNotInUse));
         BoardSettings b;
         const char board[3] = { 1, 1, 3 };               // Nano, flags bit0 set, delay 3
-        QVERIFY(decodeBoard(QByteArray(board, 3), b));   // flags bit0 (was 'recorder on') is ignored
-        QCOMPARE(int(quint8(encodeBoard(b).at(1))), 0);
+        QVERIFY(decodeBoard(QByteArray(board, 3), b));   // flags bit0: D0/D1 as inputs and outputs
+        QVERIFY(b.serialPins);
+        QCOMPARE(int(quint8(encodeBoard(b).at(1))), 1);
+        QVERIFY(BoardSettings::fromJson(b.toJson()).serialPins);
         QVERIFY(pinReservedReason(18).isEmpty() && pinReservedReason(19).isEmpty());   // A4/A5 always usable
     }
 
@@ -837,6 +839,36 @@ private slots:
         QTRY_VERIFY(sim->configSession());
         QCOMPARE(noBoard.size(), 0);
         QCOMPARE(errors.size(), 0);
+    }
+
+    // Board setting 'D0 / D1 as inputs and outputs' (flags bit0): D0/D1 are pins as before, the board link is off
+    void serialPinsAsIO()
+    {
+        SimulatedDevice sim;
+        QVERIFY(sim.open(QIODevice::ReadWrite));
+        for (int o = 0; o < NumOutputs; ++o) sim.setOutput(o, OutputConfig());
+        for (int i = 0; i < NumInputs; ++i)  sim.setInput(i, InputConfig());
+        BoardSettings b = sim.board();
+        b.serialPins = true;
+        sim.setBoard(b);
+        OutputConfig lamp;
+        lamp.type = SingleSteady; lamp.pinA = 1;                 // D1 (TX) as an output
+        sim.setOutput(0, lamp);
+        InputConfig det;
+        det.type = Latching; det.pin = 0; det.outputId = 0;      // D0 (RX) as an input
+        sim.setInput(0, det);
+        sim.advanceClock(5100);
+        QTRY_VERIFY(sim.serialIsIO());
+        QTest::qWait(150);
+        QTRY_COMPARE(int(sim.pin(1).level), 1);                  // free: on
+        sim.setPinLevel(0, false);                               // the other board pulls D0 low
+        QTRY_COMPARE(int(sim.pin(1).level), 0);
+        sim.setPinLevel(0, true);
+        QTRY_COMPARE(int(sim.pin(1).level), 1);
+        sim.clearLinkSent();
+        sim.linkReceive(linkFrame(false, 5, 1));                 // no board link: nothing passed on
+        QTest::qWait(200);
+        QVERIFY(sim.linkSent().isEmpty());
     }
 
     // GPIOcore.ino serialCheck(): after the serial window without a GUI the UART becomes the board link (9600 baud),
