@@ -18,24 +18,26 @@ Quick reminder:
 
 ## Contents
 
-1. [Plain servo decoder](#1-plain-servo-decoder)
-2. [Servo decoder with frog polarisation](#2-servo-decoder-with-frog-polarisation)
-3. [Coil decoder (solenoid turnouts)](#3-coil-decoder-solenoid-turnouts)
-4. [Coil decoder with frog polarisation](#4-coil-decoder-with-frog-polarisation)
-5. [Stall motors (MTB MP1 and similar)](#5-stall-motors-mtb-mp1-and-similar)
-6. [Set a whole route of turnouts with one button](#6-set-a-whole-route-of-turnouts-with-one-button)
-7. [Many buttons on one pin (resistor ladder)](#7-many-buttons-on-one-pin-resistor-ladder)
-8. [Water crane: a train arrives, the crane swings out and back](#8-water-crane-a-train-arrives-the-crane-swings-out-and-back)
-9. [Engine shed doors that open and close by themselves](#9-engine-shed-doors-that-open-and-close-by-themselves)
-10. [A crane with several servos](#10-a-crane-with-several-servos)
-11. [Street and house lights that come on when it gets dark](#11-street-and-house-lights-that-come-on-when-it-gets-dark)
-12. [Level crossing with flashing lights, barriers and a bell](#12-level-crossing-with-flashing-lights-barriers-and-a-bell)
-13. [Playing sounds](#13-playing-sounds)
-14. [Light effects](#14-light-effects)
-15. [A signal](#15-a-signal)
-16. [Day and night: lights that fade slowly](#16-day-and-night-lights-that-fade-slowly)
-17. [Automatic block signals](#17-automatic-block-signals)
-18. [Semaphore signals that follow the track](#18-semaphore-signals-that-follow-the-track)
+- [GPIOcore – what you can build with it](#gpiocore--what-you-can-build-with-it)
+  - [Contents](#contents)
+  - [1. Plain servo decoder](#1-plain-servo-decoder)
+  - [2. Servo decoder with frog polarisation](#2-servo-decoder-with-frog-polarisation)
+  - [3. Coil decoder (solenoid turnouts)](#3-coil-decoder-solenoid-turnouts)
+  - [4. Coil decoder with frog polarisation](#4-coil-decoder-with-frog-polarisation)
+  - [5. Stall motors (MTB MP1 and similar)](#5-stall-motors-mtb-mp1-and-similar)
+  - [6. Set a whole route of turnouts with one button](#6-set-a-whole-route-of-turnouts-with-one-button)
+  - [7. Many buttons on one pin (resistor ladder)](#7-many-buttons-on-one-pin-resistor-ladder)
+  - [8. Water crane: a train arrives, the crane swings out and back](#8-water-crane-a-train-arrives-the-crane-swings-out-and-back)
+  - [9. Engine shed doors that open and close by themselves](#9-engine-shed-doors-that-open-and-close-by-themselves)
+  - [10. A crane with several servos](#10-a-crane-with-several-servos)
+  - [11. Street and house lights that come on when it gets dark](#11-street-and-house-lights-that-come-on-when-it-gets-dark)
+  - [12. Level crossing with flashing lights, barriers and a bell](#12-level-crossing-with-flashing-lights-barriers-and-a-bell)
+  - [13. Playing sounds](#13-playing-sounds)
+  - [14. Light effects](#14-light-effects)
+  - [15. A signal](#15-a-signal)
+  - [16. Day and night: lights that fade slowly](#16-day-and-night-lights-that-fade-slowly)
+  - [17. Automatic block signals](#17-automatic-block-signals)
+  - [18. Semaphore signals that follow the track](#18-semaphore-signals-that-follow-the-track)
 
 ---
 
@@ -43,11 +45,9 @@ Quick reminder:
 
 **What it does:** up to 16 servo turnouts, each on its own DCC address and/or push button.
 
-**You need:** servos (SG90 or MG90), a separate 5 V supply for the servos (the Nano cannot power more
-than one or two), wires.
+**You need:** servos (SG90 or MG90), 12V - 18V DC power supply
 
-**Wiring:** servo signal wire to an output pin (D3–D12, A0–A5), servo + to the 5 V servo supply,
-servo − to GND. Connect the GND of the servo supply to the GND of the Nano.
+**Wiring:** servo cable can be directly connected to the board. Make sure to plug it in correctly
 
 **In the program:**
 
@@ -70,7 +70,7 @@ servo − to GND. Connect the GND of the servo supply to the GND of the Nano.
 **What it does:** like example 1, but the decoder also switches the power on the frog of the turnout, so
 locos don't stall on it.
 
-**You need:** a relay module per turnout (a 5 V relay board with a transistor input works).
+**You need:** a relay module per turnout (a 5 V relay board works).
 
 - **Unifrog / one relay:** one relay switches the frog between the two rails.
 - **Electrofrog / two relays:** the decoder turns *both* relays off while the servo moves and switches the
@@ -86,11 +86,9 @@ servo output, choose the **Frog** type and the relay pins.
 **What it does:** drives turnouts with two coils (e.g. Peco, Roco, Fleischmann): a short pulse on one coil
 throws the turnout, a pulse on the other throws it back.
 
-**You need:** a driver board, because coils need much more current than an Arduino pin gives. A
-**ULN2803** (8 channels) or MOSFET board works. Plus a coil supply (often 16 V AC rectified, or 12–16 V DC).
+**You need:** a suitable board with amplified outputs, Plus a 18V DC power supply
 
-**Wiring:** Arduino pins → driver inputs, driver outputs → one side of each coil, the common wire of the
-turnout → + of the coil supply. Connect the GND of the coil supply to the Nano's GND.
+**Wiring:** Connect the Coil to the amplified power terminals
 
 **In the program:** preset **"8 double pulse"**. Per output type **Double pulse**, two pins (one per coil)
 and the **pulse length** (start with 200 ms; too short = doesn't throw, too long = hot coils).
@@ -109,10 +107,9 @@ As example 3, plus a relay for the frog. Presets **"5 double pulse + unifrog rel
 **What it does:** stall motors (MTB MP1, Tortoise, Cobalt) don't want a pulse but a **constant voltage**
 whose polarity decides the direction.
 
-**You need:** a small motor driver per motor, e.g. an **L9110S** or **L293D** board (two inputs → motor
-turns one way or the other). The MP1 has its own switch for the frog, so no relay is needed.
+**You need:** a suitable board with amplified outputs, Plus a 12V DC power supply
 
-**Wiring:** two Arduino pins → the two inputs of the driver, driver outputs → the motor.
+**Wiring:** Connect the Coil to the amplified power terminals
 
 **In the program:** output type **Double steady**: pin A follows the state, pin B is always the opposite.
 So the driver always gets "left" or "right" and the motor keeps pushing gently against its end stop, which is
@@ -139,23 +136,37 @@ throws several turnouts one after another, e.g. "track 3 into the station".
 ## 7. Many buttons on one pin (resistor ladder)
 
 **What it does:** saves pins. Five, eight or more push buttons share **one analog pin**. Each button
-makes a different voltage; the decoder recognises which button was pressed.
+makes a different voltage; the decoder recognises which button was pressed. Recommended is to use pin 6 for this board.
 
 **You need:** push buttons and resistors.
 
 **Wiring (one common way):**
 
 ```text
-5 V ──[ 10 kΩ ]──┬──────────── A0
-                 │
-                 ├─[button 1]─────────────────────── GND
-                 ├─[button 2]──[ 1 kΩ ]───────────── GND
-                 ├─[button 3]──[ 2.2 kΩ ]─────────── GND
-                 ├─[button 4]──[ 4.7 kΩ ]─────────── GND
-                 └─[button 5]──[ 10 kΩ ]──────────── GND
+                         +5V
+                          │
+                       [10 kΩ]
+                          │
+       A0 ────────────────┼────────[button 1]──── GND
+                          │
+                       [1 kΩ]
+                          │
+                          ├────────[button 2]──── GND
+                          │
+                       [1 kΩ]
+                          │
+                          ├────────[button 3]──── GND
+                          │
+                       [1 kΩ]
+                          │
+                          ├────────[button 4]──── GND
+                          │
+                       [1 kΩ]
+                          │
+                         GND
 ```
 
-No button pressed: A0 reads about 1023. Each button pulls A0 down to its own value.
+No button pressed: A6 reads about 1023. Each button pulls A6 down to its own value.
 
 **In the program**, for each button one input:
 
@@ -176,8 +187,7 @@ differ (resistor tolerances, cable length): **always use the live reading**, not
 **What it does:** a loco stops at the water crane. After 5 seconds the crane arm swings over the tender,
 "fills up" for 30 seconds and swings back.
 
-**You need:** one servo for the arm, a sensor in the track: a reed switch with a magnet under the loco, an
-IR reflection sensor, or a light sensor (LDR) between the sleepers.
+**You need:** one servo for the arm, a sensor in the track: a sensor of any kind to detect a loco
 
 **In the program:**
 
@@ -186,7 +196,7 @@ IR reflection sensor, or a light sensor (LDR) between the sleepers.
 2. Output: **Servo** for the crane arm. Straight = parked, curved = over the tender.
 3. Input on the sensor pin:
    - a reed switch or IR sensor: a normal digital pin;
-   - an LDR (the loco covers it): **Read as** *Analog – below a value* and use the live reading to find the
+   - or an LDR (the loco covers it): **Read as** *Analog – below a value* and use the live reading to find the
      value with and without a loco above it.
 4. **Function: Route**, with these steps:
 
@@ -282,7 +292,7 @@ a bell sound (see example 13), two track sensors (one before, one after the cros
 
 **Outputs:**
 
-- **Swing light** for the two red lamps (they flash alternately).
+- **Light effect** *swing light* for the two red lamps (they flash alternately).
 - **Servo** for each barrier.
 - **Sound effect** for the bell.
 
@@ -292,7 +302,7 @@ Sensor before the crossing → **Route** "close":
 
 | Step | Output | Value | Wait after |
 |---|---|---|---|
-| 1 | Swing light | on | 0 s |
+| 1 | Light effect (swing light) | on | 0 s |
 | 2 | Sound | track 1 (bell) | 4 s |
 | 3 | Barrier left | curved (down) | 0.5 s |
 | 4 | Barrier right | curved (down) | 0 s |
@@ -303,7 +313,7 @@ Sensor after the crossing → **Route** "open":
 |---|---|---|---|
 | 1 | Barrier left | straight (up) | 0.5 s |
 | 2 | Barrier right | straight (up) | 3 s |
-| 3 | Swing light | off | 0 s |
+| 3 | Light effect (swing light) | off | 0 s |
 | 4 | Sound | 0 (stop) | 0 s |
 
 Set a slow servo **Speed** so the barriers move like the real thing.
@@ -314,13 +324,12 @@ Set a slow servo **Speed** so the barriers move like the real thing.
 
 **What it does:** plays MP3 files: a bell, a station announcement, a steam whistle, water, birds.
 
-**You need:** a **DFPlayer Mini** module, a micro-SD card, a small speaker (3 W, 4–8 Ω).
+**You need:** a **DFPlayer Mini** module, a micro-SD card, a small speaker (3 W, 4–8 Ω). or a board that already contains such a module.
 
 **Wiring:**
 
-- DFPlayer VCC → 5 V, GND → GND.
-- **DFPlayer RX ← Nano TX (D1)**, with a **1 kΩ resistor** in between.
-- Speaker on SPK1 and SPK2.
+- on board *DFPlayer**
+- Speaker on the designated speaker pins
 
 **SD card:** put the files in a folder `MP3` and name them `0001.mp3`, `0002.mp3`, `0003.mp3` … The number is
 the track; the order in which you copy them does not matter. MP3 only.
@@ -347,10 +356,11 @@ Every output can be a little light show, controlled like any other output (butto
 |---|---|---|
 | **Single flashing** | a blinking warning light | 1 |
 | **Double flashing** | two lamps blinking in turn | 2 |
-| **Swing light** | level crossing lights | 2 |
-| **Fireplace** | flickering fire or a campfire (needs PWM pins: D3, D5, D6, D9, D10, D11) | 2 |
-| **TL tube** | a fluorescent tube that flickers a few times before it stays on | 1 (PWM) |
-| **Welder** | random blue welding flashes in a workshop | 1 |
+| **Light effect** → *swing light* | level crossing lights | 2 |
+| **Light effect** → *fireplace* | flickering fire or a campfire (needs PWM pins: D3, D5, D6, D9, D10, D11) | 2 |
+| **Light effect** → *TL tube* | a fluorescent tube that flickers a few times before it stays on | 1 (PWM) |
+| **Light effect** → *welder* | random blue welding flashes in a workshop | 1 |
+| **Light effect** → *photographer* | a camera flash now and then, sometimes with a pre-flash | 1 |
 | **PWM** | a lamp at a set brightness, which can **fade** slowly to a new brightness | 1 (PWM) |
 
 ---

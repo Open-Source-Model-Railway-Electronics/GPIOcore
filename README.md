@@ -28,6 +28,7 @@ with a bell, lights that come on at dusk, a water crane, and more).
 9. [Analog inputs: sensors and many buttons on one pin](#9-analog-inputs-sensors-and-many-buttons-on-one-pin)
 10. [Sound (DFPlayer Mini)](#10-sound-dfplayer-mini)
 10a. [Automatic block signals](#10a-automatic-block-signals)
+10b. [Linking boards (board link)](#10b-linking-boards-board-link)
 11. [Setting servos at the layout](#11-setting-servos-at-the-layout)
 12. [Saving your work](#12-saving-your-work)
 13. [When something doesn't work](#13-when-something-doesnt-work)
@@ -40,7 +41,7 @@ with a bell, lights that come on at dusk, a water crane, and more).
 - **Turnouts:** servos (with adjustable speed), coil turnouts (two coils, short pulse), stall motors.
   It can also switch the **frog** power with a relay, so locos never stall on the turnout.
 - **Lights:** on/off, blinking, level crossing lights, a flickering fireplace, a fluorescent tube that
-  starts up, welding flashes, a lamp at a set brightness that can fade slowly (day and night).
+  starts up, welding flashes, a photographer's flash, a lamp at a set brightness that can fade slowly (day and night).
 - **Signals:** up to four lamps per signal.
 - **Sound:** plays MP3 files (bell, announcement, whistle) with a DFPlayer Mini module.
 - **Routes:** one button press or one DCC command does several things one after another, with wait times
@@ -58,19 +59,18 @@ with a bell, lights that come on at dusk, a water crane, and more).
 | A USB cable and a **Windows PC** | to set it up (not needed while the layout runs) |
 | A **5 V power supply** for servos | one Nano can't power more than one or two servos |
 | Optional: a DCC input circuit (optocoupler) on pin **D2** | only if you use a DCC command station |
-| Optional: a push button on pin **A7** (with a 10 kΩ resistor to 5 V) | to set servos at the layout with your throttle |
+| Optional: a push button from pin **D2** to GND (the config button) | to set servos at the layout with your throttle |
 | Optional: relay modules, a coil driver (ULN2803), a DFPlayer Mini … | depending on what you build, see [examples.md](examples.md) |
 
 **DCCnext:** the program shows the board's own port numbers **P1–P16** (P1 = D3 … P10 = D12, P11 = A0 … P16 = A5).
 
-**Pins with a fixed job:** D2 = DCC, D13 = the little LED on the Nano (shows the config mode), A7 = config
-button. All other pins are yours.
+**Pins with a fixed job:** D2 = DCC input and config button, D13 = the little LED on the Nano (shows the config
+mode), D0 / D1 = the serial line (USB, board link, DFPlayer, Bluetooth). All other pins are yours.
 
 **Good to know about pins:**
 
-- D0 and D1 are also the USB connection. They only work as normal pins when no PC is connected.
 - Some effects need a **PWM pin** (marked "PWM" in the program): D3, D5, D6, D9, D10, D11.
-- A6 can only be used as an input, and only on a Nano.
+- A6 and A7 can only be used as analog inputs, and only on a Nano.
 
 ---
 
@@ -150,12 +150,12 @@ Click an output and choose its **Type**:
 | **Single steady** | one pin on or off (a lamp, a relay) | 1 |
 | **Double steady** | two pins, always opposite (stall motor via a motor driver, two-colour LED) | 2 |
 | **Single flashing / Double flashing** | blinking light(s) | 1 / 2 |
-| **Swing light** | level crossing lights, two lamps blinking in turn | 2 |
-| **Fireplace / TL tube / Welder** | light effects | 1–2 |
+| **Light effect** | choose the effect: swing light (level crossing), fireplace, TL tube, welder, photographer | 1–2 |
 | **PWM** | a lamp at a set brightness; with a **Fade time** it changes slowly (day / night) | 1 |
 | **4-aspect signal** | a light signal with up to four lamps | 4 |
 | **Sound effect** | plays MP3 tracks on a DFPlayer Mini (see chapter 10) | D1 |
 | **Block signal** | a light signal that sets itself from track occupancy (see chapter 10a) | 1–4 |
+| **Board link (TX)** | sends turnout commands and values to other boards (see chapter 10b) | D1 |
 
 Every output has two states: **curved / off** and **straight / on**. **Test: curved / off** and
 **Test: straight / on** let you try it.
@@ -308,10 +308,24 @@ analog condition is true). Any input in use counts as a detector, so an **Absolu
 **Semaphore signals:** a servo can follow a detector (servo settings, *Follows a detector*): occupied =
 curved (stop), free = straight (clear), or swapped.
 
-**Linking boards:** the last signal of a board needs the first block of the next board. Use D0 (RX) with an
-optocoupler as a Sensor input for "next board's first block", and D1 (TX) as a *Single steady* output driven
-by an Absolute input on your own first detector. D0/D1 only work when no PC is connected (5 s after
-power-up without the program); in the simulator they always work.
+**Linking boards:** the last signal of a board needs the first block of the next board. Wire that detector
+through an optocoupler to a free pin here, as a Sensor input for "next board's first block".
+
+---
+
+## 10b. Linking boards (board link)
+
+Several boards can work together, for example one board with all the buttons and three boards with the turnouts.
+Connect **TX (D1)** of one board to **RX (D0)** of the next, and so on, with a common GND.
+
+- On the first board add one output of type **Board link (TX)**. In a route, each step to it chooses an
+  **address** (1–255) and **Curved**, **Straight** or **Value** (0–255: an aspect, a servo angle, PWM, a track).
+- Every board passes what it receives on to the next one at once, and runs it as if it came from the DCC command
+  station. Set the other boards up as a **normal DCC decoder**: an input with DCC address 5 reacts to a step
+  "#5 straight". They need no other setting.
+- The wait time between the steps is also the time between the commands, so the turnouts move one after another.
+- **Only without a PC connected:** 5 seconds after power-up the serial line becomes the board link. With the
+  program connected it is the program's.
 
 ---
 
@@ -325,9 +339,10 @@ once, and the slider in the program moves along too.
 
 ### With the config button and your throttle (no PC needed)
 
-Only on an Arduino **Nano**: the Uno and the DCCnext have no A7.
+The config button is a push button from **D2** (the DCC input) to GND. DCC changes D2 all the time; a pressed
+button holds it low, and that is what the board looks for.
 
-1. **Hold the button on A7 for 2 seconds.** The LED on the Nano blinks: config mode.
+1. **Hold the config button for 2 seconds.** The LED on the Nano blinks: config mode.
 2. **Short press:** the next servo is selected and moves, so you see which one it is.
 3. On your throttle, select **loco address 9999**:
    - the **speed knob** moves the servo;

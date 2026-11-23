@@ -54,14 +54,15 @@ In the program choose *View → Language → Deutsch (de)* and restart the progr
 - **New texts after an update:** run `update_translations` again. Existing translations stay;
   new texts appear in Linguist as "unfinished".
 
-## Status (2026-11-13)
+## Status (2026-11-23)
 
-| Language | UI texts | Explanation texts |
-|---|---|---|
-| English (`en`) | source (441 texts) | complete (21) |
-| Nederlands (`nl`), Deutsch (`de`), Français (`fr`), Español (`es`), Italiano (`it`) | 441 of 441 translated | complete (21) |
-| `pl` `cs` `da` `nb` `sv` `hu` `pt` | 441 of 441 translated | not yet (falls back to English) |
+All 12 languages (`nl de fr es it pl cs da nb sv hu pt`) have every UI text translated (625 texts) and every
+explanation text (27 topics). Terms have **not** yet been checked by native speakers on forums: signal aspects,
+frog, block and "board link" are the first candidates.
 
-Terms have **not** yet been checked on forums. Deviations from the existing manuals: NL puntstuk (not
-"hartpunt"), SV hjärtstycke, HU szív, NB sporveksel, and ES/IT/PT/NB a word of their own for frog (corazón, cuore, coração,
-hjertestykke). In Dutch the circuit board is called "board" in the GUI (the product is called "GPIOcore board").
+## For programmers
+
+- Texts in the context `Gpio` that are translated with `trGpio(...)` must be written as
+  `trGpio(QT_TRANSLATE_NOOP("Gpio", "..."))`, otherwise lupdate does not find them.
+- A help topic is one file per language; a new topic needs a CMake configure run (the files are globbed).
+- Check a translated topic with a script: its HTML tag sequence must equal the English one.
