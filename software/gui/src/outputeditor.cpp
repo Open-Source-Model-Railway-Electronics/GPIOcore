@@ -388,32 +388,6 @@ void OutputEditor::buildUi()
     }
     root->addWidget(m_paramBox);
 
-    // State + test
-    auto *stateBox = new QGroupBox(tr("State"));
-    m_stateBox = stateBox;
-    auto *stateInner = new QVBoxLayout(stateBox);
-    auto *stateLay = new QHBoxLayout;
-    auto *testLay  = new QHBoxLayout;
-    stateInner->addLayout(stateLay);
-    stateInner->addLayout(testLay);
-    m_state = new QComboBox;
-    m_state->addItem(tr("0  (off / curved)"), 0);
-    m_state->addItem(tr("1  (on / straight)"), 1);
-    m_test0 = new QPushButton(tr("▶ Test: curved / off"));
-    m_test1 = new QPushButton(tr("▶ Test: straight / on"));
-    m_test0->setObjectName(QStringLiteral("test"));
-    m_test1->setObjectName(QStringLiteral("test"));
-    const QString tip = tr("Writes this output to the board with the chosen state (also stored in EEPROM)");
-    m_test0->setToolTip(tip);
-    m_test1->setToolTip(tip);
-    stateLay->addWidget(new QLabel(tr("Stored state")));
-    stateLay->addWidget(m_state);
-    stateLay->addStretch();
-    stateLay->addWidget(Info::button(QStringLiteral("output.state")));
-    testLay->addWidget(m_test0);
-    testLay->addWidget(m_test1);
-    testLay->addStretch();
-    root->addWidget(stateBox);
     root->addStretch();
 
     refreshPinCombos();
@@ -466,7 +440,6 @@ void OutputEditor::buildUi()
     for (auto *c : m_pins)   connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     for (auto *c : m_relays) connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     connect(m_invertFrog, &QCheckBox::toggled, this, onEdit);
-    connect(m_state, QOverload<int>::of(&QComboBox::currentIndexChanged), this, onEdit);
     for (auto *s : { m_switchTime, m_swingPulse, m_swingPause, m_servoMin, m_servoMax, m_servoSpeed, m_pwm, m_fade,
                      m_linkAddress })
         connect(s, QOverload<int>::of(&QSpinBox::valueChanged), this, onEdit);
@@ -492,15 +465,13 @@ void OutputEditor::buildUi()
     // stored state after every settings write, so the servo stays at the angle being adjusted.
     auto follow = [this](int state) {
         if (m_loading || !m_live->isChecked() || !m_live->isEnabled() || m_cfg.state == state) return;
-        m_state->setCurrentIndex(m_state->findData(state));
+        m_cfg.state = quint8(state);
+        collect();
     };
     connect(m_servoMin, QOverload<int>::of(&QSpinBox::valueChanged), this, [follow, live](int a) { follow(0); live(a); });
     connect(m_servoMax, QOverload<int>::of(&QSpinBox::valueChanged), this, [follow, live](int a) { follow(1); live(a); });
     connect(m_servoMinSlider, &QSlider::sliderPressed, this, [this, live] { live(m_servoMin->value()); });
     connect(m_servoMaxSlider, &QSlider::sliderPressed, this, [this, live] { live(m_servoMax->value()); });
-
-    connect(m_test0, &QPushButton::clicked, this, [this] { emit testRequested(m_index, 0); });
-    connect(m_test1, &QPushButton::clicked, this, [this] { emit testRequested(m_index, 1); });
 }
 
 void OutputEditor::refreshPinCombos()
@@ -576,8 +547,6 @@ void OutputEditor::setWarnings(const QStringList &warnings, const QString &note)
 void OutputEditor::setConnected(bool connected)
 {
     m_connected = connected;
-    m_test0->setEnabled(connected);
-    m_test1->setEnabled(connected);
     refresh();
 }
 
@@ -630,7 +599,6 @@ void OutputEditor::refresh()
     if (m_cfg.servoFollows() >= 0)
         Ui::selectData(m_followInput, m_cfg.servoFollows());
     m_followSwap->setChecked(m_cfg.servoFollowSwap());
-    m_state->setCurrentIndex(m_cfg.state ? 1 : 0);
 
     const bool liveOk = m_connected && m_liveAvailable;
     m_live->setEnabled(liveOk);
@@ -681,7 +649,6 @@ void OutputEditor::updateVisibility()
     if (auto *form = qobject_cast<QFormLayout *>(m_blockRow[1]->parentWidget()->layout()))
         if (QWidget *label = form->labelForField(m_blockRow[1]))
             label->setEnabled(next);
-    m_stateBox->setVisible(m_cfg.type != BlockSignal);   // no stored state: the aspect is computed
     applyLevel();
 }
 
@@ -771,7 +738,7 @@ void OutputEditor::collect()
     default:
         break;
     }
-    m_cfg.state = quint8(m_state->currentIndex());
+    // m_cfg.state is the board's own: it comes from the board or the file and is kept as it is
 
     m_loading = true;
     m_frogNote->setVisible(false);

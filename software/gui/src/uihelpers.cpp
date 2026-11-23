@@ -280,7 +280,6 @@ void applyAppStyle(QApplication &app)
         QPlainTextEdit#log { font-family: Consolas, 'Courier New', monospace; font-size: 9pt; background: #0F172A; color: #E2E8F0; border: none; }
         QPushButton { padding: 5px 12px; border: 1px solid #CBD5E1; border-radius: 6px; background: #FFFFFF; }
         QPushButton:hover { background: #F1F5F9; }
-        QPushButton#test { border-color: #93C5FD; color: #1D4ED8; }
         QComboBox, QSpinBox { padding: 3px 6px; border: 1px solid #CBD5E1; border-radius: 5px; background: white; min-height: 20px; }
         QComboBox:disabled, QSpinBox:disabled { background: #F1F5F9; }
         QComboBox QAbstractItemView { outline: 0; border: 1px solid #CBD5E1; background: #FFFFFF; }

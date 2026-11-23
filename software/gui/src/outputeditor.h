@@ -40,7 +40,6 @@ public:
 
 signals:
     void changed(int index, const Gpio::OutputConfig &c);
-    void testRequested(int index, int state);
     void liveServo(int index, int angle);
 
 private:
@@ -114,9 +113,4 @@ private:
     QWidget        *m_soundInfo = nullptr;   // sound effect: wiring and SD card help
     QSpinBox       *m_linkAddress = nullptr; // board link: its own address (data[0])
     QLabel         *m_linkNote = nullptr;
-
-    QGroupBox      *m_stateBox = nullptr;
-    QComboBox      *m_state = nullptr;
-    QPushButton    *m_test0 = nullptr;
-    QPushButton    *m_test1 = nullptr;
 };

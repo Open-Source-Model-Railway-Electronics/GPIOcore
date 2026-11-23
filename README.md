@@ -157,8 +157,8 @@ Click an output and choose its **Type**:
 | **Block signal** | a light signal that sets itself from track occupancy (see chapter 10a) | 1–4 |
 | **Board link (TX)** | sends turnout commands and values to other boards (see chapter 10b) | D1 |
 
-Every output has two states: **curved / off** and **straight / on**. **Test: curved / off** and
-**Test: straight / on** let you try it.
+Every output has two states: **curved / off** and **straight / on**. The board remembers the last state, also
+without power. To try an output on the real board, use **Live test** and click the input that drives it.
 
 **Choosing pins:** pins that are already used are shown in **red** in the list. If you choose one anyway,
 it moves to this output and the other block becomes "not in use".

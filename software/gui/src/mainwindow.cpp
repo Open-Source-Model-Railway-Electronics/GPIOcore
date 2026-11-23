@@ -512,7 +512,6 @@ void MainWindow::buildUi()
         m_edit.inputs[i].name = name;
         userEdited();
     });
-    connect(m_outEd, &OutputEditor::testRequested, this, &MainWindow::testOutput);
 }
 
 void MainWindow::userEdited()
