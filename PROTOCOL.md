@@ -241,7 +241,7 @@ flags  : bit0 = D0/D1 usable as I/O outside a config session
          bit4 = analog inputs (GET_ANALOG D1 / D3) and the sound effect output (type 14)
          bit5 = Bluetooth: BT_SETUP (E0 / E3) and the announce after a short press on the
                 config button (GUI mode, section 3.1)
-step pool: number of route steps that still fit with the current board settings
+step pool: number of route steps the board has room for with the current board settings
            (timing on/off), all routes together
 ```
 

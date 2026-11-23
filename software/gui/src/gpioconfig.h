@@ -155,6 +155,9 @@ QString inputTypeHelp(quint8 type);
 
 // ── Route steps (5 bytes each on the wire, see PROTOCOL.md) ────────────────
 constexpr int     MaxRouteSteps    = 16;      // per route (protocol limit)
+constexpr int     RoutePoolBytes   = 1024 - 262; // firmware EE_END - EE_POOL: all routes together
+// Route steps the board has room for: 3 B per step, 5 B with its own wait time (board setting 'timing')
+constexpr int routeStepPool(bool timing) { return RoutePoolBytes / (timing ? 5 : 3); }
 constexpr quint16 MaxStepDelay     = 0x3FFF;  // 14 bits of 0.1 s = 1638.3 s
 constexpr quint16 DefaultStepDelay = 3;       // 0.3 s
 

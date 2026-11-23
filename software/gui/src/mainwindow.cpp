@@ -598,13 +598,11 @@ void MainWindow::closePanels()
 RouteLimits MainWindow::routeLimits() const
 {
     RouteLimits l;
+    l.pool = routeStepPool(m_edit.board.timing);   // follows the setting, also before it is written
     const DeviceCaps &c = m_link->caps();
     if (m_link->isOpen() && c.known)
-    {
         l.maxSteps = qBound(1, c.maxRouteSteps, MaxRouteSteps);
-        l.pool     = qMax(1, c.stepPool);
-    }
-    return l;                            // offline: what a decoder can do
+    return l;
 }
 
 void MainWindow::applyCapabilities()
@@ -635,6 +633,7 @@ void MainWindow::setBoardType(int type)
     m_edit.board.type = boardOptions().type;           // Uno = Nano
     QSettings().setValue(QStringLiteral("board/type"), int(m_edit.board.type));
     m_inEd->setTimingEnabled(m_edit.board.timing);
+    updateInputEditorLimits();           // the step pool depends on the timing setting
     if (m_boardType)
         m_boardType->setCurrentIndex(m_boardType->findData(int(m_edit.board.type)));
     m_outEd->refreshPinCombos();

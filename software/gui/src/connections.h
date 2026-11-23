@@ -26,7 +26,7 @@ int totalRouteSteps(const BoardConfig &board);
 struct RouteLimits
 {
     int maxSteps = MaxRouteSteps;            // per route
-    int pool     = NumInputs * MaxRouteSteps; // all routes together
+    int pool     = routeStepPool(false);       // all routes together
 };
 
 enum class ConnectResult

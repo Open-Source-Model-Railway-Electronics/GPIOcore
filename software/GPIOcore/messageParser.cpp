@@ -212,7 +212,7 @@ OPCODE( OPCODE_REQ_VERSION )
 // HELLO reply; sent unasked (without a session) after a short press on the config button: the announce
 void sendHelloReply()
 {
-    uint16_t pool = freeRouteSteps() ;
+    uint16_t pool = usedRouteSteps() + freeRouteSteps() ;   // room for this many steps in total
     Message m ;
     m.command    = OPCODE_HELLO_REPLY ;
     m.payload[0] = PROTOCOL_VERSION ;

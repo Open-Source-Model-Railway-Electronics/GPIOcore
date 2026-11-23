@@ -668,6 +668,9 @@ private slots:
         QCOMPARE(r.link->caps().protocol, 2);
         QCOMPARE(r.link->caps().maxRouteSteps, 16);
         QCOMPARE(r.link->caps().stepPool, (1024 - 262) / 3);   // the EEPROM pool, timing off: 3 B per step
+        QCOMPARE(r.link->caps().stepPool, Gpio::routeStepPool(false));   // the GUI's own count agrees
+        QCOMPARE(Gpio::routeStepPool(false), 254);
+        QCOMPARE(Gpio::routeStepPool(true), 152);                       // 5 B per step with own wait times
         QVERIFY(r.link->caps().servoLive);
         QVERIFY(r.sim->configSession());
         QCOMPARE(r.errors, 0);
