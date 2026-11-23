@@ -50,8 +50,8 @@ The **(i)** buttons everywhere in the program explain the thing next to them.
 - **New board (offline)**: start with an empty board, without a board connected.
 - **Open configuration / Save / Save as**: your board files.
 - **Open example**: ready-made examples, such as a level crossing. Open one and look how it is made.
-- **Export / Import**: save some inputs, outputs or the board settings in a file of their own, or add them from
-  another file. Handy to copy a turnout setup to another board.
+- **Export / Import**: save the outputs, inputs or board settings in a file of their own, or add them from
+  another file. See *Reusing parts: export and import*.
 - **Open the boards folder**: opens `Documents\IOcore\boards`.
 
 ![](./images/Board.png)
@@ -84,10 +84,42 @@ The **(i)** buttons everywhere in the program explain the thing next to them.
   own name.
 - **Read board** loads what is on the board; **Write all** puts what is on screen on the board, for example
   after working offline.
-- **Export** saves only some inputs, outputs or the board settings in a file of their own. **Import** adds them
-  to the board on screen, on the same numbers or on free places. Lines between the imported parts are
-  renumbered for you. Handy to reuse your resistor ladder or a turnout setup on the next board.
 - Closing the program with unsaved changes? It asks what to do.
+
+## Reusing parts: export and import
+
+Made a nice turnout setup or a level crossing, and you want it on the next board too? You don't have to click it
+together again.
+
+**Export** (*File → Export…*)
+
+1. Tick what you want to save: **Outputs**, **Inputs** and / or **Board settings**.
+2. Choose a file name. The file is a normal board file, with the names, settings and routes of everything that is
+   in use.
+
+Tip: export takes all outputs or all inputs in use. Want only a part, for example just the level crossing? Save a
+copy with **Save as**, remove everything else, and export that.
+
+**Import** (*File → Import…*)
+
+1. Choose a board file: an export, an example, or the file of another board.
+2. Tick what you want to take: **Outputs**, **Inputs** and / or **Board settings**.
+3. Choose where it goes:
+   - **Into free slots** (the default): the imported items go to the first free outputs and inputs. The lines
+     between them are renumbered for you, so each input still drives the right output. Your own items stay.
+   - **Same numbers (replace)**: every item goes to its own number. Your items on those numbers are replaced; the
+     program shows which ones and asks first.
+
+**Good to know**
+
+- **Pins:** if an imported item uses a pin that one of your items already uses, the imported item gets the pin.
+  Your own item keeps its settings but loses that pin. The program lists these items afterwards: give them
+  another pin.
+- **Not enough room?** A board has 16 outputs and 16 inputs. If there are not enough free ones, the program says
+  so and imports nothing.
+- **DCC addresses** are copied as they are. Two boards with the same addresses react to the same command: change
+  them if that is not what you want.
+- After an import, try it in **Simulate** before you write it to the board.
 
 ## Other controls
 
