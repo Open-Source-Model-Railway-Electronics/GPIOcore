@@ -401,8 +401,8 @@ void fillPinCombo(QComboBox *combo, bool output)
         QString reserved = pinReservedReason(pin);
         if (reserved.isEmpty() && output) reserved = pinOutputReason(pin);
         const QString note     = pinNote(pin);
-        if (pin < 2)
-            continue;                    // D0/D1: the serial line (GUI, board link, DFPlayer), never a pin
+        if (pin < 2 || pin == 2 || pin == 13)
+            continue;                    // D0/D1: the serial line; D2: DCC + config button; D13: config LED
         if ((pin == 20 || pin == 21) && !reserved.isEmpty())
             continue;                    // A6/A7 only appear where they can be used
         if (boardOptions().dccNext && !dccNextPort(pin))

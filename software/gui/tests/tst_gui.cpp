@@ -1550,7 +1550,8 @@ private slots:
             if (c->itemText(c->findData(int(BoardDccNext))) == boardTypeName(BoardDccNext))
                 QVERIFY(c->findData(int(BoardUno)) < 0 && c->count() == BoardTypeCount - 1);
         chooseBoardType(w, BoardJackOfAllTrades);
-        QVERIFY(!items(inPin).contains(20) && !items(inPin).contains(21) && items(inPin).contains(13));
+        QVERIFY(!items(inPin).contains(20) && !items(inPin).contains(21) && !items(inPin).contains(13)
+                && !items(inPin).contains(2));                // reserved pins are never offered
         QVERIFY(pinA->itemText(pinA->findData(3)).startsWith(QLatin1String("D3")));
         chooseBoardType(w, BoardNano);
         QVERIFY(items(inPin).contains(20) && items(inPin).contains(21));   // A6 and A7 (button on D2)
