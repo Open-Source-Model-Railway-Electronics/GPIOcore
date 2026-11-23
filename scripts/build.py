@@ -2,7 +2,7 @@
 """
 Build everything into release/ (run from the repository root, or from anywhere):
 
-    python build.py
+    python scripts/build.py
 
 1. Empties release/ (it only holds build output, it is not in git).
 2. Runs every build script of the project, in this order:
@@ -23,7 +23,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent       # the repository (this file is in scripts/)
 RELEASE_DIR = ROOT / "release"
 REPO = "IOcore"                  # the product name (the local folder may still have another name)
 

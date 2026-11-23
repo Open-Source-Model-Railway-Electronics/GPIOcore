@@ -2,7 +2,7 @@
 
 Ready-made ideas, from simple to clever. Each example says **what you need**, **how to wire it** and
 **what to set in the IOcore program**. Words like *input*, *output* and *route* are explained in the
-[manual](README.md).
+[manual](../README.md).
 
 Quick reminder:
 

@@ -40,9 +40,9 @@ No board yet? Everything works offline and in the simulator.
 | | |
 |---|---|
 | **[Manual](docs/Manual.md)** | The program, all outputs and inputs, routes, board link, block signals |
-| **[Examples](examples.md)** | Step-by-step recipes: servo decoder, coil decoder, level crossing with a bell, lights at dusk, ... |
+| **[Examples](docs/examples.md)** | Step-by-step recipes: servo decoder, coil decoder, level crossing with a bell, lights at dusk, ... |
 | **[Hardware](hardware/)** | The IOcore boards: schematics, PCB files, bill of materials *(coming)* |
-| **[Protocol](PROTOCOL.md)** · **[EEPROM](EEPROM.md)** | For developers: the serial protocol and the memory map |
+| **[Protocol](docs/PROTOCOL.md)** · **[EEPROM](docs/EEPROM.md)** | For developers: the serial protocol and the memory map |
 
 ## What you need
 
@@ -66,12 +66,13 @@ Version 1.0 follows when the hardware is done.
 | `software/IOcore/` | Arduino firmware |
 | `software/IOcore-Configurator/` | Qt 6 configuration program, simulator and tests (`CMakeLists.txt`) |
 | `hardware/` | KiCad projects |
-| `docs/` | manual and images |
+| `docs/` | manual, examples, protocol, EEPROM map, images |
+| `scripts/` | build, release and presentation scripts |
 
 | Command (from the repository root) | What it does |
 |---|---|
-| `python build.py` | builds the firmware, the program and the installer into `release/` |
-| `python release.py` | sets the version, builds, tags and publishes a GitHub release (`--dry-run` to try) |
+| `python scripts/build.py` | builds the firmware, the program and the installer into `release/` |
+| `python scripts/release.py` | sets the version, builds, tags and publishes a GitHub release (`--dry-run` to try) |
 | `python software/IOcore/src/build.py` | firmware only, to `release/IOcore.hex` |
 | `python software/IOcore/src/upload.py [COM9]` | puts `release/IOcore.hex` on a Nano |
 

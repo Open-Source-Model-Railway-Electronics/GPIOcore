@@ -1,7 +1,7 @@
 """IOcore screen-recording deck (16:9) with narration in the speaker notes; opens in LibreOffice Impress.
 
     pip install python-pptx
-    python docs/make_presentation.py      -> docs/IOcore-presentation.pptx (uses docs/images)
+    python scripts/make_presentation.py      -> docs/IOcore-presentation.pptx (uses docs/images)
 """
 import sys
 from pathlib import Path

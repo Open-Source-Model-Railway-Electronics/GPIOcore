@@ -20,7 +20,7 @@ Required Qt modules: Widgets, SerialPort, Network, Test (LinguistTools for the t
 makes `iocore_fw_host`: the firmware in `../IOcore` compiled for the PC (with a small Arduino shim in
 `fwhost/`). The simulator runs it, so *Simulate* and the tests use the real firmware.
 
-`build.py` makes a release for end users in `<repo>/release/` (the root `build.py` also builds the firmware).
+`build.py` makes a release for end users in `<repo>/release/` (`scripts/build.py` also builds the firmware).
 
 ## The window
 

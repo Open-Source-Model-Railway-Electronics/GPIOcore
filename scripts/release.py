@@ -2,9 +2,9 @@
 """
 Release a new version (run from the repository root, or from anywhere):
 
-    python release.py              ask the version and notes, build, then publish
-    python release.py --no-build   publish what is in release/ now (it must contain the new version!)
-    python release.py --dry-run    show what would happen; changes nothing
+    python scripts/release.py              ask the version and notes, build, then publish
+    python scripts/release.py --no-build   publish what is in release/ now (it must contain the new version!)
+    python scripts/release.py --dry-run    show what would happen; changes nothing
 
 Steps:
 1. Asks the version (e.g. 0.2, v0.2 or 0.2.1) and the release notes.
@@ -26,7 +26,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent       # the repository (this file is in scripts/)
 RELEASE_DIR = ROOT / "release"
 REPO = "IOcore"                  # the product name (the local folder may still have another name)
 sys.path.insert(0, str(ROOT))
@@ -110,7 +110,7 @@ def main():
             p.write_text(text, encoding="utf-8")
 
     if build_first and not dry:
-        if subprocess.run([sys.executable, "-B", str(ROOT / "build.py")], cwd=ROOT).returncode != 0:
+        if subprocess.run([sys.executable, "-B", str(Path(__file__).resolve().parent / "build.py")], cwd=ROOT).returncode != 0:
             fail("build failed (the version files are changed but nothing is committed)")
     files = [p for p in RELEASE_DIR.rglob("*") if p.is_file()] if RELEASE_DIR.is_dir() else []
     if not files:
