@@ -20,7 +20,7 @@ you control the outputs. Last the advanced features, such as linking boards and 
 
 # Getting started: the GUI basic controls
 
-![](./images/GUI%20elements.png)
+![](./images/gui-elements.png)
 
 | Part | What it does |
 |---|---|
@@ -93,7 +93,7 @@ The **(i)** buttons everywhere in the program explain the thing next to them.
 
 ### Board settings
 
-![](./images/Board%20settings.png)
+![](./images/board-settings.png)
 
 - **Name**: up to 16 letters, stored on the board. The program finds the file of a board by this name, so give
   every board its own name.
@@ -108,7 +108,7 @@ The **(i)** buttons everywhere in the program explain the thing next to them.
 
 ### Phone remote
 
-![](./images/Phone%20remote.png)
+![](./images/phone-remote.png)
 
 Adjust your servos with your phone, standing next to the layout. The phone must be on the same Wi-Fi as the PC.
 Scan the code with the camera of your phone and keep the program open. The first time Windows may ask whether the
