@@ -8,7 +8,7 @@ Build the GUI for end users into <repo>/release/:
     examples/             example board files
     presets/              the presets of the toolbar's Preset list (board files)
 
-    python software/gui/build.py         (the root build.py also builds the firmware)
+    python software/IOcore-Configurator/build.py         (the root build.py also builds the firmware)
 
 The GUI is built in a temporary folder that is removed afterwards.
 Qt is found in C:/Qt (newest 6.x with MinGW) or via QT_DIR=<...>/mingw_64.
@@ -22,7 +22,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-GUI_DIR = Path(__file__).resolve().parent                    # software/gui
+GUI_DIR = Path(__file__).resolve().parent                    # software/IOcore-Configurator
 REPO_ROOT = GUI_DIR.parent.parent
 RELEASE_DIR = REPO_ROOT / "release"
 EXE = "IOcoreGUI.exe"

@@ -82,7 +82,7 @@ button (A7) only exists on the Nano. A file with a pin the board type does not h
 ## Presets
 
 The toolbar's **Preset** list (and *File → New board*) shows the board files in `presets/`: next to the exe, or
-in the source tree (`software/gui/presets/`) for a development build; `build.py` copies them to `release/`.
+in the source tree (`software/IOcore-Configurator/presets/`) for a development build; `build.py` copies them to `release/`.
 They are sorted by name; the name is the file's `presetName` field (otherwise the file name). *Apply* asks first
 (optionally clearing the names), then replaces all outputs and inputs; when connected they are written live. A
 preset that needs a higher user level raises it, as when opening a file. A preset only sets the board type when

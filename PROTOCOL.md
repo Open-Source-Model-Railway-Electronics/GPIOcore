@@ -1,7 +1,7 @@
 # IOcore serial protocol
 
 Date: 2026-11-18 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by
-the firmware (`software/IOcore`), the Qt GUI and the simulator (`software/gui/src/simulateddevice.cpp`).
+the firmware (`software/IOcore`), the Qt GUI and the simulator (`software/IOcore-Configurator/src/simulateddevice.cpp`).
 
 After opening the port the GUI sends `HELLO`. A board that answers is an IOcore decoder and reports its
 capabilities. If a board does not answer at all, the GUI first waits up to 30 s for the board to announce itself

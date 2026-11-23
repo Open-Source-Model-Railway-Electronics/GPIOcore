@@ -1,4 +1,4 @@
-"""Generate IOcore example board files into software/gui/examples."""
+"""Generate IOcore example board files into software/IOcore-Configurator/examples."""
 import json
 import sys
 from pathlib import Path

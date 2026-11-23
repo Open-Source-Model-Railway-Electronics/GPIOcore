@@ -30,7 +30,7 @@ the output opcode announces 13 bytes, but the payload is 14 bytes (<b>F1</b>).
 <b>Python GUI</b>: does not work with the current firmware. It crashes on the first message, receives nothing
  (the receive loop is called only once) and uses an old payload layout. See <b>P1–P9</b>.
 </li><li>
-<b>Qt GUI</b>: new project <code>software/gui/</code>. It works with the current firmware (including the
+<b>Qt GUI</b>: new project <code>software/IOcore-Configurator/</code>. It works with the current firmware (including the
  protocol quirks below) and also with a fixed firmware (0x2E). There are 19 automatic
  tests, which run against a firmware simulator. <b>Not yet tested on real hardware</b>.
 </li></ul>
@@ -88,7 +88,7 @@ deleting is done with a trash button per row;
 bug fix: row buttons were deleted while their own click was still running (<code>delete</code> → <code>deleteLater</code>).
 </li></ul>
 </li><li>
-<b>Help:</b> 17 extended explanation texts for beginners in <code>software/gui/i18n/info/en/*.html</code>, plus
+<b>Help:</b> 17 extended explanation texts for beginners in <code>software/IOcore-Configurator/i18n/info/en/*.html</code>, plus
  <i>Help → Getting started</i>.
 </li><li>
 <b>Translations:</b>
@@ -101,7 +101,7 @@ explanation texts as HTML per language, with fallback to English;
 a <i>View → Language</i> menu.
 </li></ul>
 </li></ul>
-<p>Explanation for translators: <code>software/gui/i18n/README.md</code>.</p>
+<p>Explanation for translators: <code>software/IOcore-Configurator/i18n/README.md</code>.</p>
 <ul><li>
 There are 39 tests (31 core + 8 GUI), all green.
 </li></ul>
@@ -350,7 +350,7 @@ servos are attached again and again.
 </tbody></table>
 <p>Conclusion: the Python GUI is not usable with the current firmware. The Qt GUI replaces it functionally.</p>
 <p>---</p>
-<h2>6. New Qt GUI (<code>software/gui/</code>)</h2>
+<h2>6. New Qt GUI (<code>software/IOcore-Configurator/</code>)</h2>
 <p><b>Features</b></p>
 <ul><li>
 Serial connection (115200 8N1). Recognises Arduino/CH340/FTDI/CP210x ports automatically and waits for the
@@ -376,7 +376,7 @@ Serial connection (115200 8N1). Recognises Arduino/CH340/FTDI/CP210x ports autom
 <b>Demo mode</b>: a built-in firmware simulator that imitates the behaviour of the current firmware
  (including F1, F2, F5 and the bitfield truncation).
 </li></ul>
-<p><b>Building</b>: open <code>software/gui/CMakeLists.txt</code> in Qt Creator (kit Qt 6.10.1 MinGW). Tested with Qt 6.10.1 / MinGW 13.1. The code uses no Qt6-only APIs and <code>find_package</code> falls back to Qt5, but I could <b>not</b> test a Qt5 build (only Qt 6 is on this machine).</p>
+<p><b>Building</b>: open <code>software/IOcore-Configurator/CMakeLists.txt</code> in Qt Creator (kit Qt 6.10.1 MinGW). Tested with Qt 6.10.1 / MinGW 13.1. The code uses no Qt6-only APIs and <code>find_package</code> falls back to Qt5, but I could <b>not</b> test a Qt5 build (only Qt 6 is on this machine).</p>
 <p><b>Tests</b> (<code>ctest</code>): 17 unit tests (framing, model, link ↔ simulator: legacy/fixed, double ACK, NACK retry, preset) and 2 GUI tests (edit → write → read back → clean; preset + conflict marking). All green.</p>
 <p><b>Not tested</b>: real hardware. First test advice: try Demo, then connect to a board, "Read board" and look at the serial log. Use the pulse types (F9) and relays (F10) only after the firmware fixes.</p>
 <p><code>GUI/untitled/</code> is the empty Qt Creator template; I left it in place and it can go.</p>

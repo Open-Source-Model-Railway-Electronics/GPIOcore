@@ -64,7 +64,7 @@ Version 1.0 follows when the hardware is done.
 | Folder | Contents |
 |---|---|
 | `software/IOcore/` | Arduino firmware |
-| `software/gui/` | Qt 6 configuration program, simulator and tests (`CMakeLists.txt`) |
+| `software/IOcore-Configurator/` | Qt 6 configuration program, simulator and tests (`CMakeLists.txt`) |
 | `hardware/` | KiCad projects |
 | `docs/` | manual and images |
 

@@ -364,7 +364,7 @@ QString FlashDialog::defaultHexPath()
     const QString name = QStringLiteral("IOcore.hex");
     QStringList candidates;
 #ifdef IOCORE_SOURCE_DIR
-    // IOCORE_SOURCE_DIR is software/gui; the repository root is two levels up.
+    // IOCORE_SOURCE_DIR is software/IOcore-Configurator; the repository root is two levels up.
     candidates << QDir::cleanPath(QStringLiteral(IOCORE_SOURCE_DIR) + QStringLiteral("/../../release/") + name);
 #endif
     // Without the define: look for <dir>/release/IOcore.hex above the executable.

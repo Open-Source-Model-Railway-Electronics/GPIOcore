@@ -12,7 +12,7 @@ Date: 2026-11-04 · Scope: the whole `IOcore/` folder (firmware, `GUI_Python/`, 
   - the output opcode announces 13 bytes, but the payload is 14 bytes (**F1**).
 - **Python GUI**: does not work with the current firmware. It crashes on the first message, receives nothing
   (the receive loop is called only once) and uses an old payload layout. See **P1–P9**.
-- **Qt GUI**: new project `software/gui/`. It works with the current firmware (including the
+- **Qt GUI**: new project `software/IOcore-Configurator/`. It works with the current firmware (including the
   protocol quirks below) and also with a fixed firmware (0x2E). There are 19 automatic
   tests, which run against a firmware simulator. **Not yet tested on real hardware**.
 
@@ -78,7 +78,7 @@ route default, preset broadcast layout, preset 4).
   - at least one row is always open; for an empty route you choose the first output there;
   - deleting is done with a trash button per row;
   - bug fix: row buttons were deleted while their own click was still running (`delete` → `deleteLater`).
-- **Help:** 17 extended explanation texts for beginners in `software/gui/i18n/info/en/*.html`, plus
+- **Help:** 17 extended explanation texts for beginners in `software/IOcore-Configurator/i18n/info/en/*.html`, plus
   *Help → Getting started*.
 - **Translations:**
   - UI texts through Qt Linguist (`i18n/iocore_<language>.ts`; `iocore_nl.ts` created, 269 texts,
@@ -86,7 +86,7 @@ route default, preset broadcast layout, preset 4).
   - explanation texts as HTML per language, with fallback to English;
   - a *View → Language* menu.
 
-  Explanation for translators: `software/gui/i18n/README.md`.
+  Explanation for translators: `software/IOcore-Configurator/i18n/README.md`.
 - There are 39 tests (31 core + 8 GUI), all green.
 
 ## Update 2026-11-11: protocol v2 (GUI done, decoder still to do)
@@ -430,7 +430,7 @@ Conclusion: the Python GUI is not usable with the current firmware. The Qt GUI r
 
 ---
 
-## 6. New Qt GUI (`software/gui/`)
+## 6. New Qt GUI (`software/IOcore-Configurator/`)
 
 **Features**
 - Serial connection (115200 8N1). Recognises Arduino/CH340/FTDI/CP210x ports automatically and waits for the
@@ -449,7 +449,7 @@ Conclusion: the Python GUI is not usable with the current firmware. The Qt GUI r
 - **Demo mode**: a built-in firmware simulator that imitates the behaviour of the current firmware
   (including F1, F2, F5 and the bitfield truncation).
 
-**Building**: open `software/gui/CMakeLists.txt` in Qt Creator (kit Qt 6.10.1 MinGW). Tested with
+**Building**: open `software/IOcore-Configurator/CMakeLists.txt` in Qt Creator (kit Qt 6.10.1 MinGW). Tested with
 Qt 6.10.1 / MinGW 13.1. The code uses no Qt6-only APIs and `find_package` falls back to Qt5, but
 I could **not** test a Qt5 build (only Qt 6 is on this machine).
 

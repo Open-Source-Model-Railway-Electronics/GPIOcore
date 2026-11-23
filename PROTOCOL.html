@@ -12,7 +12,7 @@ th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-alig
 hr{border:none;border-top:1px solid var(--line);margin:28px 0}
 </style></head><body>
 <h1>IOcore serial protocol</h1>
-<p>Date: 2026-11-18 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by the firmware (<code>software/IOcore</code>), the Qt GUI and the simulator (<code>software/gui/src/simulateddevice.cpp</code>).</p>
+<p>Date: 2026-11-18 (updated) · Status: pre-release (v0). This document describes the current protocol, as implemented by the firmware (<code>software/IOcore</code>), the Qt GUI and the simulator (<code>software/IOcore-Configurator/src/simulateddevice.cpp</code>).</p>
 <p>After opening the port the GUI sends <code>HELLO</code>. A board that answers is an IOcore decoder and reports its capabilities. If a board does not answer at all, the GUI first waits up to 30 s for the board to announce itself (a short press on its config button, §3.1). If nothing comes, the GUI asks you to flash the IOcore firmware.</p>
 <h2>1. Framing</h2>
 <pre><code>&lt;command&gt; &lt;payload ...&gt; &lt;checksum&gt;

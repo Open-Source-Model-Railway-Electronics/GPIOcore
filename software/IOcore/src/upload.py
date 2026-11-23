@@ -19,7 +19,7 @@ from pathlib import Path
 SKETCH_DIR = Path(__file__).resolve().parent.parent      # software/IOcore
 REPO_ROOT = SKETCH_DIR.parent.parent
 HEX_FILE = REPO_ROOT / "release" / "IOcore.hex"
-AVRDUDE_DIR = REPO_ROOT / "software" / "gui" / "tools" / "avrdude"
+AVRDUDE_DIR = REPO_ROOT / "software" / "IOcore-Configurator" / "tools" / "avrdude"
 BAUD = "115200"       # new Nano bootloader (Optiboot); use 57600 for the old bootloader
 
 
